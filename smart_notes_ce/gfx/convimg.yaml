@@ -10,10 +10,9 @@ converts:
     palette: palette
     images:
       - settings.png
-
 outputs:
-  - type: ice
-    include-file: ice.txt
+  - type: c
+    include-file: gfx.h
     converts:
       - myimages
     palettes:
