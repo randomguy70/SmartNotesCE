@@ -1,0 +1,315 @@
+[i]NOTES
+[i]"AAA9AAAAAAAAAAAAAAA9AAAAAAAAAAAA9999999999999999AAA9AAAAAAAAAAAAAAA9AAAAAAAAAAAA9999999999999999AAA9AAAAAAAAAAAAAAA9AAAAAAAAAAAA9999999999999999AAA9AAAAAAAAAAAAAAA9AAAAAAAAAAAA9999999999999999AAA9AAAAAAAAAAAAAAA9AAAAAAAAAAAA9999999999999999AAA9AAAAAAAAAAAA"
+[i]SmartNotes CE, coded by JP Malloy. Version 1.0
+Begin
+//i really like HexaEdit by Captain Calc, so the graphics are sort of like his (especially the black, white, and grey file viewer). however, i want to make the graphics more vivid and cooler, so if anyone has ideas I might implement them.
+// current ToDo list
+//make deleting files faster
+//display text faster
+//blit only the text section of the text editor so avoid wasting time
+//make 'other' options actually display other options
+//make lowercase ascii data
+//when user creates a new file, i need to check if a file with that name exists
+//need to add scrolling files with pos offset. can do this with updating invisible search until offset, then displaying the files
+
+////////// usage of os_strings
+//Str1-selected filename
+//Str2-current filename
+//Str3-last inputted ascii char
+//Str4-inputted string
+//Str5-
+//Str6-
+//Str7-
+//Str8-
+//Str9-
+
+//delete os_strings, otherwise strange things might happen, and have happened
+0->***{Str1
+0->***{Str2
+0->***{Str3
+0->***{Str4
+0->***{Str5
+0->***{Str6
+0->***{Str7
+0->***{Str8
+0->***{Str9
+0->***{Str0
+
+///////// initialize some variables
+//length of inputted string
+0->STRLEN
+
+//text modes: 1=Math, 2=Caps, 3=Lowercase
+2->TEXTMODE
+
+//text file currently selected, 0=start
+0->SELECTED
+//text file going to be opened or currently open
+0->DOC
+
+//cursor vars
+0->CURSORX
+0->CURSORY
+0->CURSORPOS
+0-5->CURSORISBLINKING
+
+//main screen, displays all text files and has all the main options such as creating new files, deleting files, renaming files, etc...
+Lbl HOME
+	SetDraw(1
+
+	//SCREEN SETUP
+	FillScreen(149
+	SetColor(0
+	Rectangle(50,1,222,30
+	Rectangle_NoClip(35,55,250,152
+	SetColor(255
+	FillRectangle_NoClip(36,56,248,150
+	SetTextFGColor(0
+	PrintStringXY("SMARTNOTES CE",115,5
+	PrintStringXY("VERSION 1.0 BY JOHNPAUL MALLOY",55,20
+	PrintStringXY("NAME",40,45
+	PrintStringXY("SIZE",135,45
+	PrintStringXY("STATUS",210,45
+
+	//button rects at bottom of screen
+	For(I,1,320,64
+		SetColor(0
+		Rectangle_NoClip(I,220,62,19
+		SetColor(42
+		FillRectangle_NoClip(I+1,221,60,17
+	End
+	
+	//button text
+	SetTextFGColor(0
+	PrintStringXY("OPEN",16,227
+	PrintStringXY("RENAME",73,227
+	PrintStringXY("DELETE",137,227
+	PrintStringXY("NEW",211,227
+	PrintStringXY("OTHER",270,227
+
+	//starting y coord for file display
+	61->Y
+	//number of files
+	0->NUMBER
+	//vat offset for while loop
+	0->POS
+	
+	//loop to detect and display files
+	While (Detect(^^oPOS,"TXT->CURNAME and (NUMBER<10)
+
+		getKey->K
+		CloseAll
+		//get file info, archive files...
+		Open(CURNAME,"r"->CURFILE
+		GetSize(CURFILE->SIZE
+		SetArchiveStatus(1,CURFILE
+		sum(31,Str2,CURFILE
+
+		//display currently selected file with highlighting rect
+		If SELECTED=NUMBER
+			//save the name of the selected file in str one to use later
+			Str2->Str1
+			//check if should be deleted
+			SetColor(0
+			FillRectangle_NoClip(35,Y-5,250,15
+			SetTextFGColor(149
+		Else
+			SetTextFGColor(0
+		End
+
+		//display detected file name & size
+		PrintStringXY(Str2,40,Y
+		SetTextXY(135,Y
+		PrintInt(SIZE,4
+		
+		//update search-dependant vars
+		NUMBER+1->NUMBER
+		Y+15->Y
+	End
+	
+	//display when no appvars are found
+	If not(NUMBER
+		SetTextFGColor(244
+		PrintStringXY("--NO FILES FOUND--",93,80
+	End
+	
+	//move selected down
+	If (getKey(1)) and (SELECTED<9) and (SELECTED<NUMBER-1)
+		SELECTED+1->SELECTED
+	End
+	
+	//move selected up
+	If getKey(4) and (SELECTED>0)
+		SELECTED-1->SELECTED
+	End
+	
+	////button functions(new file, etc...)
+	//create new file
+	If getKey(50
+		Call NEW
+		FillScreen(0
+	End
+	
+	//delete selected file (name = os_Str1)
+	If getKey(51
+		Call DELETE
+	End
+	
+	//clear force quits
+	If getKey(15
+		Goto X
+	Else
+		Blit(1
+		Goto HOME
+	End
+
+////////////////// ----  CUSTOM FUNCTIONS ---- //////////////////////////
+
+//not started yet
+Lbl OPEN
+	Goto X
+
+
+//not started yet
+Lbl EDIT
+	Goto X
+
+
+//function that returns one ascii character entered based on the current text mode(caps, math, lowercase). i have not yet incorporated the full ascii character 'list'/'set'/'table' or whatever you call it. so far i have all the capital letter, and numbers and parenthases and commas and that sort of thing. i am not sure whether this method is really efficient or actually a waste of time because this is the first time I have ever had to create a string editor from scratch.
+Lbl WRITECHAR
+	//math mode
+	If TEXTMODE=1
+		If (14>=K and K>=10) or (21>=K and K>=17) or (29>=K and K>=25) or (37>=K and K>=33)
+			Seek(K,0,MATH
+			Read(Str3,1,1,MATH
+			1->CHARWASWRITTEN
+			Return
+		End
+	End
+	
+	//caps mode
+	If TEXTMODE=2
+		If (14>=K and K>=9) or (22>=K and K>=17) or (31>=K and K>=25) or (39>=K and K>=33) or (47>=K and K>=42)
+			Seek(K,0,CAPS
+			Read(Str3,1,1,CAPS
+			1->CHARWASWRITTEN
+			Return
+		Else
+			0->CHARWASWRITTEN
+		End
+	End
+	
+	Return
+
+
+//open my ascii data appvars
+Lbl OPENDATA
+	[i]OPEN TEXT DATA APPVARS
+	CloseAll
+	Open("MATHASCI","r"->MATH
+	Open("LETTERAS","r"->CAPS
+	[i]need to add LOWERCASE here
+	
+	Return
+
+
+//input ascii string to os_str4 while displaying os_str4. then create text file with name os_str4 if doesn't already exist
+Lbl NEW
+	Call OPENDATA
+	0->*{Str4
+	
+	While (1
+		getKey->K
+		If K=15
+			Goto HOME
+		End
+		
+		If (K=9) and (STRLEN>1) and (STRLEN<9)
+			Open(Str4,"w+"->DOC
+			Write("TXT",3,1,DOC
+			Return
+		End
+		
+		If (K>0) and (STRLEN<8)
+			Call WRITECHAR
+			If CHARWASWRITTEN
+				Str4+Str3->Str4
+				STRLEN+1->STRLEN
+			End
+		End
+		
+		If (K=56) and (STRLEN>0)
+			sub(Str4,0,STRLEN-1->Str4
+		End
+		
+		//display current string/new filename with outline box
+		SetDraw(1
+		//big box fill
+		SetColor(149
+		FillRectangle_NoClip(110,90,80,40
+		//big box outline
+		SetColor(0
+		Rectangle_NoClip(110,90,80,40
+		//text box fill
+		SetColor(255
+		FillRectangle_NoClip(115,110,70,13
+		//text box outline
+		SetColor(0
+		Rectangle_NoClip(115,110,70,13
+		//display text
+		SetTextFGColor(0
+		PrintStringXY("New file",120,95
+		PrintStringXY(Str4,117,113
+		//display cursor
+		GetTextX+1->CURSORX
+		GetTextY-4->CURSORY
+		VertLine_NoClip(CURSORX,CURSORY,8
+		Blit(1
+	End
+
+	Return
+
+
+//function that checks if you're sure and deletes appvar with name os_Str1
+Lbl DELETE
+   SetDraw(1
+   SetColor(149
+   FillRectangle_NoClip(100,90,121,40
+   SetColor(0
+   Rectangle_NoClip(100,90,121,40
+   //text
+   SetTextFGColor(0
+   PrintStringXY("Are you sure?",112,100
+   PrintStringXY("Yes=2nd  No=Mode",102,115
+   Blit(1
+   Repeat (K=54) or (K=55)
+      getKey->K
+      If K=54
+         Delete(Str1
+         If SELECTED>1
+            SELECTED-1->SELECTED
+         End
+      End
+   End
+      Return
+
+//function that waits for keypress
+Lbl GETKEY
+	0->K
+	Repeat K>0
+		getKey->K
+	End
+	Return
+
+
+//defines various icons
+Lbl SPRITES
+
+
+
+//function that archives files, exits graphics mode, ends program
+Lbl X
+	SetArchiveStatus(1,FILE
+	SetArchiveStatus(1,MATH
+	SetArchiveStatus(1,CAPS
+	det(1
