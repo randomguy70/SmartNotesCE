@@ -63,6 +63,7 @@ char * input_string(uint8_t min_len, uint8_t max_len, uint8_t x, uint8_t y) {
 */
 
 int dispHomeScreen() {
+   uint8_t i;
    uint8_t numFiles = 0; // total number of files detected
    uint8_t numFilesShown = 0; // number of files currently shown on screen. can't be more than 10
    uint8_t fileSlot; // slot of currently detected file
@@ -193,7 +194,13 @@ int dispHomeScreen() {
          ti_Delete(selectedName);
       } else if(kb_IsDown(kb_KeyTrace)) {
          char buffer[9];
-         inputString(buffer);
+         for(i=0; i<9; i++) {
+            buffer[i] = 0;
+         }
+         
+         if(inputString(buffer, 8)=1) {
+
+         }
       }
 
       gfx_SwapDraw();
@@ -203,11 +210,11 @@ int dispHomeScreen() {
    return 1;
 }
 
-int inputString(char* buffer, uint8_t length)
+int inputString(char* buffer, uint8_t length, uint8_t mode)
 {
-   uint8_t result;
-   uint8_t cursorX;
-   uint8_t fileSlot;
+   uint8_t result = 0;
+   uint8_t cursorX = 0;
+   uint8_t fileSlot = 0;
 
    while (!result) {
       kb_Scan();
@@ -218,8 +225,7 @@ int inputString(char* buffer, uint8_t length)
          }
          
          if (kb_IsDown(kb_KeyEnter) && 0<strLen<9) {
-            fileSlot = ti_Open(&string,"w+");
-            ti_Write("TXT",3,1,fileSlot);
+            result = 1;
          }
          
          if (kb_AnyKey() && strLen<9) {
@@ -258,10 +264,32 @@ int inputString(char* buffer, uint8_t length)
          gfx_VertLine_NoClip(cursorX,cursorY,8);
          gfx_Blit(1);
    }
+   return result;
 }
 
-char inputChar() {
-   return 'h';
+char inputChar(char* buffer) {
+   uint8_t result;
+   uint8_t keyPressed;
+   
+	if (mode == 1)
+		if ((keyPressed = get_single_key_pressed()) > 0) { //math mode
+			ti_Seek(keyPressed,0,MATH);
+			ti_Read(buffer,1,1,MATH);
+			result = 1;
+      }
+   } else if (mode == 3) { // lowercase mode
+
+   }else if (mode==2) { // caps mode
+		if ((keyPressed = get_single_key_pressed()) > 0) {
+			ti_Seek(keyPressed,0,CAPS);
+			ti_Read(buffer,1,1,CAPS);
+			result = 1;
+      } else {
+			result = 0;
+      }
+   }
+	
+	return result;
 }
 
 void dispButtons(uint8_t mode)
@@ -289,6 +317,29 @@ void dispButtons(uint8_t mode)
 void handleKeyPresses(int mode)
 {
    
+}
+
+uint8_t get_single_key_pressed(void) {
+    static uint8_t last_key;
+    uint8_t only_key = 0;
+    kb_Scan();
+    for (uint8_t key = 1, group = 7; group; --group) {
+        for (uint8_t mask = 1; mask; mask <<= 1, ++key) {
+            if (kb_Data[group] & mask) {
+                if (only_key) {
+                    last_key = 0;
+                    return 0;
+                } else {
+                    only_key = key;
+                }
+            }
+        }
+    }
+    if (only_key == last_key) {
+        return 0;
+    }
+    last_key = only_key;
+    return only_key;
 }
 
 void archiveAll() 
