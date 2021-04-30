@@ -2,9 +2,9 @@ palettes:
   - name: palette
     images: automatic
     fixed-entries:
-      - color: {index: 0, r: 255, g: 0, b: 128}   # transparent color (hot pink)
-      - color: {index: 1, r: 220, g: 220, b: 220} # grey, need to refine
-      - color: {index: 2, r: 0, g: 0, b: 0}       # black
+    - color: {index: 0, r: 255, g: 0, b: 128}   # transparent color (hot pink)
+    - color: {index: 1, r: 220, g: 220, b: 220} # grey, need to refine
+    - color: {index: 2, r: 0, g: 0, b: 0}       # black
 converts:
   - name: myimages
     palette: palette
