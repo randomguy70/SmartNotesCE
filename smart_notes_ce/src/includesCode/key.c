@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <keypadc.h>
+#include "includes/key.h"
 
 uint8_t get_single_key_pressed(void) {
     static uint8_t last_key;

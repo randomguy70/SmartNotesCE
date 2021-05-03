@@ -2,6 +2,7 @@
 #include <fileioc.h>
 #include <keypadc.h>
 #include <graphx.h>
+#include "includes/ui.h"
 
 uint8_t dispHomeScreen() {
    uint8_t i; // for loop var

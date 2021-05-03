@@ -2,6 +2,7 @@
 #include <fileioc.h>
 #include <keypadc.h>
 #include "graphx.h"
+#include "includes/text.h"
 
 uint8_t inputString(char* buffer, uint8_t maxLength)
 {

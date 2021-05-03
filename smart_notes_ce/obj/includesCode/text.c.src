@@ -17,7 +17,7 @@ BB0_1:
 	ld	h, (iy + 1)
 	ld	a, l
 	bit	6, a
-	jq	nz, BB0_10
+	jq	nz, BB0_7
 	ld	l, (iy)
 	ld	h, (iy + 1)
 	ld.sis	bc, 1
@@ -32,16 +32,14 @@ BB0_1:
 	xor	a, l
 	xor	a, l
 	bit	0, a
-	jq	nz, BB0_12
+	jq	nz, BB0_16
 BB0_5:
 	call	_kb_AnyKey
-	ld	l, a
+	or	a, a
+	jq	z, BB0_15
 	ld	a, (ix + -1)
 	cp	a, 9
-	jq	nc, BB0_13
-	ld	a, l
-	or	a, a
-	jq	z, BB0_13
+	jq	nc, BB0_15
 	ld	hl, 1
 	push	hl
 	push	hl
@@ -49,21 +47,23 @@ BB0_5:
 	pop	hl
 	pop	hl
 	or	a, a
-	ld	a, 1
-	jq	nz, BB0_9
-	ld	a, 0
-BB0_9:
-	and	a, 1
-	ld	l, a
+	jq	z, BB0_15
 	ld	a, (ix + -1)
-	add	a, l
+	or	a, a
+	sbc	hl, hl
+	ex	de, hl
+	ld	e, a
+	ld	hl, (ix + 6)
+	add	hl, de
+	ld	(hl), 0
+	inc	a
 	ld	(ix + -1), a
-BB0_13:
+BB0_15:
 	xor	a, a
-	jq	BB0_14
-BB0_10:
+	jq	BB0_8
+BB0_7:
 	ld	a, 2
-BB0_14:
+BB0_8:
 	ld	(ix + -5), a
 	ld	hl, -720878
 	push	de
@@ -75,11 +75,11 @@ BB0_14:
 	pop	de
 	ld	a, (ix + -1)
 	or	a, a
-	jq	z, BB0_18
+	jq	z, BB0_12
 	ld	a, l
 	cp	a, 0
 	call	__setflag
-	jq	p, BB0_18
+	jq	p, BB0_12
 	ld	de, 0
 	ld	a, (ix + -1)
 	ld	e, a
@@ -90,12 +90,12 @@ BB0_14:
 	push	hl
 	call	_delay
 	pop	hl
-BB0_18:
+BB0_12:
 	ld	hl, 1
 	push	hl
 	call	_gfx_SetDraw
 	pop	hl
-	ld	hl, 149
+	ld	hl, -107
 	push	hl
 	call	_gfx_SetColor
 	pop	hl
@@ -130,7 +130,7 @@ BB0_18:
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	hl, 255
+	ld	hl, -1
 	push	hl
 	call	_gfx_SetColor
 	pop	hl
@@ -194,21 +194,16 @@ BB0_18:
 	inc	hl
 	ld	(ix + -4), hl
 	call	_gfx_GetTextY
-	push	hl
-	pop	iy
-	ld	de, 252
-	add	iy, de
+	ld	a, l
+	add	a, -4
+	ld	e, a
 	ld	hl, (ix + -4)
 	ld	bc, 255
 	call	__iand
-	push	hl
-	pop	de
-	lea	hl, iy + 0
-	call	__iand
 	ld	bc, 8
 	push	bc
-	push	hl
 	push	de
+	push	hl
 	call	_gfx_VertLine_NoClip
 	pop	hl
 	pop	hl
@@ -219,9 +214,9 @@ BB0_18:
 	pop	hl
 	ld	l, (ix + -5)
 	jq	BB0_1
-BB0_12:
+BB0_16:
 	ld	a, 1
-	jq	BB0_14
+	jq	BB0_8
 BB0_19:
 	ld	a, l
 	ld	sp, ix
