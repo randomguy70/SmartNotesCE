@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <fileioc.h>
 #include <keypadc.h>
-#include "gfx/gfx.h"
+#include "graphx.h"
 
 uint8_t inputString(char* buffer, uint8_t maxLength)
 {
@@ -11,7 +11,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
    uint8_t strLen = 0;
    uint8_t cursorX;
    uint8_t cursorY;
-   char *character;
+   char *character = NULL;
 
    while (!result) {
       kb_Scan();

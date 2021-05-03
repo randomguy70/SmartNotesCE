@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <fileioc.h>
 #include <keypadc.h>
-#include "gfx/gfx.h"
+#include <graphx.h>
 
 uint8_t dispHomeScreen() {
    uint8_t i; // for loop var
