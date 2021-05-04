@@ -3,6 +3,6 @@
 	section	.data,"aw",@progbits
 	public	_palette
 _palette:
-	db	"",020o,"|{o",000o,000o,017o,"x",017o,"|"
+	db	"",000o,000o,020o,"|{o3:Zk",377o,377o,037o,000o,017o,"x",017o,"|"
 
 	ident	"clang version 12.0.0 (https://github.com/jacobly0/llvm-project 170be88120e3aa88c20eea5615ba76b8f1d6c647)"

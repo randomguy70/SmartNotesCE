@@ -6,87 +6,94 @@
 
 uint8_t inputString(char* buffer, uint8_t maxLength)
 {
-   uint8_t txtMode = 1;
    uint8_t result = 0;
-   uint8_t fileSlot = 0;
-   uint8_t strLen = 0;
+   uint8_t keyPressed;
+   uint8_t txtMode = 1;
+   uint8_t strLen = 0; //  current length & offset of inputted string
+   char character; //  current inputted character
    uint8_t cursorX;
-   uint8_t cursorY;
-   char *character = NULL;
 
    while (!result) {
       kb_Scan();
 
+      // clear quits
       if (kb_IsDown(kb_KeyClear)) {
          result = 2;
+         // break;
       } else if (kb_IsDown(kb_KeyEnter) && 0<strLen && strLen<=maxLength) {
          result = 1;
-      } else if (kb_AnyKey() && strLen<9) {
-         if(inputChar(character, txtMode)){
+         // break;
+      }
+
+      if (character = inputChar()) > 0) {
             buffer[strLen] = character;
             strLen++;
-         }
       }
-      
+
       if ((kb_IsDown(kb_KeyDel)) && strLen>0) {
          buffer[strLen] = 0;
+         strLen--;
          delay(100);
       }
       
-      //display current string/new filename with outline box
+      // display current string/new filename with outline box
+
       gfx_SetDraw(1);
-      //big box fill
-      gfx_SetColor(149);
+      // outer text box fill
+      gfx_SetColor(3); // fill rectangle light grey
       gfx_FillRectangle_NoClip(110,90,80,40);
-      //big box outline
-      gfx_SetColor(0);
+
+      // outer text box outline
+      gfx_SetColor(6); //  blue outline for text input outer box
       gfx_Rectangle_NoClip(110,90,80,40);
-      //text box fill
-      gfx_SetColor(255);
+
+      // inner text box fill
+      gfx_SetColor(1); // fill inner text box white
       gfx_FillRectangle_NoClip(115,110,70,13);
-      //text box outline
-      gfx_SetColor(0);
+
+      // inner text box outline
+      gfx_SetColor(6); //  blue outline for text input inner box
       gfx_Rectangle_NoClip(115,110,70,13);
-      //display text
+
+      // display inputted text
       gfx_SetTextFGColor(0);
       gfx_PrintStringXY("New file",120,95);
       gfx_PrintStringXY(buffer,117,113);
-      //display cursor
+
+      // display cursor
       cursorX = gfx_GetTextX()+1;
-      cursorY = gfx_GetTextY()-4;
-      gfx_VertLine_NoClip(cursorX,cursorY,8);
+      gfx_SetColor(6);
+      gfx_VertLine_NoClip(cursorX,cursorY,12);
+      gfx_VertLine_NoClip(cursorX+1,cursorY,12);
       gfx_Blit(1);
    }
    return result;
 }
 
-uint8_t inputChar(char* buffer, uint8_t txtMode) {
-   char result;
-   uint8_t keyPressed;
-   uint8_t mathSlot = ti_Open("MATH", "r"); // slot of math ascii data
-   uint8_t capsSlot = ti_Open("CAPS", "r"); // slot of caps ascii data
-   uint8_t lowerSlot; // slot of lowercase ascii data
+uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed) {
+   char result = NULL;
+   uint8_t mathSlot = ti_Open("MATHASCI", "r"); //  slot of math ascii data
+   uint8_t capsSlot = ti_Open("LETTERAS", "r"); //  slot of caps ascii data
+   uint8_t lowerSlot = 0; //  slot of lowercase ascii data
 
 	if (txtMode == 1) {
-		if ((keyPressed = get_single_key_pressed()) > 0) { //math txtMode
+		if ((keyPressed = get_single_key_pressed()) > 0) { // math txtMode
 			ti_Seek(keyPressed, 0, mathSlot);
-			buffer = ti_GetC(mathSlot);
-			result = 1;
-      } else if (txtMode == 2) { // caps txtMode
+			result = ti_GetC(mathSlot);
+      } else if (txtMode == 2) { //  caps txtMode
 		   if ((keyPressed = get_single_key_pressed()) > 0) {
-            ti_Seek(keyPressed,0, capsSlot);
-            buffer = ti_GetC(capsSlot);
-            result = 1;
+            ti_Seek(keyPressed, 0, capsSlot);
+            result = ti_GetC(capsSlot);
          }
       } else {
-         result = 0;
+         result = NULL;
       }
    }
 
    return result;
 }
-
+/*
 uint8_t deleteChar(uint8_t slot, short offset) {
 
 }
-
+*/

@@ -3,68 +3,61 @@
 	section	.text,"ax",@progbits
 	public	_inputString
 _inputString:
-	ld	hl, -5
+	ld	hl, -7
 	call	__frameset
-	ld	l, 0
-	ld	(ix + -1), l
+	xor	a, a
+	ld	(ix + -1), a
 BB0_1:
-	ld	a, l
-	or	a, a
-	jq	nz, BB0_19
 	call	_kb_Scan
 	ld	iy, -720868
 	ld	l, (iy)
 	ld	h, (iy + 1)
 	ld	a, l
 	bit	6, a
-	jq	nz, BB0_7
-	ld	l, (iy)
-	ld	h, (iy + 1)
+	lea	hl, iy + 0
+	jq	nz, BB0_13
+	push	de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	ld	l, e
+	ld	h, d
+	pop	de
 	ld.sis	bc, 1
 	call	__sand
 	ld	a, (ix + -1)
 	dec	a
 	ld	e, (ix + 9)
 	cp	a, e
-	jq	nc, BB0_5
+	jq	nc, BB0_4
 	ld	a, l
 	ld	l, 1
 	xor	a, l
 	xor	a, l
 	bit	0, a
-	jq	nz, BB0_16
-BB0_5:
-	call	_kb_AnyKey
+	jq	nz, BB0_15
+BB0_4:
+	call	_get_single_key_pressed
+	ld	a, l
 	or	a, a
-	jq	z, BB0_15
-	ld	a, (ix + -1)
-	cp	a, 9
-	jq	nc, BB0_15
-	ld	hl, 1
+	jq	nz, BB0_6
+	ld	c, (ix + -1)
+	jq	BB0_7
+BB0_6:
 	push	hl
+	ld	hl, 1
 	push	hl
 	call	_inputChar
 	pop	hl
 	pop	hl
-	or	a, a
-	jq	z, BB0_15
-	ld	a, (ix + -1)
-	or	a, a
-	sbc	hl, hl
-	ex	de, hl
-	ld	e, a
+	ld	de, 0
+	ld	c, (ix + -1)
+	ld	e, c
 	ld	hl, (ix + 6)
 	add	hl, de
-	ld	(hl), 0
-	inc	a
-	ld	(ix + -1), a
-BB0_15:
-	xor	a, a
-	jq	BB0_8
+	ld	(hl), a
+	inc	c
 BB0_7:
-	ld	a, 2
-BB0_8:
-	ld	(ix + -5), a
 	ld	hl, -720878
 	push	de
 	ld	e, (hl)
@@ -73,19 +66,24 @@ BB0_8:
 	ld	l, e
 	ld	h, d
 	pop	de
-	ld	a, (ix + -1)
+	ld	a, c
 	or	a, a
-	jq	z, BB0_12
+	jq	z, BB0_8
 	ld	a, l
 	cp	a, 0
 	call	__setflag
-	jq	p, BB0_12
+	jq	m, BB0_11
+BB0_8:
+	ld	(ix + -1), c
+	jq	BB0_12
+BB0_11:
 	ld	de, 0
-	ld	a, (ix + -1)
-	ld	e, a
+	ld	e, c
 	ld	hl, (ix + 6)
 	add	hl, de
 	ld	(hl), 0
+	dec	c
+	ld	(ix + -1), c
 	ld	hl, 100
 	push	hl
 	call	_delay
@@ -95,7 +93,7 @@ BB0_12:
 	push	hl
 	call	_gfx_SetDraw
 	pop	hl
-	ld	hl, -107
+	ld	hl, 3
 	push	hl
 	call	_gfx_SetColor
 	pop	hl
@@ -112,8 +110,7 @@ BB0_12:
 	pop	hl
 	pop	hl
 	pop	hl
-	or	a, a
-	sbc	hl, hl
+	ld	hl, 6
 	push	hl
 	call	_gfx_SetColor
 	pop	hl
@@ -130,7 +127,7 @@ BB0_12:
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	hl, -1
+	ld	hl, 1
 	push	hl
 	call	_gfx_SetColor
 	pop	hl
@@ -147,8 +144,7 @@ BB0_12:
 	pop	hl
 	pop	hl
 	pop	hl
-	or	a, a
-	sbc	hl, hl
+	ld	hl, 6
 	push	hl
 	call	_gfx_SetColor
 	pop	hl
@@ -192,18 +188,38 @@ BB0_12:
 	pop	hl
 	call	_gfx_GetTextX
 	inc	hl
-	ld	(ix + -4), hl
+	ld	(ix + -7), hl
 	call	_gfx_GetTextY
 	ld	a, l
 	add	a, -4
-	ld	e, a
-	ld	hl, (ix + -4)
+	ld	l, a
+	ld	(ix + -4), hl
+	ld	hl, 6
+	push	hl
+	call	_gfx_SetColor
+	pop	hl
+	ld	hl, (ix + -7)
 	ld	bc, 255
 	call	__iand
-	ld	bc, 8
-	push	bc
-	push	de
 	push	hl
+	pop	de
+	ld	(ix + -7), de
+	ld	hl, 12
+	push	hl
+	ld	hl, (ix + -4)
+	push	hl
+	push	de
+	call	_gfx_VertLine_NoClip
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	de, (ix + -7)
+	inc	de
+	ld	hl, 12
+	push	hl
+	ld	hl, (ix + -4)
+	push	hl
+	push	de
 	call	_gfx_VertLine_NoClip
 	pop	hl
 	pop	hl
@@ -212,32 +228,30 @@ BB0_12:
 	push	hl
 	call	_gfx_Blit
 	pop	hl
-	ld	l, (ix + -5)
 	jq	BB0_1
-BB0_16:
-	ld	a, 1
-	jq	BB0_8
-BB0_19:
-	ld	a, l
+BB0_13:
+	ld	a, 2
+BB0_14:
 	ld	sp, ix
 	pop	ix
 	ret
+BB0_15:
+	ld	a, 1
+	jq	BB0_14
 	section	.text,"ax",@progbits
 
 	section	.text,"ax",@progbits
 	public	_inputChar
 _inputChar:
-	ld	hl, -4
+	ld	hl, -3
 	call	__frameset
 	ld	hl, L_.str.1
 	ld	de, L_.str.2
-	xor	a, a
-	ld	(ix + -1), a
 	push	de
 	push	hl
 	call	_ti_Open
 	ld	l, a
-	ld	(ix + -4), hl
+	ld	(ix + -3), hl
 	pop	hl
 	pop	hl
 	ld	hl, L_.str.2
@@ -247,18 +261,17 @@ _inputChar:
 	call	_ti_Open
 	pop	hl
 	pop	hl
-	ld	a, (ix + 9)
+	ld	a, (ix + 6)
 	cp	a, 1
-	jq	nz, BB1_3
+	jq	nz, BB1_4
 	call	_get_single_key_pressed
 	ld	bc, 255
 	call	__iand
 	ld	a, l
 	or	a, a
+	ld	e, 0
 	jq	z, BB1_3
-	ld	a, 1
-	ld	(ix + -1), a
-	ld	de, (ix + -4)
+	ld	de, (ix + -3)
 	push	de
 	ld	de, 0
 	push	de
@@ -267,21 +280,18 @@ _inputChar:
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	hl, (ix + -4)
+	ld	hl, (ix + -3)
 	push	hl
 	call	_ti_GetC
+	push	hl
+	pop	de
 	pop	hl
+	jq	BB1_3
+BB1_4:
+	ld	e, 0
 BB1_3:
-	ld	a, (ix + -1)
-	ld	sp, ix
-	pop	ix
-	ret
-	section	.text,"ax",@progbits
-
-	section	.text,"ax",@progbits
-	public	_deleteChar
-_deleteChar:
-	call	__frameset0
+	ld	a, e
+	pop	hl
 	pop	ix
 	ret
 	section	.text,"ax",@progbits
@@ -294,7 +304,7 @@ L_.str:
 	section	.rodata,"a",@progbits
 	private	L_.str.1
 L_.str.1:
-	db	"MATH",000o
+	db	"MATHASCI",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.2
@@ -304,16 +314,15 @@ L_.str.2:
 	section	.rodata,"a",@progbits
 	private	L_.str.3
 L_.str.3:
-	db	"CAPS",000o
+	db	"LETTERAS",000o
 
 	ident	"clang version 12.0.0 (https://github.com/jacobly0/llvm-project 170be88120e3aa88c20eea5615ba76b8f1d6c647)"
 	extern	__Unwind_SjLj_Register
 	extern	__frameset
 	extern	_get_single_key_pressed
 	extern	_gfx_SetTextFGColor
-	extern	_kb_AnyKey
-	extern	_gfx_FillRectangle_NoClip
 	extern	_gfx_Rectangle_NoClip
+	extern	_gfx_FillRectangle_NoClip
 	extern	_kb_Scan
 	extern	__sand
 	extern	_ti_Seek
@@ -330,4 +339,3 @@ L_.str.3:
 	extern	_gfx_SetColor
 	extern	_delay
 	extern	_gfx_PrintStringXY
-	extern	__frameset0
