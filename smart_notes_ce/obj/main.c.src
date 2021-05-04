@@ -3,27 +3,40 @@
 	section	.text,"ax",@progbits
 	public	_main
 _main:
-	ld	e, 1
+	call	_gfx_Begin
 	or	a, a
 	sbc	hl, hl
+	push	hl
+	ld	hl, 10
+	push	hl
+	ld	hl, _palette
+	push	hl
+	call	_gfx_SetPalette
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	l, 1
 BB0_1:
 BB0_2:
-	ld	a, e
+	ld	a, l
 	or	a, a
 	jq	z, BB0_5
-	ld	a, e
+	ld	a, l
 	cp	a, 1
 	jq	nz, BB0_2
 	call	_dispHomeScreen
-	or	a, a
-	sbc	hl, hl
-	ld	e, a
+	ld	l, a
 	jq	BB0_1
 BB0_5:
+	or	a, a
+	sbc	hl, hl
 	ret
 	section	.text,"ax",@progbits
 
 	ident	"clang version 12.0.0 (https://github.com/jacobly0/llvm-project 170be88120e3aa88c20eea5615ba76b8f1d6c647)"
 	extern	__Unwind_SjLj_Register
 	extern	__Unwind_SjLj_Unregister
+	extern	_gfx_Begin
+	extern	_gfx_SetPalette
+	extern	_palette
 	extern	_dispHomeScreen

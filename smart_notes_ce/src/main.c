@@ -33,6 +33,8 @@
 /* main loop */
 int main() {
    uint8_t mode = 1;
+   gfx_Begin();
+   gfx_SetPalette(palette, 10, 0);
    //put mode at 0 to exit, or call function exitFull()
    while(mode) {
       if (mode == 1) {

@@ -5,15 +5,14 @@
 _dispHomeScreen:
 	ld	hl, -32
 	call	__frameset
-	lea	hl, ix + -12
-	ld	(ix + -32), hl
-	call	_gfx_Begin
 	ld	hl, -720896
+	ld	e, 0
+	lea	bc, ix + -12
+	ld	(ix + -32), bc
 	ld	a, (hl)
 	or	a, 3
 	ld	(hl), a
-	xor	a, a
-	ld	(ix + -20), a
+	ld	(ix + -20), e
 BB0_1:
 	ld	hl, 1
 	push	hl
@@ -511,11 +510,9 @@ BB0_32:
 	push	hl
 	push	iy
 	call	_inputString
-	pop	de
-	pop	de
-	ld	de, 1
-	or	a, a
-	sbc	hl, de
+	pop	hl
+	pop	hl
+	cp	a, 1
 	ld	hl, L_.str.10
 	push	hl
 	ld	hl, (ix + -32)
@@ -662,7 +659,11 @@ BB1_5:
 _exitFull:
 	call	_archiveAll
 	call	_gfx_End
-	call	_abort
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	call	_exit
+	pop	hl
 	section	.text,"ax",@progbits
 
 	section	.rodata,"a",@progbits
@@ -749,12 +750,10 @@ L_.str.15:
 	extern	__Unwind_SjLj_Register
 	extern	_ti_Detect
 	extern	__frameset
-	extern	_abort
 	extern	_archiveAll
 	extern	_gfx_Rectangle_NoClip
 	extern	_gfx_SetTextFGColor
 	extern	_gfx_FillRectangle_NoClip
-	extern	_gfx_Begin
 	extern	_ti_Delete
 	extern	_kb_Scan
 	extern	__sand
@@ -768,6 +767,7 @@ L_.str.15:
 	extern	__Unwind_SjLj_Unregister
 	extern	_ti_SetArchiveStatus
 	extern	_gfx_Blit
+	extern	_exit
 	extern	_inputString
 	extern	_ti_Open
 	extern	_gfx_SetColor

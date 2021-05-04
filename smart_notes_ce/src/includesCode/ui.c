@@ -2,9 +2,13 @@
 #include <fileioc.h>
 #include <keypadc.h>
 #include <graphx.h>
+//my includes
 #include "includes/ui.h"
+#include "includes/file.h"
+#include "includes/text.h"
 
 uint8_t dispHomeScreen() {
+   uint8_t result = 0; //return of dispHomeScreen()
    uint8_t i; // for loop var
    uint8_t numFiles = 0; // total number of files detected
    uint8_t numFilesShown = 0; // number of files currently shown on screen. can't be more than 10
@@ -16,11 +20,10 @@ uint8_t dispHomeScreen() {
    uint8_t selectedNum = 0; // number of currently selected file
    char * selectedName; // pointer to name of selected file
 
-   gfx_Begin();
    kb_SetMode(MODE_3_CONTINUOUS);
 
    // main homescreen loop. displays files, options, etc...
-   while(1) {
+   while(!result) {
       numFiles = 0; // total number of files detected
       numFilesShown = 0; // number of files currently shown on screen. can't be more than 10
       numFile = 0; // number of currently detected file
@@ -131,6 +134,7 @@ uint8_t dispHomeScreen() {
          selectedNum--;
       } else if(kb_IsDown(kb_KeyClear)) {
          exitFull();
+         //result = 4;
       } else if(kb_IsDown(kb_KeyZoom) && (numFiles >0)) {
          ti_Delete(selectedName);
       } else if(kb_IsDown(kb_KeyTrace)) { // new file
@@ -174,6 +178,6 @@ void dispButtons(uint8_t txtMode)
 void exitFull() {
    archiveAll();
    gfx_End();
-   abort();
+   exit(0);
 }
 
