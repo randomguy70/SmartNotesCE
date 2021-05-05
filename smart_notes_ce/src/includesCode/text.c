@@ -19,13 +19,14 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       // clear quits
       if (kb_IsDown(kb_KeyClear)) {
          result = 2;
-         // break;
+         break;
       } else if (kb_IsDown(kb_KeyEnter) && 0<strLen && strLen<=maxLength) {
          result = 1;
-         // break;
+         break;
       }
 
-      if (character = inputChar()) > 0) {
+      if ((keyPressed = get_single_key_pressed()) > 0)
+      if ((character = inputChar(txtMode, keyPressed)) != NULL && strLen<=maxLength) {
             buffer[strLen] = character;
             strLen++;
       }
@@ -33,7 +34,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       if ((kb_IsDown(kb_KeyDel)) && strLen>0) {
          buffer[strLen] = 0;
          strLen--;
-         delay(100);
+         //delay(100);
       }
       
       // display current string/new filename with outline box
@@ -63,8 +64,8 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       // display cursor
       cursorX = gfx_GetTextX()+1;
       gfx_SetColor(6);
-      gfx_VertLine_NoClip(cursorX,cursorY,12);
-      gfx_VertLine_NoClip(cursorX+1,cursorY,12);
+      gfx_VertLine_NoClip(cursorX, 111, 12);
+      gfx_VertLine_NoClip(cursorX+1, 111, 12);
       gfx_Blit(1);
    }
    return result;

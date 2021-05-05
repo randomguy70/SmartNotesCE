@@ -7,7 +7,7 @@ _main:
 	or	a, a
 	sbc	hl, hl
 	push	hl
-	ld	hl, 10
+	ld	hl, 18
 	push	hl
 	ld	hl, _palette
 	push	hl
