@@ -512,12 +512,12 @@ BB0_32:
 	call	_inputString
 	pop	hl
 	pop	hl
-	cp	a, 1
+	or	a, a
 	ld	hl, L_.str.10
 	push	hl
 	ld	hl, (ix + -32)
 	push	hl
-	call	z, _ti_Open
+	call	nz, _ti_Open
 	pop	hl
 	jq	BB0_34
 BB0_33:

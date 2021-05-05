@@ -140,9 +140,9 @@ uint8_t dispHomeScreen() {
       } else if(kb_IsDown(kb_KeyTrace)) { // new file
          char buffer[9];
          for(i=0; i<9; i++) {
-            buffer[i] = 0;
+            buffer[i] = '\0';
          }
-         if(inputString(buffer, 8)==1) {
+         if(inputString(buffer, 8)) {
             ti_Open(buffer, "w+");
          }
       }
@@ -150,7 +150,7 @@ uint8_t dispHomeScreen() {
       gfx_SwapDraw();
       gfx_Wait();
    }
-   return 1;
+   return 0;
 }
 
 void dispButtons(uint8_t txtMode)

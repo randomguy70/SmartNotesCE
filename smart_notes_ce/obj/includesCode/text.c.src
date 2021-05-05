@@ -3,7 +3,7 @@
 	section	.text,"ax",@progbits
 	public	_inputString
 _inputString:
-	ld	hl, -7
+	ld	hl, -4
 	call	__frameset
 	xor	a, a
 	ld	(ix + -1), a
@@ -15,7 +15,7 @@ BB0_1:
 	ld	a, l
 	bit	6, a
 	lea	hl, iy + 0
-	jq	nz, BB0_13
+	jq	nz, BB0_18
 	push	de
 	ld	e, (hl)
 	inc	hl
@@ -35,29 +35,41 @@ BB0_1:
 	xor	a, l
 	xor	a, l
 	bit	0, a
-	jq	nz, BB0_15
+	jq	nz, BB0_19
 BB0_4:
 	call	_get_single_key_pressed
 	ld	a, l
 	or	a, a
-	jq	nz, BB0_6
-	ld	c, (ix + -1)
-	jq	BB0_7
-BB0_6:
+	jq	nz, BB0_5
+	jq	BB0_8
+BB0_5:
 	push	hl
 	ld	hl, 1
 	push	hl
 	call	_inputChar
-	pop	hl
-	pop	hl
+	ld	c, a
+	pop	de
+	pop	de
+	ld	a, (ix + 9)
+	ld	l, (ix + -1)
+	cp	a, l
+	jq	nc, BB0_6
+	jq	BB0_8
+BB0_6:
+	ld	a, c
+	or	a, a
+	jq	nz, BB0_7
+	jq	BB0_8
+BB0_7:
 	ld	de, 0
-	ld	c, (ix + -1)
-	ld	e, c
+	ld	a, (ix + -1)
+	ld	e, a
 	ld	hl, (ix + 6)
 	add	hl, de
-	ld	(hl), a
-	inc	c
-BB0_7:
+	ld	(hl), c
+	inc	a
+	ld	(ix + -1), a
+BB0_8:
 	ld	hl, -720878
 	push	de
 	ld	e, (hl)
@@ -66,29 +78,30 @@ BB0_7:
 	ld	l, e
 	ld	h, d
 	pop	de
-	ld	a, c
+	ld	a, (ix + -1)
 	or	a, a
-	jq	z, BB0_8
+	jq	nz, BB0_9
+	jq	BB0_11
+BB0_9:
 	ld	a, l
 	cp	a, 0
 	call	__setflag
-	jq	m, BB0_11
-BB0_8:
-	ld	(ix + -1), c
-	jq	BB0_12
-BB0_11:
+	jq	m, BB0_10
+	jq	BB0_11
+BB0_10:
 	ld	de, 0
-	ld	e, c
+	ld	a, (ix + -1)
+	ld	e, a
 	ld	hl, (ix + 6)
 	add	hl, de
 	ld	(hl), 0
-	dec	c
-	ld	(ix + -1), c
+	dec	a
+	ld	(ix + -1), a
 	ld	hl, 100
 	push	hl
 	call	_delay
 	pop	hl
-BB0_12:
+BB0_11:
 	ld	hl, 1
 	push	hl
 	call	_gfx_SetDraw
@@ -188,38 +201,33 @@ BB0_12:
 	pop	hl
 	call	_gfx_GetTextX
 	inc	hl
-	ld	(ix + -7), hl
-	call	_gfx_GetTextY
-	ld	a, l
-	add	a, -4
-	ld	l, a
 	ld	(ix + -4), hl
 	ld	hl, 6
 	push	hl
 	call	_gfx_SetColor
 	pop	hl
-	ld	hl, (ix + -7)
+	ld	hl, (ix + -4)
 	ld	bc, 255
 	call	__iand
 	push	hl
 	pop	de
-	ld	(ix + -7), de
+	ld	(ix + -4), de
 	ld	hl, 12
 	push	hl
-	ld	hl, (ix + -4)
+	ld	hl, 111
 	push	hl
 	push	de
 	call	_gfx_VertLine_NoClip
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	de, (ix + -7)
-	inc	de
-	ld	hl, 12
-	push	hl
 	ld	hl, (ix + -4)
-	push	hl
+	inc	hl
+	ld	de, 12
 	push	de
+	ld	de, 111
+	push	de
+	push	hl
 	call	_gfx_VertLine_NoClip
 	pop	hl
 	pop	hl
@@ -229,15 +237,15 @@ BB0_12:
 	call	_gfx_Blit
 	pop	hl
 	jq	BB0_1
-BB0_13:
+BB0_18:
 	ld	a, 2
-BB0_14:
+BB0_12:
 	ld	sp, ix
 	pop	ix
 	ret
-BB0_15:
+BB0_19:
 	ld	a, 1
-	jq	BB0_14
+	jq	BB0_12
 	section	.text,"ax",@progbits
 
 	section	.text,"ax",@progbits
@@ -319,17 +327,16 @@ L_.str.3:
 	ident	"clang version 12.0.0 (https://github.com/jacobly0/llvm-project 170be88120e3aa88c20eea5615ba76b8f1d6c647)"
 	extern	__Unwind_SjLj_Register
 	extern	__frameset
+	extern	_gfx_Rectangle_NoClip
 	extern	_get_single_key_pressed
 	extern	_gfx_SetTextFGColor
-	extern	_gfx_Rectangle_NoClip
 	extern	_gfx_FillRectangle_NoClip
 	extern	_kb_Scan
-	extern	__sand
 	extern	_ti_Seek
+	extern	__sand
 	extern	_gfx_VertLine_NoClip
 	extern	_gfx_SetDraw
 	extern	_gfx_GetTextX
-	extern	_gfx_GetTextY
 	extern	__setflag
 	extern	__Unwind_SjLj_Unregister
 	extern	_gfx_Blit

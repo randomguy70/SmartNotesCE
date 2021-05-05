@@ -6,11 +6,11 @@
 
 uint8_t inputString(char* buffer, uint8_t maxLength)
 {
-   uint8_t result = 0;
-   uint8_t keyPressed;
-   uint8_t txtMode = 1;
+   uint8_t result = 0; // return of inputString()
+   uint8_t keyPressed; // value of key currently pressed
+   uint8_t txtMode = 1; // caps, math, or lowercase. default is 1(caps)
    uint8_t strLen = 0; //  current length & offset of inputted string
-   char character; //  current inputted character
+   char character = '\0'; //  current inputted character
    uint8_t cursorX;
 
    while (!result) {
@@ -20,21 +20,22 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       if (kb_IsDown(kb_KeyClear)) {
          result = 2;
          break;
-      } else if (kb_IsDown(kb_KeyEnter) && 0<strLen && strLen<=maxLength) {
+      } else if ((kb_IsDown(kb_KeyEnter)) && 0<strLen && strLen<=maxLength) {
          result = 1;
          break;
       }
 
-      if ((keyPressed = get_single_key_pressed()) > 0)
-      if ((character = inputChar(txtMode, keyPressed)) != NULL && strLen<=maxLength) {
-            buffer[strLen] = character;
-            strLen++;
+      if ((keyPressed = get_single_key_pressed()) > 0) {
+         if ((character = inputChar(txtMode, keyPressed)) != NULL && strLen<=maxLength) {
+               buffer[strLen] = character;
+               strLen++;
+         }
       }
 
       if ((kb_IsDown(kb_KeyDel)) && strLen>0) {
          buffer[strLen] = 0;
          strLen--;
-         //delay(100);
+         delay(100);
       }
       
       // display current string/new filename with outline box

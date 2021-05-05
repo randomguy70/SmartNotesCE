@@ -43,6 +43,8 @@ int main() {
 
       } else if(mode == 3) {
 
+      } else if(mode == 0) {
+         exitFull();
       }
    }
 }
