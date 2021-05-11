@@ -6,7 +6,7 @@ void archiveAll()
 {
    uint8_t fileSlot;
    char * fileName;
-   int* search_pos = NULL;
+   void* search_pos = NULL;
    while (((fileName = ti_Detect(search_pos, "TXT")) != NULL)) {
       fileSlot = ti_Open(fileName, "r");
       ti_SetArchiveStatus(1, fileSlot);
@@ -17,4 +17,3 @@ void archiveAll()
    ti_SetArchiveStatus(1, fileSlot);
    ti_CloseAll();
 }
-

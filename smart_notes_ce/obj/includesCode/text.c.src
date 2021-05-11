@@ -38,7 +38,7 @@ BB0_1:
 	jq	nz, BB0_19
 BB0_4:
 	call	_get_single_key_pressed
-	ld	a, l
+	ld	l, a
 	or	a, a
 	jq	nz, BB0_5
 	jq	BB0_8
@@ -126,6 +126,19 @@ BB0_11:
 	ld	hl, 6
 	push	hl
 	call	_gfx_SetColor
+	pop	hl
+	ld	hl, 42
+	push	hl
+	ld	hl, 82
+	push	hl
+	ld	hl, 89
+	push	hl
+	ld	hl, 109
+	push	hl
+	call	_gfx_Rectangle_NoClip
+	pop	hl
+	pop	hl
+	pop	hl
 	pop	hl
 	ld	hl, 40
 	push	hl
@@ -238,7 +251,7 @@ BB0_11:
 	pop	hl
 	jq	BB0_1
 BB0_18:
-	ld	a, 2
+	xor	a, a
 BB0_12:
 	ld	sp, ix
 	pop	ix
@@ -267,18 +280,32 @@ _inputChar:
 	ld	hl, L_.str.3
 	push	hl
 	call	_ti_Open
-	pop	hl
-	pop	hl
-	ld	a, (ix + 6)
+	ld	c, a
+	pop	de
+	pop	de
+	ld	d, (ix + 6)
+	ld	e, (ix + 9)
+	ld	l, 0
+	ld	a, d
 	cp	a, 1
-	jq	nz, BB1_4
-	call	_get_single_key_pressed
-	ld	bc, 255
-	call	__iand
-	ld	a, l
+	jq	nz, BB1_2
+	ld	a, e
 	or	a, a
-	ld	e, 0
+	jq	nz, BB1_4
+BB1_2:
+	ld	a, d
+	cp	a, 2
 	jq	z, BB1_3
+	jq	BB1_5
+BB1_3:
+	ld	a, e
+	or	a, a
+	ld	(ix + -3), bc
+	jq	z, BB1_5
+BB1_4:
+	or	a, a
+	sbc	hl, hl
+	ld	l, e
 	ld	de, (ix + -3)
 	push	de
 	ld	de, 0
@@ -291,14 +318,9 @@ _inputChar:
 	ld	hl, (ix + -3)
 	push	hl
 	call	_ti_GetC
-	push	hl
 	pop	de
-	pop	hl
-	jq	BB1_3
-BB1_4:
-	ld	e, 0
-BB1_3:
-	ld	a, e
+BB1_5:
+	ld	a, l
 	pop	hl
 	pop	ix
 	ret

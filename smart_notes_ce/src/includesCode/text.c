@@ -3,35 +3,42 @@
 #include <keypadc.h>
 #include "graphx.h"
 #include "includes/text.h"
+#include "includes/key.h"
 
 uint8_t inputString(char* buffer, uint8_t maxLength)
 {
-   uint8_t result = 0; // return of inputString()
-   uint8_t keyPressed; // value of key currently pressed
-   uint8_t txtMode = 1; // caps, math, or lowercase. default is 1(caps)
-   uint8_t strLen = 0; //  current length & offset of inputted string
+   uint8_t result = 0; // return of inputString(), 1=success, 0=break
+   uint8_t keyPressed = 0; // value of key currently pressed
+   uint8_t txtMode = 1; // caps, math, or lowercase. default is 1 (caps)
+   uint8_t strLen = 0; //  currently length & offset of inputted string
    char character = '\0'; //  current inputted character
    uint8_t cursorX;
 
-   while (!result) {
+   while(1) {
       kb_Scan();
 
-      // clear quits
+      // clear quits and returns failure (0)
       if (kb_IsDown(kb_KeyClear)) {
-         result = 2;
-         break;
-      } else if ((kb_IsDown(kb_KeyEnter)) && 0<strLen && strLen<=maxLength) {
+         result = 0;
+         return result;
+      }
+      // enter finishes string input and returns 1
+      if ((kb_IsDown(kb_KeyEnter)) && strLen>0 && strLen<=maxLength) {
          result = 1;
-         break;
+         return result;
       }
 
-      if ((keyPressed = get_single_key_pressed()) > 0) {
-         if ((character = inputChar(txtMode, keyPressed)) != NULL && strLen<=maxLength) {
+      // input character and add the character to the current offset in the string buffer
+      keyPressed = get_single_key_pressed();
+      
+      if (keyPressed) {
+         character = inputChar(txtMode, keyPressed);
+         if (character && strLen<=maxLength) {
                buffer[strLen] = character;
                strLen++;
          }
       }
-
+      
       if ((kb_IsDown(kb_KeyDel)) && strLen>0) {
          buffer[strLen] = 0;
          strLen--;
@@ -46,7 +53,8 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       gfx_FillRectangle_NoClip(110,90,80,40);
 
       // outer text box outline
-      gfx_SetColor(6); //  blue outline for text input outer box
+      gfx_SetColor(6); // blue outline for text input outer box
+      gfx_Rectangle_NoClip(109,89,82,42);
       gfx_Rectangle_NoClip(110,90,80,40);
 
       // inner text box fill
@@ -74,26 +82,23 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
 
 uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed) {
    char result = NULL;
-   uint8_t mathSlot = ti_Open("MATHASCI", "r"); //  slot of math ascii data
-   uint8_t capsSlot = ti_Open("LETTERAS", "r"); //  slot of caps ascii data
-   uint8_t lowerSlot = 0; //  slot of lowercase ascii data
+   uint8_t mathSlot = ti_Open("MATHASCI", "r"); // slot of math ascii data
+   uint8_t capsSlot = ti_Open("LETTERAS", "r"); // slot of caps ascii data
+   //uint8_t lowerSlot = 0; // slot of lowercase ascii data
 
-	if (txtMode == 1) {
-		if ((keyPressed = get_single_key_pressed()) > 0) { // math txtMode
-			ti_Seek(keyPressed, 0, mathSlot);
-			result = ti_GetC(mathSlot);
-      } else if (txtMode == 2) { //  caps txtMode
-		   if ((keyPressed = get_single_key_pressed()) > 0) {
-            ti_Seek(keyPressed, 0, capsSlot);
-            result = ti_GetC(capsSlot);
-         }
-      } else {
-         result = NULL;
-      }
+	if (txtMode == 1 && keyPressed) { // math txtMode
+		ti_Seek(keyPressed, 0, mathSlot);
+		return(ti_GetC(mathSlot));
    }
-
-   return result;
+   else if (txtMode == 2 && keyPressed) { // caps txtMode
+      ti_Seek(keyPressed, 0, capsSlot);
+      return(ti_GetC(capsSlot));
+   }
+   else {
+      return 0;
+   }
 }
+
 /*
 uint8_t deleteChar(uint8_t slot, short offset) {
 
