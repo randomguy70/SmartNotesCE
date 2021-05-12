@@ -222,10 +222,10 @@ BB0_7:
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	a, 4
+	ld	a, 1
 	jq	BB0_8
 BB0_9:
-	ld	a, 1
+	xor	a, a
 BB0_8:
 	ld	l, a
 	push	hl

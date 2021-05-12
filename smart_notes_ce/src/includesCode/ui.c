@@ -98,9 +98,9 @@ uint8_t dispHomeScreen() {
             }
             gfx_SetColor(0);
             gfx_FillRectangle_NoClip(35,fileY-5,250,15);
-            gfx_SetTextFGColor(4);
-         } else {
             gfx_SetTextFGColor(1);
+         } else {
+            gfx_SetTextFGColor(0);
          }
 
          // display detected file name & size
