@@ -10,7 +10,8 @@
 uint8_t dispHomeScreen() {
    uint8_t result = 0; //return of dispHomeScreen()
    uint8_t i; // for loop var
-   uint8_t numFiles = 0; // total number of files detected
+   uint8_t numFiles = getNumFiles("TXT"); // total number of files detected
+   char fileNames[numFiles][9];
    uint8_t numFilesShown = 0; // number of files currently shown on screen. can't be more than 10
    uint8_t fileSlot; // slot of currently detected file
    uint8_t numFile = 0; // number of currently detected file
@@ -20,11 +21,11 @@ uint8_t dispHomeScreen() {
    uint8_t selectedNum = 0; // number of currently selected file
    char * selectedName; // pointer to name of selected file
 
+   // write the text file names to the array fileNames[]
    kb_SetMode(MODE_3_CONTINUOUS);
 
    // main homescreen loop. displays files, options, etc...
    while(!result) {
-      numFiles = 0; // total number of files detected
       numFilesShown = 0; // number of files currently shown on screen. can't be more than 10
       numFile = 0; // number of currently detected file
       fileY = 61; // y coord for currently detected file
@@ -32,11 +33,11 @@ uint8_t dispHomeScreen() {
       gfx_SetDraw(1);
 
       // SCREEN SETUP
-      gfx_FillScreen(149);
+      gfx_FillScreen(4);
       gfx_SetColor(0);
       gfx_Rectangle_NoClip(50,1,222,30);
       gfx_Rectangle_NoClip(35,55,250,152);
-      gfx_SetColor(255);
+      gfx_SetColor(1);
       gfx_FillRectangle_NoClip(36,56,248,150);
       gfx_SetTextFGColor(0);
       gfx_PrintStringXY("SMARTNOTES CE",115,5);
@@ -65,7 +66,7 @@ uint8_t dispHomeScreen() {
 
          // display currently selected file with highlighting rect
          if (selectedNum == numFile) {
-            // check if should be deleted
+            // check if should be deleted (if zoom is pressed)
             kb_Scan();
             if(kb_IsDown(kb_KeyZoom)) {
                gfx_SetDraw(1);
@@ -97,18 +98,18 @@ uint8_t dispHomeScreen() {
             }
             gfx_SetColor(0);
             gfx_FillRectangle_NoClip(35,fileY-5,250,15);
-            gfx_SetTextFGColor(149);
+            gfx_SetTextFGColor(4);
          } else {
-            gfx_SetTextFGColor(0);
+            gfx_SetTextFGColor(1);
          }
 
          // display detected file name & size
+         gfx_SetTextFGColor(0);
          gfx_PrintStringXY(fileName,40,fileY);
          gfx_SetTextXY(135,fileY);
          gfx_PrintInt(fileSize,4);
          
          // update search-dependant vars
-         numFiles++;
          numFile++;
          numFilesShown++;
          fileY += 15;
@@ -133,8 +134,8 @@ uint8_t dispHomeScreen() {
       } else if(kb_IsDown(kb_KeyUp) && selectedNum > 0) {
          selectedNum--;
       } else if(kb_IsDown(kb_KeyClear)) {
-         exitFull();
-         //result = 4;
+         gfx_End();
+         return 0;
       } else if(kb_IsDown(kb_KeyZoom) && (numFiles >0)) {
          ti_Delete(selectedName);
       } else if(kb_IsDown(kb_KeyTrace)) { // new file

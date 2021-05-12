@@ -15,7 +15,7 @@ BB0_1:
 	ld	a, l
 	bit	6, a
 	lea	hl, iy + 0
-	jq	nz, BB0_18
+	jq	nz, BB0_2
 	push	de
 	ld	e, (hl)
 	inc	hl
@@ -29,20 +29,20 @@ BB0_1:
 	dec	a
 	ld	e, (ix + 9)
 	cp	a, e
-	jq	nc, BB0_4
+	jq	nc, BB0_5
 	ld	a, l
 	ld	l, 1
 	xor	a, l
 	xor	a, l
 	bit	0, a
 	jq	nz, BB0_19
-BB0_4:
+BB0_5:
 	call	_get_single_key_pressed
 	ld	l, a
 	or	a, a
-	jq	nz, BB0_5
-	jq	BB0_8
-BB0_5:
+	jq	nz, BB0_6
+	jq	BB0_9
+BB0_6:
 	push	hl
 	ld	hl, 1
 	push	hl
@@ -53,14 +53,14 @@ BB0_5:
 	ld	a, (ix + 9)
 	ld	l, (ix + -1)
 	cp	a, l
-	jq	nc, BB0_6
-	jq	BB0_8
-BB0_6:
+	jq	nc, BB0_7
+	jq	BB0_9
+BB0_7:
 	ld	a, c
 	or	a, a
-	jq	nz, BB0_7
-	jq	BB0_8
-BB0_7:
+	jq	nz, BB0_8
+	jq	BB0_9
+BB0_8:
 	ld	de, 0
 	ld	a, (ix + -1)
 	ld	e, a
@@ -69,7 +69,7 @@ BB0_7:
 	ld	(hl), c
 	inc	a
 	ld	(ix + -1), a
-BB0_8:
+BB0_9:
 	ld	hl, -720878
 	push	de
 	ld	e, (hl)
@@ -80,15 +80,15 @@ BB0_8:
 	pop	de
 	ld	a, (ix + -1)
 	or	a, a
-	jq	nz, BB0_9
-	jq	BB0_11
-BB0_9:
+	jq	nz, BB0_10
+	jq	BB0_12
+BB0_10:
 	ld	a, l
 	cp	a, 0
 	call	__setflag
-	jq	m, BB0_10
-	jq	BB0_11
-BB0_10:
+	jq	m, BB0_11
+	jq	BB0_12
+BB0_11:
 	ld	de, 0
 	ld	a, (ix + -1)
 	ld	e, a
@@ -101,7 +101,7 @@ BB0_10:
 	push	hl
 	call	_delay
 	pop	hl
-BB0_11:
+BB0_12:
 	ld	hl, 1
 	push	hl
 	call	_gfx_SetDraw
@@ -250,15 +250,19 @@ BB0_11:
 	call	_gfx_Blit
 	pop	hl
 	jq	BB0_1
-BB0_18:
+BB0_2:
+	ld	hl, 200
+	push	hl
+	call	_delay
+	pop	hl
 	xor	a, a
-BB0_12:
+BB0_13:
 	ld	sp, ix
 	pop	ix
 	ret
 BB0_19:
 	ld	a, 1
-	jq	BB0_12
+	jq	BB0_13
 	section	.text,"ax",@progbits
 
 	section	.text,"ax",@progbits
@@ -349,13 +353,13 @@ L_.str.3:
 	ident	"clang version 12.0.0 (https://github.com/jacobly0/llvm-project 170be88120e3aa88c20eea5615ba76b8f1d6c647)"
 	extern	__Unwind_SjLj_Register
 	extern	__frameset
-	extern	_gfx_Rectangle_NoClip
 	extern	_get_single_key_pressed
 	extern	_gfx_SetTextFGColor
+	extern	_gfx_Rectangle_NoClip
 	extern	_gfx_FillRectangle_NoClip
 	extern	_kb_Scan
-	extern	_ti_Seek
 	extern	__sand
+	extern	_ti_Seek
 	extern	_gfx_VertLine_NoClip
 	extern	_gfx_SetDraw
 	extern	_gfx_GetTextX

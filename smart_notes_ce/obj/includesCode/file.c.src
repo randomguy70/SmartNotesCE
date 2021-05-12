@@ -63,6 +63,101 @@ BB0_3:
 	jp	_ti_CloseAll
 	section	.text,"ax",@progbits
 
+	section	.text,"ax",@progbits
+	public	_loadFileNames
+_loadFileNames:
+	ld	hl, -7
+	call	__frameset
+	ld	de, (ix + 6)
+	ld	hl, 0
+	xor	a, a
+	ld	(ix + -4), a
+	ld	(ix + -3), hl
+BB1_1:
+	push	de
+	pea	ix + -3
+	call	_ti_Detect
+	push	hl
+	pop	de
+	pop	hl
+	pop	hl
+	push	de
+	pop	hl
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	z, BB1_6
+	or	a, a
+	sbc	hl, hl
+	ld	a, (ix + -4)
+	ld	l, a
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, (ix + 9)
+	add	iy, bc
+	ld	(ix + -7), iy
+	ld	bc, 0
+BB1_3:
+	push	bc
+	pop	iy
+	push	bc
+	pop	hl
+	ld	bc, 9
+	or	a, a
+	sbc	hl, bc
+	jq	z, BB1_5
+	ld	hl, (ix + -7)
+	ld	hl, (hl)
+	lea	bc, iy + 0
+	add	hl, bc
+	ld	(hl), 0
+	inc	bc
+	jq	BB1_3
+BB1_5:
+	ld	a, e
+	ld	hl, (ix + -7)
+	ld	hl, (hl)
+	ld	(hl), a
+	ld	a, (ix + -4)
+	inc	a
+	ld	(ix + -4), a
+	ld	de, (ix + 6)
+	jq	BB1_1
+BB1_6:
+	ld	a, (ix + -4)
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_getNumFiles
+_getNumFiles:
+	ld	hl, -4
+	call	__frameset
+	ld	hl, 0
+	ld	(ix + -3), hl
+BB2_1:
+	ld	(ix + -4), a
+	ld	hl, (ix + 6)
+	push	hl
+	pea	ix + -3
+	call	_ti_Detect
+	ld	a, (ix + -4)
+	pop	de
+	pop	de
+	inc	a
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB2_1
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
 	section	.rodata,"a",@progbits
 	private	L_.str
 L_.str:
@@ -88,5 +183,7 @@ L_.str.3:
 	extern	__Unwind_SjLj_Register
 	extern	_ti_SetArchiveStatus
 	extern	_ti_Detect
+	extern	__frameset
 	extern	__Unwind_SjLj_Unregister
 	extern	_ti_Open
+	extern	__imulu

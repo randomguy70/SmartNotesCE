@@ -5,20 +5,25 @@
 _dispHomeScreen:
 	ld	hl, -32
 	call	__frameset
+	ld	hl, L_.str
+	lea	de, ix + -12
+	ld	(ix + -32), de
+	push	hl
+	call	_getNumFiles
+	ld	(ix + -16), a
+	pop	hl
 	ld	hl, -720896
-	ld	e, 0
-	lea	bc, ix + -12
-	ld	(ix + -32), bc
 	ld	a, (hl)
 	or	a, 3
 	ld	(hl), a
-	ld	(ix + -20), e
+	xor	a, a
+	ld	(ix + -20), a
 BB0_1:
 	ld	hl, 1
 	push	hl
 	call	_gfx_SetDraw
 	pop	hl
-	ld	hl, -107
+	ld	hl, 4
 	push	hl
 	call	_gfx_FillScreen
 	pop	hl
@@ -53,7 +58,7 @@ BB0_1:
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	hl, -1
+	ld	hl, 1
 	push	hl
 	call	_gfx_SetColor
 	pop	hl
@@ -79,7 +84,7 @@ BB0_1:
 	push	hl
 	ld	hl, 115
 	push	hl
-	ld	hl, L_.str
+	ld	hl, L_.str.1
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -89,7 +94,7 @@ BB0_1:
 	push	hl
 	ld	hl, 55
 	push	hl
-	ld	hl, L_.str.1
+	ld	hl, L_.str.2
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -99,7 +104,7 @@ BB0_1:
 	push	hl
 	ld	hl, 40
 	push	hl
-	ld	hl, L_.str.2
+	ld	hl, L_.str.3
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -109,7 +114,7 @@ BB0_1:
 	push	hl
 	ld	hl, 135
 	push	hl
-	ld	hl, L_.str.3
+	ld	hl, L_.str.4
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -119,7 +124,7 @@ BB0_1:
 	push	hl
 	ld	hl, 210
 	push	hl
-	ld	hl, L_.str.4
+	ld	hl, L_.str.5
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -135,10 +140,9 @@ BB0_1:
 	ld	hl, 61
 	ld	(ix + -19), hl
 	xor	a, a
-	ld	(ix + -16), a
-	ld	(ix + -13), a
+	ld	(ix + -15), a
 BB0_2:
-	ld	hl, L_.str.5
+	ld	hl, L_.str
 	push	hl
 	pea	ix + -3
 	call	_ti_Detect
@@ -146,7 +150,7 @@ BB0_2:
 	pop	de
 	pop	hl
 	pop	hl
-	ld	a, (ix + -16)
+	ld	a, (ix + -15)
 	cp	a, 10
 	jq	nc, BB0_17
 	push	de
@@ -179,7 +183,7 @@ BB0_2:
 	pop	hl
 	pop	hl
 	ld	a, (ix + -20)
-	ld	l, (ix + -16)
+	ld	l, (ix + -15)
 	cp	a, l
 	jq	nz, BB0_9
 	call	_kb_Scan
@@ -194,11 +198,11 @@ BB0_2:
 	ld	a, l
 	bit	2, a
 	jq	nz, BB0_10
-	ld	a, (ix + -16)
+	ld	a, (ix + -15)
 	ld	(ix + -20), a
-BB0_7:
 	or	a, a
 	sbc	hl, hl
+BB0_7:
 	push	hl
 	call	_gfx_SetColor
 	pop	hl
@@ -218,12 +222,17 @@ BB0_7:
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	a, -107
+	ld	a, 4
 	jq	BB0_8
 BB0_9:
-	xor	a, a
+	ld	a, 1
 BB0_8:
 	ld	l, a
+	push	hl
+	call	_gfx_SetTextFGColor
+	pop	hl
+	or	a, a
+	sbc	hl, hl
 	push	hl
 	call	_gfx_SetTextFGColor
 	pop	hl
@@ -251,12 +260,9 @@ BB0_8:
 	call	_gfx_PrintInt
 	pop	hl
 	pop	hl
-	ld	a, (ix + -13)
+	ld	a, (ix + -15)
 	inc	a
-	ld	(ix + -13), a
-	ld	a, (ix + -16)
-	inc	a
-	ld	(ix + -16), a
+	ld	(ix + -15), a
 	ld	de, 15
 	ld	hl, (ix + -19)
 	add	hl, de
@@ -331,7 +337,9 @@ BB0_10:
 	push	hl
 	call	_gfx_Blit
 	pop	hl
-	ld	a, (ix + -16)
+	or	a, a
+	sbc	hl, hl
+	ld	a, (ix + -15)
 	ld	(ix + -20), a
 	xor	a, a
 BB0_11:
@@ -350,6 +358,8 @@ BB0_11:
 	call	__sshru
 	ld	a, l
 	and	a, 2
+	or	a, a
+	sbc	hl, hl
 	jq	BB0_11
 BB0_14:
 	push	hl
@@ -368,14 +378,16 @@ BB0_16:
 	ld	a, e
 	add	a, l
 	ld	(ix + -20), a
-	ld	a, (ix + -13)
+	ld	a, (ix + -16)
 	dec	a
-	ld	(ix + -13), a
+	ld	(ix + -16), a
 	ld	hl, 100
 	push	hl
 	call	_delay
 	pop	hl
 	ld	a, 1
+	or	a, a
+	sbc	hl, hl
 	jq	BB0_11
 BB0_17:
 	ld	hl, 10
@@ -389,16 +401,16 @@ BB0_17:
 	sbc	hl, hl
 	push	hl
 	pop	de
-	ld	a, (ix + -13)
+	ld	a, (ix + -16)
 	ld	e, a
 	inc	hl
 	push	hl
-	ld	(ix + -16), de
+	ld	(ix + -15), de
 	push	de
 	call	_gfx_PrintInt
 	pop	hl
 	pop	hl
-	ld	a, (ix + -13)
+	ld	a, (ix + -16)
 	or	a, a
 	jq	nz, BB0_19
 	ld	hl, -12
@@ -431,7 +443,7 @@ BB0_19:
 	or	a, a
 	sbc	hl, hl
 	ld	l, e
-	ld	bc, (ix + -16)
+	ld	bc, (ix + -15)
 	dec	bc
 	or	a, a
 	sbc	hl, bc
@@ -468,7 +480,7 @@ BB0_25:
 	ld	l, e
 	ld	h, d
 	pop	de
-	ld	a, (ix + -13)
+	ld	a, (ix + -16)
 	or	a, a
 	jq	z, BB0_28
 	ld	a, l
@@ -530,7 +542,11 @@ BB0_35:
 	call	_gfx_Wait
 	jq	BB0_1
 BB0_36:
-	call	_exitFull
+	call	_gfx_End
+	xor	a, a
+	ld	sp, ix
+	pop	ix
+	ret
 	section	.text,"ax",@progbits
 
 	section	.text,"ax",@progbits
@@ -669,32 +685,32 @@ _exitFull:
 	section	.rodata,"a",@progbits
 	private	L_.str
 L_.str:
-	db	"SMARTNOTES CE",000o
+	db	"TXT",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.1
 L_.str.1:
-	db	"VERSION 1.0 BY JOHNPAUL MALLOY",000o
+	db	"SMARTNOTES CE",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.2
 L_.str.2:
-	db	"NAME",000o
+	db	"VERSION 1.0 BY JOHNPAUL MALLOY",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.3
 L_.str.3:
-	db	"SIZE",000o
+	db	"NAME",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.4
 L_.str.4:
-	db	"STATUS",000o
+	db	"SIZE",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.5
 L_.str.5:
-	db	"TXT",000o
+	db	"STATUS",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.6
@@ -775,5 +791,6 @@ L_.str.15:
 	extern	_gfx_Wait
 	extern	_delay
 	extern	_gfx_PrintStringXY
+	extern	_getNumFiles
 	extern	_gfx_SetTextXY
 	extern	_gfx_End

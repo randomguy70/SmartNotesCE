@@ -19,13 +19,12 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
 
       // clear quits and returns failure (0)
       if (kb_IsDown(kb_KeyClear)) {
-         result = 0;
-         return result;
+         delay(200);
+         return 0;
       }
       // enter finishes string input and returns 1
       if ((kb_IsDown(kb_KeyEnter)) && strLen>0 && strLen<=maxLength) {
-         result = 1;
-         return result;
+         return 1;
       }
 
       // input character and add the character to the current offset in the string buffer
@@ -77,11 +76,12 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       gfx_VertLine_NoClip(cursorX+1, 111, 12);
       gfx_Blit(1);
    }
-   return result;
+   // will change this return someday to what it actually should be
+   return 0;
 }
 
 uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed) {
-   char result = NULL;
+   char result = '\0';
    uint8_t mathSlot = ti_Open("MATHASCI", "r"); // slot of math ascii data
    uint8_t capsSlot = ti_Open("LETTERAS", "r"); // slot of caps ascii data
    //uint8_t lowerSlot = 0; // slot of lowercase ascii data
