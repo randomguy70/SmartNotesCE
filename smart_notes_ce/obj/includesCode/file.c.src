@@ -66,10 +66,10 @@ BB0_3:
 	section	.text,"ax",@progbits
 	public	_loadFileNames
 _loadFileNames:
-	ld	hl, -7
+	ld	hl, -4
 	call	__frameset
-	ld	de, (ix + 6)
 	ld	hl, 0
+	ld	de, L_.str.4
 	xor	a, a
 	ld	(ix + -4), a
 	ld	(ix + -3), hl
@@ -86,7 +86,7 @@ BB1_1:
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, BB1_6
+	jq	z, BB1_3
 	or	a, a
 	sbc	hl, hl
 	ld	a, (ix + -4)
@@ -95,37 +95,20 @@ BB1_1:
 	call	__imulu
 	push	hl
 	pop	bc
-	ld	iy, (ix + 9)
-	add	iy, bc
-	ld	(ix + -7), iy
-	ld	bc, 0
-BB1_3:
-	push	bc
-	pop	iy
-	push	bc
-	pop	hl
-	ld	bc, 9
-	or	a, a
-	sbc	hl, bc
-	jq	z, BB1_5
-	ld	hl, (ix + -7)
-	ld	hl, (hl)
-	lea	bc, iy + 0
+	ld	hl, (ix + 6)
 	add	hl, bc
-	ld	(hl), 0
-	inc	bc
-	jq	BB1_3
-BB1_5:
-	ld	a, e
-	ld	hl, (ix + -7)
 	ld	hl, (hl)
-	ld	(hl), a
+	push	hl
+	push	de
+	call	_copyString
+	pop	hl
+	pop	hl
 	ld	a, (ix + -4)
 	inc	a
 	ld	(ix + -4), a
-	ld	de, (ix + 6)
+	ld	de, L_.str.4
 	jq	BB1_1
-BB1_6:
+BB1_3:
 	ld	a, (ix + -4)
 	ld	sp, ix
 	pop	ix
@@ -138,6 +121,7 @@ _getNumFiles:
 	ld	hl, -4
 	call	__frameset
 	ld	hl, 0
+	ld	a, -1
 	ld	(ix + -3), hl
 BB2_1:
 	ld	(ix + -4), a
@@ -154,6 +138,131 @@ BB2_1:
 	sbc	hl, bc
 	jq	nz, BB2_1
 	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_deleteFile
+_deleteFile:
+	call	__frameset0
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetDraw
+	pop	hl
+	ld	hl, 4
+	push	hl
+	call	_gfx_SetColor
+	pop	hl
+	ld	hl, 40
+	push	hl
+	ld	hl, 121
+	push	hl
+	ld	hl, 90
+	push	hl
+	ld	hl, 100
+	push	hl
+	call	_gfx_FillRectangle_NoClip
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 6
+	push	hl
+	call	_gfx_SetColor
+	pop	hl
+	ld	hl, 42
+	push	hl
+	ld	hl, 123
+	push	hl
+	ld	hl, 89
+	push	hl
+	ld	hl, 99
+	push	hl
+	call	_gfx_Rectangle_NoClip
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 40
+	push	hl
+	ld	hl, 121
+	push	hl
+	ld	hl, 90
+	push	hl
+	ld	hl, 100
+	push	hl
+	call	_gfx_Rectangle_NoClip
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	call	_gfx_SetTextFGColor
+	pop	hl
+	ld	hl, 100
+	push	hl
+	ld	hl, 112
+	push	hl
+	ld	hl, L_.str.5
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 115
+	push	hl
+	ld	hl, 102
+	push	hl
+	ld	hl, L_.str.6
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_Blit
+	pop	hl
+BB3_1:
+	call	_kb_Scan
+	ld	hl, -720880
+	push	de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	ld	l, e
+	ld	h, d
+	pop	de
+	ld	a, l
+	bit	5, a
+	jq	nz, BB3_2
+	ld	hl, -720880
+	push	de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	ld	l, e
+	ld	h, d
+	pop	de
+	ld	a, l
+	bit	6, a
+	jq	z, BB3_1
+	xor	a, a
+	jq	BB3_4
+BB3_2:
+	ld	hl, (ix + 6)
+	push	hl
+	call	_ti_Delete
+	pop	hl
+	ld	hl, 100
+	push	hl
+	call	_delay
+	pop	hl
+	ld	a, 1
+BB3_4:
 	pop	ix
 	ret
 	section	.text,"ax",@progbits
@@ -178,12 +287,39 @@ L_.str.2:
 L_.str.3:
 	db	"CAPS",000o
 
+	section	.rodata,"a",@progbits
+	private	L_.str.4
+L_.str.4:
+	db	"txt",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.5
+L_.str.5:
+	db	"Are you sure?",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.6
+L_.str.6:
+	db	"Yes=2nd  No=Mode",000o
+
 	ident	"clang version 12.0.0 (https://github.com/jacobly0/llvm-project 170be88120e3aa88c20eea5615ba76b8f1d6c647)"
-	extern	_ti_CloseAll
 	extern	__Unwind_SjLj_Register
-	extern	_ti_SetArchiveStatus
+	extern	_copyString
 	extern	_ti_Detect
 	extern	__frameset
+	extern	_gfx_Rectangle_NoClip
+	extern	_gfx_SetTextFGColor
+	extern	_gfx_FillRectangle_NoClip
+	extern	_ti_Delete
+	extern	_kb_Scan
+	extern	_gfx_SetDraw
+	extern	_ti_CloseAll
 	extern	__Unwind_SjLj_Unregister
-	extern	_ti_Open
+	extern	_ti_SetArchiveStatus
+	extern	_gfx_Blit
 	extern	__imulu
+	extern	_ti_Open
+	extern	_gfx_SetColor
+	extern	_delay
+	extern	_gfx_PrintStringXY
+	extern	__frameset0

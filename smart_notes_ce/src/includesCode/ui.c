@@ -90,9 +90,9 @@ uint8_t dispHomeScreen() {
                      }
                      numFiles--;
                      delay(100);
-                     result = 1;
+                     return 1;
                   } else if (kb_IsDown(kb_Clear)) {
-                     result = 2;
+                     return 1;
                   }
                }
             }
@@ -103,11 +103,11 @@ uint8_t dispHomeScreen() {
             gfx_SetTextFGColor(0);
          }
 
-         // display detected file name & size
-         gfx_SetTextFGColor(0);
+         // display detected file name & size & 
          gfx_PrintStringXY(fileName,40,fileY);
          gfx_SetTextXY(135,fileY);
          gfx_PrintInt(fileSize,4);
+         gfx_SetTextFGColor(0);
          
          // update search-dependant vars
          numFile++;
@@ -129,7 +129,7 @@ uint8_t dispHomeScreen() {
       kb_Scan();
 
       // move selected down
-      if(kb_IsDown(kb_KeyDown) && selectedNum < (numFiles-1)) {
+      if(kb_IsDown(kb_KeyDown) && selectedNum < numFiles) {
          selectedNum++;
       } else if(kb_IsDown(kb_KeyUp) && selectedNum > 0) {
          selectedNum--;

@@ -8,7 +8,7 @@ palettes:
     - color: {index: 3, r: 220, g: 220, b: 220} # dark grey
     - color: {index: 4, r: 119, g: 136, b: 153} # medium grey
     - color: {index: 5, r: 211, g: 211, b: 211} # light grey
-    - color: {index: 6, r: 0, g: 0, b: 255}     # blue
+    - color: {index: 6, r: 0, g: 0, b: 255}     # dark blue
 converts:
   - name: myimages
     palette: palette

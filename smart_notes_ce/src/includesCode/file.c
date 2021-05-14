@@ -1,6 +1,9 @@
 #include <stdint.h>
 #include <fileioc.h>
+#include <keypadc.h>
+#include <graphx.h>
 #include "includes/file.h"
+#include "includes/text.h"
 
 void archiveAll()
 {
@@ -19,28 +22,46 @@ void archiveAll()
 }
 
 // write the names of all detected files starting with a given string into a given 2d buffer array and return the number of files detected
-uint8_t loadFileNames(const char* txt, char** buffer) {
+uint8_t loadFileNames(char** buffer) {
    uint8_t result=0;
-   uint8_t i;
    char* fileName;
    void *search_pos = NULL;
-   while ((fileName=ti_Detect(&search_pos, txt)) != NULL) {
-      // delete previous contents of each string
-      for(i=0; i<9; i++) {
-         buffer[result][i] = 0;
-      }
-      buffer[result][0]=fileName;
+   while ((fileName=ti_Detect(&search_pos, "txt")) != NULL) {
+      copyString(fileName, &buffer[result][0]);
       result++;
    }
    return result;
 }
 
 uint8_t getNumFiles(const char* txt) {
-   uint8_t result;
-   uint8_t i;
+   uint8_t result = '\0';
    void *search_pos = NULL;
    while (ti_Detect(&search_pos, txt) != NULL) {
       result++;
    }
    return result;
+}
+
+uint8_t deleteFile(char* name) {
+   gfx_SetDraw(1);
+   gfx_SetColor(4);
+   gfx_FillRectangle_NoClip(100,90,121,40);
+   gfx_SetColor(6);
+   gfx_Rectangle_NoClip(99,89,123,42);
+   gfx_Rectangle_NoClip(100,90,121,40);
+   //text
+   gfx_SetTextFGColor(0);
+   gfx_PrintStringXY("Are you sure?",112,100);
+   gfx_PrintStringXY("Yes=2nd  No=Mode",102,115);
+   gfx_Blit(1);
+   while (1) {
+      kb_Scan();
+      if (kb_IsDown(kb_2nd)) {
+         ti_Delete(name);
+         delay(100);
+         return 1;
+      } else if (kb_IsDown(kb_Clear)) {
+         return 0;
+      }
+   }
 }

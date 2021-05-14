@@ -2,6 +2,7 @@
 #include <keypadc.h>
 #include "includes/key.h"
 
+// all credit for uint8_t get_single_key_pressed(void); should go to Jacobly, because he made it.
 uint8_t get_single_key_pressed(void) {
     static uint8_t last_key;
     uint8_t only_key = 0;

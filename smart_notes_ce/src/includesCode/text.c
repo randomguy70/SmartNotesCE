@@ -7,12 +7,12 @@
 
 uint8_t inputString(char* buffer, uint8_t maxLength)
 {
-   uint8_t result = 0; // return of inputString(), 1=success, 0=break
    uint8_t keyPressed = 0; // value of key currently pressed
    uint8_t txtMode = 1; // caps, math, or lowercase. default is 1 (caps)
-   uint8_t strLen = 0; //  currently length & offset of inputted string
-   char character = '\0'; //  current inputted character
+   uint8_t strLen = 0; //  current character length & offset of inputted string
+   char character; //  current inputted character buffer
    uint8_t cursorX;
+   uint8_t cursorBlink = 0;
 
    while(1) {
       kb_Scan();
@@ -24,12 +24,12 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       }
       // enter finishes string input and returns 1
       if ((kb_IsDown(kb_KeyEnter)) && strLen>0 && strLen<=maxLength) {
+         delay(200);
          return 1;
       }
 
       // input character and add the character to the current offset in the string buffer
       keyPressed = get_single_key_pressed();
-      
       if (keyPressed) {
          character = inputChar(txtMode, keyPressed);
          if (character && strLen<=maxLength) {
@@ -37,13 +37,13 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
                strLen++;
          }
       }
-      
+
       if ((kb_IsDown(kb_KeyDel)) && strLen>0) {
          buffer[strLen] = 0;
          strLen--;
          delay(100);
       }
-      
+
       // display current string/new filename with outline box
 
       gfx_SetDraw(1);
@@ -58,11 +58,11 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
 
       // inner text box fill
       gfx_SetColor(1); // fill inner text box white
-      gfx_FillRectangle_NoClip(115,110,70,13);
+      gfx_FillRectangle_NoClip(114,109,72,15);
 
       // inner text box outline
       gfx_SetColor(6); //  blue outline for text input inner box
-      gfx_Rectangle_NoClip(115,110,70,13);
+      gfx_Rectangle_NoClip(114,109,72,15);
 
       // display inputted text
       gfx_SetTextFGColor(0);
@@ -72,30 +72,51 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       // display cursor
       cursorX = gfx_GetTextX()+1;
       gfx_SetColor(6);
-      gfx_VertLine_NoClip(cursorX, 111, 12);
-      gfx_VertLine_NoClip(cursorX+1, 111, 12);
+      if(cursorBlink > 15) {
+         gfx_VertLine_NoClip(cursorX, 111, 11);
+         gfx_VertLine_NoClip(cursorX+1, 111, 11);
+         if(cursorBlink == 40) {
+            cursorBlink = 0;
+         }
+      }
+      cursorBlink++;
       gfx_Blit(1);
    }
-   // will change this return someday to what it actually should be
+   // will change this 'return' someday to what it actually should be
    return 0;
 }
 
 uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed) {
-   char result = '\0';
+   char character;
    uint8_t mathSlot = ti_Open("MATHASCI", "r"); // slot of math ascii data
    uint8_t capsSlot = ti_Open("LETTERAS", "r"); // slot of caps ascii data
    //uint8_t lowerSlot = 0; // slot of lowercase ascii data
 
 	if (txtMode == 1 && keyPressed) { // math txtMode
 		ti_Seek(keyPressed, 0, mathSlot);
-		return(ti_GetC(mathSlot));
+      ti_Read(&character,1,1,mathSlot);
+		return character;
    }
    else if (txtMode == 2 && keyPressed) { // caps txtMode
       ti_Seek(keyPressed, 0, capsSlot);
-      return(ti_GetC(capsSlot));
+      ti_Read(&character,1,1,capsSlot);
+      return character;
    }
    else {
       return 0;
+   }
+}
+
+uint8_t copyString(char* inputStr, char* outputBuffer) {
+   uint8_t strPos = 0;
+   while(inputStr[strPos]!=NULL) {
+      outputBuffer[strPos] = inputStr[strPos];
+      strPos++;
+   }
+   if(!strPos) {
+      return 0;
+   } else {
+      return strPos;
    }
 }
 
