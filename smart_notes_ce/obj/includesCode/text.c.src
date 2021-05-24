@@ -45,25 +45,24 @@ BB0_4:
 	jq	nz, BB0_5
 	jq	BB0_8
 BB0_5:
-	push	hl
-	ld	hl, 1
-	push	hl
-	call	_inputChar
-	ld	c, a
-	pop	de
-	pop	de
+	ld	de, 0
 	ld	a, (ix + 9)
-	ld	l, (ix + -1)
-	cp	a, l
+	ld	c, (ix + -1)
+	cp	a, c
 	jq	nc, BB0_6
 	jq	BB0_8
 BB0_6:
+	push	de
+	pop	bc
+	ld	c, l
+	ld	hl, L___const.inputChar.mathDat
+	add	hl, bc
+	ld	c, (hl)
 	ld	a, c
 	or	a, a
 	jq	nz, BB0_7
 	jq	BB0_8
 BB0_7:
-	ld	de, 0
 	ld	a, (ix + -1)
 	ld	e, a
 	ld	hl, (ix + 6)
@@ -286,84 +285,36 @@ BB0_24:
 	section	.text,"ax",@progbits
 	public	_inputChar
 _inputChar:
-	ld	hl, -7
-	call	__frameset
-	ld	hl, L_.str.1
-	ld	bc, L_.str.2
-	lea	de, ix + -1
-	ld	(ix + -7), de
-	push	bc
-	push	hl
-	call	_ti_Open
-	ld	l, a
-	ld	(ix + -4), hl
-	pop	hl
-	pop	hl
-	ld	hl, L_.str.2
-	push	hl
-	ld	hl, L_.str.3
-	push	hl
-	call	_ti_Open
-	ld	e, (ix + 9)
-	ld	c, a
-	pop	hl
-	pop	hl
-	ld	l, (ix + 6)
-	ld	a, l
+	call	__frameset0
+	ld	c, (ix + 6)
+	ld	d, (ix + 9)
+	ld	e, 0
+	ld	a, c
 	cp	a, 1
-	jq	nz, BB1_2
-	ld	a, e
+	jq	nz, BB1_3
+	ld	a, d
 	or	a, a
-	jq	nz, BB1_6
-BB1_2:
-	ld	a, l
+	jq	nz, BB1_2
+BB1_3:
+	ld	a, c
 	cp	a, 2
 	jq	z, BB1_4
-	xor	a, a
-	jq	BB1_8
-BB1_4:
-	ld	a, e
-	or	a, a
-	ld	a, 0
-	jq	z, BB1_8
-	or	a, a
-	sbc	hl, hl
-	ld	l, e
-	push	bc
-	ld	de, 0
-	push	de
-	push	hl
-	ld	(ix + -4), bc
 	jq	BB1_7
-BB1_6:
+BB1_4:
+	ld	a, d
 	or	a, a
-	sbc	hl, hl
-	ld	l, e
-	ld	de, (ix + -4)
-	push	de
-	ld	de, 0
-	push	de
-	push	hl
+	jq	z, BB1_7
+	ld	hl, L___const.inputChar.capsDat
+	jq	BB1_6
+BB1_2:
+	ld	hl, L___const.inputChar.mathDat
+BB1_6:
+	ld	bc, 0
+	ld	c, d
+	add	hl, bc
+	ld	e, (hl)
 BB1_7:
-	call	_ti_Seek
-	pop	hl
-	pop	hl
-	pop	hl
-	ld	hl, (ix + -4)
-	push	hl
-	ld	hl, 1
-	push	hl
-	push	hl
-	ld	hl, (ix + -7)
-	push	hl
-	call	_ti_Read
-	pop	hl
-	pop	hl
-	pop	hl
-	pop	hl
-	ld	a, (ix + -1)
-BB1_8:
-	ld	sp, ix
+	ld	a, e
 	pop	ix
 	ret
 	section	.text,"ax",@progbits
@@ -404,19 +355,16 @@ L_.str:
 	db	"New file",000o
 
 	section	.rodata,"a",@progbits
-	private	L_.str.1
-L_.str.1:
-	db	"MATHASCI",000o
+	private	L___const.inputChar.capsDat
+L___const.inputChar.capsDat:
+	db	"",000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,"+-*/^",000o,000o,"-369)",000o,000o,000o,".258(",000o,000o,000o,"0147,"
+	db	18 dup 0
 
 	section	.rodata,"a",@progbits
-	private	L_.str.2
-L_.str.2:
-	db	"r",000o
-
-	section	.rodata,"a",@progbits
-	private	L_.str.3
-L_.str.3:
-	db	"LETTERAS",000o
+	private	L___const.inputChar.mathDat
+L___const.inputChar.mathDat:
+	db	"",000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,"""WRMH",000o,000o,"?[VQLG",000o,000o,":ZUPKFC",000o," YTOJEB",000o,000o,"XSNIDA"
+	db	8 dup 0
 
 	ident	"clang version 12.0.0 (https://github.com/jacobly0/llvm-project 170be88120e3aa88c20eea5615ba76b8f1d6c647)"
 	extern	__Unwind_SjLj_Register
@@ -427,16 +375,13 @@ L_.str.3:
 	extern	_gfx_FillRectangle_NoClip
 	extern	_kb_Scan
 	extern	__sand
-	extern	_ti_Seek
 	extern	_gfx_VertLine_NoClip
-	extern	_ti_Read
 	extern	_gfx_SetDraw
 	extern	_gfx_GetTextX
 	extern	__setflag
 	extern	__Unwind_SjLj_Unregister
 	extern	_gfx_Blit
 	extern	__iand
-	extern	_ti_Open
 	extern	_gfx_SetColor
 	extern	_delay
 	extern	_gfx_PrintStringXY
