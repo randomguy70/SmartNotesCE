@@ -39,8 +39,8 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       }
 
       if ((kb_IsDown(kb_KeyDel)) && strLen>0) {
-         buffer[strLen] = 0;
-         strLen--;
+         buffer[strLen-1] = 0;
+         strLen--;;
          delay(100);
       }
 

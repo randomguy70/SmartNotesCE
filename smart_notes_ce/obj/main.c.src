@@ -28,6 +28,10 @@ _main:
 	call	_gfx_SetTextBGColor
 	pop	hl
 	ld	l, 1
+	ld	iy, -720896
+	ld	a, (iy)
+	or	a, 3
+	ld	(iy), a
 BB0_1:
 BB0_2:
 	ld	a, l

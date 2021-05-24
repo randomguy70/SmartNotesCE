@@ -93,6 +93,7 @@ BB0_10:
 	ld	de, 0
 	ld	a, (ix + -1)
 	ld	e, a
+	dec	de
 	ld	hl, (ix + 6)
 	add	hl, de
 	ld	(hl), 0
