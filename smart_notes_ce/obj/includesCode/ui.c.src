@@ -209,7 +209,7 @@ BB0_2:
 	pop	de
 	ld	a, l
 	bit	2, a
-	jq	nz, BB0_30
+	jq	nz, BB0_27
 	or	a, a
 	sbc	hl, hl
 	push	hl
@@ -327,26 +327,29 @@ BB0_10:
 	ld	l, 1
 	xor	a, l
 	bit	0, a
-	ld	hl, 0
-	ld	c, (ix + -14)
+	ld	de, 0
 	jq	nz, BB0_14
-	ld	l, c
-	ld	de, (ix + -27)
+	push	de
+	pop	hl
+	ld	a, (ix + -14)
+	ld	l, a
+	ld	bc, (ix + -27)
 	or	a, a
-	sbc	hl, de
+	sbc	hl, bc
 	call	__setflag
 	jq	p, BB0_14
-	inc	c
+	ld	a, (ix + -14)
+	inc	a
 	jq	BB0_13
 BB0_14:
 	ld	l, (iy)
 	ld	h, (iy + 1)
-	ld	a, c
+	ld	a, (ix + -14)
 	or	a, a
 	jq	z, BB0_16
 	ld	a, l
 	bit	3, a
-	jq	nz, BB0_35
+	jq	nz, BB0_32
 BB0_16:
 	ld	hl, -720868
 	push	de
@@ -358,7 +361,7 @@ BB0_16:
 	pop	de
 	ld	a, l
 	bit	6, a
-	jq	nz, BB0_28
+	jq	nz, BB0_25
 	ld	iy, -720878
 	ld	l, (iy)
 	ld	h, (iy + 1)
@@ -367,32 +370,22 @@ BB0_16:
 	jq	z, BB0_19
 	ld	a, l
 	bit	2, a
-	jq	nz, BB0_25
+	jq	nz, BB0_22
 BB0_19:
 	ld	l, (iy)
 	ld	h, (iy + 1)
 	ld	a, l
 	bit	1, a
-	jq	z, BB0_27
-	ld	de, 0
-BB0_21:
+	jq	z, BB0_24
+	ld	hl, 9
+	push	hl
 	push	de
-	pop	hl
-	ld	bc, 9
-	or	a, a
-	sbc	hl, bc
-	jq	z, BB0_23
 	ld	hl, (ix + -36)
-	add	hl, de
-	ld	(hl), 0
-	inc	de
-	jq	BB0_21
-BB0_35:
-	dec	c
-BB0_13:
-	ld	(ix + -14), c
-	jq	BB0_27
-BB0_23:
+	push	hl
+	call	_memset
+	pop	hl
+	pop	hl
+	pop	hl
 	ld	hl, 8
 	push	hl
 	ld	hl, (ix + -36)
@@ -401,7 +394,7 @@ BB0_23:
 	pop	hl
 	pop	hl
 	or	a, a
-	jq	z, BB0_27
+	jq	z, BB0_24
 	call	_ti_CloseAll
 	ld	hl, L_.str.10
 	push	hl
@@ -422,22 +415,28 @@ BB0_23:
 	pop	hl
 	pop	hl
 	pop	hl
-	jq	BB0_26
-BB0_25:
+	jq	BB0_23
+BB0_32:
+	ld	a, (ix + -14)
+	dec	a
+BB0_13:
+	ld	(ix + -14), a
+	jq	BB0_24
+BB0_22:
 	push	hl
 	call	_ti_Delete
-BB0_26:
+BB0_23:
 	pop	hl
-BB0_27:
+BB0_24:
 	call	_gfx_SwapDraw
 	call	_gfx_Wait
 	ld	hl, 1
 	jq	BB0_1
-BB0_28:
+BB0_25:
 	call	_gfx_End
 	xor	a, a
-	jq	BB0_29
-BB0_30:
+	jq	BB0_26
+BB0_27:
 	ld	hl, 1
 	push	hl
 	call	_gfx_SetDraw
@@ -506,21 +505,21 @@ BB0_30:
 	push	hl
 	call	_gfx_Blit
 	pop	hl
-BB0_31:
+BB0_28:
 	call	_kb_Scan
 	ld	iy, -720880
 	ld	l, (iy)
 	ld	h, (iy + 1)
 	ld	a, l
 	bit	5, a
-	jq	nz, BB0_34
+	jq	nz, BB0_31
 	ld	l, (iy)
 	ld	h, (iy + 1)
 	ld	a, l
 	bit	6, a
-	jq	z, BB0_31
-	jq	BB0_33
-BB0_34:
+	jq	z, BB0_28
+	jq	BB0_30
+BB0_31:
 	push	hl
 	call	_ti_Delete
 	pop	hl
@@ -528,9 +527,9 @@ BB0_34:
 	push	hl
 	call	_delay
 	pop	hl
-BB0_33:
+BB0_30:
 	ld	a, 1
-BB0_29:
+BB0_26:
 	ld	sp, ix
 	pop	ix
 	ret
@@ -750,6 +749,7 @@ L_.str.15:
 	db	"Other",000o
 
 	ident	"clang version 12.0.0 (https://github.com/jacobly0/llvm-project 170be88120e3aa88c20eea5615ba76b8f1d6c647)"
+	extern	_memset
 	extern	__Unwind_SjLj_Register
 	extern	_ti_Detect
 	extern	__frameset

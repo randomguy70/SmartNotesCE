@@ -9,7 +9,6 @@
 
 uint8_t dispHomeScreen() {
    uint8_t result = 0; //return of dispHomeScreen()
-   uint8_t i; // for loop var
    uint8_t numFiles = getNumFiles("TXT"); // total number of files detected
    //char fileNames[numFiles][9];
    uint8_t numFilesShown = 0; // number of files currently shown on screen. can't be more than 10
@@ -140,10 +139,7 @@ uint8_t dispHomeScreen() {
       } else if(kb_IsDown(kb_KeyZoom) && (numFiles >0)) {
          ti_Delete(selectedName);
       } else if(kb_IsDown(kb_KeyTrace)) { // new file
-         char buffer[9];
-         for(i=0; i<9; i++) {
-            buffer[i] = '\0';
-         }
+         char buffer[9] = {0};
          if(inputString(buffer, 8) > 0) {
             ti_CloseAll();
             file = ti_Open(buffer, "w+");
