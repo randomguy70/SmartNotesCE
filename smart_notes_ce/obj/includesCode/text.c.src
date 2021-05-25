@@ -99,7 +99,7 @@ BB0_10:
 	ld	(hl), 0
 	dec	a
 	ld	(ix + -1), a
-	ld	hl, 100
+	ld	hl, 20
 	push	hl
 	call	_delay
 	pop	hl
@@ -357,16 +357,16 @@ L_.str:
 	db	"New file",000o
 
 	section	.rodata,"a",@progbits
-	private	L___const.inputChar.capsDat
-L___const.inputChar.capsDat:
-	db	"",000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,"+-*/^",000o,000o,"-369)",000o,000o,000o,".258(",000o,000o,000o,"0147,"
-	db	18 dup 0
-
-	section	.rodata,"a",@progbits
 	private	L___const.inputChar.mathDat
 L___const.inputChar.mathDat:
 	db	"",000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,"""WRMH",000o,000o,"?[VQLG",000o,000o,":ZUPKFC",000o," YTOJEB",000o,000o,"XSNIDA"
 	db	8 dup 0
+
+	section	.rodata,"a",@progbits
+	private	L___const.inputChar.capsDat
+L___const.inputChar.capsDat:
+	db	"",000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,"+-*/^",000o,000o,"-369)",000o,000o,000o,".258(",000o,000o,000o,"0147,"
+	db	18 dup 0
 
 	ident	"clang version 12.0.0 (https://github.com/jacobly0/llvm-project 170be88120e3aa88c20eea5615ba76b8f1d6c647)"
 	extern	__Unwind_SjLj_Register

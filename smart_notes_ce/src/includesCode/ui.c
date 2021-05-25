@@ -141,10 +141,10 @@ uint8_t dispHomeScreen() {
       } else if(kb_IsDown(kb_KeyTrace)) { // new file
          char buffer[9];
          for(i=0; i<9; i++) {
-            buffer[i] = '0';
+            buffer[i] = '\0';
          }
          if(inputString(buffer, 8) > 0) {
-            ti_Open(buffer, "w+");
+            //ti_Write("TXT", 3, 1, ti_Open(buffer, "w+"));
          }
       }
 

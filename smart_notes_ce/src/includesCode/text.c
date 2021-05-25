@@ -21,7 +21,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       if (kb_IsDown(kb_KeyClear)) {
          delay(200);
          return 0;
-      } else
+      }
       if ((kb_IsDown(kb_KeyEnter)) && strLen>0 && strLen<=maxLength) { // enter finishes string input and returns 1
          delay(150);
          return 1;
@@ -31,7 +31,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       keyPressed = get_single_key_pressed();
       if (keyPressed>0) {
          character = inputChar(txtMode, keyPressed);
-         if (character != NULL && strLen<=maxLength) {
+         if (character != '\0' && strLen<=maxLength) {
                buffer[strLen] = character;
                strLen++;
          }
@@ -40,7 +40,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       if ((kb_IsDown(kb_KeyDel)) && strLen>0) {
          buffer[strLen-1] = 0;
          strLen--;;
-         delay(100);
+         delay(20);
       }
 
       // display current string/new filename with outline box
@@ -86,15 +86,6 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
 }
 
 uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed) {
-   unsigned char capsDat[] = {
-      0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
-      0x0, 0x0 , 0x2B, 0x2D, 0x2A, 0x2F, 0x5E, 0x0, 
-      0x0, 0x2D, 0x33, 0x36, 0x39, 0x29, 0x0 , 0x0, 
-      0x0, 0x2E, 0X32, 0x35, 0x38, 0x28, 0x0 , 0x0, 
-      0x0, 0x30, 0x31, 0x34, 0x37, 0x2C, 0x0 , 0x0, 
-      0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
-      0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
-   };
    unsigned char mathDat[] = {
       0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 
       0x0, 0x0 , 0x22, 0x57, 0x52, 0x4D, 0x48, 0x0 , 
@@ -104,10 +95,21 @@ uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed) {
       0x0, 0x0 , 0x58, 0x53, 0x4E, 0x49, 0x44, 0x41, 
       0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 
    };
+   unsigned char capsDat[] = {
+      0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
+      0x0, 0x0 , 0x2B, 0x2D, 0x2A, 0x2F, 0x5E, 0x0, 
+      0x0, 0x2D, 0x33, 0x36, 0x39, 0x29, 0x0 , 0x0, 
+      0x0, 0x2E, 0X32, 0x35, 0x38, 0x28, 0x0 , 0x0, 
+      0x0, 0x30, 0x31, 0x34, 0x37, 0x2C, 0x0 , 0x0, 
+      0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
+      0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
+   };
+   // I will add an array for lowerCaseDat as well
+
    uint8_t math = 1;
    uint8_t caps = 2;
-   uint8_t lowerCase = 3;
-   char character = NULL;
+   //uint8_t lowerCase = 3;
+   char character = '\0';
 
 	if (txtMode == math && keyPressed) {
 		character = mathDat[keyPressed];
@@ -124,7 +126,7 @@ uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed) {
 
 uint8_t copyString(char* inputStr, char* outputBuffer) {
    uint8_t strPos = 0;
-   while(inputStr[strPos]!=NULL) {
+   while(inputStr[strPos]!= '\0') {
       outputBuffer[strPos] = inputStr[strPos];
       strPos++;
    }

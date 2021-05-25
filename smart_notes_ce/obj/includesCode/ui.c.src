@@ -209,7 +209,7 @@ BB0_2:
 	pop	de
 	ld	a, l
 	bit	2, a
-	jq	nz, BB0_29
+	jq	nz, BB0_31
 	or	a, a
 	sbc	hl, hl
 	push	hl
@@ -346,7 +346,7 @@ BB0_14:
 	jq	z, BB0_16
 	ld	a, l
 	bit	3, a
-	jq	nz, BB0_34
+	jq	nz, BB0_21
 BB0_16:
 	ld	hl, -720868
 	push	de
@@ -358,7 +358,7 @@ BB0_16:
 	pop	de
 	ld	a, l
 	bit	6, a
-	jq	nz, BB0_27
+	jq	nz, BB0_29
 	ld	iy, -720878
 	ld	l, (iy)
 	ld	h, (iy + 1)
@@ -367,62 +367,54 @@ BB0_16:
 	jq	z, BB0_19
 	ld	a, l
 	bit	2, a
-	jq	nz, BB0_24
+	jq	nz, BB0_26
 BB0_19:
 	ld	l, (iy)
 	ld	h, (iy + 1)
 	ld	a, l
 	bit	1, a
-	jq	z, BB0_26
+	jq	z, BB0_28
 	ld	de, 0
-	ld	iy, (ix + -39)
-BB0_21:
+BB0_23:
 	push	de
 	pop	hl
 	ld	bc, 9
 	or	a, a
 	sbc	hl, bc
-	jq	z, BB0_23
-	lea	hl, iy + 0
+	jq	z, BB0_25
+	ld	hl, (ix + -39)
 	add	hl, de
-	ld	(hl), 48
+	ld	(hl), 0
 	inc	de
-	jq	BB0_21
-BB0_34:
+	jq	BB0_23
+BB0_21:
 	dec	c
 BB0_13:
 	ld	(ix + -14), c
-	jq	BB0_26
-BB0_23:
+	jq	BB0_28
+BB0_25:
 	ld	hl, 8
-	push	hl
-	push	iy
-	call	_inputString
-	pop	hl
-	pop	hl
-	or	a, a
-	ld	hl, L_.str.10
 	push	hl
 	ld	hl, (ix + -39)
 	push	hl
-	call	nz, _ti_Open
+	call	_inputString
 	pop	hl
-	jq	BB0_25
-BB0_24:
+	jq	BB0_27
+BB0_26:
 	push	hl
 	call	_ti_Delete
-BB0_25:
+BB0_27:
 	pop	hl
-BB0_26:
+BB0_28:
 	call	_gfx_SwapDraw
 	call	_gfx_Wait
 	ld	hl, 1
 	jq	BB0_1
-BB0_27:
+BB0_29:
 	call	_gfx_End
 	xor	a, a
-	jq	BB0_28
-BB0_29:
+	jq	BB0_30
+BB0_31:
 	ld	hl, 1
 	push	hl
 	call	_gfx_SetDraw
@@ -491,21 +483,21 @@ BB0_29:
 	push	hl
 	call	_gfx_Blit
 	pop	hl
-BB0_30:
+BB0_32:
 	call	_kb_Scan
 	ld	iy, -720880
 	ld	l, (iy)
 	ld	h, (iy + 1)
 	ld	a, l
 	bit	5, a
-	jq	nz, BB0_33
+	jq	nz, BB0_35
 	ld	l, (iy)
 	ld	h, (iy + 1)
 	ld	a, l
 	bit	6, a
-	jq	z, BB0_30
-	jq	BB0_32
-BB0_33:
+	jq	z, BB0_32
+	jq	BB0_34
+BB0_35:
 	push	hl
 	call	_ti_Delete
 	pop	hl
@@ -513,9 +505,9 @@ BB0_33:
 	push	hl
 	call	_delay
 	pop	hl
-BB0_32:
+BB0_34:
 	ld	a, 1
-BB0_28:
+BB0_30:
 	ld	sp, ix
 	pop	ix
 	ret
@@ -590,7 +582,7 @@ BB1_4:
 	push	hl
 	ld	hl, 16
 	push	hl
-	ld	hl, L_.str.11
+	ld	hl, L_.str.10
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -600,7 +592,7 @@ BB1_4:
 	push	hl
 	ld	hl, 73
 	push	hl
-	ld	hl, L_.str.12
+	ld	hl, L_.str.11
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -610,7 +602,7 @@ BB1_4:
 	push	hl
 	ld	hl, 137
 	push	hl
-	ld	hl, L_.str.13
+	ld	hl, L_.str.12
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -620,7 +612,7 @@ BB1_4:
 	push	hl
 	ld	hl, 211
 	push	hl
-	ld	hl, L_.str.14
+	ld	hl, L_.str.13
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -630,7 +622,7 @@ BB1_4:
 	push	hl
 	ld	hl, 270
 	push	hl
-	ld	hl, L_.str.15
+	ld	hl, L_.str.14
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -707,31 +699,26 @@ L_.str.9:
 	section	.rodata,"a",@progbits
 	private	L_.str.10
 L_.str.10:
-	db	"w+",000o
+	db	"Open",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.11
 L_.str.11:
-	db	"Open",000o
+	db	"Rename",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.12
 L_.str.12:
-	db	"Rename",000o
+	db	"Delete",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.13
 L_.str.13:
-	db	"Delete",000o
+	db	"New",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.14
 L_.str.14:
-	db	"New",000o
-
-	section	.rodata,"a",@progbits
-	private	L_.str.15
-L_.str.15:
 	db	"Other",000o
 
 	ident	"clang version 12.0.0 (https://github.com/jacobly0/llvm-project 170be88120e3aa88c20eea5615ba76b8f1d6c647)"
@@ -762,6 +749,6 @@ L_.str.15:
 	extern	_gfx_Wait
 	extern	_delay
 	extern	_gfx_PrintStringXY
+	extern	_gfx_End
 	extern	_getNumFiles
 	extern	_gfx_SetTextXY
-	extern	_gfx_End
