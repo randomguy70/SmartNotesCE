@@ -145,8 +145,9 @@ uint8_t dispHomeScreen() {
             buffer[i] = '\0';
          }
          if(inputString(buffer, 8) > 0) {
+            ti_CloseAll();
             file = ti_Open(buffer, "w+");
-            //ti_Write("TXT", 3, 1, file);
+            ti_Write("TXT", 3, 1, file);
          }
       }
 

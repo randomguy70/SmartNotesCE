@@ -81,8 +81,6 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       cursorBlink++;
       gfx_Blit(1);
    }
-   // will change this 'return' someday to what it actually should be
-   return 0;
 }
 
 uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed) {
