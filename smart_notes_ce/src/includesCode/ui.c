@@ -11,7 +11,7 @@ uint8_t dispHomeScreen() {
    uint8_t result = 0; //return of dispHomeScreen()
    uint8_t i; // for loop var
    uint8_t numFiles = getNumFiles("TXT"); // total number of files detected
-   char fileNames[numFiles][9];
+   //char fileNames[numFiles][9];
    uint8_t numFilesShown = 0; // number of files currently shown on screen. can't be more than 10
    uint8_t fileSlot; // slot of currently detected file
    uint8_t numFile = 0; // number of currently detected file
@@ -20,6 +20,7 @@ uint8_t dispHomeScreen() {
    int fileSize = 0; // size of currently detected file
    uint8_t selectedNum = 0; // number of currently selected file
    char * selectedName; // pointer to name of selected file
+   uint8_t file; //used for extra file manipulations, such as open
 
    // write the text file names to the array fileNames[]
    kb_SetMode(MODE_3_CONTINUOUS);
@@ -144,7 +145,8 @@ uint8_t dispHomeScreen() {
             buffer[i] = '\0';
          }
          if(inputString(buffer, 8) > 0) {
-            //ti_Write("TXT", 3, 1, ti_Open(buffer, "w+"));
+            file = ti_Open(buffer, "w+");
+            //ti_Write("TXT", 3, 1, file);
          }
       }
 
