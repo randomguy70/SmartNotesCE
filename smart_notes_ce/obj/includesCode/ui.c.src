@@ -3,11 +3,11 @@
 	section	.text,"ax",@progbits
 	public	_dispHomeScreen
 _dispHomeScreen:
-	ld	hl, -36
+	ld	hl, -39
 	call	__frameset
 	ld	hl, L_.str
 	lea	de, ix + -12
-	ld	(ix + -36), de
+	ld	(ix + -39), de
 	push	hl
 	call	_getNumFiles
 	ld	e, a
@@ -18,11 +18,13 @@ _dispHomeScreen:
 	or	a, 3
 	ld	(iy), a
 	ld	bc, 0
-	ld	(ix + -14), e
+	ld	(ix + -21), e
 	ld	c, e
 	ld	(ix + -24), bc
+	dec	bc
+	ld	(ix + -27), bc
 	xor	a, a
-	ld	(ix + -15), a
+	ld	(ix + -14), a
 BB0_1:
 	push	hl
 	call	_gfx_SetDraw
@@ -143,9 +145,9 @@ BB0_1:
 	ld	(ix + -3), hl
 	ld	a, 56
 	ld	l, a
-	ld	(ix + -21), hl
+	ld	(ix + -20), hl
 	ld	hl, 61
-	ld	(ix + -18), hl
+	ld	(ix + -17), hl
 	xor	a, a
 	ld	(ix + -13), a
 BB0_2:
@@ -170,32 +172,32 @@ BB0_2:
 	push	hl
 	push	de
 	ld	(ix + -13), a
-	ld	(ix + -33), de
+	ld	(ix + -36), de
 	call	_ti_Open
 	ld	e, a
-	ld	(ix + -30), de
+	ld	(ix + -33), de
 	pop	hl
 	pop	hl
 	push	de
 	call	_ti_GetSize
-	ld	(ix + -27), l
-	ld	(ix + -26), h
+	ld	(ix + -30), l
+	ld	(ix + -29), h
 	pop	hl
-	ld	hl, (ix + -30)
+	ld	hl, (ix + -33)
 	push	hl
 	ld	hl, 1
 	push	hl
 	call	_ti_SetArchiveStatus
 	pop	hl
 	pop	hl
-	ld	a, (ix + -15)
+	ld	a, (ix + -14)
 	ld	l, (ix + -13)
 	cp	a, l
 	ld	a, 0
 	ld	l, a
 	jq	nz, BB0_7
-	ld	l, (ix + -27)
-	ld	h, (ix + -26)
+	ld	l, (ix + -30)
+	ld	h, (ix + -29)
 	call	_kb_Scan
 	ld	hl, -720878
 	push	de
@@ -217,7 +219,7 @@ BB0_2:
 	push	hl
 	ld	hl, 250
 	push	hl
-	ld	hl, (ix + -21)
+	ld	hl, (ix + -20)
 	push	hl
 	ld	hl, 35
 	push	hl
@@ -232,25 +234,25 @@ BB0_7:
 	ld	de, 0
 	push	de
 	pop	bc
-	ld	e, (ix + -27)
-	ld	d, (ix + -26)
+	ld	e, (ix + -30)
+	ld	d, (ix + -29)
 	ld	c, e
 	ld	b, d
-	ld	(ix + -27), bc
+	ld	(ix + -30), bc
 	push	hl
 	call	_gfx_SetTextFGColor
 	pop	hl
-	ld	hl, (ix + -18)
+	ld	hl, (ix + -17)
 	push	hl
 	ld	hl, 40
 	push	hl
-	ld	hl, (ix + -33)
+	ld	hl, (ix + -36)
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	hl, (ix + -18)
+	ld	hl, (ix + -17)
 	push	hl
 	ld	hl, 135
 	push	hl
@@ -259,7 +261,7 @@ BB0_7:
 	pop	hl
 	ld	hl, 4
 	push	hl
-	ld	hl, (ix + -27)
+	ld	hl, (ix + -30)
 	push	hl
 	call	_gfx_PrintInt
 	pop	hl
@@ -273,14 +275,14 @@ BB0_7:
 	inc	a
 	ld	(ix + -13), a
 	ld	de, 15
-	ld	hl, (ix + -18)
+	ld	hl, (ix + -17)
 	add	hl, de
-	ld	(ix + -18), hl
-	ld	hl, (ix + -21)
+	ld	(ix + -17), hl
+	ld	hl, (ix + -20)
 	ld	a, l
 	add	a, 15
 	ld	l, a
-	ld	(ix + -21), hl
+	ld	(ix + -20), hl
 	jq	BB0_2
 BB0_8:
 	ld	hl, 10
@@ -297,7 +299,7 @@ BB0_8:
 	call	_gfx_PrintInt
 	pop	hl
 	pop	hl
-	ld	a, (ix + -14)
+	ld	a, (ix + -21)
 	or	a, a
 	jq	nz, BB0_10
 	ld	hl, -12
@@ -321,16 +323,19 @@ BB0_10:
 	ld	h, (iy + 1)
 	ld.sis	bc, 1
 	call	__sand
-	ld	c, (ix + -15)
-	ld	a, c
-	ld	e, (ix + -14)
-	cp	a, e
-	jq	nc, BB0_14
 	ld	a, l
 	ld	l, 1
 	xor	a, l
 	bit	0, a
+	ld	hl, 0
+	ld	c, (ix + -14)
 	jq	nz, BB0_14
+	ld	l, c
+	ld	de, (ix + -27)
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB0_14
 	inc	c
 	jq	BB0_13
 BB0_14:
@@ -357,7 +362,7 @@ BB0_16:
 	ld	iy, -720878
 	ld	l, (iy)
 	ld	h, (iy + 1)
-	ld	a, e
+	ld	a, (ix + -21)
 	or	a, a
 	jq	z, BB0_19
 	ld	a, l
@@ -370,7 +375,7 @@ BB0_19:
 	bit	1, a
 	jq	z, BB0_26
 	ld	de, 0
-	ld	iy, (ix + -36)
+	ld	iy, (ix + -39)
 BB0_21:
 	push	de
 	pop	hl
@@ -380,13 +385,13 @@ BB0_21:
 	jq	z, BB0_23
 	lea	hl, iy + 0
 	add	hl, de
-	ld	(hl), 0
+	ld	(hl), 48
 	inc	de
 	jq	BB0_21
 BB0_34:
 	dec	c
 BB0_13:
-	ld	(ix + -15), c
+	ld	(ix + -14), c
 	jq	BB0_26
 BB0_23:
 	ld	hl, 8
@@ -398,7 +403,7 @@ BB0_23:
 	or	a, a
 	ld	hl, L_.str.10
 	push	hl
-	ld	hl, (ix + -36)
+	ld	hl, (ix + -39)
 	push	hl
 	call	nz, _ti_Open
 	pop	hl
@@ -743,6 +748,7 @@ L_.str.15:
 	extern	_gfx_SwapDraw
 	extern	_gfx_PrintInt
 	extern	_gfx_SetDraw
+	extern	__setflag
 	extern	_gfx_FillScreen
 	extern	_ti_CloseAll
 	extern	__Unwind_SjLj_Unregister

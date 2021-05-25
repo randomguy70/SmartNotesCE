@@ -129,7 +129,7 @@ uint8_t dispHomeScreen() {
       kb_Scan();
 
       // move selected down
-      if(kb_IsDown(kb_KeyDown) && selectedNum < numFiles) {
+      if(kb_IsDown(kb_KeyDown) && selectedNum < numFiles -1) {
          selectedNum++;
       } else if(kb_IsDown(kb_KeyUp) && selectedNum > 0) {
          selectedNum--;
@@ -141,9 +141,9 @@ uint8_t dispHomeScreen() {
       } else if(kb_IsDown(kb_KeyTrace)) { // new file
          char buffer[9];
          for(i=0; i<9; i++) {
-            buffer[i] = '\0';
+            buffer[i] = '0';
          }
-         if(inputString(buffer, 8)) {
+         if(inputString(buffer, 8) > 0) {
             ti_Open(buffer, "w+");
          }
       }

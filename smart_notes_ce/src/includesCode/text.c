@@ -21,10 +21,9 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       if (kb_IsDown(kb_KeyClear)) {
          delay(200);
          return 0;
-      }
-      // enter finishes string input and returns 1
-      if ((kb_IsDown(kb_KeyEnter)) && strLen>0 && strLen<=maxLength) {
-         delay(200);
+      } else
+      if ((kb_IsDown(kb_KeyEnter)) && strLen>0 && strLen<=maxLength) { // enter finishes string input and returns 1
+         delay(150);
          return 1;
       }
 

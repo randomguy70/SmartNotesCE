@@ -268,8 +268,8 @@ BB0_15:
 	pop	hl
 	jq	BB0_1
 BB0_23:
+	ld.sis	hl, 200
 BB0_16:
-	ld	hl, 200
 	push	hl
 	call	_delay
 	pop	hl
@@ -278,6 +278,7 @@ BB0_16:
 	pop	ix
 	ret
 BB0_24:
+	ld.sis	hl, 150
 	ld	a, 1
 	ld	(ix + -3), a
 	jq	BB0_16
