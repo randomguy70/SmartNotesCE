@@ -11,7 +11,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
    uint8_t caps = 2;
    uint8_t lowerCase = 3;
    uint8_t keyPressed = 0; // value of key currently pressed
-   uint8_t txtMode = 1; // caps, math, or lowercase. default is 1 (caps)
+   uint8_t txtMode = caps; // caps, math, or lowercase. default is 2 (caps)
    uint8_t strLen = 0; //  current character length & offset of inputted string
    char character; //  current inputted character buffer
    uint8_t cursorX;
@@ -31,8 +31,10 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       }
       if ((kb_IsDown(kb_KeyAlpha)) && (txtMode == math || txtMode == lowerCase)) {
          txtMode = caps;
+         delay(100);
       } else if ((kb_IsDown(kb_KeyAlpha)) && (txtMode == math || txtMode == caps)) {
          txtMode = lowerCase;
+         delay(100);
       } else if ((kb_IsDown(kb_Key2nd))) {
          txtMode = math;
       }
@@ -49,7 +51,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       if ((kb_IsDown(kb_KeyDel)) && strLen>0) {
          buffer[strLen-1] = 0;
          strLen--;;
-         delay(20);
+         delay(80);
       }
 
       // display current string/new filename with outline box
@@ -72,10 +74,19 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       gfx_SetColor(6); //  blue outline for text input inner box
       gfx_Rectangle_NoClip(114,109,72,15);
 
-      // display inputted text
+      // display inputted text and txtMode
+      gfx_SetTextFGColor(0);
+      if(txtMode == math) {
+         gfx_PrintStringXY("1", 180, 95);
+      } else if(txtMode == caps) {
+         gfx_PrintStringXY("A", 180, 95);
+      } else if(txtMode == lowerCase) {
+         gfx_PrintStringXY("a", 180, 95);
+      }
       gfx_SetTextFGColor(0);
       gfx_PrintStringXY("New file",120,95);
       gfx_PrintStringXY(buffer,117,113);
+      gfx_SetTextFGColor(1);
 
       // display cursor
       cursorX = gfx_GetTextX()+1;
@@ -113,8 +124,8 @@ uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed) {
    };
    unsigned char lowerCaseDat[] = {
       0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
-      0x0, 0x0 , 0x3f, 0x41, 0x3e, 0x43, 0x72, 0x0, 
-      0x0, 0x41, 0x47, 0x4a, 0x4d, 0x3d, 0x0 , 0x0, 
+      0x0, 0x3f, 0x3f, 0x41, 0x3e, 0x43, 0x72, 0x0, 
+      0x0, 0x3a, 0x47, 0x4a, 0x4d, 0x3d, 0x0 , 0x0, 
       0x0, 0x42, 0X46, 0x49, 0x4c, 0x3c, 0x0 , 0x0, 
       0x0, 0x44, 0x45, 0x48, 0x4b, 0x40, 0x0 , 0x0, 
       0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
@@ -135,7 +146,7 @@ uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed) {
       return character;
    }
    else if (txtMode == lowerCase) {
-      character = lowerCaseDat[keyPressed];
+      character = capsDat[keyPressed] + 0x20;
       return character;
    }
    else {
