@@ -11,7 +11,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
    uint8_t caps = 2;
    uint8_t lowerCase = 3;
    uint8_t keyPressed = 0; // value of key currently pressed
-   uint8_t txtMode = caps; // caps, math, or lowercase. default is 2 (caps)
+   uint8_t txtMode = 1; // caps, math, or lowercase. default is 2 (caps)
    uint8_t strLen = 0; //  current character length & offset of inputted string
    char character; //  current inputted character buffer
    uint8_t cursorX;
@@ -29,10 +29,10 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
          delay(150);
          return 1;
       }
-      if ((kb_IsDown(kb_KeyAlpha)) && (txtMode == math || txtMode == lowerCase)) {
+      if (kb_IsDown(kb_KeyAlpha) && txtMode!=caps) {
          txtMode = caps;
          delay(100);
-      } else if ((kb_IsDown(kb_KeyAlpha)) && (txtMode == math || txtMode == caps)) {
+      } else if ((kb_IsDown(kb_KeyAlpha)) && txtMode!=lowerCase) {
          txtMode = lowerCase;
          delay(100);
       } else if ((kb_IsDown(kb_Key2nd))) {
