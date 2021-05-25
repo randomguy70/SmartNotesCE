@@ -7,6 +7,9 @@
 
 uint8_t inputString(char* buffer, uint8_t maxLength)
 {
+   uint8_t math = 1;
+   uint8_t caps = 2;
+   uint8_t lowerCase = 3;
    uint8_t keyPressed = 0; // value of key currently pressed
    uint8_t txtMode = 1; // caps, math, or lowercase. default is 1 (caps)
    uint8_t strLen = 0; //  current character length & offset of inputted string
@@ -26,7 +29,13 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
          delay(150);
          return 1;
       }
-
+      if ((kb_IsDown(kb_KeyAlpha)) && (txtMode == math || txtMode == lowerCase)) {
+         txtMode = caps;
+      } else if ((kb_IsDown(kb_KeyAlpha)) && (txtMode == math || txtMode == caps)) {
+         txtMode = lowerCase;
+      } else if ((kb_IsDown(kb_Key2nd))) {
+         txtMode = math;
+      }
       // input character and add the character to the current offset in the string buffer
       keyPressed = get_single_key_pressed();
       if (keyPressed>0) {
@@ -102,19 +111,31 @@ uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed) {
       0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
       0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
    };
-   // I will add an array for lowerCaseDat as well
+   unsigned char lowerCaseDat[] = {
+      0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
+      0x0, 0x0 , 0x3f, 0x41, 0x3e, 0x43, 0x72, 0x0, 
+      0x0, 0x41, 0x47, 0x4a, 0x4d, 0x3d, 0x0 , 0x0, 
+      0x0, 0x42, 0X46, 0x49, 0x4c, 0x3c, 0x0 , 0x0, 
+      0x0, 0x44, 0x45, 0x48, 0x4b, 0x40, 0x0 , 0x0, 
+      0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
+      0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
+   };
 
    uint8_t math = 1;
    uint8_t caps = 2;
-   //uint8_t lowerCase = 3;
+   uint8_t lowerCase = 3;
    char character = '\0';
 
-	if (txtMode == math && keyPressed) {
+	if (txtMode == math) {
 		character = mathDat[keyPressed];
 		return character;
    }
-   else if (txtMode == caps && keyPressed) {
+   else if (txtMode == caps) {
       character = capsDat[keyPressed];
+      return character;
+   }
+   else if (txtMode == lowerCase) {
+      character = lowerCaseDat[keyPressed];
       return character;
    }
    else {
