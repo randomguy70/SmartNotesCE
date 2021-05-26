@@ -65,8 +65,13 @@ uint8_t dispHomeScreen() {
             char buffer[9] = {0};
             if(inputString(buffer, 8) > 0) {
                newFile(buffer);
+               numFiles++;
             }
          }
+         if(kb_IsDown(kb_KeyZoom) && numFiles) {
+            deleteFile(selectedName);
+         }
+
       gfx_SetColor(6);
       gfx_SetTextXY(10,10);
       gfx_PrintInt(numFiles,1);

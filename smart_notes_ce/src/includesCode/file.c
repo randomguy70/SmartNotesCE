@@ -56,18 +56,21 @@ uint8_t deleteFile(char* name) {
    gfx_Rectangle_NoClip(99,89,123,42);
    gfx_Rectangle_NoClip(100,90,121,40);
    //text
-   gfx_SetTextFGColor(0);
+   gfx_SetTextFGColor(6);
    gfx_PrintStringXY("Are you sure?",112,100);
    gfx_PrintStringXY("Yes=2nd  No=Mode",102,115);
    gfx_Blit(1);
+   
    while (1) {
       kb_Scan();
       if (kb_IsDown(kb_2nd)) {
          ti_Delete(name);
          delay(100);
          return 1;
-      } else if (kb_IsDown(kb_Clear)) {
+      }
+      if (kb_IsDown(kb_Clear)) {
          return 0;
       }
    }
 }
+
