@@ -4,5 +4,5 @@
 void archiveAll();
 uint8_t getNumFiles(const char* txt);
 uint8_t loadFileNames(char** buffer);
-
+uint8_t newFile(char* name);
 #endif

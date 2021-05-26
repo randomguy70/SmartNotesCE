@@ -42,6 +42,12 @@ uint8_t getNumFiles(const char* txt) {
    return result;
 }
 
+uint8_t newFile(char* name) {
+   ti_CloseAll();
+   uint8_t file = ti_Open(name, "w+");
+   ti_Write("TXT", 3, 1, file);
+}
+
 uint8_t deleteFile(char* name) {
    gfx_SetDraw(1);
    gfx_SetColor(4);

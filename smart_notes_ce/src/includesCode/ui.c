@@ -8,31 +8,17 @@
 #include "includes/text.h"
 
 uint8_t dispHomeScreen() {
-   uint8_t result = 0; //return of dispHomeScreen()
-   uint8_t numFiles = getNumFiles("TXT"); // total number of files detected
-   //char fileNames[numFiles][9];
    uint8_t numFilesShown = 0; // number of files currently shown on screen. can't be more than 10
-   uint8_t fileSlot; // slot of currently detected file
-   uint8_t numFile = 0; // number of currently detected file
-   uint8_t fileY = 61; // y coord for currently detected file
-   char * fileName; // pointer to name of currently detected file
-   int fileSize = 0; // size of currently detected file
+   uint8_t numFiles = 0;
+   char selectedName[9] = {0}; // pointer to name of selected file
    uint8_t selectedNum = 0; // number of currently selected file
-   char * selectedName; // pointer to name of selected file
-   uint8_t file; //used for extra file manipulations, such as open
+   uint8_t viewerOffset = 0;
 
-   // write the text file names to the array fileNames[]
-   kb_SetMode(MODE_3_CONTINUOUS);
+   numFiles = getNumFiles("TXT");
 
-   // main homescreen loop. displays files, options, etc...
-   while(!result) {
-      numFilesShown = 0; // number of files currently shown on screen. can't be more than 10
-      numFile = 0; // number of currently detected file
-      fileY = 61; // y coord for currently detected file
-
+   while(1) {
+      // graphics
       gfx_SetDraw(1);
-
-      // SCREEN SETUP
       gfx_FillScreen(4);
       gfx_SetColor(0);
       gfx_Rectangle_NoClip(50,1,222,30);
@@ -46,59 +32,83 @@ uint8_t dispHomeScreen() {
       gfx_PrintStringXY("SIZE",135,45);
       gfx_PrintStringXY("STATUS",210,45);
 
-      // displays the button options (delete, rename, settings, open, etc...)
-      // dispButtons(mode);
-
-      // close all open slots
-      ti_CloseAll();
+      // display the txt files and buttons
+      numFilesShown = dispFiles(viewerOffset, selectedNum, selectedName);
       dispButtons(1);
 
-      // vat offset for appvar detection loop
-      void *search_pos = NULL;
-      
-      // loop to detect and display files
-      while (((fileName = ti_Detect(&search_pos, "TXT")) != NULL) && (numFilesShown<10)) {
+         // handle keypresses, should probably make this a function
+         kb_Scan();
+         // move selected down
+         if(kb_IsDown(kb_KeyDown) && selectedNum<numFiles-2) { // move selected down
+            selectedNum++;
+            if(selectedNum >= viewerOffset + numFilesShown) {
+               viewerOffset++;
+            }
+         }
+         if(kb_IsDown(kb_KeyUp) && selectedNum>0) { // move selected up
+            if(selectedNum == viewerOffset) {
+               selectedNum--;
+               viewerOffset--;
+            }
+            else {
+               selectedNum--;
+            }
+         }
+         if(kb_IsDown(kb_KeyClear)) { // quit program
+            gfx_End();
+            return 0;
+         }
+         if(kb_IsDown(kb_KeyZoom)) { //  delete file
+            ti_Delete(selectedName);
+         }
+         if(kb_IsDown(kb_KeyTrace)) { // new file
+            char buffer[9] = {0};
+            if(inputString(buffer, 8) > 0) {
+               newFile(buffer);
+            }
+         }
+      gfx_SetColor(6);
+      gfx_SetTextXY(10,10);
+      gfx_PrintInt(numFiles,1);
+      gfx_SwapDraw();
+      gfx_Wait();
+   }
+}
 
-         // get file info, archive all text file appvars detected et cetera...
+uint8_t dispFiles(uint8_t offset, uint8_t selectedNum, char* selectedName) {
+   uint8_t i;
+   uint8_t numFilesShown = 0; // number of files currently drawn on the file viewer at once
+   char* fileName;
+   uint8_t fileSlot; // slot number of currently detected file
+   uint8_t fileSize; // size of currently detected and drawn file
+   uint8_t fileY = 61;
+   uint8_t numFile = 0; // number of currently detected and drawn file
+
+   // jump to offset in file viewer (this is for scrolling purposes)
+   void *search_pos = NULL;
+   if(offset) {
+      while((fileName = ti_Detect(&search_pos, "TXT") != NULL && numFile<offset)) {
+      numFile++;
+      }
+   }
+
+   // display files starting at offset
+   while (((fileName = ti_Detect(&search_pos, "TXT")) != NULL) && (numFilesShown<10)) {
+         // get file info, get file info, get file info...
          fileSlot = ti_Open(fileName,"r");
          fileSize = ti_GetSize(fileSlot);
-         ti_SetArchiveStatus(1,fileSlot);
 
          // display currently selected file with highlighting rect
          if (selectedNum == numFile) {
-            // check if should be deleted (if zoom is pressed)
-            kb_Scan();
-            if(kb_IsDown(kb_KeyZoom)) {
-               gfx_SetDraw(1);
-               gfx_SetColor(149);
-               gfx_FillRectangle_NoClip(100,90,121,40);
-               gfx_SetColor(0);
-               gfx_Rectangle_NoClip(100,90,121,40);
-               //text
-               gfx_SetTextFGColor(0);
-               gfx_PrintStringXY("Are you sure?",112,100);
-               gfx_PrintStringXY("Yes=2nd  No=Mode",102,115);
-               gfx_Blit(1);
-
-               uint8_t result = 0;
-               while (!result) {
-                  kb_Scan();
-                  if (kb_IsDown(kb_2nd)) {
-                     ti_Delete(selectedName);
-                     if (selectedNum>1) {
-                        selectedNum--;
-                     }
-                     numFiles--;
-                     delay(100);
-                     return 1;
-                  } else if (kb_IsDown(kb_Clear)) {
-                     return 1;
-                  }
-               }
-            }
             gfx_SetColor(0);
             gfx_FillRectangle_NoClip(35,fileY-5,250,15);
             gfx_SetTextFGColor(1);
+            // write name of selected file to given buffer
+            i=0;
+            while(selectedName[i] != '\0' || fileName[i] != '\0') {
+               selectedName[i] = fileName[i];
+               i++;
+            }
          } else {
             gfx_SetTextFGColor(0);
          }
@@ -108,55 +118,30 @@ uint8_t dispHomeScreen() {
          gfx_SetTextXY(135,fileY);
          gfx_PrintInt(fileSize,4);
          gfx_SetTextFGColor(0);
-         
+
          // update search-dependant vars
          numFile++;
          numFilesShown++;
          fileY += 15;
       }
-
-      //show number of files in top right corner
-      gfx_SetTextXY(300,10);
-      gfx_PrintInt(numFiles,1);
-
+      // finish detecting the rest of the files to get an accurate count of how many there are, but don't display them because they would go off the screen
+      while((fileName = ti_Detect(&search_pos, "TXT")) != NULL) {
+      numFile++;
+      }
       // display when no appvars are found
-      if (numFiles == 0) {
+      if (numFile == 0) {
          gfx_SetTextFGColor(244);
-         gfx_PrintStringXY("--NO FILES FOUND--",93,80);
+         gfx_PrintStringXY("--NO FILES FOUND--)",93,80);
+         gfx_PrintStringXY("That's too bad for you :(",93,100);
       }
-
-      //keypresses
-      kb_Scan();
-
-      // move selected down
-      if(kb_IsDown(kb_KeyDown) && selectedNum < numFiles -1) {
-         selectedNum++;
-      } else if(kb_IsDown(kb_KeyUp) && selectedNum > 0) {
-         selectedNum--;
-      } else if(kb_IsDown(kb_KeyClear)) {
-         gfx_End();
-         return 0;
-      } else if(kb_IsDown(kb_KeyZoom) && (numFiles >0)) {
-         ti_Delete(selectedName);
-      } else if(kb_IsDown(kb_KeyTrace)) { // new file
-         char buffer[9] = {0};
-         if(inputString(buffer, 8) > 0) {
-            ti_CloseAll();
-            file = ti_Open(buffer, "w+");
-            ti_Write("TXT", 3, 1, file);
-         }
-      }
-
-      gfx_SwapDraw();
-      gfx_Wait();
-   }
-   return 0;
+   *(selectedName) = numFile;
+   return numFilesShown;
 }
 
-void dispButtons(uint8_t txtMode)
+void dispButtons(uint8_t mode)
 {
    int i = 0;
-   if(txtMode == 1) {
+   if(mode == 1) {
       //button rects at bottom of screen
       for(i=0; i<320; i=i+64) {
          gfx_SetColor(0);
@@ -164,7 +149,7 @@ void dispButtons(uint8_t txtMode)
          gfx_SetColor(42);
          gfx_FillRectangle_NoClip(i+1,221,60,17);
       }
-      
+
       //button text
       gfx_SetTextFGColor(0);
       gfx_PrintStringXY("Open",16,227);
@@ -173,7 +158,32 @@ void dispButtons(uint8_t txtMode)
       gfx_PrintStringXY("New",211,227);
       gfx_PrintStringXY("Other",270,227);
    }
+
 };
+
+uint8_t checkIfDelete(char* name) {
+   gfx_SetDraw(1);
+   gfx_SetColor(4);
+   gfx_FillRectangle_NoClip(100,90,121,40); // main rect
+   gfx_SetColor(6);
+   gfx_Rectangle_NoClip(100,90,121,40);// outline rect
+   gfx_Rectangle_NoClip(101,91,119,38);// outline rect
+   //text
+   gfx_SetTextFGColor(6);
+   gfx_PrintStringXY("Are you sure?",112,100);
+   gfx_PrintStringXY("Yes=2nd  No=Mode",102,115);
+   gfx_Blit(1);
+   while (1) {
+      kb_Scan();
+      if (kb_IsDown(kb_2nd)) {
+         ti_Delete(name);
+         delay(200);
+         return 1;;
+      } else if (kb_IsDown(kb_Clear)) {
+         return 0;
+      }
+   }
+}
 
 void exitFull() {
    archiveAll();
