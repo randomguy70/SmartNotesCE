@@ -39,7 +39,7 @@ uint8_t dispHomeScreen() {
          // handle keypresses, should probably make this a function
          kb_Scan();
          // move selected down
-         if(kb_IsDown(kb_KeyDown) && selectedNum<numFiles-2) { // move selected down
+         if(kb_IsDown(kb_KeyDown) && selectedNum<numFiles-2) { // move selected down. I am not sure why I need to put a -2, I get why I would need -1, but I am not sure where the other -1 comes from, maybe from the scrolling. please leave a post in the github repo if you know why I need the -2 :), because if you are reading this, then you probably know what you are talking (or typing) about :)
             selectedNum++;
             if(selectedNum >= viewerOffset + numFilesShown) {
                viewerOffset++;
