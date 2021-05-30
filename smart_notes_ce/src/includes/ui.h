@@ -11,6 +11,6 @@ void dispButtons(uint8_t mode);
 void exitFull();
 
 // displays files at a given offset & writes the name of the selected file to a given string buffer
-uint8_t dispFiles(uint8_t offset, uint8_t selectedNum, char* selectedNameBuffer);
+uint8_t dispFiles(uint8_t offset, uint8_t selectedNum, char* selectedName);
 
 #endif

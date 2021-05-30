@@ -36,45 +36,50 @@ uint8_t dispHomeScreen() {
       numFilesShown = dispFiles(viewerOffset, selectedNum, selectedName);
       dispButtons(1);
 
-         // handle keypresses, should probably make this a function
-         kb_Scan();
-         // move selected down
-         if(kb_IsDown(kb_KeyDown) && selectedNum<numFiles-2) { // move selected down. I am not sure why I need to put a -2, I get why I would need -1, but I am not sure where the other -1 comes from, maybe from the scrolling. please leave a post in the github repo if you know why I need the -2 :), because if you are reading this, then you probably know what you are talking (or typing) about :)
+      // handle keypresses, should probably make this a function
+      kb_Scan();
+      // move selected down
+      if(kb_IsDown(kb_KeyDown) && selectedNum<numFiles-1) {
+         if(selectedNum == viewerOffset + 9) {
+            viewerOffset++;
             selectedNum++;
-            if(selectedNum >= viewerOffset + numFilesShown) {
-               viewerOffset++;
-            }
+         } else {
+            selectedNum++;
          }
-         if(kb_IsDown(kb_KeyUp) && selectedNum>0) { // move selected up
-            if(selectedNum == viewerOffset) {
-               selectedNum--;
-               viewerOffset--;
-            }
-            else {
-               selectedNum--;
-            }
+      }
+      if(kb_IsDown(kb_KeyUp) && selectedNum>0) { // move selected up
+         if(selectedNum == viewerOffset) {
+            selectedNum--;
+            viewerOffset--;
          }
-         if(kb_IsDown(kb_KeyClear)) { // quit program
-            gfx_End();
-            return 0;
+         else {
+            selectedNum--;
          }
-         if(kb_IsDown(kb_KeyZoom)) { //  delete file
-            ti_Delete(selectedName);
+      }
+      if(kb_IsDown(kb_KeyClear)) { // quit program
+         gfx_End();
+         return 0;
+      }
+      if(kb_IsDown(kb_KeyZoom)) { //  delete file
+         ti_Delete(selectedName);
+      }
+      if(kb_IsDown(kb_KeyTrace)) { // new file
+         char buffer[9] = {0};
+         if(inputString(buffer, 8) > 0) {
+            newFile(buffer);
+            numFiles++;
          }
-         if(kb_IsDown(kb_KeyTrace)) { // new file
-            char buffer[9] = {0};
-            if(inputString(buffer, 8) > 0) {
-               newFile(buffer);
-               numFiles++;
-            }
-         }
-         if(kb_IsDown(kb_KeyZoom) && numFiles) {
-            deleteFile(selectedName);
-         }
-
+      }
+      if(kb_IsDown(kb_KeyZoom) && numFiles) {
+         deleteFile(selectedName);
+      }
       gfx_SetColor(6);
       gfx_SetTextXY(10,10);
       gfx_PrintInt(numFiles,1);
+      gfx_SetTextXY(10, 25);
+      gfx_PrintInt(selectedNum, 1);
+      gfx_SetTextXY(10, 35);
+      gfx_PrintInt(viewerOffset, 1);
       gfx_SwapDraw();
       gfx_Wait();
    }
@@ -92,8 +97,8 @@ uint8_t dispFiles(uint8_t offset, uint8_t selectedNum, char* selectedName) {
    // jump to offset in file viewer (this is for scrolling purposes)
    void *search_pos = NULL;
    if(offset) {
-      while((fileName = ti_Detect(&search_pos, "TXT") != NULL && numFile<offset)) {
-      numFile++;
+      while((fileName = ti_Detect(&search_pos, "TXT") != NULL && numFile<offset-1)) {
+         numFile++;
       }
    }
 
@@ -110,7 +115,7 @@ uint8_t dispFiles(uint8_t offset, uint8_t selectedNum, char* selectedName) {
             gfx_SetTextFGColor(1);
             // write name of selected file to given buffer
             i=0;
-            while(selectedName[i] != '\0' || fileName[i] != '\0') {
+            while(*(selectedName+i) != '\0' || fileName[i] != '\0') {
                selectedName[i] = fileName[i];
                i++;
             }
@@ -139,7 +144,6 @@ uint8_t dispFiles(uint8_t offset, uint8_t selectedNum, char* selectedName) {
          gfx_PrintStringXY("--NO FILES FOUND--)",93,80);
          gfx_PrintStringXY("That's too bad for you :(",93,100);
       }
-   *(selectedName) = numFile;
    return numFilesShown;
 }
 

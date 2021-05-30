@@ -15,6 +15,6 @@ uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed);
 uint8_t copyString(char* inputStr, char* outputBuffer);
 
 // deleteChar() seeks to a given offset in an os variable (such as a program or appvar) and deletes 1 byte from that offset by moving all the data past the given offset back 1 byte and resizing the variable to be 1 byte smaller
-uint8_t deleteChar(uint8_t slot, short offset);
+//uint8_t deleteChar(uint8_t slot, short offset);
 
 #endif

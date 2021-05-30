@@ -21,18 +21,6 @@ void archiveAll()
    ti_CloseAll();
 }
 
-// write the names of all detected files starting with a given string into a given 2d buffer array and return the number of files detected
-uint8_t loadFileNames(char** buffer) {
-   uint8_t result=0;
-   char* fileName;
-   void *search_pos = NULL;
-   while ((fileName=ti_Detect(&search_pos, "txt")) != NULL) {
-      copyString(fileName, &buffer[result][0]);
-      result++;
-   }
-   return result;
-}
-
 uint8_t getNumFiles(const char* txt) {
    uint8_t result = '\0';
    void *search_pos = NULL;
