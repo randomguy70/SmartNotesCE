@@ -1,9 +1,11 @@
 #include <stdint.h>
 #include <fileioc.h>
 #include <keypadc.h>
+#include <fontlibc.h>
 #include "graphx.h"
 #include "includes/text.h"
 #include "includes/key.h"
+#include "includes/file.h"
 
 uint8_t inputString(char* buffer, uint8_t maxLength)
 {
@@ -164,4 +166,46 @@ uint8_t copyString(char* inputStr, char* outputBuffer) {
    }
 }
 
+int varToArray(uint8_t slot, int varSize, char array[]) {
+   int i;
+
+   ti_Seek(10, 0, slot);
+
+   for(i=0; i<varSize-10; i++) {
+      array[i] = ti_GetChar(slot);
+   }
+   return varSize;
+}
+
+int arrayToVar(char array[], int arraySize, uint8_t slot) {
+   int i;
+
+   ti_Resize(arraySize+10, slot);
+   ti_Seek(10, 0, slot);
+   ti_Write(array, 1, arraySize, slot);
+}
+
+// formats the raw character data in the text array into an organized structure (hence the struct...obviously)
+int loadFile(char text[], int textSize, struct fileStruct* file, int curLine) {
+   int lines = 0;
+   int charPos = 0; // current offset in the text array
+
+   while(charPos<textSize) {
+      char curLine[40] = {0};
+      int curLineWidth = 0; // pixel length of current line
+      uint8_t curLineSize  = 0; // byte size of current line
+      uint8_t i            = 0; // loop var
+
+      while(curLineWidth < 315 && text[charPos] != 1) {
+         curLine[i] = text[charPos];
+         curLineWidth = fontlib_GetStringWidth(curLine);
+         charPos++;
+         curLineSize++;
+         i++;
+      }
+      file->lineOffsets[i] = ti_MallocString(curLineSize);
+      copyString(curLine, &(file->lineOffsets));
+      lines++;
+   }
+}
 

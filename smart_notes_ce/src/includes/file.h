@@ -11,4 +11,15 @@ uint8_t newFile(char* name);
 // gives a choice whether or not to delete a file with a given name
 uint8_t deleteFile(char* name);
 
+// contains organized file metadata
+struct fileStruct{
+   uint8_t slot; // the current slot the file is stored in
+   int characters; // the total number of characters in the file
+   int numLines; // the total number of lines in the file
+   int lineOffsets[200]; // array containing the offsets of the beginning of each line. for now, there can only be 200 lines per file
+};
+
+// detects all txt appvars and writes their names into a given 2d string buffer, returns the number of files found
+uint8_t loadFileNames(char **buffer);
+
 #endif

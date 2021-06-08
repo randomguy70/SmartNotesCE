@@ -6,7 +6,7 @@
 #include "includes/ui.h"
 #include "includes/file.h"
 #include "includes/text.h"
-////////////// /////////////  //////////////  ///////////  ////////////  //////////////////////////  //////////////////
+
 // homescreen stuff
 uint8_t dispHomeScreen() {
    uint8_t numFilesShown = 0; // number of files currently shown on screen. can't be more than 10
@@ -15,13 +15,10 @@ uint8_t dispHomeScreen() {
    uint8_t selectedNum = 0; // number of currently selected file
    uint8_t viewerOffset = 0;
    numFiles = getNumFiles("TXT");
-   char *fileNames[25][9];
 
-   loadFileNames(fileNames);
    struct fileViewerStruct fileViewer;
 
    while(1) {
-      uint8_t i;
       // graphics
       gfx_SetDraw(1);
       gfx_FillScreen(4);
@@ -109,7 +106,6 @@ uint8_t dispFiles(uint8_t offset, uint8_t selectedNum, char* selectedName) {
 
    // display files starting at offset
    while (((fileName = ti_Detect(&search_pos, "TXT")) != NULL) && (numFilesShown<10)) {
-      
          // get file info, get file info, get file info...
          fileSlot = ti_Open(fileName,"r");
          fileSize = ti_GetSize(fileSlot);
@@ -182,7 +178,7 @@ uint8_t dispEditor() {
 }
 
 // other
-uint8_t checkIfDelete(char *name) {
+uint8_t checkIfDelete(char* name) {
    gfx_SetDraw(1);
    gfx_SetColor(4);
    gfx_FillRectangle_NoClip(100,90,121,40); // main rect

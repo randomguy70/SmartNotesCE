@@ -30,13 +30,13 @@ uint8_t getNumFiles(const char* txt) {
    return result;
 }
 
-uint8_t newFile(char* name) {
+uint8_t newFile(char *name) {
    ti_CloseAll();
    uint8_t file = ti_Open(name, "w+");
    ti_Write("TXT", 3, 1, file);
 }
 
-uint8_t deleteFile(char* name) {
+uint8_t deleteFile(char *name) {
    gfx_SetDraw(1);
    gfx_SetColor(4);
    gfx_FillRectangle_NoClip(100,90,121,40);
@@ -60,5 +60,18 @@ uint8_t deleteFile(char* name) {
          return 0;
       }
    }
+}
+
+uint8_t loadFileNames(char **buffer) {
+   uint8_t result = 0;
+   char *string = '\0';
+   void *search_pos = NULL;
+
+   while ((string = ti_Detect(&search_pos, "TXT")) != NULL) {
+      // copies filename string into a 2d array buffer
+      copyString(string, buffer[result][0]);
+      result++;
+   }
+   return result;
 }
 
