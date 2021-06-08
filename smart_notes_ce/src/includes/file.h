@@ -20,6 +20,6 @@ struct fileStruct{
 };
 
 // detects all txt appvars and writes their names into a given 2d string buffer, returns the number of files found
-uint8_t loadFileNames(char **buffer);
+uint8_t loadFileNames(char *buffer);
 
 #endif

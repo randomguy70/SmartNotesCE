@@ -6,22 +6,18 @@
 #include "includes/ui.h"
 #include "includes/file.h"
 #include "includes/text.h"
-////////////// /////////////  //////////////  ///////////  ////////////  //////////////////////////  //////////////////
-// homescreen stuff
-uint8_t dispHomeScreen() {
-   uint8_t numFilesShown = 0; // number of files currently shown on screen. can't be more than 10
-   uint8_t numFiles = 0;
-   char selectedName[9] = {0}; // pointer to name of selected file
-   uint8_t selectedNum = 0; // number of currently selected file
-   uint8_t viewerOffset = 0;
-   numFiles = getNumFiles("TXT");
-   char *fileNames[25][9];
 
+uint8_t dispHomeScreen() {
+   uint8_t numFilesShown = 0;          // number of files currently shown on screen. can't be more than 10
+   uint8_t numFiles = 0;               // total number of txt files detected
+   char selectedName[9] = {0};         // pointer to name of selected file
+   uint8_t selectedNum = 0;            // number of currently selected file
+   uint8_t viewerOffset = 0;
+   char *fileNames[40] = {0};                // array of pointers to the names of text files
+   numFiles = getNumFiles("TXT");  
    loadFileNames(fileNames);
-   struct fileViewerStruct fileViewer;
 
    while(1) {
-      uint8_t i;
       // graphics
       gfx_SetDraw(1);
       gfx_FillScreen(4);
@@ -39,6 +35,7 @@ uint8_t dispHomeScreen() {
 
       // display the txt files and buttons
       numFilesShown = dispFiles(viewerOffset, selectedNum, selectedName);
+      gfx_PrintStringXY(fileNames[1], 10, 10);
       dispButtons(1);
 
       // handle keypresses, should probably make this a function

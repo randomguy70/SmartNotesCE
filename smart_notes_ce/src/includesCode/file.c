@@ -62,14 +62,11 @@ uint8_t deleteFile(char *name) {
    }
 }
 
-uint8_t loadFileNames(char **buffer) {
+uint8_t loadFileNames(char *buffer) {
    uint8_t result = 0;
-   char *string = '\0';
    void *search_pos = NULL;
 
-   while ((string = ti_Detect(&search_pos, "TXT")) != NULL) {
-      // copies filename string into a 2d array buffer
-      copyString(string, buffer[result][0]);
+   while ((buffer[result] = ti_Detect(&search_pos, "TXT")) != NULL) {
       result++;
    }
    return result;
