@@ -14,7 +14,7 @@ uint8_t dispHomeScreen() {
    uint8_t selectedNum = 0;            // number of currently selected file
    uint8_t viewerOffset = 0;
    numFiles = getNumFiles("TXT");
-   char fileNames[20][9] = {0};           // array of all the names of text files. there can only be 20 at the most (might change that if someone asks)
+   char fileNames[30][9] = {0};           // array of all the names of text files. there can only be 30 at the most (might change that if someone asks)
    loadFileNames(fileNames);
 
    while(1) {
@@ -35,7 +35,6 @@ uint8_t dispHomeScreen() {
 
       // display the txt files and buttons
       numFilesShown = dispFiles(viewerOffset, selectedNum, selectedName);
-      gfx_PrintStringXY(fileNames[0], 10, 10);
       dispButtons(1);
 
       // handle keypresses, should probably make this a function
