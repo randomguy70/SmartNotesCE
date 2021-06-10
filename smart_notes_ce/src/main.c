@@ -52,10 +52,6 @@ int main() {
    while(mode) {
       if (mode == 1) {
          mode = dispHomeScreen();
-      } else if (mode == 2) {
-
-      } else if(mode == 3) {
-
       }
    }
    return 0;
