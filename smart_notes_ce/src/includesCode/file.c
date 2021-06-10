@@ -69,7 +69,7 @@ uint8_t loadFileNames(char **buffer) {
    while ((namePtr = ti_Detect(&search_pos, "TXT")) != NULL) {
       uint8_t i = 0;
       while(namePtr[i]!='\0'){
-         buffer[numFiles][i] = namePtr[i];
+         *(*(buffer+numFiles)+i) = namePtr[i];
          i++;
       }
       numFiles++;
