@@ -10,11 +10,11 @@
 uint8_t dispHomeScreen() {
    uint8_t numFilesShown = 0;          // number of files currently shown on screen. can't be more than 10
    uint8_t numFiles = 0;               // total number of txt files detected
-   char selectedName[9] = {0};         // pointer to name of selected file
+   char selectedName[9];         // pointer to name of selected file
    uint8_t selectedNum = 0;            // number of currently selected file
    uint8_t viewerOffset = 0;
-   char *fileNames[40] = {0};                // array of pointers to the names of text files
-   numFiles = getNumFiles("TXT");  
+   numFiles = getNumFiles("TXT");
+   char fileNames[20][9]= {0};           // array of all the names of text files. there can only be 20 at the most (might change that if someone asks)
    loadFileNames(fileNames);
 
    while(1) {

@@ -10,14 +10,12 @@ void archiveAll()
    uint8_t fileSlot;
    char * fileName;
    void* search_pos = NULL;
+   
+   ti_CloseAll();
    while (((fileName = ti_Detect(search_pos, "TXT")) != NULL)) {
       fileSlot = ti_Open(fileName, "r");
       ti_SetArchiveStatus(1, fileSlot);
    }
-   fileSlot = ti_Open("MATH", "r");
-   ti_SetArchiveStatus(1, fileSlot);
-   fileSlot = ti_Open("CAPS", "r");
-   ti_SetArchiveStatus(1, fileSlot);
    ti_CloseAll();
 }
 
@@ -34,6 +32,7 @@ uint8_t newFile(char *name) {
    ti_CloseAll();
    uint8_t file = ti_Open(name, "w+");
    ti_Write("TXT", 3, 1, file);
+   return 1;
 }
 
 uint8_t deleteFile(char *name) {
@@ -62,13 +61,19 @@ uint8_t deleteFile(char *name) {
    }
 }
 
-uint8_t loadFileNames(char *buffer) {
-   uint8_t result = 0;
+uint8_t loadFileNames(char **buffer) {
+   uint8_t numFiles = 0;
+   char *namePtr;
    void *search_pos = NULL;
 
-   while ((buffer[result] = ti_Detect(&search_pos, "TXT")) != NULL) {
-      result++;
+   while ((namePtr = ti_Detect(&search_pos, "TXT")) != NULL) {
+      uint8_t i = 0;
+      while(namePtr[i]!='\0'){
+         buffer[numFiles][i] = namePtr[i];
+         i++;
+      }
+      numFiles++;
    }
-   return result;
+   return numFiles;
 }
 
