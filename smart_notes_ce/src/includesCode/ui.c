@@ -1,3 +1,4 @@
+/*
 #include <stdint.h>
 #include <fileioc.h>
 #include <keypadc.h>
@@ -6,67 +7,52 @@
 #include "includes/ui.h"
 #include "includes/file.h"
 #include "includes/text.h"
+*/
+#include "main.h"
 
 uint8_t dispHomeScreen() {
    // set up struct for homescreen variables & data
-   struct fileViewerStruct HS // homescreen struct
+   struct fileViewerStruct HS; // homescreen struct
    uint8_t numFilesShown = 0;          // number of files currently shown on screen. can't be more than 10
    HS.selectedFile = 0;
-   uint8_t viewerOffset = 0;
+   // uint8_t viewerOffset = 0;
    HS.numFiles = getNumFiles("TXT");
    loadFileNames(HS.fileNames);
 
    while(1) {
       dispHomeScreenBG();
-      dispFiles(viewerOffset, selectedNum, selectedName);
-      dispButtons(1);
+      dispHSButtons();
+      dispFiles(&HS);
+      gfx_PrintStringXY(HS.fileNames[0], 10, 10);
 
-      // handle keypresses, should probably make this a function
+      // keypresses
       kb_Scan();
-      // move selected down
-      if(kb_IsDown(kb_KeyDown) && selectedNum<numFiles-1) {
-         if(selectedNum == viewerOffset + 9) {
-            viewerOffset++;
-            selectedNum++;
-         } else {
-            selectedNum++;
-         }
+      // moving cursor
+      if(kb_IsDown(kb_KeyDown) && HS.selectedFile<HS.numFiles) {
+         HS.selectedFile++;
       }
-      if(kb_IsDown(kb_KeyUp) && selectedNum>0) { // move selected up
-         if(selectedNum == viewerOffset) {
-            selectedNum--;
-            viewerOffset--;
-         }
-         else {
-            selectedNum--;
-         }
+      if(kb_IsDown(kb_KeyUp) && HS.selectedFile>0) { // move selected up
+         HS.selectedFile--;
       }
-      if(kb_IsDown(kb_KeyClear)) { // quit program
+      // quit program
+      if(kb_IsDown(kb_KeyClear)) {
          gfx_End();
          ti_CloseAll();
          return 0;
       }
-      if(kb_IsDown(kb_KeyZoom)) { //  delete file
-         ti_Delete(selectedName);
-      }
-      if(kb_IsDown(kb_KeyTrace)) { // new file
+      // new file
+      if(kb_IsDown(kb_KeyTrace)) {
          newFile();
       }
-      if(kb_IsDown(kb_KeyZoom) && numFiles) {
-         deleteFile(selectedName);
+      // delete file
+      if(kb_IsDown(kb_KeyZoom) && HS.numFiles) {
+         checkIfDelete(HS.fileNames[HS.selectedFile]);
       }
-      gfx_SetColor(6);
-      gfx_SetTextXY(10,10);
-      gfx_PrintInt(numFiles,1);
-      gfx_SetTextXY(10, 25);
-      gfx_PrintInt(selectedNum, 1);
-      gfx_SetTextXY(10, 35);
-      gfx_PrintInt(viewerOffset, 1);
+
       gfx_SwapDraw();
       gfx_Wait();
    }
 }
-///////////////////////////////////////////////////////////////// editing the dispFiles function. if want to undo all changes, then cmd+z until i get back here. :P /////////// //////////////// //////////////////// //////////////////////
 
 uint8_t dispFiles(struct fileViewerStruct *HS) {
    uint8_t i;
@@ -101,7 +87,7 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
       gfx_PrintStringXY("That's too bad for you :(",93,100);
    }
 
-   // return the number of files displayed, I guess. this really isn't necessary at all btw.
+   // return the number of files displayed, I guess. this really isn't necessary at all btw. if i run low on bytes, which is unlikely, will delete this. :P
    return i;
 }
 
@@ -146,7 +132,6 @@ uint8_t dispEditor() {
    return 0;
 }
 
-// other
 uint8_t checkIfDelete(char *name) {
    gfx_SetDraw(1);
    gfx_SetColor(4);
@@ -177,4 +162,4 @@ void exitFull() {
 }
 
 
-// wow, you actually got to the bottom of this file. now, did you actually read everything or did you just scroll down quickly to impress upon people who were watching that you are cool & can read code?
+// Congrats, you actually got to the bottom of this file! Did you actually read everything or did you just scroll down quickly? :P

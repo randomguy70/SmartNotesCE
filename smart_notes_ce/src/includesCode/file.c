@@ -1,9 +1,4 @@
-#include <stdint.h>
-#include <fileioc.h>
-#include <keypadc.h>
-#include <graphx.h>
-#include "includes/file.h"
-#include "includes/text.h"
+#include "main.h"
 
 void archiveAll()
 {
@@ -41,43 +36,13 @@ uint8_t newFile() {
    }
 }
 
-uint8_t deleteFile(char *name) {
-   gfx_SetDraw(1);
-   gfx_SetColor(4);
-   gfx_FillRectangle_NoClip(100,90,121,40);
-   gfx_SetColor(6);
-   gfx_Rectangle_NoClip(99,89,123,42);
-   gfx_Rectangle_NoClip(100,90,121,40);
-   //text
-   gfx_SetTextFGColor(6);
-   gfx_PrintStringXY("Are you sure?",112,100);
-   gfx_PrintStringXY("Yes=2nd  No=Mode",102,115);
-   gfx_Blit(1);
-   
-   while (1) {
-      kb_Scan();
-      if (kb_IsDown(kb_2nd)) {
-         ti_Delete(name);
-         delay(100);
-         return 1;
-      }
-      if (kb_IsDown(kb_Clear)) {
-         return 0;
-      }
-   }
-}
-
 uint8_t loadFileNames(char buffer[][9]) {
    uint8_t numFiles = 0;
-   char *namePtr;
-   uint8_t *search_pos = NULL;
+   char *namePtr = NULL;
+   uintt_t *search_pos = NULL;
 
    while ((namePtr = ti_Detect(&search_pos, "TXT")) != NULL) {
-      uint8_t i = 0;
-      while(namePtr[i]!='\0'){
-         buffer[numFiles][i] = namePtr[i];
-         i++;
-      }
+      copyString(namePtr, buffer[numFiles]);
       numFiles++;
    }
    return numFiles;

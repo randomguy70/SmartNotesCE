@@ -1,3 +1,4 @@
+/*
 #include <stdint.h>
 #include <fileioc.h>
 #include <keypadc.h>
@@ -6,6 +7,8 @@
 #include "includes/text.h"
 #include "includes/key.h"
 #include "includes/file.h"
+*/
+#include "main.h"
 
 uint8_t inputString(char* buffer, uint8_t maxLength)
 {
