@@ -80,7 +80,6 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
       gfx_SetTextFGColor(244);
       gfx_PrintStringXY("--NO FILES FOUND--)",93,80);
       gfx_PrintStringXY("That's too bad for you :(",93,100);
-      gfx_PrintStringXY("Were you being a naughty student and not taking notes? :P", 75, 120);
    }
 
    // return the number of files displayed, I guess. this really isn't necessary at all btw. if i run low on bytes, which is unlikely, will delete this. :P
