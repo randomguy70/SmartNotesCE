@@ -5,7 +5,8 @@ uint8_t dispHomeScreen() {
    // set up struct for homescreen variables & data
    struct fileViewerStruct HS;
    HS.selectedFile = 0;
-   HS.offset=0;
+   HS.offset       = 0;
+   HS.viewOffset   = 0;
    HS.numFiles = loadFiles(&HS);
 
    while(1) {
@@ -18,6 +19,11 @@ uint8_t dispHomeScreen() {
       // moving cursor
       if(kb_IsDown(kb_KeyDown) && HS.selectedFile<HS.numFiles-1) {
          HS.selectedFile++;
+         HS.viewOffset++;
+         if(HS.selectedFile>HS.offset+HS.viewOffset){
+            HS.viewOffset--;
+            HS.offset++;
+         }
       }
       if(kb_IsDown(kb_KeyUp) && HS.selectedFile>0) { // move selected up
          HS.selectedFile--;
@@ -48,32 +54,33 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
    uint8_t i;
    uint8_t fileSlot;   // slot number of currently detected file
    uint8_t fileSize;   // size of currently detected and drawn file
+   int fileY = 61;
 
-   i=HS->offset;
-   while(i<10 && i<HS->numFiles) {
+   for(i=HS->offset; i<10 && i<numFiles; i++) {
       fileSlot = ti_Open(HS->fileNames[i],"r");
       fileSize = ti_GetSize(fileSlot);
 
       // display currently selected file with highlighting rect
       if (HS->selectedFile == i) {
          gfx_SetColor(0);
-         gfx_FillRectangle_NoClip(35,i*15+56,250,15);
+         gfx_FillRectangle_NoClip(35,fileY-5,250,15);
          gfx_SetTextFGColor(1);
       } else {
          gfx_SetTextFGColor(0);
       }
       // display detected file name & size & 
-      gfx_PrintStringXY(HS->fileNames[i],40,i*15+61);
-      gfx_SetTextXY(135,i*15+61);
+      gfx_PrintStringXY(HS->fileNames[i],40,fileY);
+      gfx_SetTextXY(135,fileY);
       gfx_PrintInt(fileSize,4);
       gfx_SetTextFGColor(0);
-      i++;
+      fileY+=15;
    }
    // display when no files were detected because you forgot to take notes :P
    if (HS->numFiles == 0) {
       gfx_SetTextFGColor(244);
       gfx_PrintStringXY("--NO FILES FOUND--)",93,80);
       gfx_PrintStringXY("That's too bad for you :(",93,100);
+      gfx_PrintStringXY("Were you being a naughty student and not taking notes? :P", 75, 120);
    }
 
    // return the number of files displayed, I guess. this really isn't necessary at all btw. if i run low on bytes, which is unlikely, will delete this. :P

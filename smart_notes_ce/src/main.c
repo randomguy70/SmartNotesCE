@@ -1,7 +1,7 @@
 #include "main.h"
 
 /* main loop */
-void main() {
+int main() {
    uint8_t mode = 1;
    gfx_Begin();
    gfx_SetPalette(palette, 18, 0);
@@ -15,4 +15,5 @@ void main() {
          mode = dispHomeScreen();
       }
    }
+   return 0;
 }

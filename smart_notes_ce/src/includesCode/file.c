@@ -62,16 +62,18 @@ uint8_t checkIfDelete(struct fileViewerStruct *HS ) {
    gfx_Rectangle_NoClip(101,91,119,38);// outline rect
    gfx_SetTextFGColor(RED);
    gfx_PrintStringXY("Are you sure?",112,100);
-   gfx_PrintStringXY("Yes=2nd  No=Mode",102,115);
+   gfx_PrintStringXY("Yes=2nd  No=Clear",102,115);
    uint8_t result = 0;
-   uint8_t keyPressed;
-   while ((keyPressed=os_GetCSC())!=sk_2nd && (keyPressed=os_GetCSC())!=sk_Clear) {
+   uint8_t keyPressed = 0;
+   while (keyPressed!=sk_2nd && keyPressed!=sk_Clear) {
+      keyPressed = os_GetCSC();
       if (keyPressed==sk_2nd) {
          ti_Delete(HS->fileNames[HS->selectedFile]);
          result = 1;;
       }
       if (keyPressed==sk_Clear) {
          result = 2;
+         delay(100);
       }
    }
    if(result==1) {

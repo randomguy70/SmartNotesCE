@@ -1,0 +1,95 @@
+	section	.text,"ax",@progbits
+	assume	adl = 1
+	section	.text,"ax",@progbits
+	public	_get_single_key_pressed
+_get_single_key_pressed:
+	ld	hl, -3
+	call	__frameset
+	call	_kb_Scan
+	ld	hl, 7
+	ld	b, 0
+	ld	c, 1
+BB0_1:
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	z, BB0_9
+	ld	(ix + -3), hl
+	add	hl, hl
+	ex	de, hl
+	ld	iy, -720880
+	add	iy, de
+	ld	a, c
+	add	a, 8
+	ld	e, a
+	ld	h, 1
+BB0_3:
+	ld	a, h
+	or	a, a
+	jq	z, BB0_8
+	ld	l, e
+	ld	e, (iy)
+	ld	d, (iy + 1)
+	ld	a, e
+	and	a, h
+	or	a, a
+	jq	nz, BB0_5
+	ld	a, b
+	jq	BB0_6
+BB0_5:
+	ld	a, b
+	or	a, a
+	ld	a, c
+	jq	nz, BB0_7
+BB0_6:
+	sla	h
+	inc	c
+	ld	b, a
+	ld	e, l
+	jq	BB0_3
+BB0_8:
+	ld	hl, (ix + -3)
+	dec	hl
+	ld	c, e
+	jq	BB0_1
+BB0_9:
+	ld	a, (_get_single_key_pressed.last_key)
+	ld	c, a
+	ld	e, 0
+BB0_10:
+	ld	a, b
+	cp	a, c
+	jq	nz, BB0_11
+	jq	BB0_13
+BB0_11:
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB0_13
+	ld	a, b
+	ld	(_get_single_key_pressed.last_key), a
+	ld	e, b
+BB0_13:
+	ld	a, e
+	pop	hl
+	pop	ix
+	ret
+BB0_7:
+	ld	e, 0
+	ld	a, e
+	ld	(_get_single_key_pressed.last_key), a
+	ld	c, e
+	ld	hl, (ix + -3)
+	jq	BB0_10
+	section	.text,"ax",@progbits
+
+	section	.bss,"aw",@nobits
+	private	_get_single_key_pressed.last_key
+_get_single_key_pressed.last_key:
+	rb	1
+
+	ident	"clang version 12.0.0 (https://github.com/jacobly0/llvm-project 170be88120e3aa88c20eea5615ba76b8f1d6c647)"
+	extern	__Unwind_SjLj_Register
+	extern	__Unwind_SjLj_Unregister
+	extern	__frameset
+	extern	_kb_Scan

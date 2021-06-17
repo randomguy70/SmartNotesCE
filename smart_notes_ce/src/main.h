@@ -12,6 +12,7 @@
 #include <graphx.h>
 #include <fileioc.h>
 #include <fontlibc.h>
+#include <string.h>
 
 // my includes
 #include "gfx/gfx.h"
