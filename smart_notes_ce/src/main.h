@@ -21,13 +21,14 @@
 #include "includes/file.h"
 
 // defines
-#define BLACK        0
-#define WHITE        1
-#define TRANSPARENT  2
-#define DARK_GREY    3
-#define MEDIUM_GREY  4
-#define LIGHT_GREY   5
-#define DARK_BLUE    6
+#define BLACK        0  // defines the fixed-entry offset of this color in my custom palette
+#define WHITE        1  // defines the fixed-entry offset of this color in my custom palette
+#define TRANSPARENT  2  // defines the fixed-entry offset of this color in my custom palette
+#define DARK_GREY    3  // defines the fixed-entry offset of this color in my custom palette
+#define MEDIUM_GREY  4  // defines the fixed-entry offset of this color in my custom palette
+#define LIGHT_GREY   5  // defines the fixed-entry offset of this color in my custom palette
+#define DARK_BLUE    6  // defines the fixed-entry offset of this color in my custom palette
+#define RED          7  // defines the fixed-entry offset of this color in my custom palette
 
 /*necessary information
 -3 modes

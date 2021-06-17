@@ -36,7 +36,7 @@ uint8_t newFile() {
    }
 }
 
-uint8_t loadFileNames(char buffer[][9]) {
+uint8_t loadFiles(char buffer[][9]) {
    uint8_t numFiles = 0;
    char *namePtr = NULL;
    uint8_t *search_pos = NULL;

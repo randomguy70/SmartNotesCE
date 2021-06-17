@@ -18,7 +18,7 @@ void exitFull();
 uint8_t dispFiles(struct fileViewerStruct *HS);
 
 // check if user wants to delete a file, and deleted the selected file if so
-uint8_t checkIfDelete(char *name);
+uint8_t checkIfDelete(struct fileViewerStruct *HS );
 
 // contains properties of the file viewer
 struct fileViewerStruct {

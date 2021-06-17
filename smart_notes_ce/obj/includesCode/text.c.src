@@ -419,27 +419,29 @@ BB1_2:
 _strcopy:
 	call	__frameset0
 	ld	hl, (ix + 9)
-	ld	d, 0
+	ld	b, 0
 BB2_1:
-	ld	bc, 0
-	ld	c, d
+	ld	de, 0
+	ld	e, b
 	push	hl
 	pop	iy
-	add	iy, bc
-	ld	e, (iy)
-	ld	a, e
+	add	iy, de
+	ld	c, (iy)
+	ld	a, c
 	or	a, a
 	jq	z, BB2_3
-	push	hl
-	pop	iy
-	ld	hl, (ix + 6)
-	add	hl, bc
-	ld	(hl), e
-	lea	hl, iy + 0
-	inc	d
+	ld	iy, (ix + 6)
+	add	iy, de
+	ld	(iy), c
+	inc	b
 	jq	BB2_1
 BB2_3:
-	ld	a, d
+	ld	a, b
+	or	a, a
+	ld	hl, 0
+	jq	z, BB2_5
+	ld	hl, (ix + 6)
+BB2_5:
 	pop	ix
 	ret
 	section	.text,"ax",@progbits

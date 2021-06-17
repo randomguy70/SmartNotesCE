@@ -120,8 +120,8 @@ BB2_2:
 	section	.text,"ax",@progbits
 
 	section	.text,"ax",@progbits
-	public	_loadFileNames
-_loadFileNames:
+	public	_loadFiles
+_loadFiles:
 	ld	hl, -4
 	call	__frameset
 	ld	hl, 0

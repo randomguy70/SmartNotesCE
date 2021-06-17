@@ -5,28 +5,19 @@
 _dispHomeScreen:
 	ld	hl, -283
 	call	__frameset
-	ld	hl, L_.str
 	ld	bc, -280
-	lea	iy, ix + 0
-	add	iy, bc
-	lea	de, iy + 0
-	push	ix
-	ld	bc, -283
-	add	ix, bc
-	ld	(ix + 0), de
-	pop	ix
-	ld	(ix + -7), 0
-	push	hl
-	call	_getNumFiles
-	pop	hl
-	ld	(ix + -10), a
-	ld	bc, -283
 	lea	hl, ix + 0
 	add	hl, bc
-	ld	hl, (hl)
+	ld	(ix + -7), 0
+	ld	(ix + -9), 0
+	ld	bc, -283
+	lea	iy, ix + 0
+	add	iy, bc
+	ld	(iy + 0), hl
 	push	hl
-	call	_loadFileNames
+	call	_loadFiles
 	pop	hl
+	ld	(ix + -10), a
 BB0_1:
 	call	_dispHomeScreenBG
 	call	_dispHSButtons
@@ -36,18 +27,6 @@ BB0_1:
 	ld	hl, (hl)
 	push	hl
 	call	_dispFiles
-	pop	hl
-	ld	hl, 10
-	push	hl
-	push	hl
-	ld	bc, -283
-	lea	hl, ix + 0
-	add	hl, bc
-	ld	hl, (hl)
-	push	hl
-	call	_gfx_PrintStringXY
-	pop	hl
-	pop	hl
 	pop	hl
 	call	_kb_Scan
 	ld	iy, -720866
@@ -59,25 +38,26 @@ BB0_1:
 	ld	l, 1
 	xor	a, l
 	bit	0, a
-	lea	hl, iy + 0
 	jq	nz, BB0_4
 	ld	a, (ix + -7)
-	ld	e, (ix + -10)
-	cp	a, e
-	jq	nc, BB0_4
+	ld	de, 0
+	push	de
+	pop	hl
+	ld	l, a
+	ld	c, (ix + -10)
+	ld	e, c
+	dec	de
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB0_4
 	inc	a
 	ld	(ix + -7), a
 BB0_4:
-	push	de
-	ld	e, (hl)
-	inc	hl
-	ld	d, (hl)
-	ld	l, e
-	ld	h, d
-	pop	de
+	ld	l, (iy)
+	ld	h, (iy + 1)
 	ld	a, l
 	bit	3, a
-	ld	iy, -720868
 	jq	z, BB0_7
 	ld	l, (ix + -7)
 	ld	a, l
@@ -86,53 +66,54 @@ BB0_4:
 	dec	l
 	ld	(ix + -7), l
 BB0_7:
+	ld	hl, -720868
+	push	de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	ld	l, e
+	ld	h, d
+	pop	de
+	ld	a, l
+	bit	6, a
+	ld	iy, -720878
+	jq	nz, BB0_8
 	ld	l, (iy)
 	ld	h, (iy + 1)
 	ld	a, l
-	bit	6, a
-	jq	nz, BB0_8
-	ld	hl, -720878
-	push	de
-	ld	e, (hl)
-	inc	hl
-	ld	d, (hl)
-	ld	l, e
-	ld	h, d
-	pop	de
-	ld	a, l
 	bit	1, a
-	call	nz, _newFile
-	ld	hl, -720878
-	push	de
-	ld	e, (hl)
-	inc	hl
-	ld	d, (hl)
-	ld	l, e
-	ld	h, d
-	pop	de
+	jq	z, BB0_11
+	call	_newFile
+	ld	bc, -283
+	lea	hl, ix + 0
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	call	_loadFiles
+	ld	iy, -720878
+	pop	hl
+BB0_11:
+	ld	l, (iy)
+	ld	h, (iy + 1)
 	ld	a, l
 	bit	2, a
 	jq	z, BB0_14
 	ld	a, (ix + -10)
 	or	a, a
 	jq	z, BB0_14
-	ld	a, (ix + -7)
-	or	a, a
-	sbc	hl, hl
-	ld	l, a
-	ld	bc, 9
-	call	__imulu
-	push	hl
-	pop	de
-	ld	(ix + -3), bc
 	ld	bc, -283
-	lea	iy, ix + 0
-	add	iy, bc
-	ld	hl, (iy + 0)
-	add	hl, de
+	lea	hl, ix + 0
+	add	hl, bc
+	ld	hl, (hl)
 	push	hl
-	ld	bc, (ix + -3)
 	call	_checkIfDelete
+	pop	hl
+	ld	bc, -283
+	lea	hl, ix + 0
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	call	_loadFiles
 	pop	hl
 BB0_14:
 	call	_gfx_SwapDraw
@@ -150,82 +131,104 @@ BB0_8:
 	section	.text,"ax",@progbits
 	public	_dispFiles
 _dispFiles:
-	ld	hl, -18
+	ld	hl, -23
 	call	__frameset
 	ld	hl, (ix + 6)
+	ld	c, 15
 	ld	de, 271
 	add	hl, de
-	ld	a, (hl)
-	ld	de, 0
-	ld	e, a
+	ld	e, c
+	ld	d, b
+	ld	d, (hl)
+	ld	iy, 0
+	lea	hl, iy + 0
+	ld	l, d
+	ld	a, d
 	cp	a, 11
 	jq	nc, BB1_2
 	ld	a, 10
 BB1_2:
-	ld	hl, 61
-	ld	(ix + -3), hl
-	ld	iy, 0
-	ld	(ix + -13), a
+	ld	(ix + -15), a
 	ld	iyl, a
-	ld	bc, 9
-	push	de
-	pop	hl
+	ld	(ix + -3), hl
+	ld	bc, 15
 	call	__imulu
-	push	de
-	pop	bc
+	ld	(ix + -8), hl
+	ld	(ix + -5), e
+	ld	(ix + -4), d
+	ld	l, e
+	ld	h, d
+	mlt	hl
+	ld	a, l
+	add	a, 56
+	ld	l, a
+	ld	(ix + -14), hl
+	ld	bc, 9
+	ld	hl, (ix + -3)
+	call	__imulu
+	lea	bc, iy + 0
 	push	hl
 	pop	de
-	ld	hl, (ix + 6)
+	ld	iy, (ix + 6)
+	lea	hl, iy + 0
 	add	hl, de
-	ld	(ix + -6), hl
-	push	bc
-	pop	de
-	ld	c, 56
+	ld	(ix + -11), hl
+	ld	de, 270
 BB1_3:
 	lea	hl, iy + 0
+	add	hl, de
+	ld	a, (hl)
+	push	bc
+	pop	hl
+	ld	de, (ix + -3)
 	or	a, a
 	sbc	hl, de
-	jq	z, BB1_7
-	ld	(ix + -16), iy
-	ld	(ix + -12), bc
-	ld	hl, L_.str.1
+	jq	z, BB1_13
+	ld	de, 0
+	ld	e, a
+	ld	hl, (ix + -3)
+	or	a, a
+	sbc	hl, de
+	jq	nc, BB1_12
+	ld	(ix + -21), bc
+	ld	hl, L_.str
 	push	hl
-	ld	hl, (ix + -6)
+	ld	hl, (ix + -11)
 	push	hl
-	ld	(ix + -9), de
 	call	_ti_Open
 	ld	l, a
 	pop	de
 	pop	de
 	push	hl
 	call	_ti_GetSize
-	ld	(ix + -18), l
-	ld	(ix + -17), h
+	ld	bc, 0
+	ld	(ix + -23), l
+	ld	(ix + -22), h
 	pop	hl
 	ld	hl, (ix + 6)
 	ld	de, 273
 	add	hl, de
 	ld	a, (hl)
-	or	a, a
-	sbc	hl, hl
-	ex	de, hl
+	push	bc
+	pop	de
 	ld	e, a
-	ld	hl, (ix + -9)
+	ld	hl, (ix + -3)
 	or	a, a
 	sbc	hl, de
-	ld	a, 0
-	ld	l, a
-	jq	nz, BB1_6
-	or	a, a
-	sbc	hl, hl
-	push	hl
+	jq	nz, BB1_7
+	push	bc
 	call	_gfx_SetColor
 	pop	hl
-	ld	hl, 15
-	push	hl
+	ld	hl, (ix + -3)
+	ld	de, 15
+	push	de
+	pop	bc
+	call	__imulu
+	ld	(ix + -18), hl
+	push	bc
 	ld	hl, 250
 	push	hl
-	ld	hl, (ix + -12)
+	ld	hl, (ix + -14)
 	push	hl
 	ld	hl, 35
 	push	hl
@@ -234,31 +237,42 @@ BB1_3:
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	a, 1
-	ld	l, a
-BB1_6:
+	ld	hl, 1
 	push	hl
 	call	_gfx_SetTextFGColor
 	pop	hl
-	ld	hl, (ix + -3)
+	ld	hl, (ix + -8)
+	jq	BB1_8
+BB1_7:
+	push	bc
+	call	_gfx_SetTextFGColor
+	pop	hl
+	ld	hl, (ix + -8)
+	ld	(ix + -18), hl
+BB1_8:
+	ld	(ix + -8), hl
+	ld	de, 61
+	ld	hl, (ix + -18)
+	add	hl, de
+	ld	(ix + -18), hl
 	push	hl
 	ld	hl, 40
 	push	hl
-	ld	hl, (ix + -6)
+	ld	hl, (ix + -11)
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	hl, (ix + -3)
+	ld	hl, (ix + -18)
 	push	hl
 	ld	hl, 135
 	push	hl
 	call	_gfx_SetTextXY
 	pop	hl
 	pop	hl
-	ld	l, (ix + -18)
-	ld	h, (ix + -17)
+	ld	l, (ix + -23)
+	ld	h, (ix + -22)
 	ld.sis	bc, 255
 	call	__sand
 	ld	de, 0
@@ -275,37 +289,51 @@ BB1_6:
 	push	hl
 	call	_gfx_SetTextFGColor
 	pop	hl
-	ld	de, 15
 	ld	hl, (ix + -3)
-	add	hl, de
+	inc	hl
 	ld	(ix + -3), hl
-	ld	de, (ix + -9)
-	inc	de
-	ld	hl, (ix + -12)
+	ld	l, (ix + -5)
+	ld	h, (ix + -4)
+	inc	h
+	ld	(ix + -5), l
+	ld	(ix + -4), h
+	ld	de, 15
+	ld	hl, (ix + -8)
+	add	hl, de
+	ld	(ix + -8), hl
+	ld	hl, (ix + -14)
 	ld	a, l
 	add	a, 15
-	ld	c, a
-	ld	iy, (ix + -6)
+	ld	l, a
+	ld	(ix + -14), hl
+	ld	iy, (ix + -11)
 	lea	iy, iy + 9
-	ld	(ix + -6), iy
-	ld	iy, (ix + -16)
-	jq	BB1_3
-BB1_7:
+	ld	(ix + -11), iy
+	ld	iy, (ix + 6)
+	ld	bc, (ix + -21)
 	ld	de, 270
-	ld	hl, (ix + 6)
-	add	hl, de
-	ld	a, (hl)
+	jq	BB1_3
+BB1_13:
+	ld	l, (ix + -15)
+	ld	d, l
+	jq	BB1_9
+BB1_12:
+	ld	e, (ix + -5)
+	ld	d, (ix + -4)
+BB1_9:
 	or	a, a
-	jq	nz, BB1_9
+	jq	nz, BB1_11
 	ld	hl, -12
 	push	hl
+	ld	(ix + -5), e
+	ld	(ix + -4), d
 	call	_gfx_SetTextFGColor
 	pop	hl
 	ld	hl, 80
 	push	hl
 	ld	hl, 93
 	push	hl
-	ld	hl, L_.str.2
+	ld	hl, L_.str.1
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -315,14 +343,16 @@ BB1_7:
 	push	hl
 	ld	hl, 93
 	push	hl
-	ld	hl, L_.str.3
+	ld	hl, L_.str.2
 	push	hl
 	call	_gfx_PrintStringXY
+	ld	e, (ix + -5)
+	ld	d, (ix + -4)
 	pop	hl
 	pop	hl
 	pop	hl
-BB1_9:
-	ld	a, (ix + -13)
+BB1_11:
+	ld	a, d
 	ld	sp, ix
 	pop	ix
 	ret
@@ -331,12 +361,16 @@ BB1_9:
 	section	.text,"ax",@progbits
 	public	_checkIfDelete
 _checkIfDelete:
-	call	__frameset0
-	ld	hl, 1
+	ld	hl, -4
+	call	__frameset
+	xor	a, a
+	ld	(ix + -1), a
+	or	a, a
+	sbc	hl, hl
 	push	hl
 	call	_gfx_SetDraw
 	pop	hl
-	ld	hl, 4
+	ld	hl, 6
 	push	hl
 	call	_gfx_SetColor
 	pop	hl
@@ -353,7 +387,7 @@ _checkIfDelete:
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	hl, 6
+	ld	hl, 7
 	push	hl
 	call	_gfx_SetColor
 	pop	hl
@@ -383,7 +417,7 @@ _checkIfDelete:
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	hl, 6
+	ld	hl, 7
 	push	hl
 	call	_gfx_SetTextFGColor
 	pop	hl
@@ -391,7 +425,7 @@ _checkIfDelete:
 	push	hl
 	ld	hl, 112
 	push	hl
-	ld	hl, L_.str.14
+	ld	hl, L_.str.13
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -401,53 +435,46 @@ _checkIfDelete:
 	push	hl
 	ld	hl, 102
 	push	hl
-	ld	hl, L_.str.15
+	ld	hl, L_.str.14
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	hl, 1
-	push	hl
-	call	_gfx_Blit
-	pop	hl
-BB2_1:
-	call	_kb_Scan
-	ld	hl, -720880
-	push	de
-	ld	e, (hl)
-	inc	hl
-	ld	d, (hl)
-	ld	l, e
-	ld	h, d
-	pop	de
-	ld	a, l
-	bit	5, a
-	jq	nz, BB2_2
-	ld	hl, -720880
-	push	de
-	ld	e, (hl)
-	inc	hl
-	ld	d, (hl)
-	ld	l, e
-	ld	h, d
-	pop	de
-	ld	a, l
-	bit	6, a
-	jq	z, BB2_1
-	xor	a, a
-	jq	BB2_4
-BB2_2:
+	ld	de, 273
 	ld	hl, (ix + 6)
+	add	hl, de
+	ld	(ix + -4), hl
+BB2_1:
+BB2_2:
+	call	_os_GetCSC
+	cp	a, 54
+	jq	z, BB2_6
+	call	_os_GetCSC
+	cp	a, 15
+	jq	z, BB2_6
+	cp	a, 54
+	jq	nz, BB2_2
+	ld	hl, (ix + -4)
+	ld	a, (hl)
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	ld	bc, 9
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, (ix + 6)
+	add	hl, de
 	push	hl
 	call	_ti_Delete
 	pop	hl
-	ld	hl, 200
-	push	hl
-	call	_delay
-	pop	hl
 	ld	a, 1
-BB2_4:
+	ld	(ix + -1), a
+	jq	BB2_1
+BB2_6:
+	ld	a, (ix + -1)
+	ld	sp, ix
 	pop	ix
 	ret
 	section	.text,"ax",@progbits
@@ -520,7 +547,7 @@ _dispHomeScreenBG:
 	push	hl
 	ld	hl, 115
 	push	hl
-	ld	hl, L_.str.4
+	ld	hl, L_.str.3
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -530,7 +557,7 @@ _dispHomeScreenBG:
 	push	hl
 	ld	hl, 55
 	push	hl
-	ld	hl, L_.str.5
+	ld	hl, L_.str.4
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -540,7 +567,7 @@ _dispHomeScreenBG:
 	push	hl
 	ld	hl, 40
 	push	hl
-	ld	hl, L_.str.6
+	ld	hl, L_.str.5
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -550,7 +577,7 @@ _dispHomeScreenBG:
 	push	hl
 	ld	hl, 135
 	push	hl
-	ld	hl, L_.str.7
+	ld	hl, L_.str.6
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -560,7 +587,7 @@ _dispHomeScreenBG:
 	push	hl
 	ld	hl, 210
 	push	hl
-	ld	hl, L_.str.8
+	ld	hl, L_.str.7
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -635,7 +662,7 @@ BB4_3:
 	push	hl
 	ld	hl, 16
 	push	hl
-	ld	hl, L_.str.9
+	ld	hl, L_.str.8
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -645,7 +672,7 @@ BB4_3:
 	push	hl
 	ld	hl, 73
 	push	hl
-	ld	hl, L_.str.10
+	ld	hl, L_.str.9
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -655,7 +682,7 @@ BB4_3:
 	push	hl
 	ld	hl, 137
 	push	hl
-	ld	hl, L_.str.11
+	ld	hl, L_.str.10
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -665,7 +692,7 @@ BB4_3:
 	push	hl
 	ld	hl, 211
 	push	hl
-	ld	hl, L_.str.12
+	ld	hl, L_.str.11
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -675,7 +702,7 @@ BB4_3:
 	push	hl
 	ld	hl, 270
 	push	hl
-	ld	hl, L_.str.13
+	ld	hl, L_.str.12
 	push	hl
 	call	_gfx_PrintStringXY
 	ld	sp, ix
@@ -690,91 +717,79 @@ _dispEditor:
 	ret
 	section	.text,"ax",@progbits
 
-	section	.text,"ax",@progbits
-	public	_exitFull
-_exitFull:
-	call	_archiveAll
-	jp	_gfx_End
-	section	.text,"ax",@progbits
-
 	section	.rodata,"a",@progbits
 	private	L_.str
 L_.str:
-	db	"TXT",000o
+	db	"r",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.1
 L_.str.1:
-	db	"r",000o
+	db	"--NO FILES FOUND--)",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.2
 L_.str.2:
-	db	"--NO FILES FOUND--)",000o
+	db	"That's too bad for you :(",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.3
 L_.str.3:
-	db	"That's too bad for you :(",000o
+	db	"SMARTNOTES CE",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.4
 L_.str.4:
-	db	"SMARTNOTES CE",000o
+	db	"VERSION 1.0 BY JOHNPAUL MALLOY",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.5
 L_.str.5:
-	db	"VERSION 1.0 BY JOHNPAUL MALLOY",000o
+	db	"NAME",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.6
 L_.str.6:
-	db	"NAME",000o
+	db	"SIZE",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.7
 L_.str.7:
-	db	"SIZE",000o
+	db	"STATUS",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.8
 L_.str.8:
-	db	"STATUS",000o
+	db	"Open",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.9
 L_.str.9:
-	db	"Open",000o
+	db	"Rename",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.10
 L_.str.10:
-	db	"Rename",000o
+	db	"Delete",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.11
 L_.str.11:
-	db	"Delete",000o
+	db	"New",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.12
 L_.str.12:
-	db	"New",000o
+	db	"Other",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.13
 L_.str.13:
-	db	"Other",000o
+	db	"Are you sure?",000o
 
 	section	.rodata,"a",@progbits
 	private	L_.str.14
 L_.str.14:
-	db	"Are you sure?",000o
-
-	section	.rodata,"a",@progbits
-	private	L_.str.15
-L_.str.15:
 	db	"Yes=2nd  No=Mode",000o
 
 	section	.bss,"aw",@nobits
@@ -785,30 +800,27 @@ _HS:
 	ident	"clang version 12.0.0 (https://github.com/jacobly0/llvm-project 170be88120e3aa88c20eea5615ba76b8f1d6c647)"
 	extern	__Unwind_SjLj_Register
 	extern	__frameset
-	extern	_archiveAll
 	extern	_gfx_Rectangle_NoClip
 	extern	_gfx_SetTextFGColor
 	extern	_gfx_FillRectangle_NoClip
 	extern	_ti_Delete
 	extern	_kb_Scan
+	extern	_loadFiles
 	extern	__sand
 	extern	_newFile
 	extern	_gfx_SwapDraw
-	extern	_loadFileNames
 	extern	_gfx_PrintInt
 	extern	_gfx_SetDraw
+	extern	__setflag
 	extern	_ti_CloseAll
 	extern	_gfx_FillScreen
 	extern	__Unwind_SjLj_Unregister
-	extern	_gfx_Blit
 	extern	__imulu
 	extern	_ti_Open
 	extern	_gfx_SetColor
 	extern	_ti_GetSize
 	extern	_gfx_Wait
-	extern	_delay
-	extern	_gfx_PrintStringXY
 	extern	_gfx_End
-	extern	_getNumFiles
-	extern	__frameset0
+	extern	_os_GetCSC
+	extern	_gfx_PrintStringXY
 	extern	_gfx_SetTextXY
