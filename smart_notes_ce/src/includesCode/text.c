@@ -145,19 +145,6 @@ uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed) {
    return 0;
 }
 
-char* strcopy(char* dest, const char* src) {
-   uint8_t strPos = 0;
-   while(src[strPos]!= '\0') {
-      dest[strPos] = src[strPos];
-      strPos++;//
-   }
-   if(!strPos) {
-      return NULL;
-   } else {
-      return dest;
-   }
-}
-
 int varToArray(uint8_t slot, int varSize, char array[]) {
    int i;
 
@@ -170,8 +157,6 @@ int varToArray(uint8_t slot, int varSize, char array[]) {
 }
 
 int arrayToVar(char array[], int arraySize, uint8_t slot) {
-   int i;
-
    ti_Resize(arraySize+10, slot);
    ti_Seek(10, 0, slot);
    ti_Write(array, 1, arraySize, slot);
@@ -195,9 +180,10 @@ int loadFile(char text[], int textSize, struct fileStruct* file, int curLine) {
          curLineSize++;
          i++;
       }
-      file->lineOffsets[i] = ti_MallocString(curLineSize);
+      //file->lineOffsets[i] = ti_MallocString(curLineSize);
       copyString(curLine, &(file->lineOffsets));
       lines++;
    }
+   return lines;
 }
 

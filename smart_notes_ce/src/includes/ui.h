@@ -17,12 +17,10 @@ void exitFull();
 // displays files at a given offset using the data in the homescreen struct (HS)
 uint8_t dispFiles(struct fileViewerStruct *HS);
 
-// check if user wants to delete a file, and deleted the selected file if so
-uint8_t checkIfDelete(struct fileViewerStruct *HS );
-
 // contains properties of the file viewer
 struct fileViewerStruct {
    char fileNames[30][9];   // array of detected text file names
+   int fileSizes[30];       // array of detected text file sizes
    uint8_t numFiles;        // total number of files detected. shouldn't be more than 30
    uint8_t offset;          // what is the number of files that were shifted UP off the screen for the cursor to move more than  10 files down
    uint8_t viewOffset;      // what is the offset of the cursor (and therefore selected file) from the first displayed file on the screen

@@ -50,7 +50,7 @@ BB0_5:
 	section	.bss,"aw",@nobits
 	public	_HS
 _HS:
-	rb	274
+	rb	364
 
 	ident	"clang version 12.0.0 (https://github.com/jacobly0/llvm-project 170be88120e3aa88c20eea5615ba76b8f1d6c647)"
 	extern	_gfx_SetTextTransparentColor

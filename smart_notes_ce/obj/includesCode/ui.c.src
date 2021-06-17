@@ -3,14 +3,14 @@
 	section	.text,"ax",@progbits
 	public	_dispHomeScreen
 _dispHomeScreen:
-	ld	hl, -283
+	ld	hl, -373
 	call	__frameset
-	ld	bc, -280
+	ld	bc, -370
 	lea	hl, ix + 0
 	add	hl, bc
 	ld	(ix + -7), 0
 	ld	(ix + -9), 0
-	ld	bc, -283
+	ld	bc, -373
 	lea	iy, ix + 0
 	add	iy, bc
 	ld	(iy + 0), hl
@@ -21,7 +21,7 @@ _dispHomeScreen:
 BB0_1:
 	call	_dispHomeScreenBG
 	call	_dispHSButtons
-	ld	bc, -283
+	ld	bc, -373
 	lea	hl, ix + 0
 	add	hl, bc
 	ld	hl, (hl)
@@ -84,7 +84,7 @@ BB0_7:
 	bit	1, a
 	jq	z, BB0_11
 	call	_newFile
-	ld	bc, -283
+	ld	bc, -373
 	lea	hl, ix + 0
 	add	hl, bc
 	ld	hl, (hl)
@@ -101,14 +101,14 @@ BB0_11:
 	ld	a, (ix + -10)
 	or	a, a
 	jq	z, BB0_14
-	ld	bc, -283
+	ld	bc, -373
 	lea	hl, ix + 0
 	add	hl, bc
 	ld	hl, (hl)
 	push	hl
 	call	_checkIfDelete
 	pop	hl
-	ld	bc, -283
+	ld	bc, -373
 	lea	hl, ix + 0
 	add	hl, bc
 	ld	hl, (hl)
@@ -135,7 +135,7 @@ _dispFiles:
 	call	__frameset
 	ld	hl, (ix + 6)
 	ld	c, 15
-	ld	de, 271
+	ld	de, 361
 	add	hl, de
 	ld	e, c
 	ld	d, b
@@ -173,7 +173,7 @@ BB1_2:
 	lea	hl, iy + 0
 	add	hl, de
 	ld	(ix + -11), hl
-	ld	de, 270
+	ld	de, 360
 BB1_3:
 	lea	hl, iy + 0
 	add	hl, de
@@ -206,7 +206,7 @@ BB1_3:
 	ld	(ix + -22), h
 	pop	hl
 	ld	hl, (ix + 6)
-	ld	de, 273
+	ld	de, 363
 	add	hl, de
 	ld	a, (hl)
 	push	bc
@@ -311,7 +311,7 @@ BB1_8:
 	ld	(ix + -11), iy
 	ld	iy, (ix + 6)
 	ld	bc, (ix + -21)
-	ld	de, 270
+	ld	de, 360
 	jq	BB1_3
 BB1_13:
 	ld	l, (ix + -15)
@@ -353,127 +353,6 @@ BB1_9:
 	pop	hl
 BB1_11:
 	ld	a, d
-	ld	sp, ix
-	pop	ix
-	ret
-	section	.text,"ax",@progbits
-
-	section	.text,"ax",@progbits
-	public	_checkIfDelete
-_checkIfDelete:
-	ld	hl, -4
-	call	__frameset
-	xor	a, a
-	ld	(ix + -1), a
-	or	a, a
-	sbc	hl, hl
-	push	hl
-	call	_gfx_SetDraw
-	pop	hl
-	ld	hl, 6
-	push	hl
-	call	_gfx_SetColor
-	pop	hl
-	ld	hl, 40
-	push	hl
-	ld	hl, 121
-	push	hl
-	ld	hl, 90
-	push	hl
-	ld	hl, 100
-	push	hl
-	call	_gfx_FillRectangle_NoClip
-	pop	hl
-	pop	hl
-	pop	hl
-	pop	hl
-	ld	hl, 7
-	push	hl
-	call	_gfx_SetColor
-	pop	hl
-	ld	hl, 40
-	push	hl
-	ld	hl, 121
-	push	hl
-	ld	hl, 90
-	push	hl
-	ld	hl, 100
-	push	hl
-	call	_gfx_Rectangle_NoClip
-	pop	hl
-	pop	hl
-	pop	hl
-	pop	hl
-	ld	hl, 38
-	push	hl
-	ld	hl, 119
-	push	hl
-	ld	hl, 91
-	push	hl
-	ld	hl, 101
-	push	hl
-	call	_gfx_Rectangle_NoClip
-	pop	hl
-	pop	hl
-	pop	hl
-	pop	hl
-	ld	hl, 7
-	push	hl
-	call	_gfx_SetTextFGColor
-	pop	hl
-	ld	hl, 100
-	push	hl
-	ld	hl, 112
-	push	hl
-	ld	hl, L_.str.13
-	push	hl
-	call	_gfx_PrintStringXY
-	pop	hl
-	pop	hl
-	pop	hl
-	ld	hl, 115
-	push	hl
-	ld	hl, 102
-	push	hl
-	ld	hl, L_.str.14
-	push	hl
-	call	_gfx_PrintStringXY
-	pop	hl
-	pop	hl
-	pop	hl
-	ld	de, 273
-	ld	hl, (ix + 6)
-	add	hl, de
-	ld	(ix + -4), hl
-BB2_1:
-BB2_2:
-	call	_os_GetCSC
-	cp	a, 54
-	jq	z, BB2_6
-	call	_os_GetCSC
-	cp	a, 15
-	jq	z, BB2_6
-	cp	a, 54
-	jq	nz, BB2_2
-	ld	hl, (ix + -4)
-	ld	a, (hl)
-	or	a, a
-	sbc	hl, hl
-	ld	l, a
-	ld	bc, 9
-	call	__imulu
-	push	hl
-	pop	de
-	ld	hl, (ix + 6)
-	add	hl, de
-	push	hl
-	call	_ti_Delete
-	pop	hl
-	ld	a, 1
-	ld	(ix + -1), a
-	jq	BB2_1
-BB2_6:
-	ld	a, (ix + -1)
 	ld	sp, ix
 	pop	ix
 	ret
@@ -603,11 +482,11 @@ _dispHSButtons:
 	call	__frameset
 	ld	iy, 0
 	ld	de, 320
-BB4_1:
+BB3_1:
 	lea	hl, iy + 0
 	or	a, a
 	sbc	hl, de
-	jq	nc, BB4_3
+	jq	nc, BB3_3
 	or	a, a
 	sbc	hl, hl
 	push	hl
@@ -651,8 +530,8 @@ BB4_1:
 	ld	de, 63
 	add	iy, de
 	ld	de, 320
-	jq	BB4_1
-BB4_3:
+	jq	BB3_1
+BB3_3:
 	or	a, a
 	sbc	hl, hl
 	push	hl
@@ -782,20 +661,10 @@ L_.str.11:
 L_.str.12:
 	db	"Other",000o
 
-	section	.rodata,"a",@progbits
-	private	L_.str.13
-L_.str.13:
-	db	"Are you sure?",000o
-
-	section	.rodata,"a",@progbits
-	private	L_.str.14
-L_.str.14:
-	db	"Yes=2nd  No=Mode",000o
-
 	section	.bss,"aw",@nobits
 	public	_HS
 _HS:
-	rb	274
+	rb	364
 
 	ident	"clang version 12.0.0 (https://github.com/jacobly0/llvm-project 170be88120e3aa88c20eea5615ba76b8f1d6c647)"
 	extern	__Unwind_SjLj_Register
@@ -803,7 +672,6 @@ _HS:
 	extern	_gfx_Rectangle_NoClip
 	extern	_gfx_SetTextFGColor
 	extern	_gfx_FillRectangle_NoClip
-	extern	_ti_Delete
 	extern	_kb_Scan
 	extern	_loadFiles
 	extern	__sand
@@ -811,6 +679,7 @@ _HS:
 	extern	_gfx_SwapDraw
 	extern	_gfx_PrintInt
 	extern	_gfx_SetDraw
+	extern	_checkIfDelete
 	extern	__setflag
 	extern	_ti_CloseAll
 	extern	_gfx_FillScreen
@@ -821,6 +690,5 @@ _HS:
 	extern	_ti_GetSize
 	extern	_gfx_Wait
 	extern	_gfx_End
-	extern	_os_GetCSC
 	extern	_gfx_PrintStringXY
 	extern	_gfx_SetTextXY

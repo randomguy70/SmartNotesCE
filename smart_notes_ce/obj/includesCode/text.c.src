@@ -415,38 +415,6 @@ BB1_2:
 	section	.text,"ax",@progbits
 
 	section	.text,"ax",@progbits
-	public	_strcopy
-_strcopy:
-	call	__frameset0
-	ld	hl, (ix + 9)
-	ld	b, 0
-BB2_1:
-	ld	de, 0
-	ld	e, b
-	push	hl
-	pop	iy
-	add	iy, de
-	ld	c, (iy)
-	ld	a, c
-	or	a, a
-	jq	z, BB2_3
-	ld	iy, (ix + 6)
-	add	iy, de
-	ld	(iy), c
-	inc	b
-	jq	BB2_1
-BB2_3:
-	ld	a, b
-	or	a, a
-	ld	hl, 0
-	jq	z, BB2_5
-	ld	hl, (ix + 6)
-BB2_5:
-	pop	ix
-	ret
-	section	.text,"ax",@progbits
-
-	section	.text,"ax",@progbits
 	public	_varToArray
 _varToArray:
 	ld	hl, -9
@@ -471,20 +439,20 @@ _varToArray:
 	sbc	hl, de
 	dec	de
 	call	__setflag
-	jq	p, BB3_2
+	jq	p, BB2_2
 	push	de
 	pop	iy
-BB3_2:
+BB2_2:
 	ld	hl, (ix + 12)
 	ld	(ix + -3), hl
 	ld	a, (ix + 6)
 	ld	e, a
-BB3_3:
+BB2_3:
 	lea	hl, iy + 0
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, BB3_5
+	jq	z, BB2_5
 	push	de
 	ld	(ix + -6), de
 	ld	(ix + -9), iy
@@ -498,8 +466,8 @@ BB3_3:
 	dec	iy
 	inc	hl
 	ld	(ix + -3), hl
-	jq	BB3_3
-BB3_5:
+	jq	BB2_3
+BB2_5:
 	ld	hl, (ix + 9)
 	ld	sp, ix
 	pop	ix
@@ -550,7 +518,7 @@ _arrayToVar:
 	section	.text,"ax",@progbits
 	public	_loadFile
 _loadFile:
-	ld	hl, -49
+	ld	hl, -50
 	call	__frameset
 	ld	de, (ix + 9)
 	or	a, a
@@ -559,13 +527,13 @@ _loadFile:
 	ld	(ix + -46), bc
 	push	hl
 	pop	bc
-BB5_1:
-	push	bc
-	pop	hl
+BB4_1:
+	ld	(ix + -43), hl
 	or	a, a
 	sbc	hl, de
 	call	__setflag
-	jq	p, BB5_7
+	jq	p, BB4_7
+	ld	(ix + -49), bc
 	ld	hl, 40
 	push	hl
 	or	a, a
@@ -573,9 +541,7 @@ BB5_1:
 	push	hl
 	ld	hl, (ix + -46)
 	push	hl
-	ld	(ix + -43), bc
 	call	_memset
-	ld	bc, (ix + -43)
 	pop	hl
 	pop	hl
 	pop	hl
@@ -583,18 +549,19 @@ BB5_1:
 	sbc	hl, hl
 	xor	a, a
 	ld	iyl, a
-BB5_3:
+	ld	bc, (ix + -43)
+BB4_3:
 	ld	de, 315
 	or	a, a
 	sbc	hl, de
 	call	__setflag
 	ld	(ix + -43), bc
-	jq	p, BB5_6
+	jq	p, BB4_6
 	ld	hl, (ix + 6)
 	add	hl, bc
 	ld	a, (hl)
 	cp	a, 1
-	jq	z, BB5_6
+	jq	z, BB4_6
 	ld	de, 0
 	ld	e, iyl
 	ld	bc, (ix + -46)
@@ -605,52 +572,34 @@ BB5_3:
 	push	bc
 	push	af
 	ld	a, iyl
-	ld	(ix + -49), a
+	ld	(ix + -50), a
 	pop	af
 	call	_fontlib_GetStringWidth
 	push	af
-	ld	a, (ix + -49)
+	ld	a, (ix + -50)
 	ld	iyl, a
 	pop	af
 	ld	bc, (ix + -43)
 	pop	de
 	inc	bc
 	inc	iyl
-	jq	BB5_3
-BB5_6:
-	or	a, a
-	sbc	hl, hl
-	ex	de, hl
-	ld	e, iyl
-	ld	(ix + -49), de
-	ld	hl, _malloc
-	push	hl
-	push	de
-	call	_ti_AllocString
-	push	hl
-	pop	de
-	pop	hl
-	pop	hl
-	ld	iy, (ix + 12)
-	lea	iy, iy + 7
-	ld	hl, (ix + -49)
-	ld	bc, 3
-	call	__imulu
-	push	hl
-	pop	bc
-	add	iy, bc
-	ld	(iy), de
+	jq	BB4_3
+BB4_6:
 	ld	iy, (ix + 12)
 	pea	iy + 7
 	ld	hl, (ix + -46)
 	push	hl
 	call	_copyString
-	ld	bc, (ix + -43)
 	pop	hl
 	pop	hl
+	ld	hl, (ix + -43)
+	ld	bc, (ix + -49)
+	inc	bc
 	ld	de, (ix + 9)
-	jq	BB5_1
-BB5_7:
+	jq	BB4_1
+BB4_7:
+	push	bc
+	pop	hl
 	ld	sp, ix
 	pop	ix
 	ret
@@ -694,7 +643,7 @@ L___const.inputChar.lowerCaseDat:
 	section	.bss,"aw",@nobits
 	public	_HS
 _HS:
-	rb	274
+	rb	364
 
 	section	.rodata,"a",@progbits
 	private	L_switch.table.inputString
@@ -715,7 +664,6 @@ L_switch.table.inputChar:
 	extern	__Unwind_SjLj_Register
 	extern	_copyString
 	extern	__frameset
-	extern	_malloc
 	extern	_get_single_key_pressed
 	extern	_gfx_SetTextFGColor
 	extern	_gfx_Rectangle_NoClip
@@ -734,7 +682,6 @@ L_switch.table.inputChar:
 	extern	__Unwind_SjLj_Unregister
 	extern	_gfx_Blit
 	extern	__iand
-	extern	_ti_AllocString
 	extern	__imulu
 	extern	_gfx_SetColor
 	extern	_delay

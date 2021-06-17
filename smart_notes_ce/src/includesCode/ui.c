@@ -121,32 +121,4 @@ uint8_t dispEditor() {
    return 0;
 }
 
-uint8_t checkIfDelete(struct fileViewerStruct *HS ) {
-   gfx_SetDraw(0);
-   gfx_SetColor(DARK_BLUE);
-   gfx_FillRectangle_NoClip(100,90,121,40); // main rect
-   gfx_SetColor(RED);
-   gfx_Rectangle_NoClip(100,90,121,40);// outline rect
-   gfx_Rectangle_NoClip(101,91,119,38);// outline rect
-   gfx_SetTextFGColor(RED);
-   gfx_PrintStringXY("Are you sure?",112,100);
-   gfx_PrintStringXY("Yes=2nd  No=Mode",102,115);
-   uint8_t result = 0;
-   uint8_t keyPressed;
-   while ((keyPressed=os_GetCSC())!=sk_2nd && (keyPressed=os_GetCSC())!=sk_Clear) {
-      if (keyPressed==sk_2nd) {
-         ti_Delete(HS->fileNames[HS->selectedFile]);
-         result = 1;;
-      }
-      if (keyPressed==sk_Clear) {
-         result = 2;
-      }
-   }
-   if(result==1) {
-      return 1;
-   }else {
-      return 0;
-   }
-}
-
 // Congrats, you actually got to the bottom of this file! Did you actually read everything or did you just scroll down quickly? :P

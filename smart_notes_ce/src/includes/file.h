@@ -19,4 +19,7 @@ struct fileStruct{
 // detects all txt appvars and writes their names into a given 2d string buffer, returns the number of files found
 uint8_t loadFiles(struct fileViewerStruct *HS);
 
+// check if user wants to delete a file, and deleted the selected file if so
+uint8_t checkIfDelete(struct fileViewerStruct *HS );
+
 #endif

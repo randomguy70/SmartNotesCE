@@ -11,6 +11,7 @@
 #include <compression.h>
 #include <graphx.h>
 #include <fileioc.h>
+#include <fontlibc.h>
 
 // my includes
 #include "gfx/gfx.h"
