@@ -14,36 +14,13 @@ uint8_t dispHomeScreen() {
       dispHSButtons();
       dispFiles(&HS);
 
-      // keypresses
-      kb_Scan();
-      // moving cursor
-      if(kb_IsDown(kb_KeyDown) && HS.selectedFile<HS.numFiles-1) {
-         HS.selectedFile++;
-         HS.viewOffset++;
-         if(HS.selectedFile>HS.offset+HS.viewOffset){
-            HS.viewOffset--;
-            HS.offset++;
-         }
-      }
-      if(kb_IsDown(kb_KeyUp) && HS.selectedFile>0) { // move selected up
-         HS.selectedFile--;
-      }
+      handleHSKeyPresses(&HS);
       // quit program
       if(kb_IsDown(kb_KeyClear)) {
-         gfx_End();
-         ti_CloseAll();
-         return 0;
-      }
-      // new file
-      if(kb_IsDown(kb_KeyTrace)) {
-         newFile();
-         loadFiles(&HS);
-      }
-      // delete file
-      if(kb_IsDown(kb_KeyZoom) && HS.numFiles>0) {
-         checkIfDelete(&HS);
-         loadFiles(&HS);
-      }
+      gfx_End();
+      ti_CloseAll();
+      return 0;
+   }
 
       gfx_SwapDraw();
       gfx_Wait();
@@ -51,13 +28,14 @@ uint8_t dispHomeScreen() {
 }
 
 uint8_t dispFiles(struct fileViewerStruct *HS) {
-   uint8_t i;
+   uint8_t i;          // starting increment of file display
+   uint8_t ii = 0;         // how many files have been displayed so far
    uint8_t fileSlot;   // slot number of currently detected file
    uint8_t fileSize;   // size of currently detected and drawn file
    int fileY = 61;
 
-   for(i=HS->offset; i<10 && i<numFiles; i++) {
-      fileSlot = ti_Open(HS->fileNames[i],"r");
+   for(i=HS->offset; i<10 && i<HS->numFiles; i++) {
+      fileSlot = ti_Open(HS->fileNames[i],"r+");
       fileSize = ti_GetSize(fileSlot);
 
       // display currently selected file with highlighting rect
@@ -74,6 +52,7 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
       gfx_PrintInt(fileSize,4);
       gfx_SetTextFGColor(0);
       fileY+=15;
+      ii++;
    }
    // display when no files were detected because you forgot to take notes :P
    if (HS->numFiles == 0) {
@@ -122,6 +101,34 @@ void dispHSButtons()
    gfx_PrintStringXY("Other",270,227);
 }
 
+void handleHSKeyPresses(struct fileViewerStruct *HS) {
+   kb_Scan();
+   // moving cursor
+   if(kb_IsDown(kb_KeyDown) && HS->selectedFile<HS->numFiles-1) {
+      HS->selectedFile++;
+      if(HS->viewOffset==10 && HS->selectedFile<HS->numFiles){
+         HS->offset++;
+      }
+      if(HS->viewOffset<10) {{
+
+      }
+         HS->viewOffset++;
+      }
+   }
+   if(kb_IsDown(kb_KeyUp) && HS->selectedFile>0) { // move selected up
+      HS->selectedFile--;
+   }
+   // new file
+   if(kb_IsDown(kb_KeyTrace)) {
+      newFile();
+      loadFiles(HS);
+   }
+   // delete file
+   if(kb_IsDown(kb_KeyZoom) && HS->numFiles>0) {
+      checkIfDelete(HS);
+      loadFiles(HS);
+   }
+}
 // text editor stuff
 uint8_t dispEditor() {
    return 0;

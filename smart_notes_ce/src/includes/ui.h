@@ -11,6 +11,9 @@ void dispHSButtons();
 // displays the homescreen background
 void dispHomeScreenBG();
 
+// handles the keypresses in the fileViewer
+void handleHSKeyPresses(struct fileViewerStruct *HS);
+
 // archives appvars and quits the program
 void exitFull();
 
@@ -26,5 +29,6 @@ struct fileViewerStruct {
    uint8_t viewOffset;      // what is the offset of the cursor (and therefore selected file) from the first displayed file on the screen
    uint8_t selectedFile;    // what is the offset of the name of the selected file from the beginnning of the fileNames array
 };
+
 
 #endif
