@@ -127,6 +127,12 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
    if(kb_IsDown(kb_KeyZoom) && HS->numFiles>0) {
       checkIfDelete(HS);
       loadFiles(HS);
+      if(HS->selectedFile>0) {
+         HS->selectedFile--;
+      }
+      if(HS->offset>0) {
+         HS->offset--;
+      }
    }
 }
 
