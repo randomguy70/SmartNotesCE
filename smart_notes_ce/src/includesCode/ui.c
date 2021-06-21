@@ -36,7 +36,7 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
    uint8_t fileSize;   // size of currently detected and drawn file
    int fileY = 61;
 
-   for(i=HS->offset; i<10 && i<HS->numFiles; i++) {
+   for(i=HS->offset; i<10+HS->offset && i<HS->numFiles; i++) {
       fileSlot = ti_Open(HS->fileNames[i],"r+");
       fileSize = ti_GetSize(fileSlot);
 
