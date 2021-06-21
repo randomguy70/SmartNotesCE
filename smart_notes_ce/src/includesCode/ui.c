@@ -15,6 +15,7 @@ uint8_t dispHomeScreen() {
       dispFiles(&HS);
 
       handleHSKeyPresses(&HS);
+      
       // quit program
       if(kb_IsDown(kb_KeyClear)) {
       gfx_End();
@@ -27,6 +28,7 @@ uint8_t dispHomeScreen() {
    }
 }
 
+// display the file names & info stored in the fileViewerStruct *HS
 uint8_t dispFiles(struct fileViewerStruct *HS) {
    uint8_t i;          // starting increment of file display
    uint8_t ii = 0;         // how many files have been displayed so far
@@ -129,6 +131,7 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
       loadFiles(HS);
    }
 }
+
 // text editor stuff
 uint8_t dispEditor() {
    return 0;
