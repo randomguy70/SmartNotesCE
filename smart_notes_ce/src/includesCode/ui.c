@@ -108,12 +108,15 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
    // moving cursor
    if(kb_IsDown(kb_KeyDown) && HS->selectedFile < HS->numFiles-1) {
       HS->selectedFile++;
-      if(HS->selectedFile>=HS->offset+10){
+      if(HS->selectedFile >= HS->offset+10){
          HS->offset++;
       }
    }
-   if(kb_IsDown(kb_KeyUp) && HS->selectedFile>0) { // move selected upx
+   if(kb_IsDown(kb_KeyUp) && HS->selectedFile>0) { // move selected up
       HS->selectedFile--;
+      if(HS->selectedFile < HS->offset){
+         HS->offset--;
+      }
    }
    // new file
    if(kb_IsDown(kb_KeyTrace)) {
