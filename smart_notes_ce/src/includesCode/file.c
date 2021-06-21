@@ -25,9 +25,12 @@ uint8_t getNumFiles(const char* txt) {
 
 uint8_t newFile() {
    char buffer[9] = {0};
+   uint8_t file;
    if(inputString(buffer, 8) > 0) {
       ti_CloseAll();
-      uint8_t file = ti_Open(buffer, "w+");
+      if (!(file = ti_Open(buffer, "r+"))){
+         file = ti_Open(buffer, "w+");
+      }
       ti_Write("TXT", 3, 1, file);
       return 1;
    }

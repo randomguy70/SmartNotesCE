@@ -181,7 +181,7 @@ int loadFile(char text[], int textSize, struct fileStruct* file, int curLine) {
          i++;
       }
       //file->lineOffsets[i] = ti_MallocString(curLineSize);
-      copyString(curLine, &(file->lineOffsets));
+      copyStr(curLine, &(file->lineOffsets));
       lines++;
    }
    return lines;
