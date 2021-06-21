@@ -15,7 +15,7 @@ uint8_t dispHomeScreen() {
       dispFiles(&HS);
 
       handleHSKeyPresses(&HS);
-      
+
       // quit program
       if(kb_IsDown(kb_KeyClear)) {
       gfx_End();
@@ -31,7 +31,7 @@ uint8_t dispHomeScreen() {
 // display the file names & info stored in the fileViewerStruct *HS
 uint8_t dispFiles(struct fileViewerStruct *HS) {
    uint8_t i;          // starting increment of file display
-   uint8_t ii = 0;         // how many files have been displayed so far
+   uint8_t ii = 0;     // how many files have been displayed so far
    uint8_t fileSlot;   // slot number of currently detected file
    uint8_t fileSize;   // size of currently detected and drawn file
    int fileY = 61;
@@ -106,18 +106,13 @@ void dispHSButtons()
 void handleHSKeyPresses(struct fileViewerStruct *HS) {
    kb_Scan();
    // moving cursor
-   if(kb_IsDown(kb_KeyDown) && HS->selectedFile<HS->numFiles-1) {
+   if(kb_IsDown(kb_KeyDown) && HS->selectedFile < HS->numFiles-1) {
       HS->selectedFile++;
-      if(HS->viewOffset==10 && HS->selectedFile<HS->numFiles){
+      if(HS->selectedFile>=HS->offset+10){
          HS->offset++;
       }
-      if(HS->viewOffset<10) {{
-
-      }
-         HS->viewOffset++;
-      }
    }
-   if(kb_IsDown(kb_KeyUp) && HS->selectedFile>0) { // move selected up
+   if(kb_IsDown(kb_KeyUp) && HS->selectedFile>0) { // move selected upx
       HS->selectedFile--;
    }
    // new file
