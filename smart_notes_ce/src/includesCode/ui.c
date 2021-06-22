@@ -143,7 +143,7 @@ uint8_t dispEditor() {
 
 // cursor stuff
 void animateCursor(struct cursorStruct *CS) {
-   if(CS->cursorState > CS->invisibleTime){
+   if(CS->cursorState > CS->invisibleTime) {
       drawCursor(CS->x, CS->y);
    }
    if(CS->cursorState >= cyclesPerAnimation) {

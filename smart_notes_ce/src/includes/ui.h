@@ -32,8 +32,8 @@ struct fileViewerStruct {
 
 // contains properties of a cursor
 struct cursorStruct {
-   uint8_t cursorState; // whether or not the cursor is visible (for blinking). is incremented until a certain value, and then reset based on how fast the main loop is.
-   uint8_t cyclesPerAnimation; // the total number of cycles per an animation (blink)
+   uint8_t cursorState; // number of cycles completed so far in 1 animation. Is incremented until it is == cyclesPerAnimation, and then reset.
+   uint8_t cyclesPerAnimation; // the total number of cycles that should be completed per an animation (blink), also called the speed :P
    uint8_t invisibleTime; // how many cycles the cursor should be invisible for
    int row; // current text row the cursor is in
    int column; // current text column the cursor is in
@@ -44,5 +44,6 @@ struct cursorStruct {
 // draws a cursor given the properties in a given cursor struct
 void animateCursor(struct cursorStruct *CS);
 
-
+// draws a cursor at a given x and y location
+void drawCursor(int x, int y);
 #endif
