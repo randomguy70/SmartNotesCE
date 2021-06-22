@@ -4,7 +4,7 @@ void archiveAll()
 {
    uint8_t fileSlot;
    char * fileName;
-   uint8_t *search_pos = NULL;
+   void *search_pos = NULL;
    
    ti_CloseAll();
    while (((fileName = ti_Detect(search_pos, "TXT")) != NULL)) {
@@ -16,7 +16,7 @@ void archiveAll()
 
 uint8_t getNumFiles(const char* txt) {
    uint8_t result = '\0';
-   uint8_t *search_pos = NULL;
+   void *search_pos = NULL;
    while (ti_Detect(&search_pos, txt) != NULL) {
       result++;
    }
@@ -25,17 +25,16 @@ uint8_t getNumFiles(const char* txt) {
 
 uint8_t newFile() {
    char buffer[9] = {0};
-   uint8_t file;
-   if(inputString(buffer, 8) > 0) {
-      ti_CloseAll();
+   uint8_t file = 0;
+   ti_CloseAll();
+   if (inputString(buffer, 8)>0){
       file = ti_Open(buffer, "r+");
       if (!file) {
          file = ti_Open(buffer, "w+");
       }
       ti_Write("TXT", 3, 1, file);
       return 1;
-   }
-   else{
+   } else {
       return 0;
    }
 }
@@ -44,7 +43,7 @@ uint8_t loadFiles(struct fileViewerStruct *HS) {
    uint8_t numFiles = 0;
    uint8_t fileSlot;
    char *namePtr = NULL;
-   uint8_t *search_pos = NULL;
+   void *search_pos = NULL;
 
    while ((namePtr = ti_Detect(&search_pos, "TXT")) != NULL) {
       strcpy(HS->fileNames[numFiles], namePtr);
