@@ -13,10 +13,12 @@ Thank you!
 - Jacobly
   - helped create the CE C toolchain
   - created [this function](https://github.com/randomguy70/SmartNotesCE/blob/8dbbe24928ba71f39dc3627c0b699b59bafe70bd/smart_notes_ce/src/includesCode/key.c#L6) that returns the OS_GetCSC value of the last key pressed using the ultra-fast kb_ data array.
+  - many helpful & patient comments & suggestions
 - MateoC
   - created the [CE C Toolchain](https://github.com/CE-Programming/toolchain/releases/tag/v9.1)
   - creator of [Oiram, a port of Mario](https://www.cemetech.net/downloads/files/1526/x1526), [Pacman](https://www.cemetech.net/downloads/files/1305/x1305), [Cesium, a shell for the TI-84 Plus CE](https://www.cemetech.net/downloads/files/1372/x2292), and many more TI-84 Plus CE related software projects
+  - many helpful and (usually) patient comments & suggestions
 - RoccoLox Programs
   - Beta-testing
 - Fghsgh
-  - helpful & patient comments
+  - helpful & patient comments & suggestions
