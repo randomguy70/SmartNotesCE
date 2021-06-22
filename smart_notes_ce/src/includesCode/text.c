@@ -160,6 +160,7 @@ int arrayToVar(char array[], int arraySize, uint8_t slot) {
    ti_Resize(arraySize+10, slot);
    ti_Seek(10, 0, slot);
    ti_Write(array, 1, arraySize, slot);
+   return 0;
 }
 
 // formats the raw character data in the text array into an organized structure (hence the struct...obviously)
@@ -181,7 +182,7 @@ int loadFile(char text[], int textSize, struct fileStruct* file, int curLine) {
          i++;
       }
       //file->lineOffsets[i] = ti_MallocString(curLineSize);
-      copyStr(curLine, &(file->lineOffsets));
+      strcpy(curLine, &(file->lineOffsets));
       lines++;
    }
    return lines;
