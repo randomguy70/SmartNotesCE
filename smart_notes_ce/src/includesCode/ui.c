@@ -146,8 +146,8 @@ void animateCursor(struct cursorStruct *CS) {
    if(CS->cursorState > CS->invisibleTime) {
       drawCursor(CS->x, CS->y);
    }
-   if(CS->cursorState >= cyclesPerAnimation) {
-      CS=>cursorState = 0;
+   if(CS->cursorState >= CS->cyclesPerAnimation) {
+      CS->cursorState = 0;
    }
    CS->cursorState++;
 }
