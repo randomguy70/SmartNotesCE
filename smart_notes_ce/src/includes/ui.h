@@ -26,6 +26,13 @@ struct fileViewerStruct {
    uint8_t selectedFile;    // what is the offset of the name of the selected file from the beginnning of the fileNames array
 };
 
+// contains properties of the editor
+struct editorStruct {
+   struct cursorStruct cursor;
+   uint8_t fileSlot; // slot of open file
+   
+};
+
 // contains properties of a cursor
 struct cursorStruct {
    uint8_t cursorState; // number of cycles completed so far in 1 animation. Is incremented until it is == cyclesPerAnimation, and then reset.

@@ -153,12 +153,31 @@ uint8_t dispEditor(uint8_t fileSlot) {
    while(1) {
       gfx_SetDraw(1);
 
-
+      if(kb_KeyIsDown(kb_Clear)) {
+         return 0;
+      }
       gfx_SwapDraw();
    }
 
 
    return 0;
+}
+
+void dispEditorBK() {
+   gfx_FillScreen(WHITE);
+
+   gfx_SetColor(DARK_BLUE);
+   // top line
+   gfx_HorizLine(0, 13, 320);
+   gfx_HorizLine(0, 14, 320);
+   // bottom line
+   gfx_HorizLine(0, 216, 320);
+   gfx_HorizLine(0, 217, 320);
+}
+
+void editorKeyPresses(struct *editorStruct ES) {
+   kb_Scan();
+   //blah blah blah...
 }
 
 // cursor stuff. not even using this right now
