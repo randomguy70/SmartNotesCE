@@ -49,6 +49,9 @@ uint8_t loadFiles(struct fileViewerStruct *HS) {
       strcpy(HS->fileNames[numFiles], namePtr);
       fileSlot = ti_Open(namePtr, "r");
       ti_SetArchiveStatus(fileSlot, 1);
+      if(ti_GetSize(fileSlot)<10) {
+         ti_Resize(10, fileSlot);
+      }
       HS->fileSizes[numFiles] = ti_GetSize(fileSlot);
       numFiles++;
    }

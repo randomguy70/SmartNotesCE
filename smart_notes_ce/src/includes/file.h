@@ -11,8 +11,11 @@ uint8_t newFile();
 // contains organized file metadata
 struct fileStruct{
    uint8_t slot; // the current slot the file is stored in
+   char *textOrigin; // pointer to the start of the text data
    int characters; // the total number of characters in the file
+   uint8_t curLine; // the current line being edited
    int numLines; // the total number of lines in the file
+   int numWords; // total number of words in the file. a word is ended with either a null byte or a space
    int lineOffsets[200]; // array containing the offsets of the beginning of each line. for now, there can only be 200 lines per file
 };
 

@@ -1,5 +1,10 @@
 #include "main.h"
 
+#define scrnXMin 15
+#define scrnYMin 0
+#define scrnXMax 320
+#define scrnYMax 210
+
 uint8_t inputString(char* buffer, uint8_t maxLength)
 {
    uint8_t math = 1; // constant for value of math/numbers txt mode
@@ -164,27 +169,36 @@ int arrayToVar(char array[], int arraySize, uint8_t slot) {
 }
 
 // formats the raw character data in the text array into an organized structure (hence the struct...obviously)
-int loadFile(char text[], int textSize, struct fileStruct* file, int curLine) {
-   int lines = 0;
-   int charPos = 0; // current offset in the text array
+int loadFile(struct fileStruct *file, uint8_t slot) {
+   int pos = 0; // current byte offset from the start of text in the file
+   int numWords = 0; // total number of words found in the file so far
+   int numChars = ti_getSize(slot)-10;
 
-   while(charPos<textSize) {
-      char curLine[40] = {0};
-      int curLineWidth = 0; // pixel length of current line
-      uint8_t curLineSize  = 0; // byte size of current line
-      uint8_t i            = 0; // loop var
+   ti_Seek(10, 0, slot);
+   file->textOrigin = ti_GetDataPtr(slot);
 
-      while(curLineWidth < 315 && text[charPos] != 1) {
-         curLine[i] = text[charPos];
-         curLineWidth = fontlib_GetStringWidth(curLine);
-         charPos++;
-         curLineSize++;
-         i++;
-      }
-      //file->lineOffsets[i] = ti_MallocString(curLineSize);
-      strcpy(curLine, &(file->lineOffsets));
-      lines++;
+   while(pos<numChars) {
+      int curWordLen = 0;
+      int curLineLen = 0;
+
+      curWordLen = getWordLen(file->textOrigin);
+      if (curWordLen+curLineLen > )
    }
-   return lines;
+}
+
+int getWordLen(char* loc) {
+   int chars = 0;
+   while(loc[chars] != '\0' && loc[chars]!=' ') {
+      chars++;
+   }
+   return chars;
+}
+
+int copyWord(char* dest, char* src) {
+   int pos = 0;
+   while(src[pos]!='\0' && src[pos]!=' ') {
+      dest[pos] = src[pos];
+   }
+   return pos;
 }
 

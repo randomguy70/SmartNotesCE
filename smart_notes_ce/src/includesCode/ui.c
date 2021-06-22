@@ -6,7 +6,6 @@ uint8_t dispHomeScreen() {
    struct fileViewerStruct HS;
    HS.selectedFile = 0;
    HS.offset       = 0;
-   HS.viewOffset   = 0;
    HS.numFiles = loadFiles(&HS);
 
    while(1) {
@@ -51,7 +50,7 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
       // display detected file name & size & 
       gfx_PrintStringXY(HS->fileNames[i],40,fileY);
       gfx_SetTextXY(135,fileY);
-      gfx_PrintInt(fileSize,4);
+      gfx_PrintInt(fileSize-10,4); // subtract 10 because the first 10 bytes are not text data
       gfx_SetTextFGColor(0);
       fileY+=15;
       ii++;
@@ -147,11 +146,22 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
 }
 
 // text editor stuff
-uint8_t dispEditor() {
+uint8_t dispEditor(uint8_t fileSlot) {
+   struct fileStruct file;
+   file.slot = fileSlot;
+   
+   while(1) {
+      gfx_SetDraw(1);
+
+
+      gfx_SwapDraw();
+   }
+
+
    return 0;
 }
 
-// cursor stuff
+// cursor stuff. not even using this right now
 void animateCursor(struct cursorStruct *CS) {
    if(CS->cursorState > CS->invisibleTime) {
       drawCursor(CS->x, CS->y);
