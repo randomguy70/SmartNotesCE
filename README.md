@@ -1,4 +1,4 @@
-# **<center>SmartNotesCE</center>**
+# **<div align="center">SmartNotesCE</div>**
 
 ### A text editor for the TI 84 Plus CE calculator written in C by Randomguy.
 
