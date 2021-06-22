@@ -19,6 +19,6 @@ Thank you!
   - creator of [Oiram, a port of Mario](https://www.cemetech.net/downloads/files/1526/x1526), [Pacman](https://www.cemetech.net/downloads/files/1305/x1305), [Cesium, a shell for the TI-84 Plus CE](https://www.cemetech.net/downloads/files/1372/x2292), and many more TI-84 Plus CE related software projects
   - many helpful and (usually) patient comments & suggestions
 - RoccoLox Programs
-  - Beta-testing
+  - First by far to offer to do Beta-testing
 - Fghsgh
   - helpful & patient comments & suggestions
