@@ -9,7 +9,7 @@ Thank you!
 
 ---
 
-## This project could not have been done (probably) without the constant help and guidance of (including but not limited to) these coders on [Cemetech](https://www.cemetech.net), a TI Calculator software development site (mostly for the TI 84 Plus CE, because it is the best)
+## This project could not have been done (probably) without the constant help and guidance of (including but not limited to) these coders on [Cemetech](https://www.cemetech.net), a TI Calculator software development site (mostly for the TI 84 Plus CE, because it is the best calculator)
 - Jacobly
   - helped create the CE C toolchain
   - created [this function](https://github.com/randomguy70/SmartNotesCE/blob/8dbbe24928ba71f39dc3627c0b699b59bafe70bd/smart_notes_ce/src/includesCode/key.c#L6) that returns the OS_GetCSC value of the last key pressed using the ultra-fast kb_ data array.

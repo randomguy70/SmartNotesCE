@@ -12,9 +12,7 @@ int main() {
    fontlib_SetAlternateStopCode(' ');
    //put mode at 0 to exit, or call function exitFull()
    while(mode) {
-      if (mode == 1) {
-         mode = dispHomeScreen();
-      }
+      mode = dispHomeScreen();
    }
    return 0;
 }
