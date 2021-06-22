@@ -28,7 +28,8 @@ uint8_t newFile() {
    uint8_t file;
    if(inputString(buffer, 8) > 0) {
       ti_CloseAll();
-      if (!(file = ti_Open(buffer, "r+"))){
+      file = ti_Open(buffer, "r+");
+      if (!file) {
          file = ti_Open(buffer, "w+");
       }
       ti_Write("TXT", 3, 1, file);
