@@ -141,4 +141,20 @@ uint8_t dispEditor() {
    return 0;
 }
 
+// cursor stuff
+void animateCursor(struct cursorStruct *CS) {
+   if(CS->cursorState > CS->invisibleTime){
+      drawCursor(CS->x, CS->y);
+   }
+   if(CS->cursorState >= cyclesPerAnimation) {
+      CS=>cursorState = 0;
+   }
+   CS->cursorState++;
+}
+
+void drawCursor(int x, int y) {
+   gfx_SetColor(DARK_BLUE);
+   gfx_VertLine_NoClip(x, y, 11);
+   gfx_VertLine_NoClip(x+1, y, 11);
+}
 // Congrats, you actually got to the bottom of this file! Did you actually read everything or did you just scroll down quickly? :P
