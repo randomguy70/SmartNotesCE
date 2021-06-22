@@ -1,6 +1,6 @@
-# **SmartNotesCE, created by Randomguy.**
+# **SmartNotesCE**
 
-### A text editor for the TI 84 Plus CE calculator written in C.
+### A text editor for the TI 84 Plus CE calculator written in C by Randomguy.
 
 ## Download and / or run at your own risk! This project is hardly even in Beta Stage yet, and is known to have numerous bugs currently. 
 
