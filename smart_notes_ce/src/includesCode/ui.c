@@ -120,14 +120,8 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
    }
    // new file
    if(kb_IsDown(kb_KeyTrace)) {
-      char buffer[9] = {0};
-      uint8_t file = 0;
-      ti_CloseAll();
-      if (inputString(buffer, 8)>0){
-         file = ti_Open(buffer, "w+");
-         ti_Write("TXT", 3, 1, file);
-         loadFiles(HS);
-      }
+      newFile();
+      loadFiles(HS);
    }
    // delete file
    if(kb_IsDown(kb_KeyZoom) && HS->numFiles>0) {
@@ -163,4 +157,5 @@ void drawCursor(int x, int y) {
    gfx_VertLine_NoClip(x, y, 11);
    gfx_VertLine_NoClip(x+1, y, 11);
 }
+
 // Congrats, you actually got to the bottom of this file! Did you actually read everything or did you just scroll down quickly? :P

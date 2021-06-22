@@ -14,9 +14,6 @@ void dispHomeScreenBG();
 // handles the keypresses in the fileViewer
 void handleHSKeyPresses(struct fileViewerStruct *HS);
 
-// archives appvars and quits the program
-void exitFull();
-
 // displays files at a given offset using the data in the homescreen struct (HS)
 uint8_t dispFiles(struct fileViewerStruct *HS);
 
