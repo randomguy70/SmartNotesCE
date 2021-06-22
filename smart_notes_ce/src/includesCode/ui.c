@@ -123,6 +123,16 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
       newFile();
       loadFiles(HS);
    }
+   // rename file
+   if(kb_IsDown(kb_KeyWindow)) {
+      uint8_t result = 0;
+      char buffer[9] = {0};
+      if(inputString(buffer, 8)) {
+         ti_CloseAll();
+         result = ti_Rename(HS->fileNames[HS->selectedFile], buffer);
+      }
+      loadFiles(HS);
+   }
    // delete file
    if(kb_IsDown(kb_KeyZoom) && HS->numFiles>0) {
       checkIfDelete(HS);
