@@ -181,8 +181,8 @@ void dispEditorBK() {
    gfx_FillScreen(WHITE);
 
    gfx_SetColor(LIGHTER_BLUE);
-   gfx_Rectangle_NoClip(9, 14, 302, 210);
-	gfx_Rectangle_NoClip(10, 15, 300, 208);
+   gfx_Rectangle_NoClip(9, 14, 302, 200);
+	gfx_Rectangle_NoClip(10, 15, 300, 198);
 
 }
 
