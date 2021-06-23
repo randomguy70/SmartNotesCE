@@ -1,7 +1,9 @@
 #ifndef UI_H
 #define UI_H
 
+struct cursorStruct CS;
 struct fileViewerStruct HS;
+struct editorStruct ES;
 // displays homescreen and deals with all the homescreen functions and options
 uint8_t dispHomeScreen();
 
@@ -26,13 +28,6 @@ struct fileViewerStruct {
    uint8_t selectedFile;    // what is the offset of the name of the selected file from the beginnning of the fileNames array
 };
 
-// contains properties of the editor
-struct editorStruct {
-   struct cursorStruct cursor;
-   uint8_t fileSlot; // slot of open file
-   
-};
-
 // contains properties of a cursor
 struct cursorStruct {
    uint8_t cursorState; // number of cycles completed so far in 1 animation. Is incremented until it is == cyclesPerAnimation, and then reset.
@@ -43,6 +38,17 @@ struct cursorStruct {
    int x; // current x coord of cursor
    int y; // current y coord of cursor
 };
+
+// contains properties of the editor
+struct editorStruct {
+   struct cursorStruct cursor;
+   uint8_t fileSlot; // slot of open file
+   
+};
+
+void handleEditorKeyPresses(struct editorStruct* ES);
+
+uint8_t dispEditorBK();
 
 // draws a cursor given the properties in a given cursor struct
 void animateCursor(struct cursorStruct *CS);

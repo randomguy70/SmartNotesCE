@@ -25,6 +25,6 @@ int varToArray(uint8_t slot, int varSize, char array[]);
 int arrayToVar(char array[], int arraySize, uint8_t slot);
 
 
-int loadFile(char text[], int textSize, struct fileStruct* file, int curLine);
+int loadFile(struct fileStruct *file, uint8_t slot);
 
 #endif

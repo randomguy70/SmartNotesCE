@@ -182,7 +182,7 @@ int loadFile(struct fileStruct *file, uint8_t slot) {
       int curLineLen = 0;
 
       curWordLen = getWordLen(file->textOrigin);
-      if (curWordLen+curLineLen > )
+      if (curWordLen+curLineLen > 1){}
    }
 }
 

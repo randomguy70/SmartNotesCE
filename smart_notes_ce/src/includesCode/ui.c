@@ -143,19 +143,31 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
          HS->offset--;
       }
    }
+   // open file in editor
+   if(kb_IsDown(kb_Yequ)) {
+      uint8_t result = 0;
+      struct editorStruct ES;
+      ES.fileSlot=HS->fileNames[HS->selectedFile];
+      while(result) {
+         result = dispEditor(&ES);
+         // display settings if the result is 2
+      }
+   }
 }
 
 // text editor stuff
-uint8_t dispEditor(uint8_t fileSlot) {
+uint8_t dispEditor(struct editorStruct *ES) {
    struct fileStruct file;
    file.slot = fileSlot;
    
    while(1) {
       gfx_SetDraw(1);
+      dispEditorBK();
 
       if(kb_KeyIsDown(kb_Clear)) {
          return 0;
       }
+      handleEditorKeyPresses();
       gfx_SwapDraw();
    }
 
@@ -163,7 +175,7 @@ uint8_t dispEditor(uint8_t fileSlot) {
    return 0;
 }
 
-void dispEditorBK() {
+uint8_t dispEditorBK() {
    gfx_FillScreen(WHITE);
 
    gfx_SetColor(DARK_BLUE);
@@ -175,7 +187,7 @@ void dispEditorBK() {
    gfx_HorizLine(0, 217, 320);
 }
 
-void editorKeyPresses(struct *editorStruct ES) {
+void handleEditorKeyPresses(struct editorStruct* ES) {
    kb_Scan();
    //blah blah blah...
 }
