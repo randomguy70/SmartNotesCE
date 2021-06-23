@@ -188,15 +188,17 @@ int loadFile(struct fileStruct *file, uint8_t slot) {
    }
 }
 
-int getLineLen(char* loc, int *chars, int *linePixelLen) {
-	int pos        = 0;
-	*(linePixelLen)    = 0;
-	*(chars)       = 0;
-	char line[50]  = {0};
+int getLineLen(char* loc) {
+	int pos = 0;
+	linePixelLen = 0;
+	chars = 0;
+	char line[50] = {0};
 	int curWordPixelLen = 0;
 
 	while(1) {
-		curWordPixelLen = getWordLen(loc+pos);
+		struct wordStruct word;
+		curWordPixelLen = getWordLen(loc+pos, &word);
+
 		if(linePixelLen+curWordPixelLen>315 && linePixelLen>0) {
 			return linePixelLen;
 		}
@@ -208,17 +210,19 @@ int getLineLen(char* loc, int *chars, int *linePixelLen) {
 		}
 	}
 }
-int getWordLen(char* loc, struct *wordStruct word) {
+
+int getWordLen(char* loc, struct wordStruct *word) {
    int chars = 0;
-	int len;
+	int pixelLen;
    while(loc[chars] != '\0' && loc[chars]!=' ') {
       chars ++;
    }
-	char word[500];
-	strcpy(word, loc);
-	len = gfx_GetStringWidth(word);
-	word->
-   return len;
+	char wordBuffer[500];
+	strcpy(wordBuffer, loc);
+	pixelLen = gfx_GetStringWidth(wordBuffer);
+	word->pixelLen=pixelLen;
+	word->numChars = chars;
+   return pixelLen;
 }
 
 int copyWord(char* dest, char* src) {
@@ -230,4 +234,5 @@ int copyWord(char* dest, char* src) {
 	dest[pos] = '\0';
    return pos;
 }
+
 
