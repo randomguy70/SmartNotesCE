@@ -188,25 +188,30 @@ int loadFile(struct fileStruct *file, uint8_t slot) {
    }
 }
 
-int getLineLen(char* loc) {
+int getLineLen(char* loc, struct lineStruct *lineBuffer) {
 	int pos = 0;
-	linePixelLen = 0;
-	chars = 0;
+	int linePixelLen = 0;
+	int chars = 0;
 	char line[50] = {0};
 	int curWordPixelLen = 0;
-
+	
 	while(1) {
 		struct wordStruct word;
-		curWordPixelLen = getWordLen(loc+pos, &word);
+		curWordPixelLen = getWordLen(loc + pos, &word);
 
-		if(linePixelLen+curWordPixelLen>315 && linePixelLen>0) {
-			return linePixelLen;
-		}
+		// if the line contains at least 1 word, and adding the next word will make it too long, then return the current length of the line and ignore the next word
+		if(linePixelLen + curWordPixelLen > 315 && linePixelLen > 0) {
+			lineBuffer->pixelLen=linePixelLen;
+			lineBuffer->numChars=chars;
+			return chars;
+		} else
 		// if a single word is longer than a line because some nut was bored & messing around :P
-		if(linePixelLen == 0 && curWordPixelLen>=315) {
-			while(linePixelLen<312) { // 312 is slightly smaller than 315 so that a large character won't go out of the text box
-
+		if(linePixelLen == 0 && curWordPixelLen > 315) {
+			while(linePixelLen < 312 && loc[pos] != '\0' && loc[pos] != ' ') { // 312 is slightly smaller than 315 so that a character won't go out of the text box
+				line[pos] = loc[pos++];
 			}
+			line[pos] = '\0';
+			lineBuffer->pixelLen=gfx_GetStringWidth
 		}
 	}
 }
@@ -214,11 +219,12 @@ int getLineLen(char* loc) {
 int getWordLen(char* loc, struct wordStruct *word) {
    int chars = 0;
 	int pixelLen;
-   while(loc[chars] != '\0' && loc[chars]!=' ') {
-      chars ++;
+	char wordBuffer[200]; // make it large if somebody is messing around with typing random letters and no spaces :Ps
+   while(loc[chars] != '\0' && loc[chars] != ' ') {
+		wordBuffer[chars] = loc[chars];
+      chars++;
    }
-	char wordBuffer[500];
-	strcpy(wordBuffer, loc);
+	wordBuffer[chars]='\0';
 	pixelLen = gfx_GetStringWidth(wordBuffer);
 	word->pixelLen=pixelLen;
 	word->numChars = chars;
