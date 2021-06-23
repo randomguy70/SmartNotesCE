@@ -22,3 +22,5 @@ Thank you!
   - First by far to offer to do Beta-testing
 - Fghsgh
   - helpful & patient comments & suggestions
+- Commandz & Alvajoy123
+  - help with fonts
