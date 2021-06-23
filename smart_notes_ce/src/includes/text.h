@@ -38,8 +38,8 @@ struct lineStruct {
 	int pixelLen;
 	int numChars;
 };
-int getLineLen(char* loc);
-int getWordLen(char* loc, struct *wordStruct word);
-int copyWord(char* dest, char* src);
+int getLineLen(char* loc, struct lineStruct *lineBuffer);
+int getWordLen(char *loc, struct wordStruct *word);
+int copyWord(char *dest, char *src);
 
 #endif

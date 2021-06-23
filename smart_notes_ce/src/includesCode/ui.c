@@ -177,16 +177,12 @@ uint8_t dispEditor(struct editorStruct *ES) {
    return 0;
 }
 
-uint8_t dispEditorBK() {
+void dispEditorBK() {
    gfx_FillScreen(WHITE);
 
    gfx_SetColor(DARK_BLUE);
-   // top line
-   gfx_HorizLine(0, 13, 320);
-   gfx_HorizLine(0, 14, 320);
-   // bottom line
-   gfx_HorizLine(0, 216, 320);
-   gfx_HorizLine(0, 217, 320);
+   gfx_Rectangle_NoClip(2, 13, 308, 307);
+
 }
 
 void handleEditorKeyPresses(struct editorStruct* ES) {

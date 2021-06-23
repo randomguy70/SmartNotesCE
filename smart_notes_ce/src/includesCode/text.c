@@ -1,5 +1,11 @@
 #include "main.h"
 
+#define TEXT_ORIGIN 10
+#define SCRNXMIN 15
+#define SCRNYMIN 0
+#define SCRNXMAX 310
+#define SCRNYMAX 210
+
 uint8_t inputString(char* buffer, uint8_t maxLength)
 {
    uint8_t math = 1; // constant for value of math/numbers txt mode
@@ -165,26 +171,18 @@ int arrayToVar(char array[], int arraySize, uint8_t slot) {
 
 // formats the raw character data in the text array into an organized structure (hence the struct...obviously)
 int loadFile(struct fileStruct *file, uint8_t slot) {
-	#define ORIGIN 10
-	#define scrnXMin 15
-	#define scrnYMin 0
-	#define scrnXMax 320
-	#define scrnYMax 210
 
    int pos = 0; // current byte offset from the start of text in the file
    int numWords = 0; // total number of words found in the file so far
    int numChars = ti_getSize(slot)-10;
 	int curLine = 0;
 
-   ti_Seek(ORIGIN, 0, slot);
+   ti_Seek(TEXT_ORIGIN, 0, slot);
    file->textOrigin = ti_GetDataPtr(slot);
 
    while(pos<numChars) {
       int curWordLen = 0;
       int curLineLen = 0;
-
-      curWordLen = getWordLen(file->textOrigin+pos);
-      if (curWordLen+curLineLen > 1){}
    }
 }
 
@@ -200,20 +198,29 @@ int getLineLen(char* loc, struct lineStruct *lineBuffer) {
 		curWordPixelLen = getWordLen(loc + pos, &word);
 
 		// if the line contains at least 1 word, and adding the next word will make it too long, then return the current length of the line and ignore the next word
-		if(linePixelLen + curWordPixelLen > 315 && linePixelLen > 0) {
+		if(linePixelLen + curWordPixelLen > SCRNXMAX && linePixelLen > 0) {
 			lineBuffer->pixelLen=linePixelLen;
 			lineBuffer->numChars=chars;
-			return chars;
-		} else
+			return lineBuffer->numChars;
+		}
 		// if a single word is longer than a line because some nut was bored & messing around :P
-		if(linePixelLen == 0 && curWordPixelLen > 315) {
-			while(linePixelLen < 312 && loc[pos] != '\0' && loc[pos] != ' ') { // 312 is slightly smaller than 315 so that a character won't go out of the text box
-				line[pos] = loc[pos++];
+		else if(linePixelLen == 0 && curWordPixelLen > SCRNXMAX) {
+			while(linePixelLen < SCRNXMAX-5 && loc[pos] != '\0' && loc[pos] != ' ') { // 312 is slightly smaller than 315 so that a character won't go out of the text box
+				line[pos] = loc[pos];
+				linePixelLen += gfx_GetCharWidth(loc[pos]);
+				pos++;
 				chars++;
 			}
 			line[pos] = '\0';
 			lineBuffer->pixelLen=gfx_GetStringWidth;
 			lineBuffer->numChars=chars;
+			return lineBuffer->numChars; // don't return the pixel length because I will be skipping through the text file based on the line offsets, not the pixel lengths. the pixel lengths are only for joining individual words into lines.
+		}
+		// add a word to the end of the line if it doesn't go beyond the screen
+		else if(linePixelLen + curWordPixelLen < SCRNXMAX) {
+			copyWord(line[pos], loc[pos]);
+			linePixelLen+=getWordLen(loc[pos], &word);
+			pos+=word.numChars;
 		}
 	}
 }

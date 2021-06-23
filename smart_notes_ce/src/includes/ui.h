@@ -52,7 +52,7 @@ void handleEditorKeyPresses(struct editorStruct* ES);
 uint8_t dispEditor(struct editorStruct *ES);
 
 // displays the background graphics for the editor, such as the title, text box, buttons, etc...
-uint8_t dispEditorBK();
+void dispEditorBK();
 
 // draws a cursor given the properties in a given cursor struct
 void animateCursor(struct cursorStruct *CS);
