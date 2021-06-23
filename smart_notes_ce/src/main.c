@@ -15,6 +15,6 @@ int main() {
    while(mode) {
       mode = dispHomeScreen();
    }
-	kb_ClearOnLatch();
+	kb_ClearOnLatch(); // this is to prevent the error message (hopefully)
    return 0;
 }
