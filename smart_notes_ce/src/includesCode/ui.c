@@ -180,8 +180,9 @@ uint8_t dispEditor(struct editorStruct *ES) {
 void dispEditorBK() {
    gfx_FillScreen(WHITE);
 
-   gfx_SetColor(DARK_BLUE);
-   gfx_Rectangle_NoClip(2, 13, 308, 307);
+   gfx_SetColor(LIGHTER_BLUE);
+   gfx_Rectangle_NoClip(9, 14, 302, 210);
+	gfx_Rectangle_NoClip(10, 15, 300, 208);
 
 }
 
