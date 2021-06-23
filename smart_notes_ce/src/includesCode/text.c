@@ -189,9 +189,9 @@ int loadFile(struct fileStruct *file, uint8_t slot) {
 }
 
 int getLineLen(char* loc, struct lineStruct *lineBuffer) {
-	int pos = 0;
+	int pos = 0; // byte offset we are reading from after the given *loc ptr
 	int linePixelLen = 0;
-	int chars = 0;
+	int chars = 0; // number of characters in the line
 	char line[50] = {0};
 	int curWordPixelLen = 0;
 	
@@ -209,9 +209,11 @@ int getLineLen(char* loc, struct lineStruct *lineBuffer) {
 		if(linePixelLen == 0 && curWordPixelLen > 315) {
 			while(linePixelLen < 312 && loc[pos] != '\0' && loc[pos] != ' ') { // 312 is slightly smaller than 315 so that a character won't go out of the text box
 				line[pos] = loc[pos++];
+				chars++;
 			}
 			line[pos] = '\0';
-			lineBuffer->pixelLen=gfx_GetStringWidth
+			lineBuffer->pixelLen=gfx_GetStringWidth;
+			lineBuffer->numChars=chars;
 		}
 	}
 }
