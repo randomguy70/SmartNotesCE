@@ -2,6 +2,8 @@
 #define TEXT_H
 
 struct fileStruct;
+struct wordStruct;
+
 //inputString() writes an inputted string into a given string buffer (array)
 uint8_t inputString(char* buffer, uint8_t maxLength);
 
@@ -26,5 +28,13 @@ int arrayToVar(char array[], int arraySize, uint8_t slot);
 
 
 int loadFile(struct fileStruct *file, uint8_t slot);
+
+struct wordStruct{
+	int pixelLen;
+	int numChars;
+};
+int getLineLen(char* loc);
+int getWordLen(char* loc, struct *wordStruct word);
+int copyWord(char* dest, char* src);
 
 #endif

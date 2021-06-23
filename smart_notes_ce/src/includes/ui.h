@@ -48,6 +48,10 @@ struct editorStruct {
 
 void handleEditorKeyPresses(struct editorStruct* ES);
 
+// main text editing loop
+uint8_t dispEditor(struct editorStruct *ES);
+
+// displays the background graphics for the editor, such as the title, text box, buttons, etc...
 uint8_t dispEditorBK();
 
 // draws a cursor given the properties in a given cursor struct

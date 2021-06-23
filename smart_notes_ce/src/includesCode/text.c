@@ -1,10 +1,5 @@
 #include "main.h"
 
-#define scrnXMin 15
-#define scrnYMin 0
-#define scrnXMax 320
-#define scrnYMax 210
-
 uint8_t inputString(char* buffer, uint8_t maxLength)
 {
    uint8_t math = 1; // constant for value of math/numbers txt mode
@@ -170,35 +165,69 @@ int arrayToVar(char array[], int arraySize, uint8_t slot) {
 
 // formats the raw character data in the text array into an organized structure (hence the struct...obviously)
 int loadFile(struct fileStruct *file, uint8_t slot) {
+	#define ORIGIN 10
+	#define scrnXMin 15
+	#define scrnYMin 0
+	#define scrnXMax 320
+	#define scrnYMax 210
+
    int pos = 0; // current byte offset from the start of text in the file
    int numWords = 0; // total number of words found in the file so far
    int numChars = ti_getSize(slot)-10;
+	int curLine = 0;
 
-   ti_Seek(10, 0, slot);
+   ti_Seek(ORIGIN, 0, slot);
    file->textOrigin = ti_GetDataPtr(slot);
 
    while(pos<numChars) {
       int curWordLen = 0;
       int curLineLen = 0;
 
-      curWordLen = getWordLen(file->textOrigin);
+      curWordLen = getWordLen(file->textOrigin+pos);
       if (curWordLen+curLineLen > 1){}
    }
 }
 
-int getWordLen(char* loc) {
+int getLineLen(char* loc, int *chars, int *linePixelLen) {
+	int pos        = 0;
+	*(linePixelLen)    = 0;
+	*(chars)       = 0;
+	char line[50]  = {0};
+	int curWordPixelLen = 0;
+
+	while(1) {
+		curWordPixelLen = getWordLen(loc+pos);
+		if(linePixelLen+curWordPixelLen>315 && linePixelLen>0) {
+			return linePixelLen;
+		}
+		// if a single word is longer than a line because some nut was bored & messing around :P
+		if(linePixelLen == 0 && curWordPixelLen>=315) {
+			while(linePixelLen<312) { // 312 is slightly smaller than 315 so that a large character won't go out of the text box
+
+			}
+		}
+	}
+}
+int getWordLen(char* loc, struct *wordStruct word) {
    int chars = 0;
+	int len;
    while(loc[chars] != '\0' && loc[chars]!=' ') {
-      chars++;
+      chars ++;
    }
-   return chars;
+	char word[500];
+	strcpy(word, loc);
+	len = gfx_GetStringWidth(word);
+	word->
+   return len;
 }
 
 int copyWord(char* dest, char* src) {
    int pos = 0;
    while(src[pos]!='\0' && src[pos]!=' ') {
       dest[pos] = src[pos];
+		pos++;
    }
+	dest[pos] = '\0';
    return pos;
 }
 

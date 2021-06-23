@@ -144,13 +144,15 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
       }
    }
    // open file in editor
-   if(kb_IsDown(kb_Yequ)) {
-      uint8_t result = 0;
+   if(kb_IsDown(kb_KeyYequ)) {
+      uint8_t result = 1;
       struct editorStruct ES;
-      ES.fileSlot=HS->fileNames[HS->selectedFile];
+      ES.fileSlot=ti_Open(HS->fileNames[HS->selectedFile], "r+");
       while(result) {
-         result = dispEditor(&ES);
-         // display settings if the result is 2
+			if(result==1) {
+				result = dispEditor(&ES);
+			}
+         // display settings if the result is 2, quit if the result is 0
       }
    }
 }
@@ -158,16 +160,16 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
 // text editor stuff
 uint8_t dispEditor(struct editorStruct *ES) {
    struct fileStruct file;
-   file.slot = fileSlot;
+   file.slot = ES->fileSlot;
    
    while(1) {
       gfx_SetDraw(1);
       dispEditorBK();
 
-      if(kb_KeyIsDown(kb_Clear)) {
+      if(kb_IsDown(kb_KeyClear)) {
          return 0;
       }
-      handleEditorKeyPresses();
+      handleEditorKeyPresses(ES);
       gfx_SwapDraw();
    }
 
