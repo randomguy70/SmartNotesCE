@@ -9,10 +9,12 @@ int main() {
    gfx_SetTextTransparentColor(2);
    gfx_SetTextBGColor(2);
    kb_SetMode(MODE_3_CONTINUOUS);
+	kb_DisableOnLatch();
 
    //set mode at 0 to exit
    while(mode) {
       mode = dispHomeScreen();
    }
+	kb_ClearOnLatch();
    return 0;
 }
