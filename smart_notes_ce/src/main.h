@@ -33,6 +33,7 @@
 #define RED           7  // defines the fixed-entry offset of red in my custom palette
 #define LIGHTER_BLUE  8  // defines the fixed-entry offset of blue in my custom palette
 
+#define TEXT_ORIGIN 10 // the text in a file begins at offset of 10 bytes from the beginning
 /* necessary but random info
 -3 modes
    mode 1 = homescreen

@@ -27,19 +27,21 @@ int varToArray(uint8_t slot, int varSize, char array[]);
 // writes the contents of an array into a given appvar starting at an offset of 10
 int arrayToVar(char array[], int arraySize, uint8_t slot);
 
-
-int loadFile(struct fileStruct *file, uint8_t slot);
-
-struct wordStruct{
-	int pixelLen;
-	int numChars;
+struct wordStruct {
+	unsigned int pixelLen;
+	unsigned int numChars;
 };
 struct lineStruct {
-	int pixelLen;
-	int numChars;
+	char line[40];            // the line data, formatted as a string
+	unsigned int pixelLen;    // the pixel length of the line
+	unsigned int numChars;    // the number of characters in the line
+	struct lineStruct * next; // Pointer to next line struct. Yes, I am making a linked list of lines :P
 };
-int getLineLen(char* loc, struct lineStruct *lineBuffer);
-int getWordLen(char *loc, struct wordStruct *word);
-int copyWord(char *dest, char *src);
+
+int getLineLen(char * loc, struct lineStruct * lineBuffer);
+
+// returns the pixel length of the next word (terminated with either ' ' or '\0')
+int getWordLen(char * loc, struct wordStruct * word);
+int copyWord(char * dest, char * src);
 
 #endif
