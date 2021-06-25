@@ -11,6 +11,7 @@ int main() {
    kb_SetMode(MODE_3_CONTINUOUS);
 	kb_DisableOnLatch();
 	(*(volatile uint8_t*)0xF00008) = 1; // This is only necessary right before the main() returns 0, I just added this because the program compiled several bytes smaller when I added this here, probably due to the way the compression works. Also, why not?
+	char * ptr = malloc(1000000);
  
    //set mode at 0 to exit
    while(mode) {

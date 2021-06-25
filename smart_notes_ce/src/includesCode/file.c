@@ -60,11 +60,11 @@ uint8_t loadFiles(struct fileViewerStruct *HS) {
 }
 
 // formats the raw character data in the text array into an organized structure (hence the struct...obviously)
-int loadFile(struct fileStruct * file, uint8_t slot) {
+int loadFile(struct fileStruct * file) {
 
    char * readPos = NULL; // pointer to the current reading position in the file
    unsigned int numChars = ti_GetSize(slot)-10;
-	bool loopIsDone = FALSE;
+	uint8_t loopIsDone = 0;
 	struct lineStruct curLinePtr = NULL;
 	unsigned int curLine = 0;
 
