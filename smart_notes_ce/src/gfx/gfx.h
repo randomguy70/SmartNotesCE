@@ -7,7 +7,11 @@ extern "C" {
 
 #include "palette.h"
 #define myimages_palette_offset 0
-#include "settings.h"
+#include "settings_gear.h"
+#include "left_arrow.h"
+#include "right_arrow.h"
+#include "new_icon.h"
+#include "trash_icon.h"
 
 #ifdef __cplusplus
 }

@@ -59,29 +59,26 @@ uint8_t loadFiles(struct fileViewerStruct *HS) {
 	return numFiles;
 }
 
-// formats the raw character data in the text array into an organized structure (hence the struct...obviously)
+// formats the raw file data into an organized structure (hence the struct...obviously)
 int loadFile(struct fileStruct * file) {
 
-   char * readPos = NULL; // pointer to the current reading position in the file
+   char * readPos; // pointer to the current reading position in the file
    unsigned int numChars = ti_GetSize(slot)-10;
-	uint8_t loopIsDone = 0;
-	struct lineStruct curLinePtr = NULL;
+	uint8_t loopIsDone = 0; // whether or not the while loop is finished yet. I was going to make this a bool except for the fact that I forgot the syntax and I will probably forget later, so don't worry if you see this because it  will (perhaps, maybe, hopefully) be corrected in several years. :P P.S. It is June 25, 2021 right now when I am creating this if you are (will be) wondering.
 	unsigned int curLine = 0;
 
-	// seek to the beginning of the text data and store the pointer into both the fileStruct (for later usage if necessary), and the readPos (for this while loop)
-   ti_Seek(TEXT_ORIGIN, 0, slot);
-   file->txtDat = ti_GetDataPtr(slot);
+	// seek to the beginning of the text data and store the pointer into both the fileStruct, if I didn't already get the pointer, and the readPos (for this while loop)	
+   ti_Seek(TEXT_ORIGIN, 0, file->slot);
+	if(file->txtDat==NULL) {
+		file->txtDat = ti_GetDataPtr(file->slot);
+	}
 	readPos = file->txtDat;
 
-	// create a pointer to the current line struct, will update this each time i create a new line
-	struct lineStruct * linePtr;
-
-	// create a starting line as the beginning of the linked list
-	struct lineStruct line;
-
-	// initialize the first line's string array
-	for(uint8_t i=0; i<40; i++) {
-		line.line[i] = '\0';
+	// initialize the file's 2 dim line array
+	for(uint8_t i=0; i<200; i++) {
+		for(uint8_t ii=0; i<40; i++) {
+			file->linesArray[i][ii] = '\0';
+		}
 	}
 
    while(!loopIsDone) {
