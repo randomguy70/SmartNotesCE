@@ -27,9 +27,6 @@ int loadFile(struct fileStruct * file);
 // adds a new line to the end of the linked line list and returns the pointer to the new line struct
 struct lineStruct * appendLine(struct lineStruct * end);
 
-// deletes all lines in the linked list
-void deleteAllLines(struct lineStruct * start);
-
 // check if user wants to delete a file, and deleted the selected file if so
 uint8_t checkIfDelete(struct fileViewerStruct *HS );
 

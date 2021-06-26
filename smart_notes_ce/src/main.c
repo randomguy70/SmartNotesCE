@@ -4,7 +4,7 @@
 int main() {
    uint8_t mode = 1;
    gfx_Begin();
-   gfx_SetPalette(palette, 18, 0);
+   gfx_SetPalette(palette, sizeof_palette, 0);
    gfx_SetTransparentColor(2);
    gfx_SetTextTransparentColor(2);
    gfx_SetTextBGColor(2);

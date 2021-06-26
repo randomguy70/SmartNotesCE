@@ -63,9 +63,10 @@ uint8_t loadFiles(struct fileViewerStruct *HS) {
 int loadFile(struct fileStruct * file) {
 
    char * readPos; // pointer to the current reading position in the file
-   unsigned int numChars = ti_GetSize(slot)-10;
+   unsigned int numChars = ti_GetSize(file->slot)-10;
 	uint8_t loopIsDone = 0; // whether or not the while loop is finished yet. I was going to make this a bool except for the fact that I forgot the syntax and I will probably forget later, so don't worry if you see this because it  will (perhaps, maybe, hopefully) be corrected in several years. :P P.S. It is June 25, 2021 right now when I am creating this if you are (will be) wondering.
 	unsigned int curLine = 0;
+	unsigned int curLineLen  = 0;
 
 	// seek to the beginning of the text data and store the pointer into both the fileStruct, if I didn't already get the pointer, and the readPos (for this while loop)	
    ti_Seek(TEXT_ORIGIN, 0, file->slot);
@@ -84,7 +85,7 @@ int loadFile(struct fileStruct * file) {
    while(!loopIsDone) {
 		struct wordStruct word;
 		getWordLen(readPos, &word);
-      if(word.pixelLen+curLineLen) {
+      if(word.pixelLen + curLineLen) {
 
 		}
 		curLine++;
@@ -102,15 +103,6 @@ struct lineStruct * appendLine(struct lineStruct * end) {
 		new->line[i] = '\0';
 	}
 	return new;
-}
-
-void deleteAllLines(struct lineStruct * start) {
-	struct lineStruct * ptr = start;
-	while(ptr!=NULL {
-		start = ptr;
-		ptr = ptr->next;
-		free(start);
-	}
 }
 
 // gives an option whether or not to delete the selected file. i should really just make an alert function with 2-3 const char* and coordinate parameters to save space and easily create other possible messages, sortof like the wrapped text box functions with headers, body, and footers that epsilon5 has in Vysion CE.
