@@ -1,19 +1,18 @@
 #include "main.h"
 
 // btw, HS stands for homescreen
-uint8_t dispHomeScreen() {
+uint8_t dispHomeScreen(struct fileViewerStruct * HS, struct editorStruct * ES, struct settingsStruct * settings) {
    // set up struct for homescreen variables & data
-   struct fileViewerStruct HS;
-   HS.selectedFile = 0;
-   HS.offset       = 0;
-   HS.numFiles = loadFiles(&HS);
+   HS->selectedFile = 0;
+   HS->offset       = 0;
+   HS->numFiles = loadFiles(HS);
 
    while(1) {
       dispHomeScreenBG();
       dispHSButtons();
-      dispFiles(&HS);
+      dispFiles(HS);
 
-      handleHSKeyPresses(&HS);
+      handleHSKeyPresses(HS);
 
       // quit program
       if(kb_IsDown(kb_KeyClear)) {
@@ -147,6 +146,9 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
    if(kb_IsDown(kb_KeyYequ)) {
       uint8_t result = 1;
       struct editorStruct ES;
+		struct fileStruct file;
+		ti_CloseAll();
+		file.slot = ti_Open(HS->fileNames[HS->selectedFile], "r+");
       ES.fileSlot=ti_Open(HS->fileNames[HS->selectedFile], "r+");
       while(result) {
 			if(result==1) {
@@ -158,14 +160,15 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
 }
 
 // text editor stuff
-uint8_t dispEditor(struct editorStruct *ES) {
-   struct fileStruct file;
-   file.slot = ES->fileSlot;
+uint8_t dispEditor(struct editorStruct * ES, struct fileStruct * file) {
+	loadFile(file);
    
    while(1) {
       gfx_SetDraw(1);
       dispEditorBK();
+		
 
+		// keypresses
       if(kb_IsDown(kb_KeyClear)) {
          return 0;
       }
@@ -188,10 +191,10 @@ void dispEditorBK() {
 
 void handleEditorKeyPresses(struct editorStruct* ES) {
    kb_Scan();
-   //blah blah blah...
+   // blah blah blah...
 }
 
-// cursor stuff. not even using this right now
+// cursor blinking function. not even using this right now, not sure if it works.
 void animateCursor(struct cursorStruct *CS) {
    if(CS->cursorState > CS->invisibleTime) {
       drawCursor(CS->x, CS->y);

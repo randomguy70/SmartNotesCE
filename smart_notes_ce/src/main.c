@@ -11,10 +11,13 @@ int main() {
    kb_SetMode(MODE_3_CONTINUOUS);
 	kb_DisableOnLatch();
  
-   //set mode at 0 to exit
-	// I will define the 3 main structs here eventually to save the state of each when you switch modes (ex: if you are in the file displayer and you switch to settings, and then you switch back to the file displayer, your selection bar will be at the same position as it was before you switched)
+	struct fileViewerStruct HS; // homescreen
+	struct editorStruct ES; // editor struct 
+	struct settingsStruct settings; // settings struct
+	
+	//set mode at 0 to exit
    while(mode) {
-      mode = dispHomeScreen();
+      mode = dispHomeScreen(&HS, &ES, &settings);
    }
 	(*(volatile uint8_t*)0xF00008) = 1; // this prevents the on-key error message. got this from commandblockguy, so thank you!
    return 0;

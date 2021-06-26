@@ -4,8 +4,10 @@
 struct cursorStruct CS;
 struct fileViewerStruct HS;
 struct editorStruct ES;
+struct settingsStruct settings;
+
 // displays homescreen and deals with all the homescreen functions and options
-uint8_t dispHomeScreen();
+uint8_t dispHomeScreen(struct fileViewerStruct * HS, struct editorStruct * ES, struct settingsStruct * settings);
 
 // displays the buttons for the homescreen
 void dispHSButtons();
@@ -28,6 +30,12 @@ struct fileViewerStruct {
    uint8_t selectedFile;    // what is the offset of the name of the selected file from the beginnning of the fileNames array
 };
 
+// contains the settings data, mostly booleans
+struct settingsStruct {
+	uint8_t saveState;
+	char lastFileOpened[9];
+};
+
 // contains properties of a cursor
 struct cursorStruct {
    uint8_t cursorState; // number of cycles completed so far in 1 animation. Is incremented until it is == cyclesPerAnimation, and then reset.
@@ -42,11 +50,10 @@ struct cursorStruct {
 // contains properties of the editor
 struct editorStruct {
    struct cursorStruct cursor;
-   uint8_t fileSlot; // slot of open file
    
 };
 
-void handleEditorKeyPresses(struct editorStruct* ES);
+void handleEditorKeyPresses(struct editorStruct * ES, struct fileStruct * file);
 
 // main text editing loop
 uint8_t dispEditor(struct editorStruct *ES);

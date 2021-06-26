@@ -86,6 +86,7 @@ int loadFile(struct fileStruct * file) {
    while(!loopIsDone) {
 		struct wordStruct word;
 		getWordLen(readPos, &word);
+		file->lineLengths[curLine] = gfx_GetStringWidth(file->linesArray[curLine]);
 
 		// if the current word is short enough to be added to the current line
       if(word.pixelLen + file->lineLengths[curLine] < 300) {
@@ -98,11 +99,17 @@ int loadFile(struct fileStruct * file) {
 		if(file->lineLengths[curLine]==0 && word.pixelLen>300) {
 			while(gfx_GetStringWidth(file->linesArray[curLine])<300) {
 				file->linesArray[curLine][linePos] = ti_GetC(file->slot);
+				linePos++;
+				readPos++;
 			}
 			linePos = 0;
 			curLine++;
 		}
-		curLine++;
+		
+		if(word.pixelLen + file->lineLengths[curLine] > 300) {
+			curLine++;
+			linePos = 0;
+		}
    }
 	return file->numLines;
 }
