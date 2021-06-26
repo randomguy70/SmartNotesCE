@@ -14,6 +14,7 @@ struct fileStruct {
    uint8_t slot; // the current slot the file is stored in
 	char * txtDat; // pointer to the start of the text data in the file
 	char linesArray[200][40];
+	uint16_t lineLengths[200];
 	uint8_t curLine; // the current line being edited
 	unsigned int numLines; // the total number of lines in the file
 };
@@ -21,11 +22,8 @@ struct fileStruct {
 // detects all txt appvars and writes their names into a given 2d string buffer, returns the number of files found
 uint8_t loadFiles(struct fileViewerStruct *HS);
 
-// organize file into a linked list of lines with organized data
+// organize file into an array of lines in a fileStruct
 int loadFile(struct fileStruct * file);
-
-// adds a new line to the end of the linked line list and returns the pointer to the new line struct
-struct lineStruct * appendLine(struct lineStruct * end);
 
 // check if user wants to delete a file, and deleted the selected file if so
 uint8_t checkIfDelete(struct fileViewerStruct *HS );

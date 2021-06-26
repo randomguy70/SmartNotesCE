@@ -64,9 +64,10 @@ int loadFile(struct fileStruct * file) {
 
    char * readPos; // pointer to the current reading position in the file
    unsigned int numChars = ti_GetSize(file->slot)-10;
-	uint8_t loopIsDone = 0; // whether or not the while loop is finished yet. I was going to make this a bool except for the fact that I forgot the syntax and I will probably forget later, so don't worry if you see this because it  will (perhaps, maybe, hopefully) be corrected in several years. :P P.S. It is June 25, 2021 right now when I am creating this if you are (will be) wondering.
+	uint8_t loopIsDone = 0; // whether or not the while loop is finished yet. I was going to make this a bool except for the fact that I forgot the syntax and I will probably forget about this later, so don't worry if you see this because it  will (perhaps, maybe, hopefully) be corrected soon (in several years). :P P.S. It is June 25, 2021 right now when I am creating this if you are (will be) wondering.
 	unsigned int curLine = 0;
-	unsigned int curLineLen  = 0;
+	unsigned int fileSize = ti_GetSize(file->slot);
+	uint8_t linePos = 0; // offset in the line array where you are writing words into
 
 	// seek to the beginning of the text data and store the pointer into both the fileStruct, if I didn't already get the pointer, and the readPos (for this while loop)	
    ti_Seek(TEXT_ORIGIN, 0, file->slot);
@@ -85,24 +86,25 @@ int loadFile(struct fileStruct * file) {
    while(!loopIsDone) {
 		struct wordStruct word;
 		getWordLen(readPos, &word);
-      if(word.pixelLen + curLineLen) {
 
+		// if the current word is short enough to be added to the current line
+      if(word.pixelLen + file->lineLengths[curLine] < 300) {
+			ti_Read(file->linesArray[curLine][linePos], 1, word.numChars, file->slot);
+			linePos+=word.numChars;
+			readPos+=word.numChars;
+		}
+
+		// if a single word is greater than a line because somebody was messing around
+		if(file->lineLengths[curLine]==0 && word.pixelLen>300) {
+			while(gfx_GetStringWidth(file->linesArray[curLine])<300) {
+				file->linesArray[curLine][linePos] = ti_GetC(file->slot);
+			}
+			linePos = 0;
+			curLine++;
 		}
 		curLine++;
    }
 	return file->numLines;
-}
-
-struct lineStruct * appendLine(struct lineStruct * end) {
-	struct lineStruct * new;
-	new = malloc(sizeof(struct lineStruct));
-	end->next=new;
-	new->next=NULL;
-	// initialize & empty the line's string
-	for(uint8_t i=0; i<40; i++) {
-		new->line[i] = '\0';
-	}
-	return new;
 }
 
 // gives an option whether or not to delete the selected file. i should really just make an alert function with 2-3 const char* and coordinate parameters to save space and easily create other possible messages, sortof like the wrapped text box functions with headers, body, and footers that epsilon5 has in Vysion CE.
