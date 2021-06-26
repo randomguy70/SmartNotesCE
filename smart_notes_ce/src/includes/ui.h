@@ -5,6 +5,7 @@ struct cursorStruct CS;
 struct fileViewerStruct HS;
 struct editorStruct ES;
 struct settingsStruct settings;
+struct fileStruct file;
 
 // displays homescreen and deals with all the homescreen functions and options
 uint8_t dispHomeScreen(struct fileViewerStruct * HS, struct editorStruct * ES, struct settingsStruct * settings);
@@ -56,10 +57,13 @@ struct editorStruct {
 void handleEditorKeyPresses(struct editorStruct * ES, struct fileStruct * file);
 
 // main text editing loop
-uint8_t dispEditor(struct editorStruct *ES);
+uint8_t dispEditor(struct editorStruct * ES, struct fileStruct * file);
 
 // displays the background graphics for the editor, such as the title, text box, buttons, etc...
 void dispEditorBK();
+
+// prints the text in a given file starting at a given line offset
+void printText(struct fileStruct * file);
 
 // draws a cursor given the properties in a given cursor struct
 void animateCursor(struct cursorStruct *CS);

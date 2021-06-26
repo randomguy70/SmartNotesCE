@@ -17,6 +17,7 @@ struct fileStruct {
 	uint16_t lineLengths[200];
 	uint8_t curLine; // the current line being edited
 	unsigned int numLines; // the total number of lines in the file
+	unsigned int lineOffset; // the number of lines pushed up off the screen in order for the user to scroll down
 };
 
 // detects all txt appvars and writes their names into a given 2d string buffer, returns the number of files found

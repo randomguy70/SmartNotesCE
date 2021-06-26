@@ -14,7 +14,7 @@ int main() {
 	struct fileViewerStruct HS; // homescreen
 	struct editorStruct ES; // editor struct 
 	struct settingsStruct settings; // settings struct
-	
+
 	//set mode at 0 to exit
    while(mode) {
       mode = dispHomeScreen(&HS, &ES, &settings);
