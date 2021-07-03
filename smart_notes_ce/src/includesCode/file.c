@@ -16,10 +16,10 @@ void archiveAll()
 
 uint8_t getNumFiles(const char* txt) {
    uint8_t result = '\0';
-   void *search_pos = NULL;
-   while (ti_Detect(&search_pos, txt) != NULL) {
+   void * pos = NULL;
+   while (ti_Detect(&pos, txt) != NULL)
       result++;
-   }
+	
    return result;
 }
 
@@ -30,13 +30,14 @@ uint8_t newFile() {
    ti_CloseAll();
    if (inputString(buffer, 8)>0){
       file = ti_Open(buffer, "r+");
-      if(!file) {
+      if (!file) {
          file = ti_Open(buffer, "w+");
       }
-      ti_Write("TXT", 3, 1, file);
+      //ti_Write("TXT", 3, 1, file);
       return 1;
+   } else {
+      return 0;
    }
-   return 0;
 }
 
 uint8_t loadFiles(struct fileViewerStruct *HS) {
@@ -90,7 +91,7 @@ int loadFile(struct fileStruct * file) {
 
 		// if the current word is short enough to be added to the current line
       if(word.pixelLen + file->lineLengths[curLine] < 300) {
-			ti_Read(file->linesArray[curLine][linePos], 1, word.numChars, file->slot);
+			ti_Read(&(file->linesArray[curLine][linePos]), 1, word.numChars, file->slot);
 			linePos+=word.numChars;
 			readPos+=word.numChars;
 		}

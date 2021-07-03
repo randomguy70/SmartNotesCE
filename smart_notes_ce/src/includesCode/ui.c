@@ -1,18 +1,19 @@
 #include "main.h"
 
 // btw, HS stands for homescreen
-uint8_t dispHomeScreen(struct fileViewerStruct * HS, struct editorStruct * ES, struct settingsStruct * settings) {
+uint8_t dispHomeScreen() {
    // set up struct for homescreen variables & data
-   HS->selectedFile = 0;
-   HS->offset       = 0;
-   HS->numFiles = loadFiles(HS);
+	struct fileViewerStruct HS;
+   HS.selectedFile = 0;
+   HS.offset = 0;
+   HS.numFiles = loadFiles(&HS);
 
    while(1) {
       dispHomeScreenBG();
       dispHSButtons();
-      dispFiles(HS);
+      dispFiles(&HS);
 
-      handleHSKeyPresses(HS);
+      handleHSKeyPresses(&HS);
 
       // quit program
       if(kb_IsDown(kb_KeyClear)) {
@@ -86,7 +87,7 @@ void dispHSButtons()
 {
    int i = 0;
    //button rects at bottom of screen
-   for(i=0; i<320; i=i+64) {
+   for(i=0; i<320; i+=64) {
       gfx_SetColor(0);
       gfx_Rectangle_NoClip(i,220,62,19);
       gfx_SetColor(42);
@@ -101,7 +102,7 @@ void dispHSButtons()
    gfx_PrintStringXY("Other",270,227);
 }
 
-void handleHSKeyPresses(struct fileViewerStruct *HS) {
+void handleHSKeyPresses(struct fileViewerStruct * HS) {
    kb_Scan();
    // moving cursor
    if(kb_IsDown(kb_KeyDown) && HS->selectedFile < HS->numFiles-1) {
@@ -119,7 +120,7 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
    // new file
    if(kb_IsDown(kb_KeyTrace)) {
       newFile();
-      loadFiles(HS);
+      loadFiles(HS);// for some reason this is causing a ram reset right now
    }
    // rename file
    if(kb_IsDown(kb_KeyWindow)) {

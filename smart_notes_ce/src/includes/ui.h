@@ -4,11 +4,10 @@
 struct cursorStruct CS;
 struct fileViewerStruct HS;
 struct editorStruct ES;
-struct settingsStruct settings;
 struct fileStruct file;
 
 // displays homescreen and deals with all the homescreen functions and options
-uint8_t dispHomeScreen(struct fileViewerStruct * HS, struct editorStruct * ES, struct settingsStruct * settings);
+uint8_t dispHomeScreen();
 
 // displays the buttons for the homescreen
 void dispHSButtons();
@@ -54,7 +53,7 @@ struct editorStruct {
    
 };
 
-void handleEditorKeyPresses(struct editorStruct * ES, struct fileStruct * file);
+void handleEditorKeyPresses();
 
 // main text editing loop
 uint8_t dispEditor(struct editorStruct * ES, struct fileStruct * file);
