@@ -15,7 +15,7 @@ uint8_t dispHomeScreen() {
 
       handleHSKeyPresses(&HS);
 
-      // quit program
+      // quit program if clear is pressed
       if(kb_IsDown(kb_KeyClear)) {
       gfx_End();
       ti_CloseAll();

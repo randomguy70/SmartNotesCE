@@ -28,12 +28,14 @@ uint8_t newFile() {
    char buffer[9] = {0};
    uint8_t file = 0;
    ti_CloseAll();
-   if (inputString(buffer, 8)>0){
+   if (inputString(buffer, 8)>0) {
       file = ti_Open(buffer, "r+");
       if (!file) {
          file = ti_Open(buffer, "w+");
       }
-      //ti_Write("TXT", 3, 1, file);
+		if (file) {
+      	ti_Write("TXT", 3, 1, file);
+		}
       return 1;
    } else {
       return 0;
