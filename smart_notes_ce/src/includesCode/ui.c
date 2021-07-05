@@ -113,14 +113,14 @@ void handleHSKeyPresses(struct fileViewerStruct * HS) {
    }
    if(kb_IsDown(kb_KeyUp) && HS->selectedFile>0) { // move selected up
       HS->selectedFile--;
-      if(HS->selectedFile < HS->offset){
+      if(HS->selectedFile < HS->offset) {
          HS->offset--;
       }
    }
    // new file
    if(kb_IsDown(kb_KeyTrace)) {
       newFile();
-      loadFiles(HS);// for some reason this is causing a ram reset right now
+      loadFiles(HS); // for some reason this is causing a ram reset right now
    }
    // rename file
    if(kb_IsDown(kb_KeyWindow)) {
