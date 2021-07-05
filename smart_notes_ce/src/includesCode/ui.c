@@ -104,24 +104,29 @@ void dispHSButtons()
 
 void handleHSKeyPresses(struct fileViewerStruct *HS) {
    kb_Scan();
-   // moving cursor
+
+   // moving cursor down
    if(kb_IsDown(kb_KeyDown) && HS->selectedFile < HS->numFiles-1) {
       HS->selectedFile++;
       if(HS->selectedFile >= HS->offset+10){
          HS->offset++;
       }
    }
-   if(kb_IsDown(kb_KeyUp) && HS->selectedFile>0) { // move selected up
+
+	// moving cursor up
+   if(kb_IsDown(kb_KeyUp) && HS->selectedFile>0) {
       HS->selectedFile--;
       if(HS->selectedFile < HS->offset) {
          HS->offset--;
       }
    }
+
    // new file
    if(kb_IsDown(kb_KeyTrace)) {
       newFile();
       loadFiles(HS); // for some reason this is causing a ram reset right now
    }
+
    // rename file
    if(kb_IsDown(kb_KeyWindow)) {
       uint8_t result = 0;
@@ -132,6 +137,7 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
       }
       loadFiles(HS);
    }
+
    // delete file
    if(kb_IsDown(kb_KeyZoom) && HS->numFiles>0) {
       checkIfDelete(HS);
@@ -143,6 +149,7 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
          HS->offset--;
       }
    }
+	
    // open file in editor
    if(kb_IsDown(kb_KeyYequ)) {
       uint8_t result = 1;

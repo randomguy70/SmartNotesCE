@@ -48,15 +48,16 @@ uint8_t loadFiles(struct fileViewerStruct *HS) {
 	char *namePtr = NULL;
 	void *search_pos = NULL;
 
+	ti_CloseAll();
 	while ((namePtr = ti_Detect(&search_pos, "TXT")) != NULL) {
 		strcpy(HS->fileNames[numFiles], namePtr);
-		ti_CloseAll();
 		fileSlot = ti_Open(namePtr, "r");
 		ti_SetArchiveStatus(fileSlot, 1);
 		if(ti_GetSize(fileSlot)<10) {
 		   ti_Resize(10, fileSlot);
 		}
 		HS->fileSizes[numFiles] = ti_GetSize(fileSlot);
+		ti_Close(fileSlot);
 		numFiles++;
 	}
 	HS->numFiles=numFiles;
