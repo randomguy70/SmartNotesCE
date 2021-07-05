@@ -102,7 +102,7 @@ void dispHSButtons()
    gfx_PrintStringXY("Other",270,227);
 }
 
-void handleHSKeyPresses(struct fileViewerStruct * HS) {
+void handleHSKeyPresses(struct fileViewerStruct *HS) {
    kb_Scan();
    // moving cursor
    if(kb_IsDown(kb_KeyDown) && HS->selectedFile < HS->numFiles-1) {

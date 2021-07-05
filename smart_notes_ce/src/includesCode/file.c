@@ -36,6 +36,7 @@ uint8_t newFile(void) {
 		if (file) {
       	ti_Write("TXT", 3, 1, file);
 		}
+		ti_CloseAll();
       return 1;
    }
    return 0;
@@ -49,6 +50,7 @@ uint8_t loadFiles(struct fileViewerStruct *HS) {
 
 	while ((namePtr = ti_Detect(&search_pos, "TXT")) != NULL) {
 		strcpy(HS->fileNames[numFiles], namePtr);
+		ti_CloseAll();
 		fileSlot = ti_Open(namePtr, "r");
 		ti_SetArchiveStatus(fileSlot, 1);
 		if(ti_GetSize(fileSlot)<10) {
