@@ -24,7 +24,7 @@ uint8_t getNumFiles(const char* txt) {
 }
 
 // asks for user to input a string and makes a new file if one doesn't already exist with that name
-uint8_t newFile() {
+uint8_t newFile(void) {
    char buffer[9] = {0};
    uint8_t file = 0;
    ti_CloseAll();
@@ -37,9 +37,8 @@ uint8_t newFile() {
       	ti_Write("TXT", 3, 1, file);
 		}
       return 1;
-   } else {
-      return 0;
    }
+   return 0;
 }
 
 uint8_t loadFiles(struct fileViewerStruct *HS) {

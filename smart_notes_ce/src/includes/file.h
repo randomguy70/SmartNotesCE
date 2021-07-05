@@ -7,7 +7,7 @@ void archiveAll();
 uint8_t getNumFiles(const char* txt);
 
 // creates a new text file with an inputted name (a text file is an appvar with TXT as the first 3 bytes, sortof like an extension a file has on a computer)
-uint8_t newFile();
+uint8_t newFile(void);
 
 // contains organized file data
 struct fileStruct {
