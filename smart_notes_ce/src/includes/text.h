@@ -31,6 +31,7 @@ struct wordStruct {
 	unsigned int pixelLen;
 	unsigned int numChars;
 };
+
 struct lineStruct {
 	char line[40];            // the line data, formatted as a string
 	unsigned int pixelLen;    // the pixel length of the line

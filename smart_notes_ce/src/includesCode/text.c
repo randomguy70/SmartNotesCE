@@ -131,20 +131,17 @@ uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed) {
       0x0, 0x0 , 0x78, 0x73, 0x6e, 0x69, 0x64, 0x61, 
    };
 
-   uint8_t math = 1;
-   uint8_t caps = 2;
-   uint8_t lowerCase = 3;
    char character = '\0';
 
-	if (txtMode == math) {
+	if (txtMode == MATH) {
 		character = mathDat[keyPressed];
 		return character;
    }
-   if (txtMode == caps) {
+   if (txtMode == CAPS) {
       character = capsDat[keyPressed];
       return character;
    }
-   if (txtMode == lowerCase) {
+   if (txtMode == LOWER_CASE) {
       character = lowerCaseDat[keyPressed];
       return character;
    }

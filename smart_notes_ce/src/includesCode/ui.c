@@ -3,29 +3,28 @@
 // btw, HS stands for homescreen
 uint8_t dispHomeScreen() {
    // set up struct for homescreen variables & data
-	struct fileViewerStruct HS;
+   struct fileViewerStruct HS;
    HS.selectedFile = 0;
-   HS.offset = 0;
+   HS.offset       = 0;
    HS.numFiles = loadFiles(&HS);
 
-   do {
+   while(1) {
       dispHomeScreenBG();
       dispHSButtons();
       dispFiles(&HS);
 
       handleHSKeyPresses(&HS);
 
-      // quit program if clear is pressed
+      // quit program
       if(kb_IsDown(kb_KeyClear)) {
       gfx_End();
       ti_CloseAll();
       return 0;
-   	}
+   }
 
       gfx_SwapDraw();
       gfx_Wait();
-		
-   } while(1);
+   }
 }
 
 // display the file names & info stored in the fileViewerStruct *HS
@@ -51,7 +50,7 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
       // display detected file name & size & 
       gfx_PrintStringXY(HS->fileNames[i],40,fileY);
       gfx_SetTextXY(135,fileY);
-      gfx_PrintInt(fileSize-10,4); // subtract 10 because the first 10 bytes are not text data
+      gfx_PrintInt(fileSize,4);
       gfx_SetTextFGColor(0);
       fileY+=15;
       ii++;
@@ -88,7 +87,7 @@ void dispHSButtons()
 {
    int i = 0;
    //button rects at bottom of screen
-   for(i=0; i<320; i+=64) {
+   for(i=0; i<320; i=i+64) {
       gfx_SetColor(0);
       gfx_Rectangle_NoClip(i,220,62,19);
       gfx_SetColor(42);
@@ -105,40 +104,30 @@ void dispHSButtons()
 
 void handleHSKeyPresses(struct fileViewerStruct *HS) {
    kb_Scan();
-
-   // moving cursor down
+   // moving cursor
    if(kb_IsDown(kb_KeyDown) && HS->selectedFile < HS->numFiles-1) {
       HS->selectedFile++;
       if(HS->selectedFile >= HS->offset+10){
          HS->offset++;
       }
    }
-
-	// moving cursor up
-   if(kb_IsDown(kb_KeyUp) && HS->selectedFile>0) {
+   if(kb_IsDown(kb_KeyUp) && HS->selectedFile>0) { // move selected up
       HS->selectedFile--;
-      if(HS->selectedFile < HS->offset) {
+      if(HS->selectedFile < HS->offset){
          HS->offset--;
       }
    }
-
    // new file
    if(kb_IsDown(kb_KeyTrace)) {
-      newFile();
-      loadFiles(HS); // for some reason this is causing a ram reset right now
-   }
-
-   // rename file
-   if(kb_IsDown(kb_KeyWindow)) {
-      uint8_t result = 0;
       char buffer[9] = {0};
-      if(inputString(buffer, 8)) {
-         ti_CloseAll();
-         result = ti_Rename(HS->fileNames[HS->selectedFile], buffer);
+      uint8_t file = 0;
+      ti_CloseAll();
+      if (inputString(buffer, 8)>0){
+         file = ti_Open(buffer, "w+");
+         ti_Write("TXT", 3, 1, file);
+         loadFiles(HS);
       }
-      loadFiles(HS);
    }
-
    // delete file
    if(kb_IsDown(kb_KeyZoom) && HS->numFiles>0) {
       checkIfDelete(HS);
@@ -150,63 +139,14 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
          HS->offset--;
       }
    }
-
-   // open file in editor
-   if(kb_IsDown(kb_KeyYequ)) {
-      uint8_t result = 1;
-      struct editorStruct ES;
-		struct fileStruct file;
-		ti_CloseAll();
-		file.slot = ti_Open(HS->fileNames[HS->selectedFile], "r+");
-      while(result) {
-			if(result==1) {
-				result = dispEditor(&ES, &file);
-			}
-         // display settings if the result is 2, quit if the result is 0
-      }
-   }
 }
 
 // text editor stuff
-uint8_t dispEditor(struct editorStruct * ES, struct fileStruct * file) {
-	loadFile(file);
-   
-   while(1) {
-      gfx_SetDraw(1);
-      dispEditorBK();
-		printText(file);
-
-		// keypresses
-      if(kb_IsDown(kb_KeyClear)) {
-         return 0;
-      }
-      handleEditorKeyPresses(ES, file);
-      gfx_SwapDraw();
-   }
-
+uint8_t dispEditor() {
    return 0;
 }
 
-void dispEditorBK() {
-   gfx_FillScreen(WHITE);
-   gfx_SetColor(LIGHTER_BLUE);
-   gfx_Rectangle_NoClip(9, 14, 302, 200);
-	gfx_Rectangle_NoClip(10, 15, 300, 198);
-}
-
-void printText(struct fileStruct * file) {
-	gfx_SetTextFGColor(BLACK);
-	for(int i = 0; i<10; i++) {
-		gfx_PrintStringXY(file->linesArray[i], 5, i*15+20);
-	}
-}
-
-void handleEditorKeyPresses(struct editorStruct * ES, struct fileStruct * file) {
-   kb_Scan();
-   // blah blah blah...
-}
-
-// cursor blinking function. not even using this right now, not sure if it works.
+// cursor stuff
 void animateCursor(struct cursorStruct *CS) {
    if(CS->cursorState > CS->invisibleTime) {
       drawCursor(CS->x, CS->y);
@@ -222,5 +162,4 @@ void drawCursor(int x, int y) {
    gfx_VertLine_NoClip(x, y, 11);
    gfx_VertLine_NoClip(x+1, y, 11);
 }
-
 // Congrats, you actually got to the bottom of this file! Did you actually read everything or did you just scroll down quickly? :P

@@ -5,18 +5,19 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <tice.h>
 #include <math.h>
+
+#include <tice.h>
+#include <string.h>
+
 #include <keypadc.h>
 #include <compression.h>
 #include <graphx.h>
 #include <fileioc.h>
 #include <fontlibc.h>
-#include <string.h>
 
 // my includes
 #include "gfx/gfx.h"
-#include "includes/data.h"
 #include "includes/key.h"
 #include "includes/ui.h"
 #include "includes/text.h"
@@ -33,16 +34,10 @@
 #define RED           7  // defines the fixed-entry offset of red in my custom palette
 #define LIGHTER_BLUE  8  // defines the fixed-entry offset of blue in my custom palette
 
-#define TEXT_ORIGIN 10 // the text in a file begins at offset of 10 bytes from the beginning
-/* necessary but random info
--3 modes
-   mode 1 = homescreen
-   mode 2 = editor
-   mode 3 = settings
--3 txt modes
-   txtMode 1 = math
-   txtMode 2 = caps
-   txtMode 3 = lowercase
-*/
+#define MATH          1
+#define CAPS          2
+#define LOWER_CASE    3
+
+#define TEXT_ORIGIN   10 // the text in a file begins at offset of 10 bytes from the beginning
 
 #endif
