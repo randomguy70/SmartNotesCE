@@ -160,7 +160,7 @@ void drawCursor(int x, int y) {
    gfx_VertLine_NoClip(x+1, y, 11);
 }
 
-static int8_t chooseToQuit() {
+int8_t chooseToQuit() {
 	kb_Scan();
 	if(kb_IsDown(kb_KeyClear)) {
       return 1;

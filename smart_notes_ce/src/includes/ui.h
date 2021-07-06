@@ -53,7 +53,11 @@ struct editorStruct {
    
 };
 
+// handles all editor key presses
 void handleEditorKeyPresses();
+
+// returns if the user is pressing clear
+int8_t chooseToQuit();
 
 // main text editing loop
 uint8_t dispEditor(struct editorStruct * ES, struct fileStruct * file);
