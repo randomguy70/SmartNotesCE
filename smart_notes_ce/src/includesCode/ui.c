@@ -104,24 +104,29 @@ void dispHSButtons()
 
 void handleHSKeyPresses(struct fileViewerStruct *HS) {
    kb_Scan();
-   // moving cursor
+
+   // move cursor down
    if(kb_IsDown(kb_KeyDown) && HS->selectedFile < HS->numFiles-1) {
       HS->selectedFile++;
       if(HS->selectedFile >= HS->offset+10){
          HS->offset++;
       }
    }
-   if(kb_IsDown(kb_KeyUp) && HS->selectedFile>0) { // move selected up
+
+	// move cursor up
+   if(kb_IsDown(kb_KeyUp) && HS->selectedFile>0) {
       HS->selectedFile--;
       if(HS->selectedFile < HS->offset){
          HS->offset--;
       }
    }
+
    // new file
    if(kb_IsDown(kb_KeyTrace)) {
 		newFile();
 		loadFiles(HS);
    }
+
    // delete file
    if(kb_IsDown(kb_KeyZoom) && HS->numFiles>0) {
       checkIfDelete(HS);
