@@ -43,28 +43,28 @@ uint8_t newFile(void) {
 }
 
 uint8_t loadFiles(struct fileViewerStruct *HS) {
-	uint8_t numFiles = 0;
-	uint8_t fileSlot;
-	char *namePtr = NULL;
-	void *search_pos = NULL;
+   uint8_t numFiles = 0;
+   uint8_t fileSlot;
+   char *namePtr = NULL;
+   void *search_pos = NULL;
 
-	ti_CloseAll();
-	while ((namePtr = ti_Detect(&search_pos, "TXT")) != NULL) {
-		strcpy(HS->fileNames[numFiles], namePtr);
-		fileSlot = ti_Open(namePtr, "r");
-		ti_SetArchiveStatus(fileSlot, 1);
-		if(ti_GetSize(fileSlot)<10) {
-		   ti_Resize(10, fileSlot);
-		}
-		HS->fileSizes[numFiles] = ti_GetSize(fileSlot);
-		ti_Close(fileSlot);
-		numFiles++;
-	}
-	HS->numFiles=numFiles;
-	return numFiles;
+   while ((namePtr = ti_Detect(&search_pos, "TXT")) != NULL) {
+		// copy the currently detected file's name into the fileviewer struct's names array
+      strcpy(HS->fileNames[numFiles], namePtr);
+
+		// open, archive, and read the size of the currently detected file
+      fileSlot = ti_Open(namePtr, "r+");
+      ti_SetArchiveStatus(fileSlot, 1);
+      HS->fileSizes[numFiles] = ti_GetSize(fileSlot);
+
+      numFiles++;
+   }
+   HS->numFiles = numFiles;
+   return numFiles;
 }
 
 // formats the raw file data into an organized structure (hence the struct...obviously)
+// i will completely change this very soon, because it is horrible code and I am actually going to switch to the greedy method with displaying text.
 int loadFile(struct fileStruct * file) {
 
    char * readPos; // pointer to the current reading position in the file

@@ -8,7 +8,7 @@ uint8_t dispHomeScreen() {
    HS.offset = 0;
    HS.numFiles = loadFiles(&HS);
 
-   while(1) {
+   do {
       dispHomeScreenBG();
       dispHSButtons();
       dispFiles(&HS);
@@ -20,11 +20,12 @@ uint8_t dispHomeScreen() {
       gfx_End();
       ti_CloseAll();
       return 0;
-   }
+   	}
 
       gfx_SwapDraw();
       gfx_Wait();
-   }
+		
+   } while(1);
 }
 
 // display the file names & info stored in the fileViewerStruct *HS
@@ -149,7 +150,7 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
          HS->offset--;
       }
    }
-	
+
    // open file in editor
    if(kb_IsDown(kb_KeyYequ)) {
       uint8_t result = 1;
