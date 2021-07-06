@@ -20,6 +20,7 @@ int main() {
 	} while (mode);
 
 	gfx_End();
+	ti_CloseAll();
 	(*(volatile uint8_t*)0xF00008) = 1; // this prevents the on-key error message. got this from commandblockguy, so thank you!
    return 0;
 }

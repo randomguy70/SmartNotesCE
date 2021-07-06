@@ -5,7 +5,7 @@ uint8_t dispHomeScreen() {
    // set up struct for homescreen variables & data
    struct fileViewerStruct HS;
    HS.selectedFile = 0;
-   HS.offset       = 0;
+   HS.offset = 0;
    HS.numFiles = loadFiles(&HS);
 
    while(1) {
@@ -16,9 +16,7 @@ uint8_t dispHomeScreen() {
       handleHSKeyPresses(&HS);
 
       // quit program
-      if(kb_IsDown(kb_KeyClear)) {
-      gfx_End();
-      ti_CloseAll();
+      if(chooseToQuit()) {
       return 0;
    }
 
@@ -161,4 +159,13 @@ void drawCursor(int x, int y) {
    gfx_VertLine_NoClip(x, y, 11);
    gfx_VertLine_NoClip(x+1, y, 11);
 }
+
+static int8_t chooseToQuit() {
+	kb_Scan();
+	if(kb_IsDown(kb_KeyClear)) {
+      return 1;
+	}
+	return 0;
+}
+
 // Congrats, you actually got to the bottom of this file! Did you actually read everything or did you just scroll down quickly? :P
