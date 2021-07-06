@@ -87,7 +87,7 @@ void dispHSButtons()
 {
    int i = 0;
    //button rects at bottom of screen
-   for(i=0; i<320; i=i+64) {
+   for(i=0; i<320; i+=64) {
       gfx_SetColor(0);
       gfx_Rectangle_NoClip(i,220,62,19);
       gfx_SetColor(42);
