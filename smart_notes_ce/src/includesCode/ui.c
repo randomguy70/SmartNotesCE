@@ -119,14 +119,8 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
    }
    // new file
    if(kb_IsDown(kb_KeyTrace)) {
-      char buffer[9] = {0};
-      uint8_t file = 0;
-      ti_CloseAll();
-      if (inputString(buffer, 8)>0){
-         file = ti_Open(buffer, "w+");
-         ti_Write("TXT", 3, 1, file);
-         loadFiles(HS);
-      }
+		newFile();
+		loadFiles(HS);
    }
    // delete file
    if(kb_IsDown(kb_KeyZoom) && HS->numFiles>0) {
