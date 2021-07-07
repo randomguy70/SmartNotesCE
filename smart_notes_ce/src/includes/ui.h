@@ -71,17 +71,18 @@ void animateCursor(struct cursorStruct *CS);
 // draws a cursor at a given x and y location
 void drawCursor(int x, int y);
 
-/* displays a given alert text string in a text box of given proportions. will add text wrapping (and later, scrolling if there isn't enough room in the text box)
+/** displays a given alert text string in a text box of given proportions. will add text wrapping (and later, scrolling if there isn't enough room in the text box)
+*@param text pointer to the alert message
+*@param boxLength pixel length of the text box which will display the alert message
+*@param boxHeight pixel height of the text box which will display the alert message
+*@param boxX the x coord of the upper left corner of the text box
+*@param boxY the Y coord of the upper left corner of the text box
+*@param showAlertHeader this is just a bool, set it to 1 if you want the text box to show "Alert" at the top, otherwise set it to 0
+**/
+int8_t alert(const char *text, int boxWidth, int boxHeight, int boxX, int boxY, int8_t showAlertHeader);
 
-- text = pointer to the alert message
-- textBoxLength = pixel length of the text box which will display the alert message
-- textBoxHeight = pixel height of the text box which will display the alert message
-- boxX = the x coord of the upper left corner of the text box
-- boxY = the Y coord of the upper left corner of the text box
-- showAlertHeader = this is just a bool, set it to 1 if you want the text box to show "Alert" at the top, otherwise set it to 0
-
-*/
-int8_t alert(const char *text, int textBoxWidth, int textBoxHeight, int boxX, int boxY, int8_t showAlertHeader);
+// draws a rectangle with a given thickness
+void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);
 
 // returns 1 if the user is pressing clear
 int8_t chooseToQuit();

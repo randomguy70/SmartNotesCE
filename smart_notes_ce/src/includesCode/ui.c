@@ -160,7 +160,47 @@ void drawCursor(int x, int y) {
    gfx_VertLine_NoClip(x+1, y, 11);
 }
 
-int8_t alert(const char *text, int textBoxLength, int textBoxWidth, int boxX, int boxY, int8_t showAlertHeader) {
+int8_t alert(const char *text, int boxWidth, int boxHeight, int boxX, int boxY, int8_t showAlertHeader) {
+	if(showAlertHeader) {
+
+		// body rect of alert header
+		gfx_SetColor(MEDIUM_GREY);
+		gfx_FillRectangle(boxX, boxY, boxWidth, 15);
+
+		// outline rect of alert header
+		gfx_SetColor(DARK_BLUE);
+		thick_Rectangle(boxX, boxY, boxWidth, 15, 2);
+
+		// text of alert header
+		gfx_SetTextFGColor(WHITE);
+		gfx_PrintStringXY("ALERT!", (boxWidth/2)-(gfx_GetStringWidth("ALERT!")/2), boxY-2);
+
+		// adjust the coords for the other part of the text box (that contains the actual message)
+		boxY+=15;
+	}
+
+	// body rect of alert header
+		gfx_SetColor(MEDIUM_GREY);
+		gfx_FillRectangle(boxX, boxY, boxWidth, 15);
+
+		// outline rect of alert header
+		gfx_SetColor(DARK_BLUE);
+		thick_Rectangle(boxX, boxY, boxWidth, 15, 2);
+
+		// text of alert header
+		gfx_SetTextFGColor(WHITE);
+		gfx_PrintStringXY("ALERT!", (boxWidth/2)-(gfx_GetStringWidth("ALERT!")/2), boxY-2);	
+
+}
+
+void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness) {
+	for(uint8_t i=0; i<thickness; i++) {
+		gfx_Rectangle(x, y, width, height);
+		x+=1;
+		y-=1;
+		width-=2;
+		height-=2;
+	}
 }
 
 int8_t chooseToQuit() {
