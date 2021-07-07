@@ -48,7 +48,9 @@ uint8_t loadFiles(struct fileViewerStruct *HS) {
    char *namePtr = NULL;
    void *search_pos = NULL;
 
+	ti_CloseAll();
    while ((namePtr = ti_Detect(&search_pos, "TXT")) != NULL) {
+
 		// copy the currently detected file's name into the fileviewer struct's names array
       strcpy(HS->fileNames[numFiles], namePtr);
 
@@ -56,6 +58,7 @@ uint8_t loadFiles(struct fileViewerStruct *HS) {
       fileSlot = ti_Open(namePtr, "r+");
       ti_SetArchiveStatus(fileSlot, 1);
       HS->fileSizes[numFiles] = ti_GetSize(fileSlot);
+		//ti_Close(fileSlot);
 
       numFiles++;
    }
@@ -68,10 +71,8 @@ uint8_t loadFiles(struct fileViewerStruct *HS) {
 int loadFile(struct fileStruct * file) {
 
    char * readPos; // pointer to the current reading position in the file
-   unsigned int numChars = ti_GetSize(file->slot)-10;
 	uint8_t loopIsDone = 0; // whether or not the while loop is finished yet. I was going to make this a bool except for the fact that I forgot the syntax and I will probably forget about this later, so don't worry if you see this because it  will (perhaps, maybe, hopefully) be corrected soon (in several years). :P P.S. It is June 25, 2021 right now when I am creating this if you are (will be) wondering.
 	unsigned int curLine = 0;
-	unsigned int fileSize = ti_GetSize(file->slot);
 	uint8_t linePos = 0; // offset in the line array where you are writing words into
 
 	// seek to the beginning of the text data and store the pointer into both the fileStruct, if I didn't already get the pointer, and the readPos (for this while loop)	
