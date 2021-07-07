@@ -161,10 +161,12 @@ void drawCursor(int x, int y) {
 }
 
 int8_t alert(const char *text, int boxWidth, int boxHeight, int boxX, int boxY, int8_t showAlertHeader) {
+	uint8_t keyPressed = 0;
+	
 	if(showAlertHeader) {
 
 		// body rect of alert header
-		gfx_SetColor(MEDIUM_GREY);
+		gfx_SetColor(DARK_GREY);
 		gfx_FillRectangle(boxX, boxY, boxWidth, 15);
 
 		// outline rect of alert header
@@ -180,17 +182,27 @@ int8_t alert(const char *text, int boxWidth, int boxHeight, int boxX, int boxY, 
 	}
 
 	// body rect of alert header
-		gfx_SetColor(MEDIUM_GREY);
-		gfx_FillRectangle(boxX, boxY, boxWidth, 15);
+	gfx_SetColor(LIGHT_GREY);
+	gfx_FillRectangle(boxX, boxY, boxWidth, boxHeight);
 
-		// outline rect of alert header
-		gfx_SetColor(DARK_BLUE);
-		thick_Rectangle(boxX, boxY, boxWidth, 15, 2);
+	// outline rect of alert header
+	gfx_SetColor(DARK_BLUE);
+	thick_Rectangle(boxX, boxY, boxWidth, boxHeight, 2);
+	
+	// text of alert header
+	gfx_SetTextFGColor(WHITE);
+	gfx_PrintStringXY(text, (boxWidth/2)-(gfx_GetStringWidth(text)/2), boxY-2);	
 
-		// text of alert header
-		gfx_SetTextFGColor(WHITE);
-		gfx_PrintStringXY("ALERT!", (boxWidth/2)-(gfx_GetStringWidth("ALERT!")/2), boxY-2);	
-
+	// waits for keypress, if clear is pressed, then return 0, if enter or second is pressed, then return 1
+	while(keyPressed != sk_Clear && keyPressed != sk_2nd && keyPressed != sk_Enter)
+		keyPressed = os_GetCSC();
+		
+	if(keyPressed == sk_Clear) {
+		return 0;
+	}
+	if(keyPressed == sk_2nd || keyPressed == sk_Enter) {
+		return 1;
+	}
 }
 
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness) {
