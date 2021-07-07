@@ -206,12 +206,9 @@ int8_t alert(const char *text, int boxWidth, int boxHeight, int boxX, int boxY, 
 }
 
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness) {
-	for(uint8_t i=0; i<thickness; i++) {
-		gfx_Rectangle(x, y, width, height);
-		x+=1;
-		y-=1;
-		width-=2;
-		height-=2;
+	uint8_t i;
+	for(i=0; i<thickness; i++) {
+		gfx_Rectangle(x+i, y+i, width-(2*i), height-(2*i));
 	}
 }
 
