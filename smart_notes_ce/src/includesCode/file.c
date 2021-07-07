@@ -49,6 +49,7 @@ uint8_t loadFiles(struct fileViewerStruct *HS) {
    void *search_pos = NULL;
 
 	ti_CloseAll();
+	
    while ((namePtr = ti_Detect(&search_pos, "TXT")) != NULL) {
 
 		// copy the currently detected file's name into the fileviewer struct's names array
