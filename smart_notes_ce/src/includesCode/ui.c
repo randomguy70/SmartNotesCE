@@ -139,7 +139,7 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
 }
 
 // text editor stuff
-uint8_t dispEditor() {
+uint8_t dispEditor(struct editorStruct * ES) {
    return 0;
 }
 
@@ -158,6 +158,9 @@ void drawCursor(int x, int y) {
    gfx_SetColor(DARK_BLUE);
    gfx_VertLine_NoClip(x, y, 11);
    gfx_VertLine_NoClip(x+1, y, 11);
+}
+
+int8_t alert(const char *text, int textBoxLength, int textBoxWidth, int boxX, int boxY, int8_t showAlertHeader) {
 }
 
 int8_t chooseToQuit() {

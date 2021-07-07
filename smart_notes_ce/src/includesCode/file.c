@@ -57,7 +57,6 @@ uint8_t loadFiles(struct fileViewerStruct *HS) {
 
 		// open, archive, and read the size of the currently detected file
       fileSlot = ti_Open(namePtr, "r+");
-      ti_SetArchiveStatus(fileSlot, 1);
       HS->fileSizes[numFiles] = ti_GetSize(fileSlot);
 		//ti_Close(fileSlot);
 
