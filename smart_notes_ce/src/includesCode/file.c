@@ -122,6 +122,7 @@ int loadFile(struct fileStruct * file) {
 
 // gives an option whether or not to delete the selected file. i should really just make an alert function with 2-3 const char* and coordinate parameters to save space and easily create other possible messages, sortof like the wrapped text box functions with headers, body, and footers that epsilon5 has in Vysion CE.
 uint8_t checkIfDelete(struct fileViewerStruct *HS ) {
+	/*
 	gfx_SetDraw(0);
 	gfx_SetColor(LIGHTER_BLUE);
 	gfx_FillRectangle_NoClip(100,90,121,40); // main rect
@@ -149,4 +150,14 @@ uint8_t checkIfDelete(struct fileViewerStruct *HS ) {
 	}else {
 	   return 0;
 	}
+	*/
+	gfx_SetDraw(0);
+	int result = alert("Delete?", 50, 20, 50, 50, 1);
+	gfx_SwapDraw();
+	if(result) {
+		ti_Delete(HS->fileNames[HS->selectedFile]);
+		return 1;
+	}
+	delay(200);
+	return 0;
 }
