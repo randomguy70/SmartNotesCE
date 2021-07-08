@@ -213,8 +213,7 @@ void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness) {
 }
 
 int8_t chooseToQuit() {
-	kb_Scan();
-	if(kb_IsDown(kb_KeyClear)) {
+	if(os_GetCSC()==sk_Clear) {
       return 1;
 	}
 	return 0;

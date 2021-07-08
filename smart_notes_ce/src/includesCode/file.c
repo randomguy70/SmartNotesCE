@@ -162,6 +162,5 @@ uint8_t checkIfDelete(struct fileViewerStruct *HS ) {
 		ti_Delete(HS->fileNames[HS->selectedFile]);
 		return 1;
 	}
-	delay(200);
 	return 0;
 }

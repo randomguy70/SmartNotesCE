@@ -21,8 +21,15 @@ int main() {
       mode = dispHomeScreen();
 	} while (mode);
 
-	cleanup();
-   return 0;
+	gfx_End();
+	archiveAll();
+	ti_CloseAll();
+	
+	/*
+	This command prevents the on-key error message. got this from commandblockguy, so thank you! ps, he added this feature to the toolchain, so it will be available next release https://github.com/CE-Programming/toolchain/commit/fb852c6360bb30ad79da9e65bdf363da38cfdf83
+	*/
+	(*(volatile uint8_t*)0xF00008) = 1;
+	return 0;
 }
 
 void cleanup() {
@@ -31,7 +38,7 @@ void cleanup() {
 	ti_CloseAll();
 	
 	/*
-	The next function prevents the on-key error message. got this from commandblockguy, so thank you! ps, he added this feature to the toolchain, so it will be available next release https://github.com/CE-Programming/toolchain/commit/fb852c6360bb30ad79da9e65bdf363da38cfdf83
+	This command prevents the on-key error message. got this from commandblockguy, so thank you! ps, he added this feature to the toolchain, so it will be available next release https://github.com/CE-Programming/toolchain/commit/fb852c6360bb30ad79da9e65bdf363da38cfdf83
 	*/
 	(*(volatile uint8_t*)0xF00008) = 1;
 	return;
