@@ -7,7 +7,7 @@ void archiveAll()
    void *search_pos = NULL;
    
    ti_CloseAll();
-   while (((fileName = ti_Detect(search_pos, "TXT")) != NULL)) {
+   while (((fileName = ti_Detect(&search_pos, "TXT")) != NULL)) {
       fileSlot = ti_Open(fileName, "r");
       ti_SetArchiveStatus(1, fileSlot);
    }
