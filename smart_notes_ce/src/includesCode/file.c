@@ -44,9 +44,9 @@ uint8_t newFile(void) {
 
 uint8_t loadFiles(struct fileViewerStruct *HS) {
    uint8_t numFiles = 0;
-   uint8_t fileSlot;
+   uint8_t fileSlot; // slot of currently detected file
    char *namePtr = NULL;
-   void *search_pos = NULL;
+   void *search_pos = NULL; // mem location of the currently detected file in the VAT
 
 	ti_CloseAll();
 	
@@ -55,7 +55,7 @@ uint8_t loadFiles(struct fileViewerStruct *HS) {
 		// copy the currently detected file's name into the fileviewer struct's names array
       strcpy(HS->fileNames[numFiles], namePtr);
 
-		// open, archive, and read the size of the currently detected file
+		//get some info from the currently detected file
       fileSlot = ti_Open(namePtr, "r+");
       HS->fileSizes[numFiles] = ti_GetSize(fileSlot);
 		//ti_Close(fileSlot);
@@ -152,7 +152,7 @@ uint8_t checkIfDelete(struct fileViewerStruct *HS ) {
 	}
 	*/
 	gfx_SetDraw(0);
-	int result = alert("Delete?", 50, 20, 50, 50, 1);
+	int result = alert("Delete?", 50, 20, 50, 50, 0);
 	thick_Rectangle(1, 1, 10, 10, 2);
 	gfx_SwapDraw();
 	if(result) {

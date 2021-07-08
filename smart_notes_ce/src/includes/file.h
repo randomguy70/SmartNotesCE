@@ -2,7 +2,10 @@
 #define FILE_H
 
 struct lineStruct;
+
+// archives all files with "TXT" as the first 3 bytes
 void archiveAll();
+
 // detects "TXT" appvars and returns the number found
 uint8_t getNumFiles(const char* txt);
 
