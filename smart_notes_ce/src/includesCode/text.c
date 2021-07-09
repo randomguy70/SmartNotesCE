@@ -22,8 +22,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       kb_Scan();
 
       // clear quits and returns failure (0)
-      if (kb_IsDown(kb_KeyClear)) {
-         delay(200);
+      if (chooseToQuit()) {
          return 0;
       }
       if ((kb_IsDown(kb_KeyEnter)) && strLen>0 && strLen<=maxLength) { // enter finishes string input and returns 1

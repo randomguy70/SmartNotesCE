@@ -7,6 +7,7 @@ uint8_t dispHomeScreen() {
    HS.selectedFile = 0;
    HS.offset = 0;
    HS.numFiles = loadFiles(&HS);
+	archiveAll();
 
    while(1) {
       dispHomeScreenBG();
@@ -16,9 +17,8 @@ uint8_t dispHomeScreen() {
       handleHSKeyPresses(&HS);
 
       // quit program
-      if(chooseToQuit()) {
-      return 0;
-   }
+		if(os_GetCSC() == sk_Clear)
+      	return 0;
 
       gfx_SwapDraw();
       gfx_Wait();
@@ -127,21 +127,23 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
 
    // delete file
    if(kb_IsDown(kb_KeyZoom) && HS->numFiles>0) {
-      checkIfDelete(HS);
+      uint8_t fileWasDeleted = checkIfDelete(HS);
       loadFiles(HS);
       if(HS->selectedFile>0) {
          HS->selectedFile--;
       }
-      if(HS->offset>0) {
+      if(HS->offset>0 && fileWasDeleted) {
          HS->offset--;
       }
    }
 }
 
 // text editor stuff
+/*
 uint8_t dispEditor(struct editorStruct * ES) {
    return 0;
 }
+*/
 
 // cursor stuff
 void animateCursor(struct cursorStruct *CS) {
@@ -203,6 +205,7 @@ int8_t alert(const char *text, int boxWidth, int boxHeight, int boxX, int boxY, 
 	if(keyPressed == sk_2nd || keyPressed == sk_Enter) {
 		return 1;
 	}
+	return 0;
 }
 
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness) {
@@ -212,10 +215,21 @@ void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness) {
 	}
 }
 
-int8_t chooseToQuit() {
-	if(os_GetCSC()==sk_Clear) {
-      return 1;
+int chooseToQuit() {
+	#define SIG_HOLD_TIME 100
+	int holdTime = 0;
+	kb_Scan();
+	while(kb_IsDown(kb_KeyClear) && holdTime < SIG_HOLD_TIME) {
+		kb_Scan();
+		holdTime++;
 	}
+
+	if(holdTime >= SIG_HOLD_TIME)
+		return 1;
+		
+	if(holdTime < SIG_HOLD_TIME)
+		return 0;
+		
 	return 0;
 }
 

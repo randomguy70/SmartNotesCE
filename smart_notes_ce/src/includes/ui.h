@@ -56,8 +56,10 @@ struct editorStruct {
 // handles all editor key presses
 void handleEditorKeyPresses();
 
+/*
 // main text editing loop
 uint8_t dispEditor(struct editorStruct * ES);
+*/
 
 // displays the background graphics for the editor, such as the title, text box, buttons, etc...
 void dispEditorBK();
@@ -84,7 +86,7 @@ int8_t alert(const char *text, int boxWidth, int boxHeight, int boxX, int boxY, 
 // draws a rectangle with a given thickness
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);
 
-// returns 1 if the user is pressing clear
-int8_t chooseToQuit();
+// returns 1 if the user is pressing clear for a significant duration
+int chooseToQuit();
 
 #endif
