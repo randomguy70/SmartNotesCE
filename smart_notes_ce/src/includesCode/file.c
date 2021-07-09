@@ -44,7 +44,7 @@ uint8_t newFile(void) {
 
 uint8_t loadFiles(struct fileViewerStruct *HS) {
    uint8_t numFiles = 0;
-   uint8_t fileSlot; // slot of currently detected file
+   uint8_t fileSlot = 0; // slot of currently detected file
    char *namePtr = NULL;
    void *search_pos = NULL; // mem location of the currently detected file in the VAT
 	
