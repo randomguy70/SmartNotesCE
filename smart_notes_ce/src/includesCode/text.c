@@ -22,11 +22,11 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       kb_Scan();
 
       // clear quits and returns failure (0)
-      if (chooseToQuit()) {
+      if (os_GetCSC() == sk_Clear)
          return 0;
-      }
+			
       if ((kb_IsDown(kb_KeyEnter)) && strLen>0 && strLen<=maxLength) { // enter finishes string input and returns 1
-         delay(150);
+         //delay(150);
          return 1;
       }
       if (kb_IsDown(kb_KeyAlpha) && txtMode!=caps) {
