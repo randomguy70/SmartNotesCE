@@ -223,7 +223,7 @@ int chooseToQuit() {
 		kb_Scan();
 		holdTime++;
 	}
-
+	
 	if(holdTime >= SIG_HOLD_TIME)
 		return 1;
 		
