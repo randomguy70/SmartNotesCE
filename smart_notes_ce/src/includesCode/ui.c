@@ -67,13 +67,16 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
 // homescreen for the fileViewer, rectangles, title, etc...
 void dispHomeScreenBG() {
    gfx_SetDraw(1);
-   gfx_FillScreen(4);
-   gfx_SetColor(0);
+   gfx_FillScreen(MEDIUM_GREY);
+	
+   gfx_SetColor(BLACK);
    gfx_Rectangle_NoClip(50,1,222,30);
    gfx_Rectangle_NoClip(35,55,250,152);
-   gfx_SetColor(1);
+	
+   gfx_SetColor(WHITE);
    gfx_FillRectangle_NoClip(36,56,248,150);
-   gfx_SetTextFGColor(0);
+	
+   gfx_SetTextFGColor(BLACK);
    gfx_PrintStringXY("SMARTNOTES CE",115,5);
    gfx_PrintStringXY("VERSION 1.0 BY JOHNPAUL MALLOY",55,20);
    gfx_PrintStringXY("NAME",40,45);
@@ -180,7 +183,7 @@ int8_t alert(const char *text, int boxWidth, int boxHeight, int boxX, int boxY, 
 		gfx_PrintStringXY("ALERT!", (boxWidth/2)-(gfx_GetStringWidth("ALERT!")/2), boxY-2);
 
 		// adjust the coords for the other part of the text box (that contains the actual message)
-		boxY+=15;
+		boxY+=13;
 	}
 
 	// body rect of alert header
