@@ -25,19 +25,24 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       if (os_GetCSC() == sk_Clear)
          return 0;
 			
+		// enter creates a new file with the inputted string for a name
       if ((kb_IsDown(kb_KeyEnter)) && strLen>0 && strLen<=maxLength) { // enter finishes string input and returns 1
-         //delay(150);
          return 1;
       }
-      if (kb_IsDown(kb_KeyAlpha) && txtMode!=caps) {
-         txtMode = caps;
-         delay(100);
-      } else if ((kb_IsDown(kb_KeyAlpha)) && txtMode!=lowerCase) {
-         txtMode = lowerCase;
-         delay(100);
-      } else if ((kb_IsDown(kb_Key2nd))) {
-         txtMode = math;
-      }
+		
+		// switching text modes
+      if (os_GetCSC() == sk_Alpha) {
+			if(txtMode == MATH) {
+				txtMode = CAPS;
+			}
+			else if(txtMode == CAPS){
+				txtMode = LOWER_CASE;
+			}
+			else if(txtMode == LOWER_CASE) {
+				txtMode = MATH;
+			}
+		}
+		
       // input character and add the character to the current offset in the string buffer
       keyPressed = get_single_key_pressed();
       if (keyPressed>0 && strLen<8) {
@@ -228,5 +233,3 @@ int copyWord(char* dest, char* src) {
 	dest[pos] = '\0';
    return pos;
 }
-
-

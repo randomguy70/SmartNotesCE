@@ -126,7 +126,7 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
    }
 
    // delete file
-   if(kb_IsDown(kb_KeyZoom) && HS->numFiles>0) {
+   if((kb_IsDown(kb_KeyZoom) || kb_IsDown(kb_KeyDel)) && HS->numFiles>0) {
       uint8_t fileWasDeleted = checkIfDelete(HS);
       loadFiles(HS);
       if(HS->selectedFile>0) {

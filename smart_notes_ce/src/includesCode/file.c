@@ -45,8 +45,8 @@ uint8_t newFile(void) {
 uint8_t loadFiles(struct fileViewerStruct *HS) {
    uint8_t numFiles = 0;
    uint8_t fileSlot = 0; // slot of currently detected file
-   char *namePtr = NULL;
-   void *search_pos = NULL; // mem location of the currently detected file in the VAT
+   char * namePtr = NULL;
+   void * search_pos = NULL; // mem location of the currently detected file in the VAT
 	
 	ti_CloseAll();
 	
@@ -57,7 +57,15 @@ uint8_t loadFiles(struct fileViewerStruct *HS) {
 		
 		//get some info from the currently detected file
       fileSlot = ti_Open(namePtr, "r+");
+		
       HS->fileSizes[numFiles] = ti_GetSize(fileSlot);
+		
+		// files have to be at least 10 bytes large for future formatting data purposes
+		if(HS->fileSizes[numFiles] < 10) {
+			ti_Resize(10, fileSlot);
+		}
+		
+		// "always close files after opening them" -Jacobly, ergo...
 		ti_Close(fileSlot);
       numFiles++;
    }
@@ -69,7 +77,7 @@ uint8_t loadFiles(struct fileViewerStruct *HS) {
 }
 
 // formats the raw file data into an organized structure (hence the struct...obviously)
-// i will completely change this very soon, because it is horrible code and I am actually going to switch to the greedy method with displaying text.
+// P.S. I will completely change function this very soon, because it is horrible code and I am actually going to switch to the greedy method with displaying text.
 int loadFile(struct fileStruct * file) {
 
    char * readPos; // pointer to the current reading position in the file
