@@ -8,11 +8,8 @@
 
 uint8_t inputString(char* buffer, uint8_t maxLength)
 {
-   uint8_t math = 1; // constant for value of math/numbers txt mode
-   uint8_t caps = 2; // constant for value of capital letters txt mode
-   uint8_t lowerCase = 3; // constant for value of lowerCase txt mode
    uint8_t keyPressed = 0; // value of key currently pressed
-   uint8_t txtMode = caps; // caps, math, or lowercase
+   uint8_t txtMode = CAPS; // caps, math, or lowercase
    uint8_t strLen = 0; //  current character length & offset of inputted string
    char character; //  current inputted character buffer
    uint8_t cursorX;
@@ -80,13 +77,13 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
 
       // display inputted text and txtMode
       gfx_SetTextFGColor(0);
-      if(txtMode == math) {
+      if(txtMode == MATH) {
          gfx_PrintStringXY("1", 180, 95);
       }
-      if(txtMode == caps) {
+      if(txtMode == CAPS) {
          gfx_PrintStringXY("A", 180, 95);
       }
-      if(txtMode == lowerCase) {
+      if(txtMode == LOWER_CASE) {
          gfx_PrintStringXY("a", 180, 95);
       }
       gfx_SetTextFGColor(0);
