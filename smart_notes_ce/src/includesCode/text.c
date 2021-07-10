@@ -106,7 +106,8 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
    }
 }
 
-uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed) {
+uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed)
+{
    unsigned char mathDat[] = {
       0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
       0x0, 0x0 , 0x2B, 0x2D, 0x2A, 0x2F, 0x5E, 0x0, 
@@ -149,7 +150,8 @@ uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed) {
    return 0;
 }
 
-int varToArray(uint8_t slot, int varSize, char array[]) {
+int varToArray(uint8_t slot, int varSize, char array[])
+{
    int i;
 
    ti_Seek(10, 0, slot);
@@ -160,14 +162,16 @@ int varToArray(uint8_t slot, int varSize, char array[]) {
    return varSize;
 }
 
-int arrayToVar(char array[], int arraySize, uint8_t slot) {
+int arrayToVar(char array[], int arraySize, uint8_t slot)
+{
    ti_Resize(arraySize+10, slot);
    ti_Seek(10, 0, slot);
    ti_Write(array, 1, arraySize, slot);
    return 0;
 }
 
-int getLineLen(char* loc, struct lineStruct *lineBuffer) {
+int getLineLen(char* loc, struct lineStruct *lineBuffer)
+{
 	int pos = 0; // byte offset we are reading from after the given *loc ptr
 	int linePixelLen = 0;
 	int chars = 0; // number of characters in the line
@@ -206,7 +210,8 @@ int getLineLen(char* loc, struct lineStruct *lineBuffer) {
 	}
 }
 
-int getWordLen(char* loc, struct wordStruct *word) {
+int getWordLen(char* loc, struct wordStruct *word)
+{
    int chars = 0;
 	int pixelLen;
 	char wordBuffer[200]; // make it large if somebody is messing around with typing random letters and no spaces :Ps
@@ -221,7 +226,8 @@ int getWordLen(char* loc, struct wordStruct *word) {
    return pixelLen;
 }
 
-int copyWord(char* dest, char* src) {
+int copyWord(char* dest, char* src)
+{
    int pos = 0;
    while(src[pos]!='\0' && src[pos]!=' ') {
       dest[pos] = src[pos];
