@@ -63,7 +63,7 @@ uint8_t loadFiles(struct fileViewerStruct *HS) {
 		// files have to be at least 10 bytes large for future formatting data purposes
 		if(HS->fileSizes[numFiles] < 10) {
 			ti_Seek(3, 0, fileSlot);
-			ti_Write((const void *)0xFF0000, 7, 1, fileSlot);
+			ti_Write((const void *)0xE40000, 7, 1, fileSlot);
 		}
 		
 		// "always close files after opening them" -Jacobly, ergo...
