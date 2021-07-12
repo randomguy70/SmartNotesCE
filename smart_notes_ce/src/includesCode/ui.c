@@ -211,22 +211,6 @@ uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS )
 	int result = 0;
 	sk_key_t keyPressed = 0;
 	
-	/*
-	// message string
-	char message[20] = {"Delete "};
-	
-	// buffer for filename
-	char name[10] = {0};
-	ti_GetName(name, HS->fileNames[HS->selectedFile]);
-	
-	// tack on the filename to the end of the message
-	strcat(&message[7], name);
-	
-	// tack on a question mark to the very end of the message, because it is a question...
-	message[7+strlen(name)] = '?';
-	message[8+strlen(name)] = 0; // null terminator
-	*/
-
 	// the alert function uses drawing routines, so you have to set the draw buffer
 	gfx_SetDraw(0);
 	
@@ -242,6 +226,11 @@ uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS )
 	
 	gfx_SetTextFGColor(RED);
 	gfx_PrintStringXY("ALERT!", (320/2)-(gfx_GetStringWidth("ALERT!")/2), (240/2)-(height/2) + 5);
+	
+	// bar under "ALERT!"
+	gfx_SetColor(DARK_BLUE);
+	gfx_HorizLine((SCRN_WIDTH/2)-(100/2), (240/2)-(height/2) + 14, 100);
+	gfx_HorizLine((SCRN_WIDTH/2)-(100/2), (240/2)-(height/2) + 15, 100);
 	
 	gfx_SetTextFGColor(BLACK);
 	gfx_PrintStringXY("Are you sure you want to ", (320/2)-(width/2) + 13, (240/2)-(height/2) + 18);
