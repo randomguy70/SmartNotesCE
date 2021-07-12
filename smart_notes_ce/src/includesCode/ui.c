@@ -204,13 +204,14 @@ void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness) {
 	return;
 }
 
-// gives an option whether or not to delete the selected file. i should really just make an alert function with 2-3 const char* and coordinate parameters to save space and easily create other possible messages, sortof like the word wrapped text box functions with headers & body, like epsilon5 has in Vysion CE, which is a cool shell that you should check out at: https://www.cemetech.net/downloads/files/2095/x2227
-uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS ) {
+// gives an option whether or not to delete the selected file
+uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS )
+{
 	
-	int width = 50;
-	int height = 50;
-	int x = (320/2)-(width/2);
-	int y = (240/2)-(height/2);
+	uint16_t width = 50;
+	uint16_t height = 50;
+	uint16_t x = (320/2)-(width/2);
+	uint16_t y = (240/2)-(height/2);
 	
 	// the alert function uses drawing routines, so you have to set the draw buffer
 	gfx_SetDraw(0);
