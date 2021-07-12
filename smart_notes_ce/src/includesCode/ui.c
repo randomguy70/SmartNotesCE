@@ -208,22 +208,66 @@ void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness) {
 // gives an option whether or not to delete the selected file
 uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS )
 {
+	int result = 0;
+	sk_key_t keyPressed = 0;
 	
-	uint16_t width = 50;
-	uint16_t height = 50;
-	uint16_t x = (320/2)-(width/2);
-	uint16_t y = (240/2)-(height/2);
+	/*
+	// message string
+	char message[20] = {"Delete "};
 	
+	// buffer for filename
+	char name[10] = {0};
+	ti_GetName(name, HS->fileNames[HS->selectedFile]);
+	
+	// tack on the filename to the end of the message
+	strcat(&message[7], name);
+	
+	// tack on a question mark to the very end of the message, because it is a question...
+	message[7+strlen(name)] = '?';
+	message[8+strlen(name)] = 0; // null terminator
+	*/
+
 	// the alert function uses drawing routines, so you have to set the draw buffer
 	gfx_SetDraw(0);
 	
-	int result = textBox("Delete?", width, height, x, y);
+	uint16_t width = 200;
+	uint16_t height = 50;
+	
+	// text box (literally a rectangle)
+	gfx_SetColor(MEDIUM_GREY);
+	gfx_FillRectangle((320/2)-(width/2), (240/2)-(height/2), width, height);
+	
+	gfx_SetColor(DARK_BLUE);
+	thick_Rectangle((320/2)-(width/2), (240/2)-(height/2), width, height, 2);
+	
+	gfx_SetTextFGColor(RED);
+	gfx_PrintStringXY("ALERT!", (320/2)-(gfx_GetStringWidth("ALERT!")/2), (240/2)-(height/2) + 5);
+	
+	gfx_SetTextFGColor(BLACK);
+	gfx_PrintStringXY("Are you sure you want to ", (320/2)-(width/2) + 13, (240/2)-(height/2) + 18);
+	gfx_PrintStringXY("delete the file ", (320/2)-(width/2) + 13, (240/2)-(height/2) + 33);
+	
+	gfx_SetTextFGColor(DARK_BLUE);
+	gfx_PrintString(HS->fileNames[HS->selectedFile]);
+	
+	gfx_SetTextFGColor(BLACK);
+	gfx_PrintChar('?');
 	
 	// obviously, to see the graphics, you have to swap the buffers
 	gfx_SwapDraw();
 	
-	// if the user pressed enter or 2nd, delete the selected file
-	if(result) {
+	// wait for keypress
+	while(keyPressed != sk_Clear && keyPressed != sk_2nd && keyPressed != sk_Enter) {
+		keyPressed = os_GetCSC();
+	}
+	
+	// if the user doesn't want to delete the file...
+	if(keyPressed == sk_Clear) {
+		return 0;
+	}
+	
+	// if the user wants to delete the file...
+	if(keyPressed == sk_2nd || keyPressed == sk_Enter) {
 		ti_Delete(HS->fileNames[HS->selectedFile]);
 		loadFiles(HS);
 		
@@ -234,6 +278,7 @@ uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS )
 		
 		return 1;
 	}
+	
 	return 0;
 }
 

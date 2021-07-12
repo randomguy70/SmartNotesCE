@@ -39,10 +39,10 @@ struct lineStruct {
 	struct lineStruct * next; // Pointer to next line struct. Yes, I am making a linked list of lines :P
 };
 
-int getLineLen(char * loc, struct lineStruct * lineBuffer);
-
 // returns the pixel length of the next word (terminated with either ' ' or '\0')
 int getWordLen(char * loc, struct wordStruct * word);
+
+// copies a null or space terminated string into a given location
 int copyWord(char * dest, char * src);
 
 #endif

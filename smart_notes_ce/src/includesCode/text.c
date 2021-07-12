@@ -1,11 +1,5 @@
 #include "main.h"
 
-#define TEXT_ORIGIN 10
-#define SCRNXMIN 15
-#define SCRNYMIN 0
-#define SCRNXMAX 310
-#define SCRNYMAX 210
-
 uint8_t inputString(char* buffer, uint8_t maxLength)
 {
    uint8_t keyPressed = 0; // value of key currently pressed
@@ -170,46 +164,6 @@ int arrayToVar(char array[], int arraySize, uint8_t slot)
    return 0;
 }
 
-int getLineLen(char* loc, struct lineStruct *lineBuffer)
-{
-	int pos = 0; // byte offset we are reading from after the given *loc ptr
-	int linePixelLen = 0;
-	int chars = 0; // number of characters in the line
-	char line[50] = {0};
-	int curWordPixelLen = 0;
-	
-	while(1) {
-		struct wordStruct word;
-		curWordPixelLen = getWordLen(loc + pos, &word);
-
-		// if the line contains at least 1 word, and adding the next word will make it too long, then return the current length of the line and ignore the next word
-		if(linePixelLen + curWordPixelLen > SCRNXMAX && linePixelLen > 0) {
-			lineBuffer->pixelLen=linePixelLen;
-			lineBuffer->numChars=chars;
-			return lineBuffer->numChars;
-		}
-		// if a single word is longer than a line because some nut was bored & messing around :P
-		else if(linePixelLen == 0 && curWordPixelLen > SCRNXMAX) {
-			while(linePixelLen < SCRNXMAX-5 && loc[pos] != '\0' && loc[pos] != ' ') { // 312 is slightly smaller than 315 so that a character won't go out of the text box
-				line[pos] = loc[pos];
-				linePixelLen += gfx_GetCharWidth(loc[pos]);
-				pos++;
-				chars++;
-			}
-			line[pos] = '\0';
-			lineBuffer->pixelLen=gfx_GetStringWidth(line);
-			lineBuffer->numChars=chars;
-			return lineBuffer->numChars; // don't return the pixel length because I will be skipping through the text file based on the line offsets, not the pixel lengths. the pixel lengths are only for joining individual words into lines.
-		}
-		// add a word to the end of the line if it doesn't go beyond the screen
-		else if(linePixelLen + curWordPixelLen < SCRNXMAX) {
-			copyWord(&line[pos], &loc[pos]);
-			linePixelLen+=getWordLen(&loc[pos], &word);
-			pos+=word.numChars;
-		}
-	}
-}
-
 int getWordLen(char* loc, struct wordStruct *word)
 {
    int chars = 0;
@@ -236,3 +190,21 @@ int copyWord(char* dest, char* src)
 	dest[pos] = '\0';
    return pos;
 }
+
+
+/** copies a string into the end of another string (pointer)
+ * @param dest pointer to first string
+ * @param dest pointer to string that you are tacking on to the first string
+**/
+/*
+int strcat(char *dest, char *src) {
+	int charsRead = 0;
+	int writePos = dest[strlen(dest)];
+	
+	while(src[charsRead]!='/0') {
+		dest[writePos] = src[charsRead];
+	}
+	
+	return charsRead;
+}
+*/
