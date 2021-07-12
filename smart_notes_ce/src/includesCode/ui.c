@@ -37,10 +37,12 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
       fileSlot = ti_Open(HS->fileNames[i],"r+");
       fileSize = ti_GetSize(fileSlot);
 
-      // display currently selected file with highlighting rect
+      // display currently selected file with a scrollbar on top of it. also, invert the text color so you can see it's name. I was inspired to do this by hexaedit (a pretty amazing program), btw
       if (HS->selectedFile == i) {
          gfx_SetColor(0);
-         gfx_FillRectangle_NoClip(35,fileY-5,250,15);
+         gfx_FillRectangle_NoClip(36,fileY-5,248,15);
+			gfx_SetColor(DARK_BLUE);
+			thick_Rectangle(34,fileY-7,252, 19, 2);
          gfx_SetTextFGColor(1);
       } else {
          gfx_SetTextFGColor(0);
