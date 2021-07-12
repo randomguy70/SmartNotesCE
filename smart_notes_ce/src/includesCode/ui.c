@@ -140,8 +140,7 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
 	
 }
 
-// text editor stuff
-/*
+/* unfinished text editor stuff
 uint8_t dispEditor(struct editorStruct * ES) {
    return 0;
 }
