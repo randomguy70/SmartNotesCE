@@ -10,16 +10,17 @@ int main() {
 	// one-time setup things
 	{
 	
+	// this has to go before the gfx setup, in case it has to quit
+	if(!setupFontlibc()) {
+		return 0;
+	}
+	
 	// necessary gfx stuff
 	gfx_Begin();
 	gfx_SetPalette(palette, sizeof_palette, 0);
 	gfx_SetTransparentColor(2);
 	gfx_SetTextTransparentColor(2);
 	gfx_SetTextBGColor(2);
-		
-	if(!setupFontlibc()) {
-		return 0;
-	}
 	
 	}
 

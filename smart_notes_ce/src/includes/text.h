@@ -6,7 +6,7 @@ struct wordStruct;
 struct lineStruct;
 
 //inputString() writes an inputted string into a given string buffer (array)
-uint8_t inputString(char* buffer, uint8_t maxLength);
+uint8_t inputString(char* buffer, uint8_t maxLength, const char * title);
 
 // inputChar() returns the last character inputted based on the value of the last keypress and text mode.
 // text Modes are:

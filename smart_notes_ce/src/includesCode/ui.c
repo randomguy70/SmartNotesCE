@@ -128,11 +128,17 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
    }
 
    // new file
-   if(kb_IsDown(kb_KeyTrace)) {
+   if(kb_IsDown(kb_KeyTrace) && HS->numFiles<30) {
 		newFile();
 		loadFiles(HS);
    }
 
+	if(kb_IsDown(kb_KeyWindow)) {
+		loadFiles(HS);
+		renameSelected(HS);
+		loadFiles(HS);
+	}
+	
    // delete file
    if((kb_IsDown(kb_KeyZoom) || kb_IsDown(kb_KeyDel)) && HS->numFiles>0) {
       checkIfDeleteSelected(HS);
@@ -193,7 +199,6 @@ int8_t textBox(const char *text, int boxWidth, int boxHeight, int boxX, int boxY
 	}
 	return 0;
 }
-
 
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness) {
 	uint8_t i;
@@ -265,6 +270,71 @@ uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS )
          HS->offset--;
       }
 		
+		return 1;
+	}
+	
+	return 0;
+}
+
+uint8_t renameSelected(struct fileViewerStruct *HS) {
+	uint16_t width = 200;
+	uint16_t height = 50;
+	
+	gfx_SetDraw(1);
+	
+	// text box (literally a rectangle)
+	gfx_SetColor(MEDIUM_GREY);
+	gfx_FillRectangle((320/2)-(width/2), (240/2)-(height/2), width, height);
+	
+	// draw a blue outline for the text box
+	gfx_SetColor(DARK_BLUE);
+	thick_Rectangle((320/2)-(width/2), (240/2)-(height/2), width, height, 2);
+	
+	// print "alert", because this is an alert...
+	gfx_SetTextFGColor(RED);
+	gfx_PrintStringXY("ALERT!", (320/2)-(gfx_GetStringWidth("ALERT!")/2), (240/2)-(height/2) + 5);
+	
+	// bar under "ALERT!"
+	gfx_SetColor(DARK_BLUE);
+	gfx_HorizLine((SCRN_WIDTH/2)-(100/2), (240/2)-(height/2) + 14, 100);
+	gfx_HorizLine((SCRN_WIDTH/2)-(100/2), (240/2)-(height/2) + 15, 100);
+	
+	// print message relative to the given width
+	gfx_SetTextFGColor(BLACK);
+	gfx_PrintStringXY("Are you sure you want to ", (SCRN_WIDTH/2)-(width/2) + 13, (SCRN_HEIGHT/2)-(height/2) + 18);
+	gfx_PrintStringXY("rename the file ", (SCRN_WIDTH/2)-(width/2) + 13, (SCRN_HEIGHT/2)-(height/2) + 33);
+	
+	// print the file's name
+	gfx_SetTextFGColor(DARK_BLUE);
+	gfx_PrintString(HS->fileNames[HS->selectedFile]);
+	
+	// add a question mark
+	gfx_SetTextFGColor(BLACK);
+	gfx_PrintChar('?');
+	
+	gfx_SwapDraw();
+	
+	sk_key_t keyPressed = 0;
+	while(keyPressed != sk_Clear && keyPressed != sk_2nd && keyPressed != sk_Enter) {
+		keyPressed = os_GetCSC();
+	}
+	
+	if(keyPressed == sk_Clear) {
+		return 0;
+	}
+	
+	char inputNameBuffer[10] = {0};
+	char prevNameBuffer[10] = {0};
+	char message[25] = {"Rename "};
+	uint8_t fileSlot;
+	
+	// create a single string by tacking the file's old name on to "Rename ", and pass that as a parameter to inputString
+	fileSlot = ti_Open(HS->fileNames[HS->selectedFile], "r");
+	ti_GetName(prevNameBuffer, fileSlot);
+	strcat(message, prevNameBuffer);
+	
+	if(inputString(inputNameBuffer, 8, message) > 0) {
+		ti_Rename(HS->fileNames[HS->selectedFile], inputNameBuffer);
 		return 1;
 	}
 	

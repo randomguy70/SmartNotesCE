@@ -1,6 +1,6 @@
 #include "main.h"
 
-uint8_t inputString(char* buffer, uint8_t maxLength)
+uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 {
    uint8_t keyPressed = 0; // value of key currently pressed
    uint8_t txtMode = CAPS; // caps, math, or lowercase
@@ -13,11 +13,12 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
       kb_Scan();
 
       // clear quits and returns failure (0)
-      if (os_GetCSC() == sk_Clear)
-         return 0;
+      if (kb_IsDown(kb_Clear)) {
+			return 0;
+		}
 			
 		// enter creates a new file with the inputted string for a name
-      if ((kb_IsDown(kb_KeyEnter)) && strLen>0 && strLen<=maxLength) { // enter finishes string input and returns 1
+      if ((kb_IsDown(kb_KeyEnter)) && strLen > 0 && strLen <= maxLength) { // enter finishes string input and returns 1
          return 1;
       }
 		
@@ -81,8 +82,8 @@ uint8_t inputString(char* buffer, uint8_t maxLength)
          gfx_PrintStringXY("a", 180, 95);
       }
       gfx_SetTextFGColor(0);
-      gfx_PrintStringXY("New file",120,95);
-      gfx_PrintStringXY(buffer,117,113);
+      gfx_PrintStringXY(title, 110, 95);
+      gfx_PrintStringXY(buffer, 117, 113);
       gfx_SetTextFGColor(1);
 
       // display cursor

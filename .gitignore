@@ -2,3 +2,4 @@
 .vscode/
 smart_notes_ce/bin
 smart_notes_ce/obj
+.VSCodeCounter/
