@@ -72,10 +72,18 @@ void dispHomeScreenBG() {
    gfx_FillScreen(MEDIUM_GREY);
 	
 	// header
-   gfx_SetColor(DARK_BLUE);
+   gfx_SetColor(BLACK);
 	thick_Rectangle(50, 1, 222, 30, 2);
-	gfx_PrintStringXY("SMARTNOTES CE",115,5);
-   gfx_PrintStringXY("VERSION 1.0 BY JOHNPAUL MALLOY",55,20);
+	
+	gfx_SetTextFGColor(DARK_BLUE);
+	int width;
+	
+	width = gfx_GetStringWidth("SmartNotes CE");
+	gfx_PrintStringXY("SMARTNOTES CE", (SCRN_WIDTH/2)-(width/2), 5);
+	
+	gfx_SetTextFGColor(BLACK);
+	width = gfx_GetStringWidth("VERSION 1.0 BY Randomguy");
+   gfx_PrintStringXY("VERSION 1.0 BY Randomguy", (SCRN_WIDTH/2)-(width/2), 20);
 	
 	// box with file names
    gfx_SetColor(WHITE);
