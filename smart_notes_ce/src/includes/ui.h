@@ -73,6 +73,7 @@ void animateCursor(struct cursorStruct *CS);
 // draws a cursor at a given x and y location
 void drawCursor(int x, int y);
 
+
 /** displays a given alert text string in a text box of given proportions. will add text wrapping (and later, scrolling if there isn't enough room in the text box)
 *@param text pointer to the alert message
 *@param boxLength pixel length of the text box which will display the alert message
@@ -80,12 +81,17 @@ void drawCursor(int x, int y);
 *@param boxX the x coord of the upper left corner of the text box
 *@param boxY the Y coord of the upper left corner of the text box
 **/
-int8_t alert(const char *text, int boxWidth, int boxHeight, int boxX, int boxY);
+
+int8_t textBox(const char *text, int boxWidth, int boxHeight, int boxX, int boxY);
 
 // draws a rectangle with a given thickness
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);
 
+// check if user wants to delete a file, and deleted the selected file if so
+uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS );
+
 // returns 1 if the user is pressing clear for a significant duration
 int chooseToQuit();
+
 
 #endif

@@ -27,7 +27,7 @@ uint8_t dispHomeScreen() {
 
 // display the file names & info stored in the fileViewerStruct *HS
 uint8_t dispFiles(struct fileViewerStruct *HS) {
-   uint8_t i;          // starting increment of file display
+   uint8_t i;          // starting increment of file display, ends up as the number of files displayed onscreen (should be <=10)
    uint8_t ii = 0;     // how many files have been displayed so far
    uint8_t fileSlot;   // slot number of currently detected file
    uint8_t fileSize;   // size of currently detected and drawn file
@@ -60,7 +60,7 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
       gfx_PrintStringXY("That's too bad for you :(",93,100);
    }
 
-   // return the number of files displayed, I guess. this really isn't necessary at all btw. if i run low on bytes, which is unlikely, will delete this. :P
+   // Return the number of files displayed, I guess. This really isn't necessary at all btw. If I run low on bytes in the stack, which is very unlikely (since I am such an efficient programmer lol && never use globals && always use tons of small functions), I will delete this. :P
    return i;
 }
 
@@ -69,16 +69,19 @@ void dispHomeScreenBG() {
    gfx_SetDraw(1);
    gfx_FillScreen(MEDIUM_GREY);
 	
-   gfx_SetColor(BLACK);
-   gfx_Rectangle_NoClip(50,1,222,30);
-   gfx_Rectangle_NoClip(35,55,250,152);
+	// header
+   gfx_SetColor(DARK_BLUE);
+	thick_Rectangle(50, 1, 222, 30, 2);
+	gfx_PrintStringXY("SMARTNOTES CE",115,5);
+   gfx_PrintStringXY("VERSION 1.0 BY JOHNPAUL MALLOY",55,20);
 	
+	// box with file names
    gfx_SetColor(WHITE);
    gfx_FillRectangle_NoClip(36,56,248,150);
+	gfx_SetColor(DARK_BLUE);
+	thick_Rectangle(34, 54, 252, 154, 2);
 	
    gfx_SetTextFGColor(BLACK);
-   gfx_PrintStringXY("SMARTNOTES CE",115,5);
-   gfx_PrintStringXY("VERSION 1.0 BY JOHNPAUL MALLOY",55,20);
    gfx_PrintStringXY("NAME",40,45);
    gfx_PrintStringXY("SIZE",135,45);
    gfx_PrintStringXY("STATUS",210,45);
@@ -130,13 +133,7 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
 
    // delete file
    if((kb_IsDown(kb_KeyZoom) || kb_IsDown(kb_KeyDel)) && HS->numFiles>0) {
-      uint8_t fileWasDeleted = checkIfDelete(HS);
-      loadFiles(HS);
-		
-      if(HS->selectedFile>0 && fileWasDeleted) {
-         HS->selectedFile--;		
-         HS->offset--;
-      }
+      checkIfDeleteSelected(HS);
    }
 	
 }
@@ -165,7 +162,7 @@ void drawCursor(int x, int y) {
    gfx_VertLine_NoClip(x+1, y, 11);
 }
 
-int8_t alert(const char *text, int boxWidth, int boxHeight, int boxX, int boxY) {
+int8_t textBox(const char *text, int boxWidth, int boxHeight, int boxX, int boxY) {
 	uint8_t keyPressed = 0;
 	
 	// fontlibc setups (still in experimental phase)
@@ -180,7 +177,7 @@ int8_t alert(const char *text, int boxWidth, int boxHeight, int boxX, int boxY) 
 	thick_Rectangle(boxX, boxY, boxWidth, boxHeight, 2);
 
 	fontlib_SetForegroundColor(BLACK);
-	fontlib_SetCursorPosition(boxX+2, boxY+2);
+	fontlib_SetCursorPosition(boxX+3, boxY+2);
 	fontlib_DrawString(text);
 	
 	// waits for keypress, if clear is pressed, then return 0, if enter or second is pressed, then return 1
@@ -196,11 +193,46 @@ int8_t alert(const char *text, int boxWidth, int boxHeight, int boxX, int boxY) 
 	return 0;
 }
 
+
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness) {
 	uint8_t i;
+	
 	for(i=0; i<thickness; i++) {
 		gfx_Rectangle(x+i, y+i, width-(2*i), height-(2*i));
 	}
+	
+	return;
+}
+
+// gives an option whether or not to delete the selected file. i should really just make an alert function with 2-3 const char* and coordinate parameters to save space and easily create other possible messages, sortof like the word wrapped text box functions with headers & body, like epsilon5 has in Vysion CE, which is a cool shell that you should check out at: https://www.cemetech.net/downloads/files/2095/x2227
+uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS ) {
+	
+	#define width 50
+	#define height 50
+	#define x (320/2)-(width/2)
+	#define y (240/2)-(height/2)
+	
+	// the alert function uses drawing routines, so you have to set the draw buffer
+	gfx_SetDraw(0);
+	
+	int result = textBox("Delete?", width, height, x, y);
+	
+	// obviously, to see the graphics, you have to swap the buffers
+	gfx_SwapDraw();
+	
+	// if the user pressed enter or 2nd, delete the selected file
+	if(result) {
+		ti_Delete(HS->fileNames[HS->selectedFile]);
+		loadFiles(HS);
+		
+		if(HS->selectedFile>0 && HS->numFiles>10) {
+         HS->selectedFile--;		
+         HS->offset--;
+      }
+		
+		return 1;
+	}
+	return 0;
 }
 
 int chooseToQuit() {

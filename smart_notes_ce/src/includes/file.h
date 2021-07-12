@@ -29,7 +29,5 @@ uint8_t loadFiles(struct fileViewerStruct *HS);
 // organize file into an array of lines in a fileStruct
 int loadFile(struct fileStruct * file);
 
-// check if user wants to delete a file, and deleted the selected file if so
-uint8_t checkIfDelete(struct fileViewerStruct *HS );
 
 #endif

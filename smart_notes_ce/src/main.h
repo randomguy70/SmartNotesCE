@@ -27,6 +27,9 @@
 #define FALSE 0
 #define TRUE !(FALSE)
 
+#define SCRN_WIDTH 320
+#define SCRN_HEIGHT 240
+
 #define BLACK         0  // defines the fixed-entry offset of black in my custom palette
 #define WHITE         1  // defines the fixed-entry offset of white in my custom palette
 #define TRANSPARENT   2  // defines the fixed-entry offset of transparent color in my custom palette
