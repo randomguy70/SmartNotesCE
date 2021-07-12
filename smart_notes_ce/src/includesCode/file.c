@@ -163,7 +163,7 @@ uint8_t checkIfDelete(struct fileViewerStruct *HS ) {
 	}
 	*/
 	gfx_SetDraw(0);
-	int result = alert("Delete?", 50, 20, 50, 50, 1);
+	int result = alert("Delete?", 100, 100, 50, 50);
 	thick_Rectangle(1, 1, 10, 10, 2);
 	gfx_SwapDraw();
 	if(result) {

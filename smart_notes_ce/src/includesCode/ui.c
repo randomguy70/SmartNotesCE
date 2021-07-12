@@ -132,13 +132,13 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
    if((kb_IsDown(kb_KeyZoom) || kb_IsDown(kb_KeyDel)) && HS->numFiles>0) {
       uint8_t fileWasDeleted = checkIfDelete(HS);
       loadFiles(HS);
-      if(HS->selectedFile>0) {
-         HS->selectedFile--;
-      }
-      if(HS->offset>0 && fileWasDeleted) {
+		
+      if(HS->selectedFile>0 && fileWasDeleted) {
+         HS->selectedFile--;		
          HS->offset--;
       }
    }
+	
 }
 
 // text editor stuff
@@ -165,39 +165,30 @@ void drawCursor(int x, int y) {
    gfx_VertLine_NoClip(x+1, y, 11);
 }
 
-int8_t alert(const char *text, int boxWidth, int boxHeight, int boxX, int boxY, int8_t showAlertHeader) {
+int8_t alert(const char *text, int boxWidth, int boxHeight, int boxX, int boxY) {
 	uint8_t keyPressed = 0;
 	
-	if(showAlertHeader) {
-
-		// body rect of alert header
-		gfx_SetColor(DARK_GREY);
-		gfx_FillRectangle(boxX, boxY, boxWidth, 15);
-
-		// outline rect of alert header
-		gfx_SetColor(DARK_BLUE);
-		thick_Rectangle(boxX, boxY, boxWidth, 15, 2);
-
-		// text of alert header
-		gfx_SetTextFGColor(WHITE);
-		gfx_PrintStringXY("ALERT!", (boxWidth/2)-(gfx_GetStringWidth("ALERT!")/2), boxY-2);
-
-		// adjust the coords for the other part of the text box (that contains the actual message)
-		boxY+=13;
-	}
+	// fontlibc setups (still in experimental phase)
+	fontlib_SetWindow(boxX, boxY, boxWidth, boxHeight);
 
 	// body rect of alert header
-	gfx_SetColor(LIGHT_GREY);
-	gfx_FillRectangle(boxX, boxY, boxWidth, boxHeight);
+	// gfx_SetColor(LIGHT_GREY);
+	// gfx_FillRectangle(boxX, boxY, boxWidth, boxHeight);
 
 	// outline rect of alert header
-	gfx_SetColor(DARK_BLUE);
-	thick_Rectangle(boxX, boxY, boxWidth, boxHeight, 2);
+	// gfx_SetColor(DARK_BLUE);
+	// thick_Rectangle(boxX, boxY, boxWidth, boxHeight, 2);
 	
+	/*
 	// text of alert header
 	gfx_SetTextFGColor(WHITE);
 	gfx_PrintStringXY(text, (boxWidth/2)-(gfx_GetStringWidth(text)/2), boxY-2);	
+	*/
 
+	fontlib_SetForegroundColor(BLACK);
+	fontlib_SetCursorPosition(boxX+2, boxY+2);
+	fontlib_DrawString(text);
+	
 	// waits for keypress, if clear is pressed, then return 0, if enter or second is pressed, then return 1
 	while(keyPressed != sk_Clear && keyPressed != sk_2nd && keyPressed != sk_Enter)
 		keyPressed = os_GetCSC();

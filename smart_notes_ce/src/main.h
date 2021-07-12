@@ -33,7 +33,7 @@
 #define DARK_GREY     3  // defines the fixed-entry offset of dark grey in my custom palette
 #define MEDIUM_GREY   4  // defines the fixed-entry offset of medium grey in my custom palette
 #define LIGHT_GREY    5  // defines the fixed-entry offset of light grey in my custom palette
-#define DARK_BLUE     6  // defines the fixed-entry offset of electric blue in my palette. I was too lazy to change the name.
+#define DARK_BLUE     6  // defines the fixed-entry offset of electric blue in my palette. I was too lazy to change the name, but it really is a nice color.
 #define RED           7  // defines the fixed-entry offset of red in my custom palette
 #define LIGHTER_BLUE  8  // defines the fixed-entry offset of blue in my custom palette
 

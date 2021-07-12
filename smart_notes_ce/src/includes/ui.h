@@ -79,9 +79,8 @@ void drawCursor(int x, int y);
 *@param boxHeight pixel height of the text box which will display the alert message
 *@param boxX the x coord of the upper left corner of the text box
 *@param boxY the Y coord of the upper left corner of the text box
-*@param showAlertHeader this is just a bool, set it to 1 if you want the text box to show "Alert" at the top, otherwise set it to 0
 **/
-int8_t alert(const char *text, int boxWidth, int boxHeight, int boxX, int boxY, int8_t showAlertHeader);
+int8_t alert(const char *text, int boxWidth, int boxHeight, int boxX, int boxY);
 
 // draws a rectangle with a given thickness
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);
