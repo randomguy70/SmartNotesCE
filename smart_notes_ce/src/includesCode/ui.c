@@ -367,4 +367,4 @@ int chooseToQuit() {
 	return 0;
 }
 
-// Congrats, you actually got to the bottom of this file! Did you actually read everything or did you just scroll down quickly? :P
+// Congrats, you actually got to the bottom of this file! Did you actually read everything? :P
