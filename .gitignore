@@ -1,2 +1,4 @@
 .DS_Store
 .vscode/
+smart_notes_ce/bin
+smart_notes_ce/obj

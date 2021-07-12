@@ -172,18 +172,12 @@ int8_t alert(const char *text, int boxWidth, int boxHeight, int boxX, int boxY) 
 	fontlib_SetWindow(boxX, boxY, boxWidth, boxHeight);
 
 	// body rect of alert header
-	// gfx_SetColor(LIGHT_GREY);
-	// gfx_FillRectangle(boxX, boxY, boxWidth, boxHeight);
+	gfx_SetColor(LIGHT_GREY);
+	gfx_FillRectangle(boxX, boxY, boxWidth, boxHeight);
 
 	// outline rect of alert header
-	// gfx_SetColor(DARK_BLUE);
-	// thick_Rectangle(boxX, boxY, boxWidth, boxHeight, 2);
-	
-	/*
-	// text of alert header
-	gfx_SetTextFGColor(WHITE);
-	gfx_PrintStringXY(text, (boxWidth/2)-(gfx_GetStringWidth(text)/2), boxY-2);	
-	*/
+	gfx_SetColor(DARK_BLUE);
+	thick_Rectangle(boxX, boxY, boxWidth, boxHeight, 2);
 
 	fontlib_SetForegroundColor(BLACK);
 	fontlib_SetCursorPosition(boxX+2, boxY+2);
