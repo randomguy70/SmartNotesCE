@@ -60,7 +60,7 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
       gfx_PrintStringXY("That's too bad for you :(",93,100);
    }
 
-   // Return the number of files displayed, I guess. This really isn't necessary at all btw. If I run low on bytes in the stack, which is very unlikely (since I am such an efficient programmer lol && never use globals && always use tons of small functions), I will delete this. :P
+   // Return the number of files displayed, I guess. This really isn't necessary at all btw. If I run low on bytes in the stack, which is very unlikely (since I am writing in C && am not defining a ton of variables && am such an efficient programmer lol && never use globals && always use tons of small functions), I will delete this. :P
    return i;
 }
 
@@ -207,10 +207,10 @@ void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness) {
 // gives an option whether or not to delete the selected file. i should really just make an alert function with 2-3 const char* and coordinate parameters to save space and easily create other possible messages, sortof like the word wrapped text box functions with headers & body, like epsilon5 has in Vysion CE, which is a cool shell that you should check out at: https://www.cemetech.net/downloads/files/2095/x2227
 uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS ) {
 	
-	#define width 50
-	#define height 50
-	#define x (320/2)-(width/2)
-	#define y (240/2)-(height/2)
+	int width = 50;
+	int height = 50;
+	int x = (320/2)-(width/2);
+	int y = (240/2)-(height/2);
 	
 	// the alert function uses drawing routines, so you have to set the draw buffer
 	gfx_SetDraw(0);
