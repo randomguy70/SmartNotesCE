@@ -6,8 +6,11 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
    uint8_t txtMode = CAPS; // caps, math, or lowercase
    uint8_t strLen = 0; //  current character length & offset of inputted string
    char character; //  current inputted character buffer
-   uint8_t cursorX;
+   uint16_t cursorX;
+	uint16_t cursorY;
    uint8_t cursorBlink = 0;
+	uint16_t windowWidth = 100;
+	uint16_t windowHeight = 50;
 
    while(1) {
       kb_Scan();
@@ -51,47 +54,51 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
          delay(80);
       }
 
+		gfx_SetDraw(1);
+		
       // display current string/new filename with outline box
-      gfx_SetDraw(1);
       // outer text box fill
       gfx_SetColor(3); // fill rectangle light grey
-      gfx_FillRectangle_NoClip(110,90,80,40);
+      gfx_FillRectangle_NoClip((SCRN_WIDTH/2)-(windowWidth/2),(SCRN_HEIGHT/2)-(windowHeight/2),windowWidth,windowHeight);
 
       // outer text box outline
-      gfx_SetColor(6); // blue outline for text input outer box
-      gfx_Rectangle_NoClip(109,89,82,42);
-      gfx_Rectangle_NoClip(110,90,80,40);
+      gfx_SetColor(DARK_BLUE); // blue outline for text input outer box
+		thick_Rectangle((SCRN_WIDTH/2)-(windowWidth/2),(SCRN_HEIGHT/2)-(windowHeight/2),windowWidth,windowHeight, 2);
 
       // inner text box fill
       gfx_SetColor(1); // fill inner text box white
-      gfx_FillRectangle_NoClip(114,109,72,15);
+		gfx_FillRectangle((SCRN_WIDTH/2)-(72/2),(SCRN_HEIGHT/2)-(windowHeight/2)+20, 72, 15);
 
       // inner text box outline
-      gfx_SetColor(6); //  blue outline for text input inner box
-      gfx_Rectangle_NoClip(114,109,72,15);
+      gfx_SetColor(DARK_BLUE);
+		gfx_Rectangle((SCRN_WIDTH/2)-(72/2),(SCRN_HEIGHT/2)-(windowHeight/2)+20, 72, 15);
 
-      // display inputted text and txtMode
-      gfx_SetTextFGColor(0);
+      // display inputted text and alpha mode (either A, a, or 1)
+      gfx_SetTextFGColor(BLACK);
+		gfx_SetTextXY((SCRN_WIDTH/2)+(windowWidth/2)-10,(SCRN_HEIGHT/2)-(windowHeight/2)+5);
+		
       if(txtMode == MATH) {
-         gfx_PrintStringXY("1", 180, 95);
+			gfx_PrintChar('1');
       }
       if(txtMode == CAPS) {
-         gfx_PrintStringXY("A", 180, 95);
+			gfx_PrintChar('A');
       }
       if(txtMode == LOWER_CASE) {
-         gfx_PrintStringXY("a", 180, 95);
+			gfx_PrintChar('a');
       }
-      gfx_SetTextFGColor(0);
-      gfx_PrintStringXY(title, 110, 95);
-      gfx_PrintStringXY(buffer, 117, 113);
-      gfx_SetTextFGColor(1);
+		
+      gfx_SetTextFGColor(BLACK);
+		gfx_PrintStringXY(title, ((SCRN_WIDTH/2)-(windowWidth/2)+((SCRN_WIDTH/2)+(windowWidth/2)-10))/2-(gfx_GetStringWidth(title)/2), (SCRN_HEIGHT/2)-(windowHeight/2)+5);
+		gfx_PrintStringXY(buffer, (SCRN_WIDTH/2)-(72/2)+2, (SCRN_HEIGHT/2)-(windowHeight/2)+24);
 
       // display cursor
-      cursorX = gfx_GetTextX()+1;
-      gfx_SetColor(6);
+      cursorX = gfx_GetTextX() + 2;
+		cursorY = gfx_GetTextY()-2;
+      gfx_SetColor(DARK_BLUE);
+		
       if(cursorBlink > 15) {
-         gfx_VertLine_NoClip(cursorX, 111, 11);
-         gfx_VertLine_NoClip(cursorX+1, 111, 11);
+			gfx_VertLine(cursorX, cursorY, 11);
+			gfx_VertLine(cursorX+1, cursorY, 11);
          if(cursorBlink == 40) {
             cursorBlink = 0;
          }
