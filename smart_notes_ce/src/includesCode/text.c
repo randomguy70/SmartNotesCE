@@ -2,7 +2,7 @@
 
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 {
-   sk_key_t keyPressed; // value of key currently pressed
+   uint8_t keyPressed; // value of key currently pressed
    uint8_t txtMode = CAPS; // caps, math, or lowercase
    uint8_t strLen = 0; // current character length & offset of inputted string
    char character; // current inputted character buffer
@@ -80,10 +80,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		
 		// keypresses
 		{
-		while(!keyPressed) {
-			keyPressed = os_GetCSC();
-			kb_Scan();
-		}
+		keyPressed = os_GetCSC();
 		
 		// enter creates a new file with the inputted string for a name
       if (keyPressed == sk_Enter && strLen > 0 && strLen <= maxLength) { // enter finishes string input and returns 1
