@@ -14,19 +14,26 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 
    while(1) {
       kb_Scan();
-
-      // clear quits and returns failure (0)
-      if (kb_IsDown(kb_Clear)) {
-			return 0;
-		}
 			
 		// enter creates a new file with the inputted string for a name
       if ((kb_IsDown(kb_KeyEnter)) && strLen > 0 && strLen <= maxLength) { // enter finishes string input and returns 1
          return 1;
       }
 		
+		// clear quits and returns failure (0)
+      if (kb_IsDown(kb_Clear)) {
+			return 0;
+		}
+		
+		// delete deletes one character (obviously)
+      if (kb_IsDown(kb_Del) && strLen>0) {
+         buffer[strLen-1] = 0;
+         strLen--;
+         delay(100);
+      }
+		
 		// switching text modes
-      if (os_GetCSC() == sk_Alpha) {
+      if (kb_IsDown(kb_Alpha)) {
 			if(txtMode == MATH) {
 				txtMode = CAPS;
 			}
@@ -40,18 +47,12 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		
       // input character and add the character to the current offset in the string buffer
       keyPressed = get_single_key_pressed();
-      if (keyPressed>0 && strLen<8) {
+      if (keyPressed>0 && strLen < 8) {
          character = inputChar(txtMode, keyPressed);
          if (character != '\0' && strLen<=maxLength) {
                buffer[strLen] = character;
                strLen++;
          }
-      }
-
-      if ((kb_IsDown(kb_KeyDel)) && strLen>0) {
-         buffer[strLen-1] = 0;
-         strLen--;;
-         delay(80);
       }
 
 		gfx_SetDraw(1);

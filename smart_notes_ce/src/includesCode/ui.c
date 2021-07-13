@@ -221,7 +221,6 @@ void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness) {
 // gives an option whether or not to delete the selected file
 uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS )
 {
-	int result = 0;
 	sk_key_t keyPressed = 0;
 	
 	// the alert function uses drawing routines, so you have to set the draw buffer
