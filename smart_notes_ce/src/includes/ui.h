@@ -47,6 +47,29 @@ struct cursorStruct {
    int y; // current y coord of cursor
 };
 
+struct message {
+	bool hasHeader;
+	char * strings[3]; // there are up to three separate strings allowed in a message: the header, the body, and the footer.
+	char * options [5]; // put the option strings here, ex: "Delete?", "Cancel", "Quit"
+	/*
+	Example:
+	-----------------------------
+	|         Alert!            |
+	-----------------------------
+	|  Are you sure you want    |
+	|  to do that?              |
+	|                           |
+	|                           |
+	-----------------------------
+	|   Yes   |  No  |  Cancel  |
+	-----------------------------
+	
+	"Alert" and "Are you sure you want to do that?" are the strings
+	the options are "Yes", "No", and "Cancel"
+	If Yes is chosen, then 0 will be returned, if No is chosen, then 1 will be returned, if Cancel is chosen, then 2 will be returned
+	*/
+};
+
 // contains properties of the editor
 struct editorStruct {
    struct cursorStruct cursor;

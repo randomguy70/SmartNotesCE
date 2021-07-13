@@ -43,7 +43,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
       gfx_SetColor(DARK_BLUE);
 		gfx_Rectangle(textBoxX, outerBoxY+20, textBoxWidth, textBoxHeight);
 
-      // display inputted text and alpha mode (either A, a, or 1)
+      // display alpha mode (either A, a, or 1)
 		int alphaXPos = outerBoxX + windowWidth - 10;
 		int alphaYPos = outerBoxY + 5;
       gfx_SetTextFGColor(BLACK);
@@ -59,6 +59,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 			gfx_PrintChar('a');
       }
 		
+		// display the title and inputted string
       gfx_SetTextFGColor(BLACK);
 		gfx_PrintStringXY(title, ((SCRN_WIDTH/2)-(windowWidth/2)+((SCRN_WIDTH/2)+(windowWidth/2)-10))/2-(gfx_GetStringWidth(title)/2), (SCRN_HEIGHT/2)-(windowHeight/2)+5);
 		gfx_PrintStringXY(buffer, (SCRN_WIDTH/2)-(72/2)+2, (SCRN_HEIGHT/2)-(windowHeight/2)+24);
@@ -68,6 +69,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		cursorY = gfx_GetTextY()-2;
       gfx_SetColor(DARK_BLUE);
 		
+		// deal with cursor cycles
       if(cursorBlink > 15) {
 			gfx_VertLine(cursorX, cursorY, 11);
 			gfx_VertLine(cursorX+1, cursorY, 11);
