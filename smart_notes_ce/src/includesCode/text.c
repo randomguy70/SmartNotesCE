@@ -37,7 +37,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		int textBoxX = (SCRN_WIDTH/2)-(textBoxWidth/2);
 		int textBoxY = outerBoxY + 20;
       gfx_SetColor(1);
-		gfx_FillRectangle(textBoxX, outerBoxY+20, textBoxWidth, textBoxHeight);
+		gfx_FillRectangle(textBoxX, textBoxY, textBoxWidth, textBoxHeight);
 
       // inner text box outline
       gfx_SetColor(DARK_BLUE);

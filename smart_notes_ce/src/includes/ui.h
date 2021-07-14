@@ -95,7 +95,7 @@ void printText(struct fileStruct * file);
 void animateCursor(struct cursorStruct *CS);
 
 // draws a cursor at a given x and y location
-void drawCursor(int x, int y);
+void drawCursor(struct cursorStruct * cursor);
 
 
 /** displays a given alert text string in a text box of given proportions. will add text wrapping (and later, scrolling if there isn't enough room in the text box)

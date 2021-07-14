@@ -68,22 +68,25 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
 
 // homescreen for the fileViewer, rectangles, title, etc...
 void dispHomeScreenBG() {
-   gfx_SetDraw(1);
-   gfx_FillScreen(MEDIUM_GREY);
-	
-	// header
-   gfx_SetColor(BLACK);
-	thick_Rectangle(50, 1, 222, 30, 2);
-	
-	gfx_SetTextFGColor(DARK_BLUE);
 	int width;
 	
+   gfx_SetDraw(1);
+	
+	// lined-paper background
+   gfx_FillScreen(PAPER_YELLOW);
+	gfx_SetColor(LIGHT_BLUE);
+	for(uint8_t i = 0; i<11; i++) {
+		gfx_HorizLine_NoClip(0, i*20, SCRN_WIDTH);
+		gfx_HorizLine_NoClip(0, i*20+1, SCRN_WIDTH);
+	}
+
+	gfx_SetTextFGColor(DARK_BLUE);
 	width = gfx_GetStringWidth("SmartNotes CE");
-	gfx_PrintStringXY("SMARTNOTES CE", (SCRN_WIDTH/2)-(width/2), 5);
+	gfx_PrintStringXY("SMARTNOTES CE", (SCRN_WIDTH/2)-(width/2), 8);
 	
 	gfx_SetTextFGColor(BLACK);
 	width = gfx_GetStringWidth("VERSION 1.0 BY Randomguy");
-   gfx_PrintStringXY("VERSION 1.0 BY Randomguy", (SCRN_WIDTH/2)-(width/2), 20);
+   gfx_PrintStringXY("VERSION 1.0 BY Randomguy", (SCRN_WIDTH/2)-(width/2), 27);
 	
 	// box with file names
    gfx_SetColor(WHITE);
@@ -104,7 +107,7 @@ void dispHSButtons()
    for(i=0; i<320; i+=64) {
       gfx_SetColor(0);
       gfx_Rectangle_NoClip(i,220,62,19);
-      gfx_SetColor(42);
+      gfx_SetColor(LIGHT_GREY);
       gfx_FillRectangle_NoClip(i+1,221,60,17);
    }
    //button text
@@ -113,6 +116,7 @@ void dispHSButtons()
    gfx_PrintStringXY("Rename",73,227);
    gfx_PrintStringXY("Delete",137,227);
    gfx_PrintStringXY("New",211,227);
+	//gfx_TransparentSprite(new_icon, 211, 200);
    gfx_PrintStringXY("Other",270,227);
 }
 
@@ -163,7 +167,7 @@ uint8_t dispEditor(struct editorStruct * ES) {
 // cursor stuff
 void animateCursor(struct cursorStruct *CS) {
    if(CS->cursorState > CS->invisibleTime) {
-      drawCursor(CS->x, CS->y);
+      drawCursor(CS);
    }
    if(CS->cursorState >= CS->cyclesPerAnimation) {
       CS->cursorState = 0;
@@ -171,10 +175,10 @@ void animateCursor(struct cursorStruct *CS) {
    CS->cursorState++;
 }
 
-void drawCursor(int x, int y) {
+void drawCursor(struct cursorStruct * cursor) {
    gfx_SetColor(DARK_BLUE);
-   gfx_VertLine_NoClip(x, y, 11);
-   gfx_VertLine_NoClip(x+1, y, 11);
+   gfx_VertLine_NoClip(cursor->x, cursor->y, 11);
+   gfx_VertLine_NoClip(cursor->x+1, cursor->y, 11);
 }
 
 int8_t textBox(const char *text, int boxWidth, int boxHeight, int boxX, int boxY) {
@@ -349,6 +353,7 @@ uint8_t renameSelected(struct fileViewerStruct *HS) {
 
 int displayMessage(struct message * message) {
 	// lots of text-wrapped fontlib stuff
+	return message->hasHeader; // i had to silence the return warning. will change that!
 }
 
 int chooseToQuit() {
