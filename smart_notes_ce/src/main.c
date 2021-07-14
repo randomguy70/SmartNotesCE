@@ -49,7 +49,7 @@ static uint8_t setupFontlibc() {
    fontlib_SetFont(my_font, 0);
 	fontlib_SetAlternateStopCode(' ');
 	fontlib_SetBackgroundColor(2);
-	fontlib_SetTransparency(TRUE);
+	fontlib_SetTransparency(true);
 	
 	return 1;
 }

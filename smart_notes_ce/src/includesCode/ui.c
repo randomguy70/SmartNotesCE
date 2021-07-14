@@ -107,10 +107,10 @@ void dispHSButtons() {
    int i = 0;
    //button rects at bottom of screen
    for(i=1; i<320; i+=64) {
-      gfx_SetColor(BLACK);
-      gfx_Rectangle_NoClip(i+1,220,60,18);
       gfx_SetColor(LIGHT_GREY);
-      gfx_FillRectangle_NoClip(i+1,220,60,18);
+      gfx_FillRectangle_NoClip(i+1,220,60,17);
+		gfx_SetColor(BLACK);
+      gfx_Rectangle_NoClip(i+1,220,60,17);
    }
    //button text
    gfx_SetTextFGColor(0);

@@ -40,6 +40,7 @@
 #define LIGHT_BLUE    8    // light blue
 #define PAPER_YELLOW  9  // color of yellow paper stickypads
 
+/*
 struct globalPalette{
 	uint8_t cursorIndex;
 	
@@ -65,6 +66,7 @@ struct globalPalette{
 		uint8_t pressedOutlineIndex;
 	};
 };
+*/
 
 #define MATH          1
 #define CAPS          2
