@@ -1,0 +1,3 @@
+Bugs that need to be fixed: 
+- if the scrollbar is on any file except the first one, when you press delete the screen goes blank and you need to restart the program
+- the file renaming window needs to be larger in case the file has a name > 6 chars
