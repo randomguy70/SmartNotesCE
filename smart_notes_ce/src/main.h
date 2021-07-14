@@ -41,6 +41,32 @@
 #define LIGHT_BLUE    8    // light blue
 #define PAPER_YELLOW  9  // color of yellow paper stickypads
 
+struct globalPalette{
+	uint8_t cursorIndex;
+	
+	struct window {
+		uint8_t fillIndex;
+		uint8_t outlineIndex;
+	};
+	struct homeScrn {
+		uint8_t BGFillIndex;
+		bool hasLines;
+		uint8_t lineIndex;
+		
+	};
+	struct editorScrn {
+		uint8_t BGFillIndex;
+		bool hasLines;
+		uint8_t lineIndex;
+	};
+	struct buttons{
+		uint8_t fillIndex;
+		uint8_t outlineIndex;
+		uint8_t pressedFillIndex;
+		uint8_t pressedOutlineIndex;
+	};
+};
+
 #define MATH          1
 #define CAPS          2
 #define LOWER_CASE    3

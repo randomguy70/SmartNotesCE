@@ -37,7 +37,7 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
       fileSlot = ti_Open(HS->fileNames[i],"r+");
       fileSize = ti_GetSize(fileSlot);
 
-      // display currently selected file with a scrollbar on top of it. also, invert the text color so you can see it's name. I was inspired to do this by hexaedit (a pretty amazing program), btw
+      // display currently selected file with a scrollbar on top of it. Also, invert the text color so you can see it's name. I was inspired to do this by hexaedit (a pretty amazing program), btw
       if (HS->selectedFile == i) {
 			// draw scrollbar
          gfx_SetColor(LIGHT_GREY);
