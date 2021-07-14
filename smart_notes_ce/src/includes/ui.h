@@ -5,6 +5,7 @@ struct cursorStruct CS;
 struct fileViewerStruct HS;
 struct editorStruct ES;
 struct fileStruct file;
+struct message message;
 
 // displays homescreen and deals with all the homescreen functions and options
 uint8_t dispHomeScreen();
@@ -106,6 +107,8 @@ void drawCursor(int x, int y);
 **/
 
 int8_t textBox(const char *text, int boxWidth, int boxHeight, int boxX, int boxY);
+
+int displayMessage(struct message * message);
 
 // draws a rectangle with a given thickness
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);

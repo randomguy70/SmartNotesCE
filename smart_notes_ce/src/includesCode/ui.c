@@ -347,6 +347,10 @@ uint8_t renameSelected(struct fileViewerStruct *HS) {
 	return 0;
 }
 
+int displayMessage(struct message * message) {
+	// lots of text-wrapped fontlib stuff
+}
+
 int chooseToQuit() {
 	#define SIG_HOLD_TIME 100
 	int holdTime = 0;
