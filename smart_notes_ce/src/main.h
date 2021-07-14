@@ -24,8 +24,6 @@
 #include "includes/file.h"
 
 // defines
-#define FALSE 0
-#define TRUE !(FALSE)
 
 #define SCRN_WIDTH 320
 #define SCRN_HEIGHT 240

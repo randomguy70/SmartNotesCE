@@ -103,13 +103,12 @@ void dispHomeScreenBG() {
    gfx_PrintStringXY("STATUS",210,45);
 }
 
-void dispHSButtons()
-{
+void dispHSButtons() {
    int i = 0;
    //button rects at bottom of screen
    for(i=1; i<320; i+=64) {
-      gfx_SetColor(0);
-      gfx_Rectangle_NoClip(i,210,62,29);
+      gfx_SetColor(BLACK);
+      gfx_Rectangle_NoClip(i+1,221,60,17);
       gfx_SetColor(LIGHT_GREY);
       gfx_FillRectangle_NoClip(i+1,221,60,17);
    }
@@ -119,7 +118,7 @@ void dispHSButtons()
    gfx_PrintStringXY("Rename",73,227);
    gfx_PrintStringXY("Delete",137,227);
    gfx_PrintStringXY("New",211,227);
-	gfx_TransparentSprite(new_icon, 211, 200);
+	//gfx_TransparentSprite(new_icon, 211, 212);
    gfx_PrintStringXY("Other",270,227);
 	
 }
