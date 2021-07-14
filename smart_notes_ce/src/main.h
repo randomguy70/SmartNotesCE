@@ -30,15 +30,42 @@
 #define SCRN_WIDTH 320
 #define SCRN_HEIGHT 240
 
-#define BLACK         0  // defines the fixed-entry offset of black in my custom palette
-#define WHITE         1  // defines the fixed-entry offset of white in my custom palette
-#define TRANSPARENT   2  // defines the fixed-entry offset of transparent color in my custom palette
-#define DARK_GREY     3  // defines the fixed-entry offset of dark grey in my custom palette
-#define MEDIUM_GREY   4  // defines the fixed-entry offset of medium grey in my custom palette
-#define LIGHT_GREY    5  // defines the fixed-entry offset of light grey in my custom palette
-#define DARK_BLUE     6  // defines the fixed-entry offset of electric blue in my palette. I was too lazy to change the name, but it really is a nice color.
-#define RED           7  // defines the fixed-entry offset of red in my custom palette
-#define LIGHTER_BLUE  8  // defines the fixed-entry offset of blue in my custom palette
+#define BLACK         0  // black
+#define WHITE         1  // white
+#define TRANSPARENT   2  // gfx transparent color (would otherwise be hot pink :P)
+#define DARK_GREY     3  // dark grey
+#define MEDIUM_GREY   4  // medium grey
+#define LIGHT_GREY    5  // light grey
+#define DARK_BLUE     6  // electric blue. I was too lazy to change the name, but it really is a nice color.
+#define RED           7  // red
+#define LIGHT_BLUE    8    // light blue
+#define PAPER_YELLOW  9  // color of yellow paper stickypads
+
+struct globalPalette{
+	uint8_t cursorIndex;
+	
+	struct window {
+		uint8_t fillIndex;
+		uint8_t outlineIndex;
+	};
+	struct homeScrn {
+		uint8_t BGFillIndex;
+		bool hasLines;
+		uint8_t lineIndex;
+		
+	};
+	struct editorScrn {
+		uint8_t BGFillIndex;
+		bool hasLines;
+		uint8_t lineIndex;
+	};
+	struct buttons{
+		uint8_t fillIndex;
+		uint8_t outlineIndex;
+		uint8_t pressedFillIndex;
+		uint8_t pressedOutlineIndex;
+	};
+};
 
 #define MATH          1
 #define CAPS          2

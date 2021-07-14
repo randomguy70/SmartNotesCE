@@ -2,10 +2,10 @@
 
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 {
-   uint8_t keyPressed = 0; // value of key currently pressed
+   uint8_t keyPressed; // value of key currently pressed
    uint8_t txtMode = CAPS; // caps, math, or lowercase
-   uint8_t strLen = 0; //  current character length & offset of inputted string
-   char character; //  current inputted character buffer
+   uint8_t strLen = 0; // current character length & offset of inputted string
+   char character; // current inputted character buffer
    uint16_t cursorX;
 	uint16_t cursorY;
    uint8_t cursorBlink = 0;
@@ -13,70 +13,41 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 	uint16_t windowHeight = 50;
 
    while(1) {
-      kb_Scan();
-			
-		// enter creates a new file with the inputted string for a name
-      if ((kb_IsDown(kb_KeyEnter)) && strLen > 0 && strLen <= maxLength) { // enter finishes string input and returns 1
-         return 1;
-      }
-		
-		// clear quits and returns failure (0)
-      if (kb_IsDown(kb_Clear)) {
-			return 0;
-		}
-		
-		// delete deletes one character (obviously)
-      if (kb_IsDown(kb_Del) && strLen>0) {
-         buffer[strLen-1] = 0;
-         strLen--;
-         delay(100);
-      }
-		
-		// switching text modes
-      if (kb_IsDown(kb_Alpha)) {
-			if(txtMode == MATH) {
-				txtMode = CAPS;
-			}
-			else if(txtMode == CAPS){
-				txtMode = LOWER_CASE;
-			}
-			else if(txtMode == LOWER_CASE) {
-				txtMode = MATH;
-			}
-		}
-		
-      // input character and add the character to the current offset in the string buffer
-      keyPressed = get_single_key_pressed();
-      if (keyPressed>0 && strLen < 8) {
-         character = inputChar(txtMode, keyPressed);
-         if (character != '\0' && strLen<=maxLength) {
-               buffer[strLen] = character;
-               strLen++;
-         }
-      }
 
 		gfx_SetDraw(1);
 		
       // display current string/new filename with outline box
-      // outer text box fill
+      // fill the outer text box white
+		int outerBoxX = (SCRN_WIDTH/2)-(windowWidth/2);
+		int outerBoxY = (SCRN_HEIGHT/2)-(windowHeight/2);
       gfx_SetColor(3); // fill rectangle light grey
-      gfx_FillRectangle_NoClip((SCRN_WIDTH/2)-(windowWidth/2),(SCRN_HEIGHT/2)-(windowHeight/2),windowWidth,windowHeight);
+      gfx_FillRectangle_NoClip(outerBoxX, outerBoxY, windowWidth, windowHeight);
 
-      // outer text box outline
-      gfx_SetColor(DARK_BLUE); // blue outline for text input outer box
-		thick_Rectangle((SCRN_WIDTH/2)-(windowWidth/2),(SCRN_HEIGHT/2)-(windowHeight/2),windowWidth,windowHeight, 2);
+		// blue outline for the outer text box
+      gfx_SetColor(DARK_BLUE);
+		thick_Rectangle(outerBoxX, outerBoxY, windowWidth, windowHeight, 2);
+		
+		// black outline for the blue outline for the outer text box lol
+		gfx_SetColor(BLACK);
+		gfx_Rectangle_NoClip(outerBoxX-1, outerBoxY-1, windowWidth+2, windowHeight+2);
 
-      // inner text box fill
-      gfx_SetColor(1); // fill inner text box white
-		gfx_FillRectangle((SCRN_WIDTH/2)-(72/2),(SCRN_HEIGHT/2)-(windowHeight/2)+20, 72, 15);
+      // fill inner text box white
+		int textBoxWidth = 72;
+		int textBoxHeight = 15;
+		int textBoxX = (SCRN_WIDTH/2)-(textBoxWidth/2);
+		int textBoxY = outerBoxY + 20;
+      gfx_SetColor(1);
+		gfx_FillRectangle(textBoxX, textBoxY, textBoxWidth, textBoxHeight);
 
       // inner text box outline
       gfx_SetColor(DARK_BLUE);
-		gfx_Rectangle((SCRN_WIDTH/2)-(72/2),(SCRN_HEIGHT/2)-(windowHeight/2)+20, 72, 15);
+		gfx_Rectangle(textBoxX, outerBoxY+20, textBoxWidth, textBoxHeight);
 
-      // display inputted text and alpha mode (either A, a, or 1)
+      // display alpha mode (either A, a, or 1)
+		int alphaXPos = outerBoxX + windowWidth - 10;
+		int alphaYPos = outerBoxY + 5;
       gfx_SetTextFGColor(BLACK);
-		gfx_SetTextXY((SCRN_WIDTH/2)+(windowWidth/2)-10,(SCRN_HEIGHT/2)-(windowHeight/2)+5);
+		gfx_SetTextXY(alphaXPos, alphaYPos);
 		
       if(txtMode == MATH) {
 			gfx_PrintChar('1');
@@ -88,6 +59,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 			gfx_PrintChar('a');
       }
 		
+		// display the title and inputted string
       gfx_SetTextFGColor(BLACK);
 		gfx_PrintStringXY(title, ((SCRN_WIDTH/2)-(windowWidth/2)+((SCRN_WIDTH/2)+(windowWidth/2)-10))/2-(gfx_GetStringWidth(title)/2), (SCRN_HEIGHT/2)-(windowHeight/2)+5);
 		gfx_PrintStringXY(buffer, (SCRN_WIDTH/2)-(72/2)+2, (SCRN_HEIGHT/2)-(windowHeight/2)+24);
@@ -97,6 +69,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		cursorY = gfx_GetTextY()-2;
       gfx_SetColor(DARK_BLUE);
 		
+		// deal with cursor cycles
       if(cursorBlink > 15) {
 			gfx_VertLine(cursorX, cursorY, 11);
 			gfx_VertLine(cursorX+1, cursorY, 11);
@@ -106,6 +79,51 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
       }
       cursorBlink++;
       gfx_Blit(1);
+		
+		// keypresses
+		{
+		keyPressed = os_GetCSC();
+		
+		// enter creates a new file with the inputted string for a name
+      if (keyPressed == sk_Enter && strLen > 0 && strLen <= maxLength) { // enter finishes string input and returns 1
+         return 1;
+      }
+		
+		// clear quits and returns failure (0)
+      if (keyPressed == sk_Clear) {
+			return 0;
+		}
+		
+		// delete deletes one character (obviously)
+      if (keyPressed == sk_Del && strLen>0) {
+         buffer[strLen-1] = 0;
+         strLen--;
+      }
+		
+		// switching text modes
+      if (keyPressed == sk_Alpha) {
+			if(txtMode == MATH) {
+				txtMode = CAPS;
+			}
+			else if(txtMode == CAPS){
+				txtMode = LOWER_CASE;
+			}
+			else if(txtMode == LOWER_CASE) {
+				txtMode = MATH;
+			}
+		}
+		
+		// input character and add the character to the current offset in the string buffer
+      // keyPressed = get_single_key_pressed();
+      if (strLen < 8) {
+         character = inputChar(txtMode, keyPressed);
+         if (character != '\0' && strLen<=maxLength) {
+               buffer[strLen] = character;
+               strLen++;
+         }
+      }
+		}
+		
    }
 }
 

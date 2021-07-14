@@ -5,6 +5,7 @@ struct cursorStruct CS;
 struct fileViewerStruct HS;
 struct editorStruct ES;
 struct fileStruct file;
+struct message message;
 
 // displays homescreen and deals with all the homescreen functions and options
 uint8_t dispHomeScreen();
@@ -47,6 +48,29 @@ struct cursorStruct {
    int y; // current y coord of cursor
 };
 
+struct message {
+	bool hasHeader;
+	char * strings[3]; // there are up to three separate strings allowed in a message: the header, the body, and the footer.
+	char * options [5]; // put the option strings here, ex: "Delete?", "Cancel", "Quit"
+	/*
+	Example:
+	-----------------------------
+	|         Alert!            |
+	-----------------------------
+	|  Are you sure you want    |
+	|  to do that?              |
+	|                           |
+	|                           |
+	-----------------------------
+	|   Yes   |  No  |  Cancel  |
+	-----------------------------
+	
+	"Alert" and "Are you sure you want to do that?" are the strings
+	the options are "Yes", "No", and "Cancel"
+	If Yes is chosen, then 0 will be returned, if No is chosen, then 1 will be returned, if Cancel is chosen, then 2 will be returned
+	*/
+};
+
 // contains properties of the editor
 struct editorStruct {
    struct cursorStruct cursor;
@@ -71,7 +95,7 @@ void printText(struct fileStruct * file);
 void animateCursor(struct cursorStruct *CS);
 
 // draws a cursor at a given x and y location
-void drawCursor(int x, int y);
+void drawCursor(struct cursorStruct * cursor);
 
 
 /** displays a given alert text string in a text box of given proportions. will add text wrapping (and later, scrolling if there isn't enough room in the text box)
@@ -83,6 +107,8 @@ void drawCursor(int x, int y);
 **/
 
 int8_t textBox(const char *text, int boxWidth, int boxHeight, int boxX, int boxY);
+
+int displayMessage(struct message * message);
 
 // draws a rectangle with a given thickness
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);

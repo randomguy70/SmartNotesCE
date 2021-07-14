@@ -37,16 +37,19 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
       fileSlot = ti_Open(HS->fileNames[i],"r+");
       fileSize = ti_GetSize(fileSlot);
 
-      // display currently selected file with a scrollbar on top of it. also, invert the text color so you can see it's name. I was inspired to do this by hexaedit (a pretty amazing program), btw
+      // display currently selected file with a scrollbar on top of it. Also, invert the text color so you can see it's name. I was inspired to do this by hexaedit (a pretty amazing program), btw
       if (HS->selectedFile == i) {
-         gfx_SetColor(0);
+			// draw scrollbar
+         gfx_SetColor(LIGHT_GREY);
          gfx_FillRectangle_NoClip(36,fileY-5,248,15);
-			gfx_SetColor(DARK_BLUE);
-			thick_Rectangle(34,fileY-7,252, 19, 2);
-         gfx_SetTextFGColor(1);
-      } else {
-         gfx_SetTextFGColor(0);
-      }
+			gfx_SetColor(BLACK);
+			gfx_Rectangle_NoClip(36,fileY-5,248,15);
+			
+			// text color inversion
+         //gfx_SetTextFGColor(WHITE);
+      } //else {
+         gfx_SetTextFGColor(BLACK);
+      //}
       // display detected file name & size & 
       gfx_PrintStringXY(HS->fileNames[i],40,fileY);
       gfx_SetTextXY(135,fileY);
@@ -68,27 +71,30 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
 
 // homescreen for the fileViewer, rectangles, title, etc...
 void dispHomeScreenBG() {
-   gfx_SetDraw(1);
-   gfx_FillScreen(MEDIUM_GREY);
-	
-	// header
-   gfx_SetColor(BLACK);
-	thick_Rectangle(50, 1, 222, 30, 2);
-	
-	gfx_SetTextFGColor(DARK_BLUE);
 	int width;
 	
+   gfx_SetDraw(1);
+	
+	// lined-paper background
+   gfx_FillScreen(PAPER_YELLOW);
+	gfx_SetColor(LIGHT_BLUE);
+	for(uint8_t i = 0; i<11; i++) {
+		gfx_HorizLine_NoClip(0, i*20, SCRN_WIDTH);
+		gfx_HorizLine_NoClip(0, i*20+1, SCRN_WIDTH);
+	}
+
+	gfx_SetTextFGColor(DARK_BLUE);
 	width = gfx_GetStringWidth("SmartNotes CE");
-	gfx_PrintStringXY("SMARTNOTES CE", (SCRN_WIDTH/2)-(width/2), 5);
+	gfx_PrintStringXY("SMARTNOTES CE", (SCRN_WIDTH/2)-(width/2), 8);
 	
 	gfx_SetTextFGColor(BLACK);
 	width = gfx_GetStringWidth("VERSION 1.0 BY Randomguy");
-   gfx_PrintStringXY("VERSION 1.0 BY Randomguy", (SCRN_WIDTH/2)-(width/2), 20);
+   gfx_PrintStringXY("Version 1.0 BY Randomguy", (SCRN_WIDTH/2)-(width/2), 27);
 	
 	// box with file names
    gfx_SetColor(WHITE);
    gfx_FillRectangle_NoClip(36,56,248,150);
-	gfx_SetColor(DARK_BLUE);
+	gfx_SetColor(LIGHT_BLUE);
 	thick_Rectangle(34, 54, 252, 154, 2);
 	
    gfx_SetTextFGColor(BLACK);
@@ -104,7 +110,7 @@ void dispHSButtons()
    for(i=0; i<320; i+=64) {
       gfx_SetColor(0);
       gfx_Rectangle_NoClip(i,220,62,19);
-      gfx_SetColor(42);
+      gfx_SetColor(LIGHT_GREY);
       gfx_FillRectangle_NoClip(i+1,221,60,17);
    }
    //button text
@@ -113,6 +119,7 @@ void dispHSButtons()
    gfx_PrintStringXY("Rename",73,227);
    gfx_PrintStringXY("Delete",137,227);
    gfx_PrintStringXY("New",211,227);
+	//gfx_TransparentSprite(new_icon, 211, 200);
    gfx_PrintStringXY("Other",270,227);
 }
 
@@ -163,7 +170,7 @@ uint8_t dispEditor(struct editorStruct * ES) {
 // cursor stuff
 void animateCursor(struct cursorStruct *CS) {
    if(CS->cursorState > CS->invisibleTime) {
-      drawCursor(CS->x, CS->y);
+      drawCursor(CS);
    }
    if(CS->cursorState >= CS->cyclesPerAnimation) {
       CS->cursorState = 0;
@@ -171,10 +178,10 @@ void animateCursor(struct cursorStruct *CS) {
    CS->cursorState++;
 }
 
-void drawCursor(int x, int y) {
+void drawCursor(struct cursorStruct * cursor) {
    gfx_SetColor(DARK_BLUE);
-   gfx_VertLine_NoClip(x, y, 11);
-   gfx_VertLine_NoClip(x+1, y, 11);
+   gfx_VertLine_NoClip(cursor->x, cursor->y, 11);
+   gfx_VertLine_NoClip(cursor->x+1, cursor->y, 11);
 }
 
 int8_t textBox(const char *text, int boxWidth, int boxHeight, int boxX, int boxY) {
@@ -219,9 +226,8 @@ void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness) {
 }
 
 // gives an option whether or not to delete the selected file
-uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS )
-{
-	sk_key_t keyPressed = 0;
+uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS ) {
+	uint8_t keyPressed = 0;
 	
 	// the alert function uses drawing routines, so you have to set the draw buffer
 	gfx_SetDraw(0);
@@ -346,6 +352,11 @@ uint8_t renameSelected(struct fileViewerStruct *HS) {
 	}
 	
 	return 0;
+}
+
+int displayMessage(struct message * message) {
+	// lots of text-wrapped fontlib stuff
+	return message->hasHeader; // i had to silence the return warning. will change that!
 }
 
 int chooseToQuit() {
