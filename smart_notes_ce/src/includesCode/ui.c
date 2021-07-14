@@ -39,12 +39,17 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
 
       // display currently selected file with a scrollbar on top of it. also, invert the text color so you can see it's name. I was inspired to do this by hexaedit (a pretty amazing program), btw
       if (HS->selectedFile == i) {
-         gfx_SetColor(DARK_GREY);
+			// draw scrollbar
+         gfx_SetColor(LIGHT_GREY);
          gfx_FillRectangle_NoClip(36,fileY-5,248,15);
-         gfx_SetTextFGColor(WHITE);
-      } else {
-         gfx_SetTextFGColor(DARK_GREY);
-      }
+			gfx_SetColor(BLACK);
+			gfx_Rectangle_NoClip(36,fileY-5,248,15);
+			
+			// text color inversion
+         //gfx_SetTextFGColor(WHITE);
+      } //else {
+         gfx_SetTextFGColor(BLACK);
+      //}
       // display detected file name & size & 
       gfx_PrintStringXY(HS->fileNames[i],40,fileY);
       gfx_SetTextXY(135,fileY);
@@ -82,7 +87,7 @@ void dispHomeScreenBG() {
 	width = gfx_GetStringWidth("SmartNotes CE");
 	gfx_PrintStringXY("SMARTNOTES CE", (SCRN_WIDTH/2)-(width/2), 8);
 	
-	gfx_SetTextFGColor(DARK_GREY);
+	gfx_SetTextFGColor(BLACK);
 	width = gfx_GetStringWidth("VERSION 1.0 BY Randomguy");
    gfx_PrintStringXY("Version 1.0 BY Randomguy", (SCRN_WIDTH/2)-(width/2), 27);
 	
@@ -92,7 +97,7 @@ void dispHomeScreenBG() {
 	gfx_SetColor(LIGHT_BLUE);
 	thick_Rectangle(34, 54, 252, 154, 2);
 	
-   gfx_SetTextFGColor(DARK_GREY);
+   gfx_SetTextFGColor(BLACK);
    gfx_PrintStringXY("NAME",40,45);
    gfx_PrintStringXY("SIZE",135,45);
    gfx_PrintStringXY("STATUS",210,45);
