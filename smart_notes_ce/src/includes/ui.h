@@ -71,6 +71,19 @@ struct message {
 	*/
 };
 
+struct menu{
+	uint8_t numOptions; // the max number is 10
+	bool hasSprites; // whether or not the menu has decorative sprites to make the gui more enjoyable
+	
+	gfx_sprite_t * sprites[10];
+	char strings[10][15];
+	
+	unsigned int xMin;
+	unsigned int yMin;
+	unsigned int width;
+	unsigned int height;
+};
+
 // contains properties of the editor
 struct editorStruct {
    struct cursorStruct cursor;
