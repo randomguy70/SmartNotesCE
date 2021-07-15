@@ -5,11 +5,11 @@
 extern "C" {
 #endif
 
-#define open_width 20
-#define open_height 20
-#define open_size 402
+#define open_width 18
+#define open_height 18
+#define open_size 326
 #define open ((gfx_sprite_t*)open_data)
-extern unsigned char open_data[402];
+extern unsigned char open_data[326];
 
 #ifdef __cplusplus
 }

@@ -123,9 +123,11 @@ void dispHSButtons() {
       gfx_Rectangle_NoClip(i+1, 215, 60, 24);
 		
 		// sprites
-		gfx_TransparentSprite_NoClip(sprites[ii], i+3, 217);
+		if(i == 1)
+			gfx_TransparentSprite_NoClip(sprites[ii], i+4, 218);
+		else
+			gfx_TransparentSprite_NoClip(sprites[ii], i+3, 217);
 	}
-	
 	// text
 	gfx_SetTextFGColor(0);
 	
