@@ -13,7 +13,8 @@ uint8_t dispHomeScreen() {
       dispHomeScreenBG();
       dispHSButtons();
       dispFiles(&HS);
-
+		gfx_Wait();
+		
       handleHSKeyPresses(&HS);
 
       // quit program
@@ -105,29 +106,34 @@ void dispHomeScreenBG() {
 
 void dispHSButtons() {
 	
-	char * strings[5][10] = {0};
-	strings[0][0] = "Open";
-	strings[1][0] = "Rename";
-	strings[2][0] = "Delete";
-	strings[3][0] = "New";
-	strings[4][0] = "Other";
+	// char strings[5][10] = {"Open", "Rename", "Delete", "New", "Other"};
 	
-   int i = 0;
-   //button rects at bottom of screen
-   for(i=1; i<320; i+=64) {
+	gfx_sprite_t * sprites[5] = {NULL};
+	sprites[0] = open;
+	sprites[1] = new_icon;
+	sprites[2] = quit;
+	sprites[3] = trash;
+	sprites[4] = more;
+	
+   for(int i = 1, ii = 0; i < 320; i+=64, ii++) {
+		// button rects
       gfx_SetColor(LIGHT_GREY);
-      gfx_FillRectangle_NoClip(i+1,209,60,28);
+      gfx_FillRectangle_NoClip(i+1, 215, 60, 24);
 		gfx_SetColor(BLACK);
-      gfx_Rectangle_NoClip(i+1,209,60,28);
-   }
-   //button text
-   gfx_SetTextFGColor(0);
-   gfx_PrintStringXY("Open",16,227);
-   gfx_PrintStringXY("Rename",73,227);
-   gfx_PrintStringXY("Delete",137,227);
-   gfx_PrintStringXY("New",211,227);
-	gfx_TransparentSprite(new_icon, 211, 212);
-   gfx_PrintStringXY("Other",270,227);
+      gfx_Rectangle_NoClip(i+1, 215, 60, 24);
+		
+		// sprites
+		gfx_TransparentSprite_NoClip(sprites[ii], i+3, 217);
+	}
+	
+	// text
+	gfx_SetTextFGColor(0);
+	
+   gfx_PrintStringXY("Open"  ,  27, 224);
+   gfx_PrintStringXY("New"   ,  90, 224);
+   gfx_PrintStringXY("Quit"  , 150, 224);
+   gfx_PrintStringXY("Delete", 214, 224);
+   gfx_PrintStringXY("Other" , 270, 224);
 	
 }
 

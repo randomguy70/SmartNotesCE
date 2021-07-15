@@ -16,11 +16,14 @@ converts:
   - name: myimages
     palette: palette
     images:
-      - settings_gear.png
+      - settings.png
       - left_arrow.png
       - right_arrow.png
       - new_icon.png
-      - trash_icon.png
+      - trash.png
+      - open.png
+      - more.png
+      - quit.png
 outputs:
   - type: c
     include-file: gfx.h
