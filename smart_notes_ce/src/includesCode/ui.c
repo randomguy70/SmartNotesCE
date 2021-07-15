@@ -129,11 +129,11 @@ void dispHSButtons() {
 	// text
 	gfx_SetTextFGColor(0);
 	
-   gfx_PrintStringXY("Open"  ,  27, 224);
-   gfx_PrintStringXY("New"   ,  90, 224);
-   gfx_PrintStringXY("Quit"  , 150, 224);
-   gfx_PrintStringXY("Delete", 214, 224);
-   gfx_PrintStringXY("Other" , 270, 224);
+   gfx_PrintStringXY("Open" ,  27, 224);
+   gfx_PrintStringXY("New"  ,  90, 224);
+   gfx_PrintStringXY("Quit" , 157, 224);
+   gfx_PrintStringXY("Del"  , 220, 224);
+   gfx_PrintStringXY("Other", 271, 224);
 	
 }
 
