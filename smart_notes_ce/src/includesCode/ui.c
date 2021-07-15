@@ -10,7 +10,7 @@ uint8_t dispHomeScreen() {
 	archiveAll();
 
    while(1) {
-      dispHomeScreenBG();
+      dispHomeScreenBG(&HS);
       dispHSButtons();
       dispFiles(&HS);
 		gfx_Wait();
@@ -38,20 +38,18 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
       fileSlot = ti_Open(HS->fileNames[i],"r+");
       fileSize = ti_GetSize(fileSlot);
 
-      // display currently selected file with a scrollbar on top of it. Also, invert the text color so you can see it's name. I was inspired to do this by hexaedit (a pretty amazing program), btw
+      // display currently selected file with a scrollbar on top of it
       if (HS->selectedFile == i) {
-			// draw scrollbar
+			// draw scrollbar & leave some pixels at the edge of the window for the scrollbar
          gfx_SetColor(LIGHT_GREY);
-         gfx_FillRectangle_NoClip(36,fileY-5,248,15);
+         gfx_FillRectangle_NoClip(36,fileY-5,240,15);
 			gfx_SetColor(BLACK);
-			gfx_Rectangle_NoClip(36,fileY-5,248,15);
-			
-			// text color inversion
-         //gfx_SetTextFGColor(WHITE);
-      } //else {
-         gfx_SetTextFGColor(BLACK);
-      //}
-      // display detected file name & size & 
+			gfx_Rectangle_NoClip(36,fileY-5,240,15);
+
+      }
+		
+      gfx_SetTextFGColor(BLACK);
+		
       gfx_PrintStringXY(HS->fileNames[i],40,fileY);
       gfx_SetTextXY(135,fileY);
       gfx_PrintInt(fileSize,4);
@@ -71,8 +69,13 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
 }
 
 // homescreen for the fileViewer, rectangles, title, etc...
-void dispHomeScreenBG() {
+void dispHomeScreenBG(struct fileViewerStruct * HS) {
 	int width;
+	
+	int scrollbarHeight = 10;
+	int scrollbarX = 284-4;
+	// int scrollbarY = 57 + (140 / (HS->selectedFile / HS->numFiles));
+	int scrollbarY = 56 + (HS->selectedFile * (144/HS->numFiles+1));
 	
    gfx_SetDraw(1);
 	
@@ -84,6 +87,7 @@ void dispHomeScreenBG() {
 		gfx_HorizLine_NoClip(0, i*20+1, SCRN_WIDTH);
 	}
 
+	// name and credits (to me :P)
 	gfx_SetTextFGColor(DARK_BLUE);
 	width = gfx_GetStringWidth("SmartNotes CE");
 	gfx_PrintStringXY("SMARTNOTES CE", (SCRN_WIDTH/2)-(width/2), 8);
@@ -98,6 +102,18 @@ void dispHomeScreenBG() {
 	gfx_SetColor(LIGHT_BLUE);
 	thick_Rectangle(34, 54, 252, 154, 2);
 	
+	// scrollbar border
+	gfx_SetColor(LIGHT_BLUE);
+	gfx_VertLine_NoClip(scrollbarX-2, 56, 150);
+	gfx_VertLine_NoClip(scrollbarX-1, 56, 150);
+	
+	// scrollbar
+	gfx_SetColor(LIGHT_GREY);
+	gfx_FillRectangle_NoClip(scrollbarX, scrollbarY, 4, scrollbarHeight);
+	gfx_SetColor(BLACK);
+	gfx_Rectangle_NoClip(scrollbarX, scrollbarY, 4, scrollbarHeight);
+	
+	// print labels for displayed file data columns
    gfx_SetTextFGColor(BLACK);
    gfx_PrintStringXY("NAME",40,45);
    gfx_PrintStringXY("SIZE",135,45);
@@ -374,6 +390,15 @@ int displayMessage(struct message * message) {
 	// lots of text-wrapped fontlib stuff
 	return message->hasHeader; // i had to silence the return warning. will change that!
 }
+
+int drawScrollbar(struct scrollBar * scrollBar) {
+	gfx_SetColor(scrollBar->colorIndex);
+	
+	for(uint8_t i=0; i<scrollBar->width; i++) {
+		gfx_VertLine_NoClip(scrollBar->x + i, scrollBar->y, scrollBar->height);
+	}
+	
+};
 
 int chooseToQuit() {
 	#define SIG_HOLD_TIME 100
