@@ -75,7 +75,7 @@ void dispHomeScreenBG(struct fileViewerStruct * HS) {
 	int scrollbarHeight = 10;
 	int scrollbarX = 284-4;
 	// int scrollbarY = 57 + (140 / (HS->selectedFile / HS->numFiles));
-	int scrollbarY = 56 + (HS->selectedFile * (144/HS->numFiles+1));
+	int scrollbarY = 56 + (HS->selectedFile * (145/HS->numFiles));
 	
    gfx_SetDraw(1);
 	
