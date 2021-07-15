@@ -1,6 +1,8 @@
 #ifndef TEXT_H
 #define TEXT_H
 
+#define ZERO_WIDTH_SPACE '\6'
+
 struct fileStruct;
 struct wordStruct;
 struct lineStruct;

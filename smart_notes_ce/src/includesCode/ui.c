@@ -104,6 +104,14 @@ void dispHomeScreenBG() {
 }
 
 void dispHSButtons() {
+	
+	char * strings[5][10] = {0};
+	strings[0][0] = "Open";
+	strings[1][0] = "Rename";
+	strings[2][0] = "Delete";
+	strings[3][0] = "New";
+	strings[4][0] = "Other";
+	
    int i = 0;
    //button rects at bottom of screen
    for(i=1; i<320; i+=64) {
