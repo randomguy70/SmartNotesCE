@@ -73,8 +73,7 @@ void dispHomeScreenBG(struct fileViewerStruct * HS) {
 	int width;
 	
 	// scrollbar math
-	float displayRatio = (float)HS->numFilesDisplayed / HS->numFiles;
-	float scrollbarHeight = 150 * displayRatio;
+	uint8_t scrollbarHeight = 150 * HS->numFilesDisplayed / HS->numFiles;
 	
 	// just making sure that the scrollbar is a reasonable size...
 	if(scrollbarHeight>150)
@@ -83,10 +82,7 @@ void dispHomeScreenBG(struct fileViewerStruct * HS) {
 		scrollbarHeight = 10;
 	
 	int scrollbarX = 280;
-	int scrollbarY = (150 - (scrollbarHeight-1)) * HS->selectedFile / (HS->numFiles-1) + 56;
-	// int scrollbarY = selectedRatio * (150 - scrollbarHeight) + 56;
-	// int scrollbarY = 57 + (140 / (HS->selectedFile / HS->numFiles));
-	// int scrollbarY = 56 + (HS->selectedFile * (150 / HS->numFiles));
+	int scrollbarY = (150 - (scrollbarHeight) + 1) * HS->selectedFile / (HS->numFiles-1) + 56;
 	
    gfx_SetDraw(1);
 	
