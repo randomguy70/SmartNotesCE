@@ -34,7 +34,7 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
    uint8_t fileSize;   // size of currently detected and drawn file
    int fileY = 61;
 
-   for(i=HS->offset; i<10+HS->offset && i<HS->numFiles; i++) {
+   for(i=HS->offset, HS->numFilesDisplayed = 0; i < 10+HS->offset && i  <HS->numFiles; i++, HS->numFilesDisplayed++) {
       fileSlot = ti_Open(HS->fileNames[i],"r+");
       fileSize = ti_GetSize(fileSlot);
 
@@ -42,9 +42,9 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
       if (HS->selectedFile == i) {
 			// draw scrollbar & leave some pixels at the edge of the window for the scrollbar
          gfx_SetColor(LIGHT_GREY);
-         gfx_FillRectangle_NoClip(36,fileY-5,240,15);
+         gfx_FillRectangle_NoClip(36,fileY-5,242,15);
 			gfx_SetColor(BLACK);
-			gfx_Rectangle_NoClip(36,fileY-5,240,15);
+			gfx_Rectangle_NoClip(36,fileY-5,242,15);
 
       }
 		
@@ -72,16 +72,31 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
 void dispHomeScreenBG(struct fileViewerStruct * HS) {
 	int width;
 	
-	int scrollbarHeight = 10;
+	// scrollbar math
+	float selectedRatio = (float)HS->numFilesDisplayed / HS->numFiles;
+	float scrollbarHeight = 150 * selectedRatio;
+	
+	// just making sure that the scrollbar is a reasonable size...
+	if(scrollbarHeight>150)
+		scrollbarHeight = 150;
+	if(scrollbarHeight<10)
+		scrollbarHeight = 10;
+	
+	// float selectedRatio = (HS->selectedFile / (HS->numFiles - 1));
+	int scrollbarY = selectedRatio * (150 - scrollbarHeight) + 56;
+	
+	
 	int scrollbarX = 284-4;
 	// int scrollbarY = 57 + (140 / (HS->selectedFile / HS->numFiles));
-	int scrollbarY = 56 + (HS->selectedFile * (145/HS->numFiles));
+	// int scrollbarY = 56 + (HS->selectedFile * (150 / HS->numFiles));
 	
    gfx_SetDraw(1);
 	
 	// lined-paper background
    gfx_FillScreen(PAPER_YELLOW);
 	gfx_SetColor(LIGHT_BLUE);
+	gfx_SetTextXY(1, 1);
+	gfx_PrintInt(HS->numFilesDisplayed, 5);
 	for(uint8_t i = 0; i<11; i++) {
 		gfx_HorizLine_NoClip(0, i*20, SCRN_WIDTH);
 		gfx_HorizLine_NoClip(0, i*20+1, SCRN_WIDTH);
