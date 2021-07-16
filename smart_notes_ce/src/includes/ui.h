@@ -17,7 +17,7 @@ void dispHSButtons();
 void dispHomeScreenBG(struct fileViewerStruct * HS);
 
 // handles the keypresses in the fileViewer
-void handleHSKeyPresses(struct fileViewerStruct *HS);
+uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS);
 
 // displays files at a given offset using the data in the homescreen struct (HS)
 uint8_t dispFiles(struct fileViewerStruct *HS);
@@ -30,6 +30,10 @@ struct fileViewerStruct {
 	uint8_t numFilesDisplayed; // number of files displayed on the screen at a single time (10 >= num >=0)
    uint8_t offset;            // the number of files that were shifted UP off the screen for the cursor to move more than  10 files down
    uint8_t selectedFile;      // the offset of the name of the selected file from the beginnning of the fileNames array
+	bool QUIT; // whether or not the program should quit
+	
+	kb_key_t lastKeyPressed;
+	int holdTime;
 };
 
 // contains the settings data, mostly booleans

@@ -6,13 +6,13 @@ static uint8_t setupFontlibc();
 // prepares for the program to exit
 static void cleanup();
 
-int main() {
+void main(void) {
 	// one-time setup things
 	{
 	
 	// this has to go before the gfx setup, in case it has to quit
 	if(!setupFontlibc()) {
-		return 0;
+		return;
 	}
 	
 	// necessary gfx stuff
@@ -31,7 +31,7 @@ int main() {
 	} while (mode);
 
 	cleanup();
-	return 0;
+	return;
 }
 
 static uint8_t setupFontlibc() {
@@ -52,6 +52,7 @@ static uint8_t setupFontlibc() {
 	fontlib_SetTransparency(true);
 	
 	return 1;
+	
 }
 
 static void cleanup() {

@@ -9,22 +9,24 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
    uint16_t cursorX;
 	uint16_t cursorY;
    uint8_t cursorBlink = 0;
-	uint16_t windowWidth = 100;
+	uint16_t windowWidth = 150;
 	uint16_t windowHeight = 50;
-
+	int outerBoxX = (SCRN_WIDTH/2)-(windowWidth/2);
+	int outerBoxY = (SCRN_HEIGHT/2)-(windowHeight/2);
+	int titleX = (SCRN_WIDTH/2) - (gfx_GetStringWidth(title) / 2);
+	
    while(1) {
 
 		gfx_SetDraw(1);
 		
       // display current string/new filename with outline box
       // fill the outer text box white
-		int outerBoxX = (SCRN_WIDTH/2)-(windowWidth/2);
-		int outerBoxY = (SCRN_HEIGHT/2)-(windowHeight/2);
-      gfx_SetColor(3); // fill rectangle light grey
+		
+      gfx_SetColor(LIGHT_GREY);
       gfx_FillRectangle_NoClip(outerBoxX, outerBoxY, windowWidth, windowHeight);
 
 		// blue outline for the outer text box
-      gfx_SetColor(DARK_BLUE);
+      gfx_SetColor(LIGHT_BLUE);
 		thick_Rectangle(outerBoxX, outerBoxY, windowWidth, windowHeight, 2);
 		
 		// black outline for the blue outline for the outer text box lol
@@ -61,7 +63,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		
 		// display the title and inputted string
       gfx_SetTextFGColor(BLACK);
-		gfx_PrintStringXY(title, ((SCRN_WIDTH/2)-(windowWidth/2)+((SCRN_WIDTH/2)+(windowWidth/2)-10))/2-(gfx_GetStringWidth(title)/2), (SCRN_HEIGHT/2)-(windowHeight/2)+5);
+		gfx_PrintStringXY(title, titleX, (SCRN_HEIGHT/2)-(windowHeight/2)+5);
 		gfx_PrintStringXY(buffer, (SCRN_WIDTH/2)-(72/2)+2, (SCRN_HEIGHT/2)-(windowHeight/2)+24);
 
       // display cursor

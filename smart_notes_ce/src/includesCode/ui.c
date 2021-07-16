@@ -7,22 +7,22 @@ uint8_t dispHomeScreen() {
    HS.selectedFile = 0;
    HS.offset = 0;
    HS.numFiles = loadFiles(&HS);
+	HS.QUIT = false;
 	archiveAll();
 
    while(1) {
       dispHomeScreenBG(&HS);
       dispHSButtons();
-      dispFiles(&HS);
-		gfx_Wait();
 		
-      handleHSKeyPresses(&HS);
-
-      // quit program
-		if(os_GetCSC() == sk_Clear)
-      	return 0;
-
-      gfx_SwapDraw();
-      gfx_Wait();
+      dispFiles(&HS);
+		
+		gfx_Wait();
+		gfx_SwapDraw();
+		
+      handleHomeScrnKeyPresses(&HS);
+		
+		if(HS.QUIT == true)
+			return 0;
    }
 }
 
@@ -162,7 +162,7 @@ void dispHSButtons() {
 	
 }
 
-void handleHSKeyPresses(struct fileViewerStruct *HS) {
+uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
    kb_Scan();
 
    // move cursor down
@@ -174,7 +174,7 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
    }
 
 	// move cursor up
-   if(kb_IsDown(kb_KeyUp) && HS->selectedFile>0) {
+   if (kb_IsDown(kb_KeyUp) && HS->selectedFile>0) {
       HS->selectedFile--;
       if(HS->selectedFile < HS->offset){
          HS->offset--;
@@ -182,29 +182,28 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
    }
 
    // new file
-   if(kb_IsDown(kb_KeyTrace) && HS->numFiles<30) {
+   if (kb_IsDown(kb_KeyWindow) && HS->numFiles<30) {
 		newFile();
 		loadFiles(HS);
    }
-
-	if(kb_IsDown(kb_KeyWindow)) {
-		loadFiles(HS);
-		renameSelected(HS);
-		loadFiles(HS);
-	}
 	
-   // delete file
-   if((kb_IsDown(kb_KeyZoom) || kb_IsDown(kb_KeyDel)) && HS->numFiles>0) {
+	// quit program
+	sk_key_t key = os_GetCSC();
+	if (key == sk_Clear || key == sk_Zoom)
+		HS->QUIT=true;
+	
+	// delete file
+   if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel)) && HS->numFiles>0) {
       checkIfDeleteSelected(HS);
+		loadFiles(HS);
    }
 	
+	// other (opens fun menu)
+	// if(kb_IsDown)
+	
+	// if the user doesn't want to quit, then return 1
+	return 1;
 }
-
-/* unfinished text editor stuff
-uint8_t dispEditor(struct editorStruct * ES) {
-   return 0;
-}
-*/
 
 // cursor stuff
 void animateCursor(struct cursorStruct *CS) {
@@ -315,7 +314,6 @@ uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS ) {
 	// if the user wants to delete the file...
 	if(keyPressed == sk_2nd || keyPressed == sk_Enter) {
 		ti_Delete(HS->fileNames[HS->selectedFile]);
-		loadFiles(HS);
 		
 		if(HS->selectedFile>0 && HS->numFiles>10) {
          HS->selectedFile--;		
