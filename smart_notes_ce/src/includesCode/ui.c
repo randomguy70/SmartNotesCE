@@ -82,11 +82,9 @@ void dispHomeScreenBG(struct fileViewerStruct * HS) {
 	if(scrollbarHeight<10)
 		scrollbarHeight = 10;
 	
-	// float selectedRatio = (HS->selectedFile / (HS->numFiles - 1));
-	int scrollbarY = selectedRatio * (150 - scrollbarHeight) + 56;
-	
-	
-	int scrollbarX = 284-4;
+	int scrollbarX = 280;
+	int scrollbarY = (HS->selectedFile / HS->numFiles) * (150 - scrollbarHeight) + 56;
+	// int scrollbarY = selectedRatio * (150 - scrollbarHeight) + 56;
 	// int scrollbarY = 57 + (140 / (HS->selectedFile / HS->numFiles));
 	// int scrollbarY = 56 + (HS->selectedFile * (150 / HS->numFiles));
 	
@@ -96,7 +94,6 @@ void dispHomeScreenBG(struct fileViewerStruct * HS) {
    gfx_FillScreen(PAPER_YELLOW);
 	gfx_SetColor(LIGHT_BLUE);
 	gfx_SetTextXY(1, 1);
-	gfx_PrintInt(HS->numFilesDisplayed, 5);
 	for(uint8_t i = 0; i<11; i++) {
 		gfx_HorizLine_NoClip(0, i*20, SCRN_WIDTH);
 		gfx_HorizLine_NoClip(0, i*20+1, SCRN_WIDTH);
