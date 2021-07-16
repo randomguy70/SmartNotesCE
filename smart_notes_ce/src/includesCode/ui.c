@@ -83,7 +83,7 @@ void dispHomeScreenBG(struct fileViewerStruct * HS) {
 		scrollbarHeight = 10;
 	
 	int scrollbarX = 280;
-	int scrollbarY = (150 - scrollbarHeight) * HS->selectedFile / HS->numFiles + 56;
+	int scrollbarY = (150 - (scrollbarHeight-1)) * HS->selectedFile / (HS->numFiles-1) + 56;
 	// int scrollbarY = selectedRatio * (150 - scrollbarHeight) + 56;
 	// int scrollbarY = 57 + (140 / (HS->selectedFile / HS->numFiles));
 	// int scrollbarY = 56 + (HS->selectedFile * (150 / HS->numFiles));
@@ -134,9 +134,7 @@ void dispHomeScreenBG(struct fileViewerStruct * HS) {
 
 void dispHSButtons() {
 	
-	// char strings[5][10] = {"Open", "Rename", "Delete", "New", "Other"};
-	
-	gfx_sprite_t * sprites[5] = {NULL};
+	gfx_sprite_t * sprites[5];
 	sprites[0] = open;
 	sprites[1] = new_icon;
 	sprites[2] = quit;
@@ -156,6 +154,7 @@ void dispHSButtons() {
 		else
 			gfx_TransparentSprite_NoClip(sprites[ii], i+3, 217);
 	}
+	
 	// text
 	gfx_SetTextFGColor(0);
 	
