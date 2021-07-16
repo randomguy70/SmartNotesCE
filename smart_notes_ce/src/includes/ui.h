@@ -76,7 +76,7 @@ struct message {
 	*/
 };
 
-struct menu{
+struct menu {
 	uint8_t numOptions; // the max number is 10
 	bool hasSprites; // whether or not the menu has decorative sprites to make the gui more enjoyable
 	
@@ -135,6 +135,13 @@ void drawCursor(struct cursorStruct * cursor);
 int8_t textBox(const char *text, int boxWidth, int boxHeight, int boxX, int boxY);
 
 int displayMessage(struct message * message);
+
+/** displays a menu with sprites
+ * @param menu a struct containing the sprite and text data for the menu
+ * @param xPos x position of top right corner of menu box
+ * @param yPos y position of top right corner of menu box
+ * */
+uint8_t displayMenu(struct menu * menu, int xPos, int yPos);
 
 // draws a rectangle with a given thickness
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);

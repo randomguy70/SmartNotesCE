@@ -396,6 +396,57 @@ int displayMessage(struct message * message) {
 	return message->hasHeader; // i had to silence the return warning. will change that!
 }
 
+uint8_t displayMenu(struct menu * menu, int xPos, int yPos) {
+	int offset = 0;
+	int selected = 0;
+	uint8_t result = 0;
+	uint8_t spacing = 22;
+	uint8_t width = 155;
+	uint8_t maxOptionsOnscreen = 5;
+	
+	while(!result) {
+		gfx_SetDraw(1);
+	
+		// outline
+		gfx_SetColor(LIGHT_BLUE);
+		thick_Rectangle(xPos, yPos, width, spacing * maxOptionsOnscreen, 2);
+		
+		// box
+		gfx_SetColor(WHITE);
+		gfx_FillRectangle_NoClip(xPos, yPos, width, spacing * maxOptionsOnscreen);
+		
+		gfx_SetTextFGColor(BLACK);
+		
+		for(uint8_t i = selected; i < menu->numOptions && i < maxOptionsOnscreen; i++) {
+		
+			// rectangle selecting box
+			if(i == selected) {
+				gfx_SetColor(BLACK);
+				gfx_Rectangle_NoClip(xPos+1, yPos + i * spacing, width, spacing);
+				
+				gfx_SetColor(LIGHT_GREY);
+				gfx_FillRectangle_NoClip(xPos+1, yPos + i * spacing, width, spacing);
+			}
+			
+			// text
+			gfx_PrintStringXY(menu->strings[i], xPos + 20, yPos + i * spacing + 10); // add 10 to center the text
+			
+			// sprites
+			if(menu->hasSprites)
+				gfx_TransparentSprite_NoClip(menu->sprites[i], xPos + 1, yPos + i * spacing);
+			
+		}
+	
+		// keyPresses
+		kb_Scan();
+		
+		
+		gfx_SwapDraw();
+	}
+	
+	return result;
+}
+
 int drawScrollbar(struct scrollBar * scrollBar) {
 	gfx_SetColor(scrollBar->colorIndex);
 	
