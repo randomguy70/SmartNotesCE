@@ -206,14 +206,17 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 			.hasSprites = true,
 			.numOptions = 6,
 			.sprites = {
-				left_arrow, hide, settings, help, quit
+				left_arrow, hide, settings, rename, help, quit
+			},
+			.spriteHeights = {
+				//left_arrow_height, hide_height, settings_height, rename_height, help_height, quit_height
 			},
 			.strings = {
-				"Back", "Rename", "(un)Hide", "Settings", "Help", "Exit"
+				"Back", "(un)Hide", "Settings", "Rename", "Help", "Exit"
 			},
-			.xPos = 170,
-			.yPos = 100,
-			.width = 155,
+			.xPos = 200,
+			.yPos = 104,
+			.width = 120,
 			.spacing = 22,
 			.maxOnScrn = 5,
 		};
@@ -446,13 +449,13 @@ int displayMenu(struct menu * menu) {
 	while(true) {
 		gfx_SetDraw(1);
 		
-		// outline
-		gfx_SetColor(LIGHT_BLUE);
-		thick_Rectangle(menu->xPos, menu->yPos, menu->width, height, 2);
-		
 		// box
 		gfx_SetColor(WHITE);
 		gfx_FillRectangle_NoClip(menu->xPos, menu->yPos, menu->width, height);
+		
+		// outline
+		gfx_SetColor(LIGHT_BLUE);
+		thick_Rectangle(menu->xPos, menu->yPos, menu->width, height, 2);
 		
 		gfx_SetTextFGColor(BLACK);
 		
@@ -460,19 +463,21 @@ int displayMenu(struct menu * menu) {
 		
 			// rectangle selecting box
 			if(i == selected) {
-				gfx_SetColor(BLACK);
-				gfx_Rectangle_NoClip(menu->xPos+1, menu->yPos + i * menu->spacing, menu->width, menu->spacing);
-				
+				// fill box
 				gfx_SetColor(LIGHT_GREY);
-				gfx_FillRectangle_NoClip(menu->xPos+1, menu->yPos + i * menu->spacing, menu->width, menu->spacing);
+				gfx_FillRectangle_NoClip(menu->xPos+2, menu->yPos + i * menu->spacing, menu->width - 4, menu->spacing);
+				
+				// outline box
+				gfx_SetColor(BLACK);
+				gfx_Rectangle_NoClip(menu->xPos+2, menu->yPos + i * menu->spacing + 2, menu->width - 4, menu->spacing - 2);
 			}
 			
 			// text
-			gfx_PrintStringXY(menu->strings[i], menu->xPos + 20, menu->yPos + i * menu->spacing + 10); // add 10 to center the text
+			gfx_PrintStringXY(menu->strings[i], menu->xPos + 30, menu->yPos + i * menu->spacing + 10); // add 10 to center the text
 			
 			// sprites
 			if(menu->hasSprites)
-				gfx_TransparentSprite_NoClip(menu->sprites[i], menu->xPos + 1, menu->yPos + i * menu->spacing);
+				gfx_TransparentSprite_NoClip(menu->sprites[i], menu->xPos + 2, menu->yPos + i * menu->spacing + 5);
 			
 		}
 		
@@ -480,7 +485,9 @@ int displayMenu(struct menu * menu) {
 		gfx_Blit(1); // I might change this to just blitting the menu rect, but who knows if anybody is even going to ever read this comment...
 	
 		// keyPresses
-		kb_Scan();
+		while(!KB_DATA_CHANGED) {
+			kb_Scan();
+		}
 		
 		// move selecter bar down
 		if(kb_IsDown(kb_Down) && selected < menu->numOptions) {

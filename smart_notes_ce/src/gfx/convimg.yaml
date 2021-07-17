@@ -26,6 +26,7 @@ converts:
       - quit.png
       - help.png
       - hide.png
+      - rename.png
 outputs:
   - type: c
     include-file: gfx.h

@@ -79,10 +79,11 @@ struct message {
 };
 
 struct menu {
-	uint8_t numOptions; // the max number is 10
-	bool hasSprites; // whether or not the menu has decorative sprites to make the gui more enjoyable
+	uint8_t numOptions; // the max number of options in a menu is 10
+	bool hasSprites; // whether or not the menu has sprites to make the GUI more enjoyable
 	
 	gfx_sprite_t * sprites[10];
+	gfx_sprite_t spriteHeights[10];
 	char strings[10][15];
 	
 	unsigned int xPos;

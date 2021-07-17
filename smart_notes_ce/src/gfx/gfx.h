@@ -17,6 +17,7 @@ extern "C" {
 #include "quit.h"
 #include "help.h"
 #include "hide.h"
+#include "rename.h"
 
 #ifdef __cplusplus
 }
