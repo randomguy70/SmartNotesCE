@@ -4,7 +4,7 @@
 
 NAME ?= NOTES
 ICON ?= icon.png
-DESCRIPTION ?= "A User-friendly text editor made by Randomguy, v1.0"
+DESCRIPTION ?= "A User-friendly text editor, v1.0"
 COMPRESSED ?= YES
 ARCHIVED ?= YES
 
