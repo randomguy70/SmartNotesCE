@@ -14,21 +14,26 @@ uint8_t dispHomeScreen();
 void dispHSButtons();
 
 // displays the homescreen background
-void dispHomeScreenBG();
+void dispHomeScreenBG(struct fileViewerStruct * HS);
 
 // handles the keypresses in the fileViewer
-void handleHSKeyPresses(struct fileViewerStruct *HS);
+uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS);
 
 // displays files at a given offset using the data in the homescreen struct (HS)
 uint8_t dispFiles(struct fileViewerStruct *HS);
 
 // contains properties of the file viewer
 struct fileViewerStruct {
-   char fileNames[30][9];   // array of detected text file names
-   int fileSizes[30];       // array of detected text file sizes
-   uint8_t numFiles;        // total number of files detected. shouldn't be more than 30
-   uint8_t offset;          // what is the number of files that were shifted UP off the screen for the cursor to move more than  10 files down
-   uint8_t selectedFile;    // what is the offset of the name of the selected file from the beginnning of the fileNames array
+   char fileNames[30][9];     // array of detected text file names
+   int fileSizes[30];         // array of detected text file sizes
+   uint8_t numFiles;          // total number of files detected. shouldn't be more than 30
+	uint8_t numFilesDisplayed; // number of files displayed on the screen at a single time (10 >= num >=0)
+   uint8_t offset;            // the number of files that were shifted UP off the screen for the cursor to move more than  10 files down
+   uint8_t selectedFile;      // the offset of the name of the selected file from the beginnning of the fileNames array
+	bool QUIT; // whether or not the program should quit
+	
+	kb_key_t lastKeyPressed;
+	int holdTime;
 };
 
 // contains the settings data, mostly booleans
@@ -71,6 +76,27 @@ struct message {
 	*/
 };
 
+struct menu {
+	uint8_t numOptions; // the max number is 10
+	bool hasSprites; // whether or not the menu has decorative sprites to make the gui more enjoyable
+	
+	gfx_sprite_t * sprites[10];
+	char strings[10][15];
+	
+	unsigned int xMin;
+	unsigned int yMin;
+	unsigned int width;
+	unsigned int height;
+};
+
+struct scrollBar{
+	int x;
+	int y;
+	uint8_t width;
+	uint8_t height;
+	uint8_t colorIndex;
+};
+
 // contains properties of the editor
 struct editorStruct {
    struct cursorStruct cursor;
@@ -109,6 +135,13 @@ void drawCursor(struct cursorStruct * cursor);
 int8_t textBox(const char *text, int boxWidth, int boxHeight, int boxX, int boxY);
 
 int displayMessage(struct message * message);
+
+/** displays a menu with sprites
+ * @param menu a struct containing the sprite and text data for the menu
+ * @param xPos x position of top right corner of menu box
+ * @param yPos y position of top right corner of menu box
+ * */
+int displayMenu(struct menu * menu, int xPos, int yPos);
 
 // draws a rectangle with a given thickness
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);

@@ -5,11 +5,11 @@
 extern "C" {
 #endif
 
-#define settings_width 20
+#define settings_width 19
 #define settings_height 20
-#define settings_size 402
+#define settings_size 382
 #define settings ((gfx_sprite_t*)settings_data)
-extern unsigned char settings_data[402];
+extern unsigned char settings_data[382];
 
 #ifdef __cplusplus
 }

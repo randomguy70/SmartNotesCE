@@ -4,8 +4,8 @@
 
 NAME ?= NOTES
 ICON ?= icon.png
-DESCRIPTION ?= "A Text Editor For the TI-84 PCE"
-COMPRESSED ?= NO # will change this for release. a little faster this way for each beta build
+DESCRIPTION ?= "A User-friendly text editor made by Randomguy, v1.0"
+COMPRESSED ?= YES
 ARCHIVED ?= YES
 
 CFLAGS ?= -Wall -Wextra -Oz

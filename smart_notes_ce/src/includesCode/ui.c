@@ -7,21 +7,22 @@ uint8_t dispHomeScreen() {
    HS.selectedFile = 0;
    HS.offset = 0;
    HS.numFiles = loadFiles(&HS);
+	HS.QUIT = false;
 	archiveAll();
 
    while(1) {
-      dispHomeScreenBG();
+      dispHomeScreenBG(&HS);
       dispHSButtons();
+		
       dispFiles(&HS);
-
-      handleHSKeyPresses(&HS);
-
-      // quit program
-		if(os_GetCSC() == sk_Clear)
-      	return 0;
-
-      gfx_SwapDraw();
-      gfx_Wait();
+		
+		gfx_Wait();
+		gfx_SwapDraw();
+		
+      handleHomeScrnKeyPresses(&HS);
+		
+		if(HS.QUIT == true)
+			return 0;
    }
 }
 
@@ -33,24 +34,22 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
    uint8_t fileSize;   // size of currently detected and drawn file
    int fileY = 61;
 
-   for(i=HS->offset; i<10+HS->offset && i<HS->numFiles; i++) {
+   for(i=HS->offset, HS->numFilesDisplayed = 0; i < 10+HS->offset && i  <HS->numFiles; i++, HS->numFilesDisplayed++) {
       fileSlot = ti_Open(HS->fileNames[i],"r+");
       fileSize = ti_GetSize(fileSlot);
 
-      // display currently selected file with a scrollbar on top of it. Also, invert the text color so you can see it's name. I was inspired to do this by hexaedit (a pretty amazing program), btw
+      // display currently selected file with a scrollbar on top of it
       if (HS->selectedFile == i) {
-			// draw scrollbar
+			// draw scrollbar & leave some pixels at the edge of the window for the scrollbar
          gfx_SetColor(LIGHT_GREY);
-         gfx_FillRectangle_NoClip(36,fileY-5,248,15);
+         gfx_FillRectangle_NoClip(36,fileY-5,242,15);
 			gfx_SetColor(BLACK);
-			gfx_Rectangle_NoClip(36,fileY-5,248,15);
-			
-			// text color inversion
-         //gfx_SetTextFGColor(WHITE);
-      } //else {
-         gfx_SetTextFGColor(BLACK);
-      //}
-      // display detected file name & size & 
+			gfx_Rectangle_NoClip(36,fileY-5,242,15);
+
+      }
+		
+      gfx_SetTextFGColor(BLACK);
+		
       gfx_PrintStringXY(HS->fileNames[i],40,fileY);
       gfx_SetTextXY(135,fileY);
       gfx_PrintInt(fileSize,4);
@@ -70,19 +69,33 @@ uint8_t dispFiles(struct fileViewerStruct *HS) {
 }
 
 // homescreen for the fileViewer, rectangles, title, etc...
-void dispHomeScreenBG() {
+void dispHomeScreenBG(struct fileViewerStruct * HS) {
 	int width;
+	
+	// scrollbar math
+	uint8_t scrollbarHeight = 150 * HS->numFilesDisplayed / HS->numFiles;
+	
+	// just making sure that the scrollbar is a reasonable size...
+	if(scrollbarHeight>150)
+		scrollbarHeight = 150;
+	if(scrollbarHeight<10)
+		scrollbarHeight = 10;
+	
+	int scrollbarX = 280;
+	int scrollbarY = (150 - (scrollbarHeight) + 1) * HS->selectedFile / (HS->numFiles-1) + 56;
 	
    gfx_SetDraw(1);
 	
 	// lined-paper background
    gfx_FillScreen(PAPER_YELLOW);
 	gfx_SetColor(LIGHT_BLUE);
+	gfx_SetTextXY(1, 1);
 	for(uint8_t i = 0; i<11; i++) {
 		gfx_HorizLine_NoClip(0, i*20, SCRN_WIDTH);
 		gfx_HorizLine_NoClip(0, i*20+1, SCRN_WIDTH);
 	}
 
+	// name and credits (to me :P)
 	gfx_SetTextFGColor(DARK_BLUE);
 	width = gfx_GetStringWidth("SmartNotes CE");
 	gfx_PrintStringXY("SMARTNOTES CE", (SCRN_WIDTH/2)-(width/2), 8);
@@ -97,33 +110,59 @@ void dispHomeScreenBG() {
 	gfx_SetColor(LIGHT_BLUE);
 	thick_Rectangle(34, 54, 252, 154, 2);
 	
+	// scrollbar border
+	gfx_SetColor(LIGHT_BLUE);
+	gfx_VertLine_NoClip(scrollbarX-2, 56, 150);
+	gfx_VertLine_NoClip(scrollbarX-1, 56, 150);
+	
+	// scrollbar
+	gfx_SetColor(LIGHT_GREY);
+	gfx_FillRectangle_NoClip(scrollbarX, scrollbarY, 4, scrollbarHeight);
+	gfx_SetColor(BLACK);
+	gfx_Rectangle_NoClip(scrollbarX, scrollbarY, 4, scrollbarHeight);
+	
+	// print labels for displayed file data columns
    gfx_SetTextFGColor(BLACK);
    gfx_PrintStringXY("NAME",40,45);
    gfx_PrintStringXY("SIZE",135,45);
    gfx_PrintStringXY("STATUS",210,45);
 }
 
-void dispHSButtons()
-{
-   int i = 0;
-   //button rects at bottom of screen
-   for(i=0; i<320; i+=64) {
-      gfx_SetColor(0);
-      gfx_Rectangle_NoClip(i,220,62,19);
+void dispHSButtons() {
+	
+	gfx_sprite_t * sprites[5];
+	sprites[0] = open;
+	sprites[1] = new_icon;
+	sprites[2] = quit;
+	sprites[3] = trash;
+	sprites[4] = more;
+	
+   for(int i = 1, ii = 0; i < 320; i+=64, ii++) {
+		// button rects
       gfx_SetColor(LIGHT_GREY);
-      gfx_FillRectangle_NoClip(i+1,221,60,17);
-   }
-   //button text
-   gfx_SetTextFGColor(0);
-   gfx_PrintStringXY("Open",16,227);
-   gfx_PrintStringXY("Rename",73,227);
-   gfx_PrintStringXY("Delete",137,227);
-   gfx_PrintStringXY("New",211,227);
-	//gfx_TransparentSprite(new_icon, 211, 200);
-   gfx_PrintStringXY("Other",270,227);
+      gfx_FillRectangle_NoClip(i+1, 215, 60, 24);
+		gfx_SetColor(BLACK);
+      gfx_Rectangle_NoClip(i+1, 215, 60, 24);
+		
+		// sprites
+		if(i == 1)
+			gfx_TransparentSprite_NoClip(sprites[ii], i+4, 218);
+		else
+			gfx_TransparentSprite_NoClip(sprites[ii], i+3, 217);
+	}
+	
+	// text
+	gfx_SetTextFGColor(0);
+	
+   gfx_PrintStringXY("Open" ,  27, 224);
+   gfx_PrintStringXY("New"  ,  90, 224);
+   gfx_PrintStringXY("Quit" , 157, 224);
+   gfx_PrintStringXY("Del"  , 220, 224);
+   gfx_PrintStringXY("Other", 271, 224);
+	
 }
 
-void handleHSKeyPresses(struct fileViewerStruct *HS) {
+uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
    kb_Scan();
 
    // move cursor down
@@ -135,7 +174,7 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
    }
 
 	// move cursor up
-   if(kb_IsDown(kb_KeyUp) && HS->selectedFile>0) {
+   if (kb_IsDown(kb_KeyUp) && HS->selectedFile>0) {
       HS->selectedFile--;
       if(HS->selectedFile < HS->offset){
          HS->offset--;
@@ -143,29 +182,44 @@ void handleHSKeyPresses(struct fileViewerStruct *HS) {
    }
 
    // new file
-   if(kb_IsDown(kb_KeyTrace) && HS->numFiles<30) {
+   if (kb_IsDown(kb_KeyWindow) && HS->numFiles<30) {
 		newFile();
 		loadFiles(HS);
    }
-
-	if(kb_IsDown(kb_KeyWindow)) {
-		loadFiles(HS);
-		renameSelected(HS);
-		loadFiles(HS);
-	}
 	
-   // delete file
-   if((kb_IsDown(kb_KeyZoom) || kb_IsDown(kb_KeyDel)) && HS->numFiles>0) {
+	// quit program
+	sk_key_t key = os_GetCSC();
+	
+	if (key == sk_Clear || key == sk_Zoom)
+		HS->QUIT=true;
+	
+	// delete file
+   if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel)) && HS->numFiles>0) {
       checkIfDeleteSelected(HS);
+		loadFiles(HS);
    }
 	
+	// other (opens fun menu with sprites)
+	if(kb_IsDown(kb_KeyGraph)) {
+		
+		struct menu menu = {
+			.hasSprites = true,
+			.numOptions = 6,
+			.sprites = {
+				left_arrow, NULL, settings, help, quit
+			},
+			.strings = {
+				"Back", "Rename", "(un)Hide", "Settings", "Help", "Exit"
+			},
+			.xMin = 170,
+			.yMin = 100,
+		};
+		
+	}
+	
+	// if the user doesn't want to quit, then return 1
+	return 1;
 }
-
-/* unfinished text editor stuff
-uint8_t dispEditor(struct editorStruct * ES) {
-   return 0;
-}
-*/
 
 // cursor stuff
 void animateCursor(struct cursorStruct *CS) {
@@ -276,7 +330,6 @@ uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS ) {
 	// if the user wants to delete the file...
 	if(keyPressed == sk_2nd || keyPressed == sk_Enter) {
 		ti_Delete(HS->fileNames[HS->selectedFile]);
-		loadFiles(HS);
 		
 		if(HS->selectedFile>0 && HS->numFiles>10) {
          HS->selectedFile--;		
@@ -358,6 +411,92 @@ int displayMessage(struct message * message) {
 	// lots of text-wrapped fontlib stuff
 	return message->hasHeader; // i had to silence the return warning. will change that!
 }
+
+int displayMenu(struct menu * menu, int xPos, int yPos) {
+	int offset = 0;
+	int selected = 0;
+	uint8_t spacing = 22;
+	uint8_t width = 155;
+	uint8_t maxOptionsOnscreen = 5;
+	
+	while(true) {
+		gfx_SetDraw(1);
+		
+		// outline
+		gfx_SetColor(LIGHT_BLUE);
+		thick_Rectangle(xPos, yPos, width, spacing * maxOptionsOnscreen, 2);
+		
+		// box
+		gfx_SetColor(WHITE);
+		gfx_FillRectangle_NoClip(xPos, yPos, width, spacing * maxOptionsOnscreen);
+		
+		gfx_SetTextFGColor(BLACK);
+		
+		for(uint8_t i = selected; i < menu->numOptions && i < maxOptionsOnscreen; i++) {
+		
+			// rectangle selecting box
+			if(i == selected) {
+				gfx_SetColor(BLACK);
+				gfx_Rectangle_NoClip(xPos+1, yPos + i * spacing, width, spacing);
+				
+				gfx_SetColor(LIGHT_GREY);
+				gfx_FillRectangle_NoClip(xPos+1, yPos + i * spacing, width, spacing);
+			}
+			
+			// text
+			gfx_PrintStringXY(menu->strings[i], xPos + 20, yPos + i * spacing + 10); // add 10 to center the text
+			
+			// sprites
+			if(menu->hasSprites)
+				gfx_TransparentSprite_NoClip(menu->sprites[i], xPos + 1, yPos + i * spacing);
+			
+		}
+		
+		gfx_Wait();
+		gfx_SwapDraw();
+	
+		// keyPresses
+		kb_Scan();
+		
+		// move selecter bar down
+		if(kb_IsDown(kb_Down) && selected < menu->numOptions) {
+			selected++;
+			if(selected >= offset+maxOptionsOnscreen){
+         	offset++;
+      	}
+		}
+		
+		// move selecter bar up
+		if(kb_IsDown(kb_Up) && selected>0) {
+			selected--;
+			if(selected < offset){
+         	offset--;
+      	}
+		}
+		
+		// select an option
+		if(kb_IsDown(kb_Enter) || kb_IsDown(kb_2nd)) {
+			return selected;
+		}
+		
+		// quit the menu
+		if(kb_IsDown(kb_Clear)) {
+			return -1;
+		}
+		
+	}
+	
+	return 0;
+}
+
+int drawScrollbar(struct scrollBar * scrollBar) {
+	gfx_SetColor(scrollBar->colorIndex);
+	
+	for(uint8_t i=0; i<scrollBar->width; i++) {
+		gfx_VertLine_NoClip(scrollBar->x + i, scrollBar->y, scrollBar->height);
+	}
+	
+};
 
 int chooseToQuit() {
 	#define SIG_HOLD_TIME 100

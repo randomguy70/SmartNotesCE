@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <math.h>
+#include <stdbool.h>
 
 #include <tice.h>
 #include <string.h>
@@ -24,8 +25,6 @@
 #include "includes/file.h"
 
 // defines
-#define FALSE 0
-#define TRUE !(FALSE)
 
 #define SCRN_WIDTH 320
 #define SCRN_HEIGHT 240
@@ -41,6 +40,7 @@
 #define LIGHT_BLUE    8    // light blue
 #define PAPER_YELLOW  9  // color of yellow paper stickypads
 
+/*
 struct globalPalette{
 	uint8_t cursorIndex;
 	
@@ -66,6 +66,7 @@ struct globalPalette{
 		uint8_t pressedOutlineIndex;
 	};
 };
+*/
 
 #define MATH          1
 #define CAPS          2

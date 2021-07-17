@@ -9,22 +9,24 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
    uint16_t cursorX;
 	uint16_t cursorY;
    uint8_t cursorBlink = 0;
-	uint16_t windowWidth = 100;
+	uint16_t windowWidth = 150;
 	uint16_t windowHeight = 50;
-
+	int outerBoxX = (SCRN_WIDTH/2)-(windowWidth/2);
+	int outerBoxY = (SCRN_HEIGHT/2)-(windowHeight/2);
+	int titleX = (SCRN_WIDTH/2) - (gfx_GetStringWidth(title) / 2);
+	
    while(1) {
 
 		gfx_SetDraw(1);
 		
       // display current string/new filename with outline box
       // fill the outer text box white
-		int outerBoxX = (SCRN_WIDTH/2)-(windowWidth/2);
-		int outerBoxY = (SCRN_HEIGHT/2)-(windowHeight/2);
-      gfx_SetColor(3); // fill rectangle light grey
+		
+      gfx_SetColor(LIGHT_GREY);
       gfx_FillRectangle_NoClip(outerBoxX, outerBoxY, windowWidth, windowHeight);
 
 		// blue outline for the outer text box
-      gfx_SetColor(DARK_BLUE);
+      gfx_SetColor(LIGHT_BLUE);
 		thick_Rectangle(outerBoxX, outerBoxY, windowWidth, windowHeight, 2);
 		
 		// black outline for the blue outline for the outer text box lol
@@ -61,7 +63,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		
 		// display the title and inputted string
       gfx_SetTextFGColor(BLACK);
-		gfx_PrintStringXY(title, ((SCRN_WIDTH/2)-(windowWidth/2)+((SCRN_WIDTH/2)+(windowWidth/2)-10))/2-(gfx_GetStringWidth(title)/2), (SCRN_HEIGHT/2)-(windowHeight/2)+5);
+		gfx_PrintStringXY(title, titleX, (SCRN_HEIGHT/2)-(windowHeight/2)+5);
 		gfx_PrintStringXY(buffer, (SCRN_WIDTH/2)-(72/2)+2, (SCRN_HEIGHT/2)-(windowHeight/2)+24);
 
       // display cursor
@@ -218,20 +220,104 @@ int copyWord(char* dest, char* src)
    return pos;
 }
 
-
-/** copies a string into the end of another string (pointer)
- * @param dest pointer to first string
- * @param dest pointer to string that you are tacking on to the first string
-**/
-/*
-int strcat(char *dest, char *src) {
-	int charsRead = 0;
-	int writePos = dest[strlen(dest)];
-	
-	while(src[charsRead]!='/0') {
-		dest[writePos] = src[charsRead];
-	}
-	
-	return charsRead;
+char * printTextBox(char * string, int xMin, int yMin, int width, int height, int lineOffset, int lines, bool fake_print) {
+	fontlib_SetWindow(xMin, yMin, width, height);
+    char old_stop = fontlib_GetAlternateStopCode();
+    unsigned int left = fontlib_GetWindowXMin();
+    unsigned int right = left + width;
+    unsigned int str_width;
+    unsigned int x = fontlib_GetCursorX();
+    unsigned char first_printable = (unsigned char)fontlib_GetFirstPrintableCodePoint();
+    unsigned char c;
+    unsigned int space_width = fontlib_GetGlyphWidth(' ');
+    if (first_printable == '\0')
+        first_printable = '\1';
+    fontlib_SetAlternateStopCode(' ');
+    do
+    {
+        /* Check if the next word can fit on the current line */
+        str_width = fontlib_GetStringWidth(string);
+        if (x + str_width < right)
+            if (!fake_print)
+                x = fontlib_DrawString(string);
+            else
+                x += str_width;
+        else
+        {
+            /* If the word is super-long such that it won't fit in the window,
+             * then forcibly print it starting on a new line. */
+            if (str_width != 0)
+            {
+                if (str_width > width && x == left)
+                    if (!fake_print)    
+                        x = fontlib_DrawString(string);
+                    else
+                    {
+                        do
+                            x += (str_width = fontlib_GetGlyphWidth(*string++));
+                        while (x < right);
+                        string--;
+                        break;
+                    }
+                else
+                    break;
+            }
+            /* If the width returned was zero, that means either another space
+             * is waiting to be printed, which will be handled below; or a
+             * control code is next, which also will be handled below.  This can
+             * occur, for example, if a control code immediately follows a
+             * space. */
+        }
+        /* FontLibC will kindly tell us exactly where it left off. */
+        string = fontlib_GetLastCharacterRead();
+        /* Now we need to deal with why the last word was terminated. */
+        c = (unsigned char)(*string);
+        /* If it's a control code, we either process a newline or give up. */
+        if (c < first_printable)
+        {
+            if (c == ZERO_WIDTH_SPACE)
+                string++;
+            else if (c == '\t')
+            {
+                string++;
+                x += 16;
+                x &= 0xFFFFF0;
+                if (!fake_print)
+                {
+                    fontlib_ClearEOL();
+                    fontlib_SetCursorPosition(x, fontlib_GetCursorY());
+                }
+            }
+            else
+                break;
+        }
+        /* If it's a space, we need to process that manually since DrawString
+         * won't handle it because we set space as a stop code. */
+        if (c == ' ')
+        {
+            string++;
+            /* We do actually need to check if there's space to print the
+             * space. */
+            if (x + space_width < right)
+            {
+                if (!fake_print)
+                    fontlib_DrawGlyph(' ');
+                x += space_width;
+            }
+            else
+            {
+                /* If there isn't room, we need to eat the space; it would look
+                 * weird to print a space at the start of the next line. 
+                 * However, we do not eat ALL the spaces if there's more than
+                 * one, just the first one or two. */
+                if (*string == ' ') /* Take care of possible second space. */
+                    string++;
+                break;
+            }
+        }
+    } while (true);
+    if (!fake_print)
+        fontlib_ClearEOL();
+    fontlib_SetAlternateStopCode(old_stop);
+    return string;
 }
-*/
