@@ -201,9 +201,19 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 	
 	// other (opens fun menu with sprites)
 	if(kb_IsDown(kb_KeyGraph)) {
-		struct menu menu;
-		menu.strings[10][15] = {"Back", "Rename", "(un)Hide", "Settings", "Help", "Exit"};
-		menu.hasSprites = true;
+		
+		struct menu menu = {
+			.hasSprites = true,
+			.numOptions = 6,
+			.sprites = {
+				left_arrow, NULL, settings, 
+			},
+			.strings = {
+				"Back", "Rename", "(un)Hide", "Settings", "Help", "Exit"
+			},
+			.xMin = 170,
+			.yMin = 100,
+		};
 		
 	}
 	
