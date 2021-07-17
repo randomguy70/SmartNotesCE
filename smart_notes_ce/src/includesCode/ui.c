@@ -206,7 +206,7 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 			.hasSprites = true,
 			.numOptions = 6,
 			.sprites = {
-				left_arrow, NULL, settings, 
+				left_arrow, NULL, settings, help, quit
 			},
 			.strings = {
 				"Back", "Rename", "(un)Hide", "Settings", "Help", "Exit"

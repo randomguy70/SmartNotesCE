@@ -15,6 +15,7 @@ extern "C" {
 #include "open.h"
 #include "more.h"
 #include "quit.h"
+#include "help.h"
 
 #ifdef __cplusplus
 }
