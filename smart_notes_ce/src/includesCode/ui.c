@@ -189,6 +189,7 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 	
 	// quit program
 	sk_key_t key = os_GetCSC();
+	
 	if (key == sk_Clear || key == sk_Zoom)
 		HS->QUIT=true;
 	
@@ -198,8 +199,13 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 		loadFiles(HS);
    }
 	
-	// other (opens fun menu)
-	// if(kb_IsDown)
+	// other (opens fun menu with sprites)
+	if(kb_IsDown(kb_KeyGraph)) {
+		struct menu menu;
+		menu.strings[10][15] = {"Back", "Rename", "(un)Hide", "Settings", "Help", "Exit"};
+		menu.hasSprites = true;
+		
+	}
 	
 	// if the user doesn't want to quit, then return 1
 	return 1;
@@ -396,17 +402,16 @@ int displayMessage(struct message * message) {
 	return message->hasHeader; // i had to silence the return warning. will change that!
 }
 
-uint8_t displayMenu(struct menu * menu, int xPos, int yPos) {
+int displayMenu(struct menu * menu, int xPos, int yPos) {
 	int offset = 0;
 	int selected = 0;
-	uint8_t result = 0;
 	uint8_t spacing = 22;
 	uint8_t width = 155;
 	uint8_t maxOptionsOnscreen = 5;
 	
-	while(!result) {
+	while(true) {
 		gfx_SetDraw(1);
-	
+		
 		// outline
 		gfx_SetColor(LIGHT_BLUE);
 		thick_Rectangle(xPos, yPos, width, spacing * maxOptionsOnscreen, 2);
@@ -436,15 +441,42 @@ uint8_t displayMenu(struct menu * menu, int xPos, int yPos) {
 				gfx_TransparentSprite_NoClip(menu->sprites[i], xPos + 1, yPos + i * spacing);
 			
 		}
+		
+		gfx_Wait();
+		gfx_SwapDraw();
 	
 		// keyPresses
 		kb_Scan();
 		
+		// move selecter bar down
+		if(kb_IsDown(kb_Down) && selected < menu->numOptions) {
+			selected++;
+			if(selected >= offset+maxOptionsOnscreen){
+         	offset++;
+      	}
+		}
 		
-		gfx_SwapDraw();
+		// move selecter bar up
+		if(kb_IsDown(kb_Up) && selected>0) {
+			selected--;
+			if(selected < offset){
+         	offset--;
+      	}
+		}
+		
+		// select an option
+		if(kb_IsDown(kb_Enter) || kb_IsDown(kb_2nd)) {
+			return selected;
+		}
+		
+		// quit the menu
+		if(kb_IsDown(kb_Clear)) {
+			return -1;
+		}
+		
 	}
 	
-	return result;
+	return 0;
 }
 
 int drawScrollbar(struct scrollBar * scrollBar) {

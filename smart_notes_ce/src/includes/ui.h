@@ -141,7 +141,7 @@ int displayMessage(struct message * message);
  * @param xPos x position of top right corner of menu box
  * @param yPos y position of top right corner of menu box
  * */
-uint8_t displayMenu(struct menu * menu, int xPos, int yPos);
+int displayMenu(struct menu * menu, int xPos, int yPos);
 
 // draws a rectangle with a given thickness
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);
