@@ -206,15 +206,41 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 			.hasSprites = true,
 			.numOptions = 6,
 			.sprites = {
-				left_arrow, NULL, settings, help, quit
+				left_arrow, hide, settings, help, quit
 			},
 			.strings = {
 				"Back", "Rename", "(un)Hide", "Settings", "Help", "Exit"
 			},
-			.xMin = 170,
-			.yMin = 100,
+			.xPos = 170,
+			.yPos = 100,
+			.width = 155,
+			.spacing = 22,
+			.maxOnScrn = 5,
 		};
 		
+		uint8_t result = displayMenu(&menu);
+		
+		if(result == 1) {
+			renameSelected(HS);
+			loadFiles(HS);
+			
+			return 1;
+		}
+		if(result == 2) {
+			// hideFile(HS->selectedFile);
+			return 2;
+		}
+		if(result == 3) {
+			// displaySettings();
+			return 3;
+		}
+		if(result == 4) {
+			// displayHelp();
+			return 4;
+		}
+		if(result == 5) {
+			return 0;
+		}
 	}
 	
 	// if the user doesn't want to quit, then return 1
@@ -412,48 +438,46 @@ int displayMessage(struct message * message) {
 	return message->hasHeader; // i had to silence the return warning. will change that!
 }
 
-int displayMenu(struct menu * menu, int xPos, int yPos) {
+int displayMenu(struct menu * menu) {
 	int offset = 0;
 	int selected = 0;
-	uint8_t spacing = 22;
-	uint8_t width = 155;
-	uint8_t maxOptionsOnscreen = 5;
+	int height = menu->spacing * menu->maxOnScrn;
 	
 	while(true) {
 		gfx_SetDraw(1);
 		
 		// outline
 		gfx_SetColor(LIGHT_BLUE);
-		thick_Rectangle(xPos, yPos, width, spacing * maxOptionsOnscreen, 2);
+		thick_Rectangle(menu->xPos, menu->yPos, menu->width, height, 2);
 		
 		// box
 		gfx_SetColor(WHITE);
-		gfx_FillRectangle_NoClip(xPos, yPos, width, spacing * maxOptionsOnscreen);
+		gfx_FillRectangle_NoClip(menu->xPos, menu->yPos, menu->width, height);
 		
 		gfx_SetTextFGColor(BLACK);
 		
-		for(uint8_t i = selected; i < menu->numOptions && i < maxOptionsOnscreen; i++) {
+		for(uint8_t i = selected; i < menu->numOptions && i < menu->maxOnScrn; i++) {
 		
 			// rectangle selecting box
 			if(i == selected) {
 				gfx_SetColor(BLACK);
-				gfx_Rectangle_NoClip(xPos+1, yPos + i * spacing, width, spacing);
+				gfx_Rectangle_NoClip(menu->xPos+1, menu->yPos + i * menu->spacing, menu->width, menu->spacing);
 				
 				gfx_SetColor(LIGHT_GREY);
-				gfx_FillRectangle_NoClip(xPos+1, yPos + i * spacing, width, spacing);
+				gfx_FillRectangle_NoClip(menu->xPos+1, menu->yPos + i * menu->spacing, menu->width, menu->spacing);
 			}
 			
 			// text
-			gfx_PrintStringXY(menu->strings[i], xPos + 20, yPos + i * spacing + 10); // add 10 to center the text
+			gfx_PrintStringXY(menu->strings[i], menu->xPos + 20, menu->yPos + i * menu->spacing + 10); // add 10 to center the text
 			
 			// sprites
 			if(menu->hasSprites)
-				gfx_TransparentSprite_NoClip(menu->sprites[i], xPos + 1, yPos + i * spacing);
+				gfx_TransparentSprite_NoClip(menu->sprites[i], menu->xPos + 1, menu->yPos + i * menu->spacing);
 			
 		}
 		
 		gfx_Wait();
-		gfx_SwapDraw();
+		gfx_Blit(1); // I might change this to just blitting the menu rect, but who knows if anybody is even going to ever read this comment...
 	
 		// keyPresses
 		kb_Scan();
@@ -461,7 +485,7 @@ int displayMenu(struct menu * menu, int xPos, int yPos) {
 		// move selecter bar down
 		if(kb_IsDown(kb_Down) && selected < menu->numOptions) {
 			selected++;
-			if(selected >= offset+maxOptionsOnscreen){
+			if(selected >= offset+menu->maxOnScrn){
          	offset++;
       	}
 		}

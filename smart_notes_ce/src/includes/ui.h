@@ -1,6 +1,8 @@
 #ifndef UI_H
 #define UI_H
 
+#include "main.h"
+
 struct cursorStruct CS;
 struct fileViewerStruct HS;
 struct editorStruct ES;
@@ -83,10 +85,13 @@ struct menu {
 	gfx_sprite_t * sprites[10];
 	char strings[10][15];
 	
-	unsigned int xMin;
-	unsigned int yMin;
+	unsigned int xPos;
+	unsigned int yPos;
 	unsigned int width;
 	unsigned int height;
+	
+	uint8_t spacing; 
+	uint8_t maxOnScrn; // maximum num of options able to be displayed
 };
 
 struct scrollBar{
@@ -138,10 +143,8 @@ int displayMessage(struct message * message);
 
 /** displays a menu with sprites
  * @param menu a struct containing the sprite and text data for the menu
- * @param xPos x position of top right corner of menu box
- * @param yPos y position of top right corner of menu box
  * */
-int displayMenu(struct menu * menu, int xPos, int yPos);
+int displayMenu(struct menu * menu);
 
 // draws a rectangle with a given thickness
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);
