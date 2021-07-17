@@ -3,6 +3,9 @@
 
 #include "main.h"
 
+#define BUTTON_TYPE_TRIGGER_ACTION  1 // Returns the value of the selected option when the button is pressed
+#define BUTTON_TYPE_TRIGGER_MENU    2 // Opens a menu when the button is pressed (a menu is an array of buttons). However, there aren't recursive menus and buttons (yet).
+
 struct cursorStruct CS;
 struct fileViewerStruct HS;
 struct editorStruct ES;
@@ -83,7 +86,7 @@ struct menu {
 	bool hasSprites; // whether or not the menu has sprites to make the GUI more enjoyable
 	
 	gfx_sprite_t * sprites[10];
-	gfx_sprite_t spriteHeights[10];
+	uint8_t spriteHeights[10];
 	char strings[10][15];
 	
 	unsigned int xPos;
@@ -93,6 +96,10 @@ struct menu {
 	
 	uint8_t spacing; 
 	uint8_t maxOnScrn; // maximum num of options able to be displayed
+};
+
+struct button {
+	uint8_t type; // 
 };
 
 struct scrollBar{

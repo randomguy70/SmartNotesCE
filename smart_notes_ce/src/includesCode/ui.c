@@ -209,7 +209,7 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 				left_arrow, hide, settings, rename, help, quit
 			},
 			.spriteHeights = {
-				//left_arrow_height, hide_height, settings_height, rename_height, help_height, quit_height
+				left_arrow_height, hide_height, settings_height, rename_height, help_height, quit_height
 			},
 			.strings = {
 				"Back", "(un)Hide", "Settings", "Rename", "Help", "Exit"
