@@ -6,7 +6,7 @@ static uint8_t setupFontlibc();
 // prepares for the program to exit
 static void cleanup();
 
-int main(void) {
+int main(int argc, char *argv[]) {
 	// one-time setup things
 	{
 	
