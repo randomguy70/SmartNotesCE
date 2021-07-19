@@ -91,7 +91,7 @@ struct button {
 };
 
 // this is what it looks like. thank you mateo :P
-struct menu_entry{
+struct menu_entry {
 	const char * str;
 	gfx_sprite_t * sprite;
 	uint8_t spriteHeight;

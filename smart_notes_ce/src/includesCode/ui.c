@@ -522,33 +522,25 @@ int displayMenu(struct menu * menu) {
 	return 0;
 };
 
-// loads the data into the struct for the homescreen menu that is triggered by the "other" (literally)
-// jacobly recommended allocating space for a struct instead of doing that in the keypress function
+/*
+loads the data into the struct for the homescreen menu that is triggered by the "other" (literally) jacobly recommended allocating space for a struct instead of doing that in the keypress function
+*/
 static const struct menu *loadHomeScreenOtherMenu(void) {
 	static const struct menu menu = { 
 		.title = "Options", 
 		.x = 200, .y = 104,
 		.numOptions = 6,
 		.hasSprites = true,
-		{
-			"Back", left_arrow, 
-		}
-		.
-		.sprites = {
-			left_arrow, hide, settings, rename, help, quit
-		},
-		.spriteHeights = {
-			left_arrow_height, hide_height, settings_height, rename_height, help_height, quit_height
-		},
-		.strings = {
-			"Back", "(un)Hide", "Settings", "Rename", "Help", "Exit"
-		},
 		
-		.xPos = 200,
-		.yPos = 104,
-		.width = 120,
-		.spacing = 22,
-		.maxOnScrn = 5,
+		// array of menu entries
+		.entry = {
+			{"Back", left_arrow, left_arrow_height, NULL},
+			{"Rename", rename, rename_height, &renameSelected},
+			{"(un)Hide", hide, hide_height, NULL},
+			{"Settings", settings, settings_height, NULL},
+			{"Help", help, help_height, NULL},
+			{"Exit", quit, quit_height, },
+		},
 		
 	};
 	
