@@ -81,25 +81,33 @@ struct message {
 	*/
 };
 
+
+struct button {
+	uint8_t type; // buttons can trigger menues, or returns a value
+	char string[15]; // text to display on button
+	bool hasSprite; // whether or not the button has a sprite
+	gfx_sprite_t * sprite; // sprite to display next to the button's text. only used if hasSprite == true
+	uint8_t spriteHeight; // Height of the button's sprite. Don't initialise this unless the button has a sprite
+};
+
 struct menu {
 	uint8_t numOptions; // the max number of options in a menu is 10
-	bool hasSprites; // whether or not the menu has sprites to make the GUI more enjoyable
 	
-	gfx_sprite_t * sprites[10];
-	uint8_t spriteHeights[10];
-	char strings[10][15];
+	// struct button buttons[9];
+	
+	char * strings[9][15]; // strings displayed on the buttons
+	
+	bool hasSprites;
+	gfx_sprite_t * sprites[9];
+	uint8_t spriteHeights[9];
 	
 	unsigned int xPos;
 	unsigned int yPos;
 	unsigned int width;
 	unsigned int height;
 	
-	uint8_t spacing; 
+	uint8_t spacing;
 	uint8_t maxOnScrn; // maximum num of options able to be displayed
-};
-
-struct button {
-	uint8_t type; // 
 };
 
 struct scrollBar{

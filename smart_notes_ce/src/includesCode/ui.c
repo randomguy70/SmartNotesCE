@@ -1,5 +1,9 @@
 #include "main.h"
 
+// static prototypes
+static void loadHomeScreenOtherMenu(struct menu * menu);
+
+
 // btw, HS stands for homescreen
 uint8_t dispHomeScreen() {
    // set up struct for homescreen variables & data
@@ -214,6 +218,7 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 			.strings = {
 				"Back", "(un)Hide", "Settings", "Rename", "Help", "Exit"
 			},
+			
 			.xPos = 200,
 			.yPos = 104,
 			.width = 120,
@@ -477,7 +482,7 @@ int displayMenu(struct menu * menu) {
 			
 			// sprites
 			if(menu->hasSprites)
-				gfx_TransparentSprite_NoClip(menu->sprites[i], menu->xPos + 2, menu->yPos + i * menu->spacing + 5);
+				gfx_TransparentSprite_NoClip(menu->sprites[i], menu->xPos + 4, menu->yPos + i * menu->spacing + 5);
 			
 		}
 		
@@ -485,9 +490,6 @@ int displayMenu(struct menu * menu) {
 		gfx_Blit(1); // I might change this to just blitting the menu rect, but who knows if anybody is even going to ever read this comment...
 	
 		// keyPresses
-		while(!KB_DATA_CHANGED) {
-			kb_Scan();
-		}
 		
 		// move selecter bar down
 		if(kb_IsDown(kb_Down) && selected < menu->numOptions) {
@@ -519,6 +521,38 @@ int displayMenu(struct menu * menu) {
 	
 	return 0;
 }
+
+// loads the data into the struct for the homescreen menu that is triggered by the "other" (literally)
+static void loadHomeScreenOtherMenu(struct menu * menu) {
+	menu->hasSprites = true,
+	menu->numOptions = 6,
+	menu->sprites[0] = left_arrow;
+	menu->sprites[1] = hide;
+	menu->sprites[2] = settings;
+	menu->sprites[3] = rename; 
+	menu->sprites[4] = help;
+	menu->sprites[5] = quit;
+
+	menu->spriteHeights[0] = left_arrow_height;
+	menu->spriteHeights[1] = hide_height;
+	menu->spriteHeights[2] = settings_height;
+	menu->spriteHeights[3] = rename_height;
+	menu->spriteHeights[4] = help_height;
+	menu->spriteHeights[5] = quit_height;
+	
+	menu->strings[0][0] = "Back";
+	menu->strings[1][0] = "(un)Hide";
+	menu->strings[2][0] = "Settings";
+	menu->strings[3][0] = "Rename";
+	menu->strings[4][0] = "Help";
+	menu->strings[5][0] = "Exit";
+	
+	menu->xPos = 200,
+	menu->yPos = 104,
+	menu->width = 120,
+	menu->spacing = 22,
+	menu->maxOnScrn = 5,
+};
 
 int drawScrollbar(struct scrollBar * scrollBar) {
 	gfx_SetColor(scrollBar->colorIndex);

@@ -5,11 +5,11 @@
 extern "C" {
 #endif
 
-#define left_arrow_width 20
-#define left_arrow_height 14
-#define left_arrow_size 282
+#define left_arrow_width 18
+#define left_arrow_height 13
+#define left_arrow_size 236
 #define left_arrow ((gfx_sprite_t*)left_arrow_data)
-extern unsigned char left_arrow_data[282];
+extern unsigned char left_arrow_data[236];
 
 #ifdef __cplusplus
 }
