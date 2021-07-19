@@ -206,28 +206,28 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 	// other (opens fun menu with sprites)
 	if(kb_IsDown(kb_KeyGraph)) {
 		
-		struct menu menu = {
-			.hasSprites = true,
-			.numOptions = 6,
-			.sprites = {
-				left_arrow, hide, settings, rename, help, quit
-			},
-			.spriteHeights = {
-				left_arrow_height, hide_height, settings_height, rename_height, help_height, quit_height
-			},
-			.strings = {
-				"Back", "(un)Hide", "Settings", "Rename", "Help", "Exit"
-			},
+		struct menu *menu = loadHomeScreenOtherMenu();
+		
+		uint8_t result = displayMenu(menu);
+		
+		switch(result) {
+			case 1:
+				renameSelected(HS);
+				loadFiles(HS);
+				return 1;
+			case 2:
+				// hideFile(HS->selectedFile); // haven't added this yet btw
+				return 2;
+			case 3: 
+				// displaySettings();
+				return 3;
+			case 4:
+				// displayHelp();
+				return 4;
+			case 5:
+				return 0;
 			
-			.xPos = 200,
-			.yPos = 104,
-			.width = 120,
-			.spacing = 22,
-			.maxOnScrn = 5,
-		};
-		
-		uint8_t result = displayMenu(&menu);
-		
+		}
 		if(result == 1) {
 			renameSelected(HS);
 			loadFiles(HS);
@@ -520,38 +520,39 @@ int displayMenu(struct menu * menu) {
 	}
 	
 	return 0;
-}
+};
 
 // loads the data into the struct for the homescreen menu that is triggered by the "other" (literally)
-static void loadHomeScreenOtherMenu(struct menu * menu) {
-	menu->hasSprites = true,
-	menu->numOptions = 6,
-	menu->sprites[0] = left_arrow;
-	menu->sprites[1] = hide;
-	menu->sprites[2] = settings;
-	menu->sprites[3] = rename; 
-	menu->sprites[4] = help;
-	menu->sprites[5] = quit;
-
-	menu->spriteHeights[0] = left_arrow_height;
-	menu->spriteHeights[1] = hide_height;
-	menu->spriteHeights[2] = settings_height;
-	menu->spriteHeights[3] = rename_height;
-	menu->spriteHeights[4] = help_height;
-	menu->spriteHeights[5] = quit_height;
+// jacobly recommended allocating space for a struct instead of doing that in the keypress function
+static const struct menu *loadHomeScreenOtherMenu(void) {
+	static const struct menu menu = { 
+		.title = "Options", 
+		.x = 200, .y = 104,
+		.numOptions = 6,
+		.hasSprites = true,
+		{
+			"Back", left_arrow, 
+		}
+		.
+		.sprites = {
+			left_arrow, hide, settings, rename, help, quit
+		},
+		.spriteHeights = {
+			left_arrow_height, hide_height, settings_height, rename_height, help_height, quit_height
+		},
+		.strings = {
+			"Back", "(un)Hide", "Settings", "Rename", "Help", "Exit"
+		},
+		
+		.xPos = 200,
+		.yPos = 104,
+		.width = 120,
+		.spacing = 22,
+		.maxOnScrn = 5,
+		
+	};
 	
-	menu->strings[0][0] = "Back";
-	menu->strings[1][0] = "(un)Hide";
-	menu->strings[2][0] = "Settings";
-	menu->strings[3][0] = "Rename";
-	menu->strings[4][0] = "Help";
-	menu->strings[5][0] = "Exit";
-	
-	menu->xPos = 200,
-	menu->yPos = 104,
-	menu->width = 120,
-	menu->spacing = 22,
-	menu->maxOnScrn = 5,
+	return &menu;
 };
 
 int drawScrollbar(struct scrollBar * scrollBar) {

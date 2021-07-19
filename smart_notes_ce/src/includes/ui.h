@@ -90,24 +90,21 @@ struct button {
 	uint8_t spriteHeight; // Height of the button's sprite. Don't initialise this unless the button has a sprite
 };
 
+// this is what it looks like. thank you mateo :P
+struct menu_entry{
+	const char * str;
+	gfx_sprite_t * sprite;
+	uint8_t spriteHeight;
+	void (*func_ptr)(void); 
+};
+
+// thank you mateo(again)
 struct menu {
-	uint8_t numOptions; // the max number of options in a menu is 10
-	
-	// struct button buttons[9];
-	
-	char * strings[9][15]; // strings displayed on the buttons
-	
-	bool hasSprites;
-	gfx_sprite_t * sprites[9];
-	uint8_t spriteHeights[9];
-	
-	unsigned int xPos;
-	unsigned int yPos;
-	unsigned int width;
-	unsigned int height;
-	
-	uint8_t spacing;
-	uint8_t maxOnScrn; // maximum num of options able to be displayed
+	const char * title; // title of menu
+	int x, y; // x and y coord of menu window
+	uint8_t numOptions;
+	bool hasSprites; // whether or not the menu entries have sprites
+	struct menu_entry entry[]; // contains all of the menu entries
 };
 
 struct scrollBar{
@@ -161,6 +158,9 @@ int displayMessage(struct message * message);
  * @param menu a struct containing the sprite and text data for the menu
  * */
 int displayMenu(struct menu * menu);
+
+// loads the menu for the "other" button in the homescreen fileViewer and returns its adress
+static const struct menu *loadHomeScreenOtherMenu(void);
 
 // draws a rectangle with a given thickness
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);
