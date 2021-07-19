@@ -1,8 +1,5 @@
 #include "main.h"
 
-// static prototypes
-static void loadHomeScreenOtherMenu(struct menu * menu);
-
 
 // btw, HS stands for homescreen
 uint8_t dispHomeScreen() {
@@ -376,7 +373,7 @@ uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS ) {
 	return 0;
 }
 
-uint8_t renameSelected(struct fileViewerStruct *HS) {
+bool renameFile(const char *name) {
 	uint16_t width = 200;
 	uint16_t height = 50;
 	
@@ -406,7 +403,7 @@ uint8_t renameSelected(struct fileViewerStruct *HS) {
 	
 	// print the file's name
 	gfx_SetTextFGColor(DARK_BLUE);
-	gfx_PrintString(HS->fileNames[HS->selectedFile]);
+	gfx_PrintString(name);
 	
 	// add a question mark
 	gfx_SetTextFGColor(BLACK);
@@ -420,25 +417,22 @@ uint8_t renameSelected(struct fileViewerStruct *HS) {
 	}
 	
 	if(keyPressed == sk_Clear) {
-		return 0;
+		return false;
 	}
 	
 	char inputNameBuffer[10] = {0};
-	char prevNameBuffer[10] = {0};
 	char message[25] = {"Rename "};
 	uint8_t fileSlot;
 	
-	// create a single string by tacking the file's old name on to "Rename ", and pass that as a parameter to inputString
-	fileSlot = ti_Open(HS->fileNames[HS->selectedFile], "r");
-	ti_GetName(prevNameBuffer, fileSlot);
-	strcat(message, prevNameBuffer);
+	strcat(message, name);
+	strcat(message, '?');
 	
 	if(inputString(inputNameBuffer, 8, message) > 0) {
-		ti_Rename(HS->fileNames[HS->selectedFile], inputNameBuffer);
-		return 1;
+		ti_Rename(name, inputNameBuffer);
+		return true;
 	}
 	
-	return 0;
+	return false;
 }
 
 int displayMessage(struct message * message) {
@@ -449,7 +443,9 @@ int displayMessage(struct message * message) {
 int displayMenu(struct menu * menu) {
 	int offset = 0;
 	int selected = 0;
-	int height = menu->spacing * menu->maxOnScrn;
+	uint8_t spacing = 22;
+	uint8_t maxOnScrn = 5;
+	int height = spacing * maxOnScrn;
 	
 	while(true) {
 		gfx_SetDraw(1);

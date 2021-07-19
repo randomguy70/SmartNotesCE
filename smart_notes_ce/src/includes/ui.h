@@ -121,6 +121,9 @@ struct editorStruct {
    
 };
 
+// loads homescreen menu for the "other" button (literally)
+static const struct menu *loadHomeScreenOtherMenu(void);
+
 // handles all editor key presses
 void handleEditorKeyPresses();
 
@@ -168,8 +171,8 @@ void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);
 // check if user wants to delete a file, and deleted the selected file if so
 uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS );
 
-// renames the selected file with an inputted string
-uint8_t renameSelected(struct fileViewerStruct *HS);
+// renames a file with an inputted string
+bool renameFile(const char *name);
 
 // returns 1 if the user is pressing clear for a significant duration
 int chooseToQuit();
