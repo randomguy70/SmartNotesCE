@@ -74,11 +74,11 @@ void dispHomeScreenBG(struct fileViewerStruct * HS) {
 	int width;
 	
 	// scrollbar math
-	uint8_t scrollbarHeight = 150 * HS->numFilesDisplayed / HS->numFiles;
+	uint8_t scrollbarHeight = 148 * HS->numFilesDisplayed / HS->numFiles;
 	
 	// just making sure that the scrollbar is a reasonable size...
-	if(scrollbarHeight>150)
-		scrollbarHeight = 150;
+	if(scrollbarHeight>148)
+		scrollbarHeight = 148;
 	if(scrollbarHeight<10)
 		scrollbarHeight = 10;
 	
@@ -467,17 +467,17 @@ int displayMenu(struct menu * menu) {
 		
 		gfx_SetTextFGColor(BLACK);
 		
-		for(uint8_t i = selected; i < menu->numOptions && i < maxOnScrn; i++) {
+		for(uint8_t i = offset; i < menu->numOptions && i < maxOnScrn; i++) {
 		
 			// rectangle selecting box
 			if(i == selected) {
 				// fill box
 				gfx_SetColor(LIGHT_GREY);
-				gfx_FillRectangle_NoClip(menu->x+2, menu->y + i * spacing + 2, width - 4, spacing - 2);
+				gfx_FillRectangle_NoClip(menu->x+2, menu->y + i * spacing + 2, width - 4, spacing);
 				
 				// outline box
 				gfx_SetColor(BLACK);
-				gfx_Rectangle_NoClip(menu->x+2, menu->y + i * spacing + 2, width - 4, spacing - 2);
+				gfx_Rectangle_NoClip(menu->x+2, menu->y + i * spacing + 2, width - 4, spacing);
 			}
 			
 			// text
@@ -489,35 +489,38 @@ int displayMenu(struct menu * menu) {
 			
 		}
 		
-		gfx_Wait();
+		// gfx_Wait();
 		gfx_Blit(1); // I might change this to just blitting the menu rect, but who knows if anybody is even going to ever read this comment...
-	
+		
 		// keyPresses
 		
 		// move selecter bar down
-		if(kb_IsDown(kb_Down) && selected < menu->numOptions) {
+		kb_Scan();
+		if(kb_IsDown(kb_KeyDown) && selected < menu->numOptions -1) {
 			selected++;
-			if(selected >= offset+maxOnScrn){
+			if(selected > offset+maxOnScrn){
          	offset++;
       	}
+			delay(100);
 		}
 		
 		// move selecter bar up
-		if(kb_IsDown(kb_Up) && selected>0) {
+		if(kb_IsDown(kb_KeyUp) && selected>0) {
 			selected--;
 			if(selected < offset){
          	offset--;
       	}
+			delay(100);
 		}
 		
 		// select an option
-		if(kb_IsDown(kb_Enter) || kb_IsDown(kb_2nd)) {
-			return selected;
+		if(kb_IsDown(kb_KeyEnter) || kb_IsDown(kb_Key2nd)) {
+			return selected + 1;
 		}
 		
 		// quit the menu
-		if(kb_IsDown(kb_Clear)) {
-			return -1;
+		if(os_GetCSC() == sk_Clear) {
+			return 0;
 		}
 		
 	}
@@ -532,7 +535,7 @@ static const struct menu *loadHomeScreenOtherMenu(void) {
 	static const struct menu menu = { 
 		.title = "Options", 
 		.x = 200, .y = 100,
-		.numOptions = 6,
+		.numOptions = 5,
 		.hasSprites = true,
 		
 		// array of menu entries
@@ -542,7 +545,6 @@ static const struct menu *loadHomeScreenOtherMenu(void) {
 			{"(un)Hide", hide, hide_height},
 			{"Settings", settings, settings_height},
 			{"Help", help, help_height},
-			{"Exit", quit, quit_height},
 		},
 		
 	};
