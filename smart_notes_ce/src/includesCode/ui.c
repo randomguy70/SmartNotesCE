@@ -209,24 +209,30 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 		
 		switch(result) {
 			case 1:
-				renameSelected(HS);
+				renameFile(HS->fileNames[HS->selectedFile]);
 				loadFiles(HS);
 				return 1;
+				
 			case 2:
 				// hideFile(HS->selectedFile); // haven't added this yet btw
 				return 2;
+				
 			case 3: 
 				// displaySettings();
 				return 3;
+				
 			case 4:
 				// displayHelp();
 				return 4;
+				
+			// returning 0 quits
 			case 5:
 				return 0;
 			
 		}
+		/*
 		if(result == 1) {
-			renameSelected(HS);
+			renameFile(HS->fileNames[HS->selectedFile]);
 			loadFiles(HS);
 			
 			return 1;
@@ -246,8 +252,9 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 		if(result == 5) {
 			return 0;
 		}
+		*/
 	}
-	
+
 	// if the user doesn't want to quit, then return 1
 	return 1;
 }
@@ -422,10 +429,9 @@ bool renameFile(const char *name) {
 	
 	char inputNameBuffer[10] = {0};
 	char message[25] = {"Rename "};
-	uint8_t fileSlot;
 	
 	strcat(message, name);
-	strcat(message, '?');
+	strcat(message, "?");
 	
 	if(inputString(inputNameBuffer, 8, message) > 0) {
 		ti_Rename(name, inputNameBuffer);
@@ -445,40 +451,41 @@ int displayMenu(struct menu * menu) {
 	int selected = 0;
 	uint8_t spacing = 22;
 	uint8_t maxOnScrn = 5;
-	int height = spacing * maxOnScrn;
+	uint8_t width = 120;
+	int height = spacing * maxOnScrn + 4;
 	
 	while(true) {
 		gfx_SetDraw(1);
 		
 		// box
 		gfx_SetColor(WHITE);
-		gfx_FillRectangle_NoClip(menu->xPos, menu->yPos, menu->width, height);
+		gfx_FillRectangle_NoClip(menu->x, menu->y, width, height);
 		
 		// outline
 		gfx_SetColor(LIGHT_BLUE);
-		thick_Rectangle(menu->xPos, menu->yPos, menu->width, height, 2);
+		thick_Rectangle(menu->x, menu->y, width, height, 2);
 		
 		gfx_SetTextFGColor(BLACK);
 		
-		for(uint8_t i = selected; i < menu->numOptions && i < menu->maxOnScrn; i++) {
+		for(uint8_t i = selected; i < menu->numOptions && i < maxOnScrn; i++) {
 		
 			// rectangle selecting box
 			if(i == selected) {
 				// fill box
 				gfx_SetColor(LIGHT_GREY);
-				gfx_FillRectangle_NoClip(menu->xPos+2, menu->yPos + i * menu->spacing, menu->width - 4, menu->spacing);
+				gfx_FillRectangle_NoClip(menu->x+2, menu->y + i * spacing + 2, width - 4, spacing - 2);
 				
 				// outline box
 				gfx_SetColor(BLACK);
-				gfx_Rectangle_NoClip(menu->xPos+2, menu->yPos + i * menu->spacing + 2, menu->width - 4, menu->spacing - 2);
+				gfx_Rectangle_NoClip(menu->x+2, menu->y + i * spacing + 2, width - 4, spacing - 2);
 			}
 			
 			// text
-			gfx_PrintStringXY(menu->strings[i], menu->xPos + 30, menu->yPos + i * menu->spacing + 10); // add 10 to center the text
+			gfx_PrintStringXY(menu->entry[i].str, (menu->x + 30), menu->y + (i * spacing) + 10); // add 10 to center the text
 			
 			// sprites
 			if(menu->hasSprites)
-				gfx_TransparentSprite_NoClip(menu->sprites[i], menu->xPos + 4, menu->yPos + i * menu->spacing + 5);
+				gfx_TransparentSprite_NoClip(menu->entry[i].sprite, menu->x + 4, menu->y + i * spacing + 5);
 			
 		}
 		
@@ -490,7 +497,7 @@ int displayMenu(struct menu * menu) {
 		// move selecter bar down
 		if(kb_IsDown(kb_Down) && selected < menu->numOptions) {
 			selected++;
-			if(selected >= offset+menu->maxOnScrn){
+			if(selected >= offset+maxOnScrn){
          	offset++;
       	}
 		}
@@ -524,18 +531,18 @@ loads the data into the struct for the homescreen menu that is triggered by the 
 static const struct menu *loadHomeScreenOtherMenu(void) {
 	static const struct menu menu = { 
 		.title = "Options", 
-		.x = 200, .y = 104,
+		.x = 200, .y = 100,
 		.numOptions = 6,
 		.hasSprites = true,
 		
 		// array of menu entries
 		.entry = {
-			{"Back", left_arrow, left_arrow_height, NULL},
-			{"Rename", rename, rename_height, &renameSelected},
-			{"(un)Hide", hide, hide_height, NULL},
-			{"Settings", settings, settings_height, NULL},
-			{"Help", help, help_height, NULL},
-			{"Exit", quit, quit_height, },
+			{"Back", left_arrow, left_arrow_height},
+			{"Rename", rename, rename_height},
+			{"(un)Hide", hide, hide_height},
+			{"Settings", settings, settings_height},
+			{"Help", help, help_height},
+			{"Exit", quit, quit_height},
 		},
 		
 	};

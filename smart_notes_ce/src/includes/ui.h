@@ -95,7 +95,7 @@ struct menu_entry {
 	const char * str;
 	gfx_sprite_t * sprite;
 	uint8_t spriteHeight;
-	void (*func_ptr)(void); 
+	// void (*func_ptr)(void); 
 };
 
 // thank you mateo(again)
