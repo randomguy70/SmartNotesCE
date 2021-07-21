@@ -22,9 +22,11 @@ int main(void) {
 	gfx_SetTextBGColor(2);
 	
 	}
-	char hello[] = {"Hello this is me randomguy testing how well my word wrapping window works"};
+	char hello[] = {"Hello this is me randomguy testing how well my word wrapping window works. Thank you to Dr. Dnar++!!!"};
 
 	alert(hello);
+	gfx_End();
+	return 0;
 	
 	// dispHomeScreen needs to return 0 to exit the program, else, it returns 1
 	uint8_t mode;

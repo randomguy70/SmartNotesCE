@@ -438,7 +438,7 @@ int displayMessage(struct message * message) {
 	return message->hasHeader; // i had to silence the return warning. will change that!
 }
 
-bool alert(const char* txt) {
+bool alert(char *txt) {
 	// window vars
 	int width = 150; 
 	int height = 100;
@@ -447,6 +447,7 @@ bool alert(const char* txt) {
 	
 	// text vars
 	char* readPos = txt;
+	int messageLen = strlen(txt);
 	uint8_t linesPrinted = 0;
 	int txtX = x;
 	int txtY = y;
@@ -470,12 +471,16 @@ bool alert(const char* txt) {
 	gfx_SetColor(LIGHT_BLUE);
 	thick_Rectangle(x-2, y-2, width + 4, height + 4, 2);
 	
-	while(txtY + y < y + height && readPos != '\0') {
+	while(linesPrinted < 4) {
 	
 		// maybe i will change this. but it works. and anyway, mateo used 'goto' a ton in Oiram...
 		
 		strWidth = fontlib_GetStringWidth(readPos);
 		
+		// quit printing if the message is ended
+		if(readPos == NULL)
+			break;
+			
 		// if the first character of the read line is the new line code..., then create a new line OBVS
 		if(readPos == NEW_LINE) {
 			fontlib_Newline();
@@ -634,6 +639,7 @@ int drawScrollbar(struct scrollBar * scrollBar) {
 		gfx_VertLine_NoClip(scrollBar->x + i, scrollBar->y, scrollBar->height);
 	}
 	
+	return 0;
 };
 
 int chooseToQuit() {

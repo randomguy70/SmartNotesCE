@@ -41,12 +41,7 @@ struct fileViewerStruct {
 	int holdTime;
 };
 
-struct editor {
-	uint8_t openFileSlot;
-	char *openFileName;
-	
-};
-
+// contains data about an opened file
 struct file {
 	uint8_t slot;
 	char *os_name;
@@ -65,6 +60,11 @@ struct file {
 struct settingsStruct {
 	uint8_t saveState;
 	char lastFileOpened[9];
+};
+
+struct editor {
+	struct file file; // contains data about the opened file in the editor
+	
 };
 
 // contains properties of a cursor
@@ -102,7 +102,7 @@ struct message {
 };
 
 // prints an alert with wordwrap
-bool alert(const char* txt);
+bool alert(char *txt);
 
 struct button {
 	uint8_t type; // buttons can trigger menues, or returns a value
@@ -142,9 +142,6 @@ struct editorStruct {
    struct cursorStruct cursor;
    
 };
-
-// loads homescreen menu for the "other" button (literally)
-static const struct menu *loadHomeScreenOtherMenu(void);
 
 // handles all editor key presses
 void handleEditorKeyPresses();
