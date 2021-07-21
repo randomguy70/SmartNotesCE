@@ -10,6 +10,8 @@ uint8_t dispHomeScreen() {
    HS.numFiles = loadFiles(&HS);
 	HS.shouldQuit = false;
 	archiveAll();
+	
+	uint8_t result = 1;
 
    while(true) {
       dispHomeScreenBG(&HS);
@@ -20,10 +22,11 @@ uint8_t dispHomeScreen() {
 		gfx_Wait();
 		gfx_SwapDraw();
 		
-      handleHomeScrnKeyPresses(&HS);
+      result = handleHomeScrnKeyPresses(&HS);
 		
 		if(HS.shouldQuit == true)
-			return 0;
+			return result = 1
+			
    }
 }
 
@@ -212,6 +215,7 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 		*/
 		switch(result) {
 			
+			// 
 			case QUIT:
 				return QUIT;
 				
@@ -434,6 +438,49 @@ int displayMessage(struct message * message) {
 	return message->hasHeader; // i had to silence the return warning. will change that!
 }
 
+bool alert(const char* txt) {
+	// window vars
+	int width = 150; 
+	int height = 100;
+	int x = SCRN_WIDTH/2 - width/2;
+	int y = SCRN_HEIGHT/2 - height/2;
+	
+	// text vars
+	char * readPos = txt;
+	int txtX = x;
+	int txtY = y;
+	int strWidth;
+	
+	fontlib_SetWindow(x, y, width, height);
+	fontlib_SetAlternateStopCode(' ');
+	
+	// box with outline
+	gfx_SetColor(LIGHT_GREY);
+	gfx_FillRectangle_NoClip(x, y, width, height);
+	gfx_SetColor(LIGHT_BLUE);
+	thick_Rectangle(x-2, y-2, width + 4, height + 4, 2);
+	
+	while(true) {
+	
+		strWidth = fontlib_GetStringWidth(txt);
+		
+		// if the string is short enough to be displayed... then display it!
+		if(strWidth < width) {
+			fontlib_DrawString(txt);
+			readPos = fontlib_GetLastCharacterRead()+1;
+			txtX += strWidth;
+		}
+		
+		// if the word won't fit on to the end of the line... then create a new line
+		if(txtX > x && strWidth + txtX > width) {
+			fontlib_Newline();
+		}
+		
+		// if some person was fooling around and a word is way too long for 1 line by itself... then print it without wrapping
+		// if()
+	}
+}
+
 int displayMenu(struct menu * menu) {
 	int offset = 0;
 	int selected = 0;
@@ -521,7 +568,7 @@ loads the data into the struct for the homescreen menu that is triggered by the 
 */
 static const struct menu *loadHomeScreenOtherMenu(void) {
 	static const struct menu menu = { 
-		.title = "Options", 
+		.title = "Options",
 		.x = 200, .y = 100,
 		.numOptions = 5,
 		.hasSprites = true,

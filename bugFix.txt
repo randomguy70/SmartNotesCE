@@ -1,3 +1,9 @@
-Bugs that need to be fixed: 
+Todo:
 - if the scrollbar is on any file except the first one, when you press delete the screen goes blank and you need to restart the program
 - need to fix the scrollbar going off by 1 pixel
+- need to only update scrollbar when the screen is shifted
+- need to add settings & help windows
+- need to add a hiding/unhiding function that puts the first character of a file's name below 0x30 so that the TI OS can't detect it :P
+- planning on adding longer filenames
+- need to add text viewbox
+- need to reformat some of the main configurations in int main
