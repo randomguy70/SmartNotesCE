@@ -24,8 +24,8 @@ uint8_t dispHomeScreen() {
 		
       result = handleHomeScrnKeyPresses(&HS);
 		
-		if(HS.shouldQuit == true)
-			return result = 1;
+		if(result == QUIT)
+			return QUIT;
 			
    }
 }
@@ -195,7 +195,7 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 	sk_key_t key = os_GetCSC();
 	
 	if (key == sk_Clear || key == sk_Zoom)
-		HS->shouldQuit=true;
+		return QUIT;
 	
 	// delete file
    if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel)) && HS->numFiles>0) {

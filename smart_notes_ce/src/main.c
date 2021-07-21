@@ -9,7 +9,6 @@ static void cleanup();
 int main(void) {
 	// one-time setup things
 	{
-	
 	// this has to go before the gfx setup, in case it has to quit
 	if(!setupFontlibc()) {
 		return 0;
@@ -23,7 +22,7 @@ int main(void) {
 	gfx_SetTextBGColor(2);
 	
 	}
-	char hello[300] = {"Hello this is me randomguy testing how well my word wrapping window works if it works well I will implement it right away This is really great and I didn't expect it to go so well so soon I am amazed at how powerful a mere calculator can be Thank you DrDnar"};
+	char hello[300] = {"Hello this is me randomguy testing how well my word wrapping window works if it works well I will implement it right away This is really"};
 
 	alert(hello);
 	
