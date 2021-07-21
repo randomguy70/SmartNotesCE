@@ -470,7 +470,7 @@ bool alert(const char* txt) {
 	gfx_SetColor(LIGHT_BLUE);
 	thick_Rectangle(x-2, y-2, width + 4, height + 4, 2);
 	
-	while(linesPrinted < 3) {
+	while(linesPrinted < 7) {
 	
 		// maybe i will change this. but it works. and anyway, mateo used 'goto' a ton in Oiram...
 		
