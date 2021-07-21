@@ -174,8 +174,6 @@ void drawCursor(struct cursorStruct * cursor);
 
 int8_t textBox(const char *text, int boxWidth, int boxHeight, int boxX, int boxY);
 
-int displayMessage(struct message * message);
-
 /** displays a menu with sprites
  * @param menu a struct containing the sprite and text data for the menu
  * */

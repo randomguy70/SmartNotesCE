@@ -433,11 +433,6 @@ bool renameFile(const char *name) {
 	return false;
 }
 
-int displayMessage(struct message * message) {
-	// lots of text-wrapped fontlib stuff
-	return message->hasHeader; // i had to silence the return warning. will change that!
-}
-
 bool alert(char *txt) {
 	// window vars
 	int width = 150; 
