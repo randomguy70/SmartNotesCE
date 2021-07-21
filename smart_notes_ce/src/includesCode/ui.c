@@ -459,6 +459,8 @@ bool alert(const char* txt) {
 	fontlib_SetWindow(x, y, width, height);
 	fontlib_SetAlternateStopCode(' ');
 	fontlib_SetCursorPosition(txtX, txtY);
+	fontlib_SetBackgroundColor(LIGHT_GREY);
+	fontlib_SetTransparency(0);
 	
 	gfx_SetDraw(1);
 	
