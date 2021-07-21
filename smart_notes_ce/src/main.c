@@ -22,7 +22,7 @@ int main(void) {
 	gfx_SetTextBGColor(2);
 	
 	}
-	char hello[300] = {"Hello this is me randomguy testing how well my word wrapping window works if it works well I will implement it right away This is really"};
+	char hello[] = {"Hello this is me randomguy testing how well my word wrapping window works"};
 
 	alert(hello);
 	

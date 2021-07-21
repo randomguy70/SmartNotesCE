@@ -41,6 +41,26 @@ struct fileViewerStruct {
 	int holdTime;
 };
 
+struct editor {
+	uint8_t openFileSlot;
+	char *openFileName;
+	
+};
+
+struct file {
+	uint8_t slot;
+	char *os_name;
+	char *full_name;
+	int size;
+	
+	char *txtPtr; // pointer to the start of ascii data in the file compatable with my program
+	char *txtEnd; // pointer to the end of the printable ascii data in the file
+	
+	int numLines;
+	char *linePtr[200]; // pointers to the start of each line (for cursor and text insertion purposes)
+	
+};
+
 // contains the settings data, mostly booleans
 struct settingsStruct {
 	uint8_t saveState;

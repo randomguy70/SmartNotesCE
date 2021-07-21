@@ -1,5 +1,5 @@
 Todo:
-- if the scrollbar is on any file except the first one, when you press delete the screen goes blank and you need to restart the program
+- if the scrollbar is on some file except the first one, when you press delete the file names often dissapear and you need to restart the program, but nothing adverse happens (apparently)
 - need to fix the scrollbar going off by 1 pixel
 - need to only update scrollbar when the screen is shifted
 - need to add settings & help windows
@@ -7,4 +7,4 @@ Todo:
 - planning on adding longer filenames
 - need to add text viewbox
 - need to reformat some of the main configurations in int main
-- for some reason the program isn't quitting correctly always
+- need to fix text wrapping

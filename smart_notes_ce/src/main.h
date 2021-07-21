@@ -23,6 +23,7 @@
 #include "includes/ui.h"
 #include "includes/text.h"
 #include "includes/file.h"
+#include "includes/specialChars.h"
 
 // defines
 
