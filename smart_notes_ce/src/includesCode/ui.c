@@ -11,7 +11,7 @@ uint8_t dispHomeScreen() {
 	HS.QUIT = false;
 	archiveAll();
 
-   while(1) {
+   while(true) {
       dispHomeScreenBG(&HS);
       dispHSButtons();
 		
