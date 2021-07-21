@@ -23,7 +23,10 @@ int main(void) {
 	gfx_SetTextBGColor(2);
 	
 	}
+	char hello[] = "Hello, this is me, randomguy, testing how well my word-wrapping window works. if it works well I will implement it right away!";
 
+	alert(hello);
+	
 	// dispHomeScreen needs to return 0 to exit the program, else, it returns 1
 	uint8_t mode;
 	do {

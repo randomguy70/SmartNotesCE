@@ -81,6 +81,8 @@ struct message {
 	*/
 };
 
+// prints an alert with wordwrap
+bool alert(const char* txt);
 
 struct button {
 	uint8_t type; // buttons can trigger menues, or returns a value

@@ -25,7 +25,7 @@ uint8_t dispHomeScreen() {
       result = handleHomeScrnKeyPresses(&HS);
 		
 		if(HS.shouldQuit == true)
-			return result = 1
+			return result = 1;
 			
    }
 }
@@ -458,6 +458,7 @@ bool alert(const char* txt) {
 	
 	fontlib_SetWindow(x, y, width, height);
 	fontlib_SetAlternateStopCode(' ');
+	fontlib_SetCursorPosition(txtX, txtY);
 	
 	gfx_SetDraw(1);
 	
@@ -469,20 +470,28 @@ bool alert(const char* txt) {
 	
 	while(txtY < y + height) {
 	
-		strWidth = fontlib_GetStringWidth(txt);
+		// maybe i will change this. but it works. and anyway, mateo used 'goto' a ton in Oiram...
+		
+		strWidth = fontlib_GetStringWidth(readPos);
 		
 		// if the first character of the read line is a 0, then create a new line
-		if(txt == 0x00) {
+		if(txt == '\0') {
 			fontlib_Newline();
 			txtY += fontHeight;
 			txtX = x;
+			readPos++;
 		}
 		
 		// if the string is short enough to be displayed... then display it!
 		if(strWidth < width) {
-			fontlib_DrawString(txt);
+			fontlib_DrawString(readPos);
 			readPos = fontlib_GetLastCharacterRead()+1;
 			txtX += strWidth;
+			// draw a space after the word if necessary
+			if(readPos == ' ') {
+				fontlib_DrawString(' ');
+			}
+			
 		}
 		
 		// if the word won't fit on to the end of the line... then create a new line
@@ -495,15 +504,15 @@ bool alert(const char* txt) {
 		
 		// if some person was fooling around and the current word is too long for a whole line by itself... then print it until it hits the endge of the window (the default)
 		if(txtX == x && strWidth > width) {
-			fontlib_PrintString(txt);
-			txt = fontlib_GetLastCharacterRead()+1;
+			fontlib_DrawString(readPos);
+			readPos = fontlib_GetLastCharacterRead()+1;
 			fontlib_Newline();
 			txtX = x;
 			txtY += fontHeight;
 		}
 	}
 	
-	gfx_SwapDraw(1);
+	gfx_Blit(1);
 	while(!os_GetCSC());
 	return 1;
 }

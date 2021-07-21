@@ -7,3 +7,4 @@ Todo:
 - planning on adding longer filenames
 - need to add text viewbox
 - need to reformat some of the main configurations in int main
+- for some reason the program isn't quitting correctly always
