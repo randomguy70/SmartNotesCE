@@ -35,7 +35,7 @@ struct fileViewerStruct {
 	uint8_t numFilesDisplayed; // number of files displayed on the screen at a single time (10 >= num >=0)
    uint8_t offset;            // the number of files that were shifted UP off the screen for the cursor to move more than  10 files down
    uint8_t selectedFile;      // the offset of the name of the selected file from the beginnning of the fileNames array
-	bool QUIT; // whether or not the program should quit
+	bool shouldQuit; // whether or not the program should quit
 	
 	kb_key_t lastKeyPressed;
 	int holdTime;

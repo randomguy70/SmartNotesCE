@@ -8,7 +8,7 @@ uint8_t dispHomeScreen() {
    HS.selectedFile = 0;
    HS.offset = 0;
    HS.numFiles = loadFiles(&HS);
-	HS.QUIT = false;
+	HS.shouldQuit = false;
 	archiveAll();
 
    while(true) {
@@ -22,7 +22,7 @@ uint8_t dispHomeScreen() {
 		
       handleHomeScrnKeyPresses(&HS);
 		
-		if(HS.QUIT == true)
+		if(HS.shouldQuit == true)
 			return 0;
    }
 }
@@ -192,7 +192,7 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 	sk_key_t key = os_GetCSC();
 	
 	if (key == sk_Clear || key == sk_Zoom)
-		HS->QUIT=true;
+		HS->shouldQuit=true;
 	
 	// delete file
    if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel)) && HS->numFiles>0) {
@@ -206,53 +206,41 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 		struct menu *menu = loadHomeScreenOtherMenu();
 		
 		uint8_t result = displayMenu(menu);
-		
+			
+		/* --Options--
+			back, rename, hide, settings, help (start at 1 as an offset because 0 signifies quit)
+		*/
 		switch(result) {
+			
+			case QUIT:
+				return QUIT;
+				
+			// back
 			case 1:
+				return 1;
+			
+			// rename
+			case 2:
 				renameFile(HS->fileNames[HS->selectedFile]);
 				loadFiles(HS);
-				return 1;
-				
-			case 2:
-				// hideFile(HS->selectedFile); // haven't added this yet btw
 				return 2;
 				
+			// hide
 			case 3: 
-				// displaySettings();
+				// hideFile(char* name); // haven't defined this yet btw...
 				return 3;
 				
+			// settings
 			case 4:
-				// displayHelp();
+				// displaySettings();
 				return 4;
 				
-			// returning 0 quits
-			case 5:
-				return 0;
+			// quit
+			default:
+				return QUIT;
 			
 		}
-		/*
-		if(result == 1) {
-			renameFile(HS->fileNames[HS->selectedFile]);
-			loadFiles(HS);
-			
-			return 1;
-		}
-		if(result == 2) {
-			// hideFile(HS->selectedFile);
-			return 2;
-		}
-		if(result == 3) {
-			// displaySettings();
-			return 3;
-		}
-		if(result == 4) {
-			// displayHelp();
-			return 4;
-		}
-		if(result == 5) {
-			return 0;
-		}
-		*/
+		
 	}
 
 	// if the user doesn't want to quit, then return 1

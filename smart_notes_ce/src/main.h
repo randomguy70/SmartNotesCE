@@ -37,9 +37,10 @@
 #define LIGHT_GREY    5  // light grey
 #define DARK_BLUE     6  // electric blue. I was too lazy to change the name, but it really is a nice color.
 #define RED           7  // red
-#define LIGHT_BLUE    8    // light blue
+#define LIGHT_BLUE    8  // light blue
 #define PAPER_YELLOW  9  // color of yellow paper stickypads
 
+#define QUIT 0           // integer return signifying a quit request
 
 struct window {
 	uint8_t fillIndex;
