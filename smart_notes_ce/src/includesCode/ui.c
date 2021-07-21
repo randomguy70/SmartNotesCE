@@ -446,13 +446,20 @@ bool alert(const char* txt) {
 	int y = SCRN_HEIGHT/2 - height/2;
 	
 	// text vars
-	char * readPos = txt;
+	char* readPos = txt;
+	uint8_t linesPrinted = 0;
 	int txtX = x;
 	int txtY = y;
 	int strWidth;
 	
+	// font vars
+	fontlib_SetLineSpacing(2, 2);
+	uint8_t fontHeight = fontlib_GetCurrentFontHeight();
+	
 	fontlib_SetWindow(x, y, width, height);
 	fontlib_SetAlternateStopCode(' ');
+	
+	gfx_SetDraw(1);
 	
 	// box with outline
 	gfx_SetColor(LIGHT_GREY);
@@ -460,9 +467,16 @@ bool alert(const char* txt) {
 	gfx_SetColor(LIGHT_BLUE);
 	thick_Rectangle(x-2, y-2, width + 4, height + 4, 2);
 	
-	while(true) {
+	while(txtY < y + height) {
 	
 		strWidth = fontlib_GetStringWidth(txt);
+		
+		// if the first character of the read line is a 0, then create a new line
+		if(txt == 0x00) {
+			fontlib_Newline();
+			txtY += fontHeight;
+			txtX = x;
+		}
 		
 		// if the string is short enough to be displayed... then display it!
 		if(strWidth < width) {
@@ -474,11 +488,19 @@ bool alert(const char* txt) {
 		// if the word won't fit on to the end of the line... then create a new line
 		if(txtX > x && strWidth + txtX > width) {
 			fontlib_Newline();
+			txtX = x;
+			txtY += fontHeight;
+			linesPrinted++;
 		}
 		
-		// if some person was fooling around and a word is way too long for 1 line by itself... then print it without wrapping
-		// if()
+		// if some person was fooling around and 1 word is too long for a whole line by itself... then print it without wrapping
+		if(txtX == x && strWidth > width) {
+			fontlib_PrintString(txt);
+			txt = fontlib_GetLastCharacterRead()+1;
+		}
 	}
+	
+	gfx_SwapDraw(1);
 }
 
 int displayMenu(struct menu * menu) {
