@@ -493,14 +493,19 @@ bool alert(const char* txt) {
 			linesPrinted++;
 		}
 		
-		// if some person was fooling around and 1 word is too long for a whole line by itself... then print it without wrapping
+		// if some person was fooling around and the current word is too long for a whole line by itself... then print it until it hits the endge of the window (the default)
 		if(txtX == x && strWidth > width) {
 			fontlib_PrintString(txt);
 			txt = fontlib_GetLastCharacterRead()+1;
+			fontlib_Newline();
+			txtX = x;
+			txtY += fontHeight;
 		}
 	}
 	
 	gfx_SwapDraw(1);
+	while(!os_GetCSC());
+	return 1;
 }
 
 int displayMenu(struct menu * menu) {
