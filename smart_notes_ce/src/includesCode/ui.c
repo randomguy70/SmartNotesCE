@@ -470,7 +470,7 @@ bool alert(const char* txt) {
 	gfx_SetColor(LIGHT_BLUE);
 	thick_Rectangle(x-2, y-2, width + 4, height + 4, 2);
 	
-	while(txtY < y + height) {
+	while(linesPrinted < 3) {
 	
 		// maybe i will change this. but it works. and anyway, mateo used 'goto' a ton in Oiram...
 		
@@ -482,10 +482,11 @@ bool alert(const char* txt) {
 			txtY += fontHeight;
 			txtX = x;
 			readPos++;
+			linesPrinted++;
 		}
 		
 		// if the string is short enough to be displayed... then display it!
-		if(strWidth < width) {
+		if(strWidth + txtX < width + x) {
 			fontlib_DrawString(readPos);
 			fontlib_SetCursorPosition(fontlib_GetCursorX()+2, fontlib_GetCursorY());
 			readPos = fontlib_GetLastCharacterRead()+1;
@@ -501,13 +502,17 @@ bool alert(const char* txt) {
 			linesPrinted++;
 		}
 		
-		// if some person was fooling around and the current word is too long for a whole line by itself... then print it until it hits the endge of the window (the default)
+		// if some person was fooling around and the current word is too long for a whole line by itself... then print it until it hits the endge of the window (the default) and create a new line
 		if(txtX == x && strWidth > width) {
+			// draw it
 			fontlib_DrawString(readPos);
 			readPos = fontlib_GetLastCharacterRead()+1;
+			
+			// new line
 			fontlib_Newline();
 			txtX = x;
 			txtY += fontHeight;
+			linesPrinted++;
 		}
 	}
 	
