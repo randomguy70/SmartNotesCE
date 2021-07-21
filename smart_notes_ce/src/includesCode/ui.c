@@ -485,17 +485,14 @@ bool alert(const char* txt) {
 		// if the string is short enough to be displayed... then display it!
 		if(strWidth < width) {
 			fontlib_DrawString(readPos);
+			fontlib_SetCursorPosition(fontlib_GetCursorX()+2, fontlib_GetCursorY());
 			readPos = fontlib_GetLastCharacterRead()+1;
 			txtX += strWidth;
-			// draw a space after the word if necessary
-			if(readPos == ' ') {
-				fontlib_DrawString(' ');
-			}
 			
 		}
 		
 		// if the word won't fit on to the end of the line... then create a new line
-		if(txtX > x && strWidth + txtX > width) {
+		if(txtX > x && strWidth + txtX > x + width) {
 			fontlib_Newline();
 			txtX = x;
 			txtY += fontHeight;
