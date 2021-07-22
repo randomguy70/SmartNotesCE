@@ -22,9 +22,9 @@ int main(void) {
 	
 	}
 	
-	char hello[] = {"ABcdefghijkomnopqrstuvwxyz Hello, this is randomguy :) Thank you to Dr. Dnar++ !!!"};
+	char hello[] = {"ABcdefghijkomnopqrstuvwxyz Hello, this is randomguy :) Thank you to Dr. Dnar++ asdlkfjalk;djsfadls;fjsdafldsjflkjadskl!!!"};
 
-	alert(hello);
+	alert(hello, 150, 4);
 	cleanup();
 	return 0;
 	

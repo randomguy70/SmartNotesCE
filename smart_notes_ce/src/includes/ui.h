@@ -101,8 +101,12 @@ struct message {
 	*/
 };
 
-// prints an alert with wordwrap
-bool alert(char *txt);
+/*
+prints a message window with wordwrap
+ -returns 1 if the user presses enter or 2nd
+ -returns 0 if the user presses clear
+*/
+bool alert(char *txt, int width, int maxLines);
 
 struct button {
 	uint8_t type; // buttons can trigger menues, or returns a value

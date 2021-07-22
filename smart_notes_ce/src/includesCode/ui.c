@@ -433,14 +433,14 @@ bool renameFile(const char *name) {
 	return false;
 }
 
-bool alert(char *txt) {
+bool alert(char *txt, int width, int maxLines) {
 	// put this first to get the font's height and use that to calculate the window height to display 5 lines
 	fontlib_SetLineSpacing(2, 2);
 	uint8_t fontHeight = fontlib_GetCurrentFontHeight();
 	
 	// window vars
-	uint8_t maxLines = 4;
-	int width = 150; 
+	// uint8_t maxLines = 4;
+	// int width = 150; 
 	int height = (2*fontHeight)+(maxLines*fontHeight); // height of the window. has 2 extra line spaces for a header
 	int x = SCRN_WIDTH/2 - width/2;
 	int y = SCRN_HEIGHT/2 - height/2;
@@ -549,8 +549,14 @@ bool alert(char *txt) {
 	}
 	
 	gfx_Blit(1);
-	while(!os_GetCSC());
-	return 1;
+	sk_key_t result = '\0';
+	while(result!=sk_2nd && result != sk_Enter && result != sk_Clear)
+		result = os_GetCSC();
+	
+	if(result == sk_2nd || result == sk_Enter)
+		return 1;
+		
+	return 0;
 }
 
 int displayMenu(struct menu * menu) {
