@@ -22,11 +22,11 @@ int main(void) {
 	
 	}
 	
-	char hello[] = {"ABcdefghijkomnopqrstuvwxyz Hello, this is randomguy :) Thank you to Dr. Dnar++ asdlkfjalk;djsfadls;fjsdafldsjflkjadskl!!!"};
-
-	alert(hello, 150, 4);
-	cleanup();
-	return 0;
+	// // char hello[] = {"ABcdefghijkomnopqrstuvwxyz Hello, this is randomguy :) Thank you to Dr. Dnar++ asdlkfjalk;djsfadls;fjsdafldsjflkjadskl!!!"};
+	
+	// alert(hello, 150, 4);
+	// cleanup();
+	// return 0;
 	
 	// dispHomeScreen needs to return 0 to exit the program, else, it returns 1
 	uint8_t mode;
