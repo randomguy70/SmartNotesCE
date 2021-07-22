@@ -439,8 +439,9 @@ bool alert(char *txt) {
 	uint8_t fontHeight = fontlib_GetCurrentFontHeight();
 	
 	// window vars
+	uint8_t maxLines = 4;
 	int width = 150; 
-	int height = 6*fontHeight; // height of the window. has 2 extra line spaces for a header
+	int height = (2*fontHeight)+(maxLines*fontHeight); // height of the window. has 2 extra line spaces for a header
 	int x = SCRN_WIDTH/2 - width/2;
 	int y = SCRN_HEIGHT/2 - height/2;
 	
@@ -450,6 +451,7 @@ bool alert(char *txt) {
 	int txtY = y + 2*fontHeight;
 	int strWidth;
 	
+	// other
 	uint8_t linesPrinted = 0;
 	int messageLen = strlen(txt);
 	int charsRead = 0;
@@ -469,10 +471,8 @@ bool alert(char *txt) {
 	gfx_SetColor(LIGHT_BLUE);
 	thick_Rectangle(x-2, y-2, width + 4, height + 4, 2);
 	
-	while(linesPrinted < 4 && charsRead < messageLen) {
+	while(linesPrinted < maxLines && charsRead < messageLen) {
 	
-		// maybe i will change this. but it works. and anyway, mateo used 'goto' a ton in Oiram...
-		
 		strWidth = fontlib_GetStringWidth(readPos);
 		
 		// quit printing if the message is ended, need to modify this to count the strlen too
@@ -481,12 +481,16 @@ bool alert(char *txt) {
 			
 		// if the first character of the read line is the new line code..., then create a new line OBVS
 		if(readPos == NEW_LINE) {
-			fontlib_Newline();
-			txtY += fontHeight;
-			txtX = x;
-			readPos++;
-			charsRead++;
-			linesPrinted++;
+			if(linesPrinted<maxLines) {
+				fontlib_Newline();
+				txtY += fontHeight;
+				txtX = x;
+				readPos++;
+				charsRead++;
+				linesPrinted++;
+			} else {
+				break;
+			}
 		}
 		
 		// if the string is short enough to be displayed... then display it!
@@ -500,20 +504,28 @@ bool alert(char *txt) {
 		
 		// if the word won't fit on to the end of the line... then create a new line
 		if(txtX > x && strWidth + txtX > x + width) {
-			fontlib_Newline();
-			txtX = x;
-			txtY += fontHeight;
-			linesPrinted++;
+			if(linesPrinted < maxLines) {
+				fontlib_Newline();
+				txtX = x;
+				txtY += fontHeight;
+				linesPrinted++;
+			} else {
+				break;
+			}
 		}
 		
 		// if some person was fooling around and the current word is too long for a whole line by itself... then print it until it hits the endge of the window (the default) and create a new line
 		if(txtX == x && strWidth > width) {
+			
 			// draw it
 			fontlib_DrawString(readPos);
 			charsRead += (fontlib_GetLastCharacterRead()+1) - readPos;
 			readPos = fontlib_GetLastCharacterRead()+1;
 			
 			// new line
+			if(linesPrinted >= maxLines)
+				break;
+				
 			fontlib_Newline();
 			txtX = x;
 			txtY += fontHeight;
