@@ -472,7 +472,7 @@ bool alert(char *txt) {
 		
 		strWidth = fontlib_GetStringWidth(readPos);
 		
-		// quit printing if the message is ended
+		// quit printing if the message is ended, need to modify this to count the strlen too
 		if(readPos == NULL)
 			break;
 			
@@ -488,7 +488,7 @@ bool alert(char *txt) {
 		// if the string is short enough to be displayed... then display it!
 		if(strWidth + txtX < width + x) {
 			fontlib_DrawString(readPos);
-			fontlib_SetCursorPosition(fontlib_GetCursorX()+2, fontlib_GetCursorY());
+			fontlib_ShiftCursorPosition(2, 0);
 			readPos = fontlib_GetLastCharacterRead()+1;
 			txtX += strWidth;
 			
