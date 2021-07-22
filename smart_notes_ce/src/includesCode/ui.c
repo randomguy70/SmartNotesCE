@@ -471,7 +471,7 @@ bool alert(char *txt) {
 	gfx_SetColor(LIGHT_BLUE);
 	thick_Rectangle(x-2, y-2, width + 4, height + 4, 2);
 	
-	while(linesPrinted < maxLines && charsRead < messageLen) {
+	while(linesPrinted < maxLines-1 && charsRead < messageLen) {
 	
 		strWidth = fontlib_GetStringWidth(readPos);
 		
@@ -518,7 +518,22 @@ bool alert(char *txt) {
 		if(txtX == x && strWidth > width) {
 			
 			// draw it
+			// if(fontlib_GetStringWidth(readPos) < width) {
+				
+				// fontlib_DrawString(readPos);
+				
+			// } else {
+				
+				// int chars = fontlib_GetStrLen(readPos);
+				// do {
+					// chars--;
+				// } while(fontlib_GetStringWidthL(readPos, chars) > width - 10);
+				// 
+				// fontlib_DrawString(readPos);
+			// }
+			
 			fontlib_DrawString(readPos);
+			
 			charsRead += (fontlib_GetLastCharacterRead()+1) - readPos;
 			readPos = fontlib_GetLastCharacterRead()+1;
 			

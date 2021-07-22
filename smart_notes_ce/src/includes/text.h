@@ -44,6 +44,9 @@ struct lineStruct {
 // returns the pixel length of the next word (terminated with either ' ' or '\0')
 int getWordLen(char * loc, struct wordStruct * word);
 
+// returns the number of characters in a word (a string terminated with a space or null character)
+int fontlib_GetStrLen(const char *string);
+
 // copies a null or space terminated string into a given location
 int copyWord(char * dest, char * src);
 

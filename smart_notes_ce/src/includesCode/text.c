@@ -209,6 +209,14 @@ int getWordLen(char* loc, struct wordStruct *word)
    return pixelLen;
 }
 
+int fontlib_GetStrLen(const char *string) {
+	int i = 0;
+	
+	while(string[i]!='\0' && string[i++]!=' ')
+	
+	return i;
+}
+
 int copyWord(char* dest, char* src)
 {
    int pos = 0;
