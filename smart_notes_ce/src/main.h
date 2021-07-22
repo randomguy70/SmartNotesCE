@@ -26,6 +26,8 @@
 #include "includes/specialChars.h"
 
 // defines
+#define VERSION 1
+#define AUTHOR "Randomguy"
 
 #define SCRN_WIDTH 320
 #define SCRN_HEIGHT 240

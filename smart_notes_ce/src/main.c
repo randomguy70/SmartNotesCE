@@ -9,7 +9,6 @@ static void cleanup();
 int main(void) {
 	// one-time setup things
 	{
-	// this has to go before the gfx setup, in case it has to quit
 	if(!setupFontlibc()) {
 		return 0;
 	}
@@ -22,9 +21,12 @@ int main(void) {
 	gfx_SetTextBGColor(2);
 	
 	}
-	char hello[] = {"ABcdefghijkomnopqrstuvwxyz ABcdefghijkomnopqrstuvwxyz Thank you to Dr. Dnar++!!!"};
+	
+	char hello[] = {"ABcdefghijkomnopqrstuvwxyz Thank you to Dr. Dnar++!!!"};
 
 	alert(hello);
+	cleanup();
+	return 0;
 	
 	// dispHomeScreen needs to return 0 to exit the program, else, it returns 1
 	uint8_t mode;
@@ -43,6 +45,7 @@ static uint8_t setupFontlibc() {
    my_font = fontlib_GetFontByIndex("DRSANS", 0);
 	if (!my_font) {
 			gfx_Begin();
+			gfx_SetTextFGColor(BLACK);
 			gfx_SetTextXY(0, 1);
       	gfx_PrintString("DRSANS appvar not found or invalid :(");
 			gfx_SetTextXY(-1, 15);
@@ -51,7 +54,7 @@ static uint8_t setupFontlibc() {
 			gfx_PrintString("if you can't find it, ask for help on Cemetech,");
 			gfx_SetTextXY(0, 45);
 			gfx_PrintString("or email me at onlychessfreeze0515@gmail.com.");
-			while(!os_GetCSC()){};
+			while(!os_GetCSC());
 			gfx_End();
       	return 0;
    }

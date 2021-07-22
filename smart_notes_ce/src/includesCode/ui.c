@@ -434,24 +434,27 @@ bool renameFile(const char *name) {
 }
 
 bool alert(char *txt) {
+	// put this first to get the font's height and use that to calculate the window height to display 5 lines
+	fontlib_SetLineSpacing(2, 2);
+	uint8_t fontHeight = fontlib_GetCurrentFontHeight();
+	
 	// window vars
 	int width = 150; 
-	int height = 100;
+	int height = 6*fontHeight; // height of the window. has 2 extra line spaces for a header
 	int x = SCRN_WIDTH/2 - width/2;
 	int y = SCRN_HEIGHT/2 - height/2;
 	
 	// text vars
 	char* readPos = txt;
-	int messageLen = strlen(txt);
-	uint8_t linesPrinted = 0;
 	int txtX = x;
-	int txtY = y;
+	int txtY = y + 2*fontHeight;
 	int strWidth;
 	
-	// font vars
-	fontlib_SetLineSpacing(2, 2);
-	uint8_t fontHeight = fontlib_GetCurrentFontHeight();
+	uint8_t linesPrinted = 0;
+	int messageLen = strlen(txt);
+	int charsRead = 0;
 	
+	// font stuff
 	fontlib_SetWindow(x, y, width, height);
 	fontlib_SetAlternateStopCode(' ');
 	fontlib_SetCursorPosition(txtX, txtY);
@@ -466,7 +469,7 @@ bool alert(char *txt) {
 	gfx_SetColor(LIGHT_BLUE);
 	thick_Rectangle(x-2, y-2, width + 4, height + 4, 2);
 	
-	while(linesPrinted < 4) {
+	while(linesPrinted < 4 && charsRead < messageLen) {
 	
 		// maybe i will change this. but it works. and anyway, mateo used 'goto' a ton in Oiram...
 		
@@ -482,6 +485,7 @@ bool alert(char *txt) {
 			txtY += fontHeight;
 			txtX = x;
 			readPos++;
+			charsRead++;
 			linesPrinted++;
 		}
 		
@@ -489,9 +493,9 @@ bool alert(char *txt) {
 		if(strWidth + txtX < width + x) {
 			fontlib_DrawString(readPos);
 			fontlib_ShiftCursorPosition(2, 0);
+			charsRead += (fontlib_GetLastCharacterRead()+1) - readPos;
 			readPos = fontlib_GetLastCharacterRead()+1;
 			txtX += strWidth;
-			
 		}
 		
 		// if the word won't fit on to the end of the line... then create a new line
@@ -506,6 +510,7 @@ bool alert(char *txt) {
 		if(txtX == x && strWidth > width) {
 			// draw it
 			fontlib_DrawString(readPos);
+			charsRead += (fontlib_GetLastCharacterRead()+1) - readPos;
 			readPos = fontlib_GetLastCharacterRead()+1;
 			
 			// new line
