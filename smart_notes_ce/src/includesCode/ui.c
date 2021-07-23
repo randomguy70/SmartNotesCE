@@ -346,6 +346,7 @@ bool renameFile(const char *name) {
 }
 
 bool alert(char *txt) {
+	
 	// put this first to get the font's height and use that to calculate the window height to display 5 lines
 	fontlib_SetLineSpacing(0, 0);
 	uint8_t fontHeight = fontlib_GetCurrentFontHeight();
@@ -466,8 +467,8 @@ bool alert(char *txt) {
 		}
 	}
 	
-	gfx_Blit(1);
-	
+	gfx_BlitRectangle(1, x-2, y-2, width+4, height+4);
+		
 	checkForInput();
 	
 	return 0;
@@ -590,16 +591,24 @@ int drawScrollbar(struct scrollBar * scrollBar) {
 	return 0;
 };
 
+// Epsilon5++
 bool checkForInput() {
-	sk_key_t keyPress = 0;
-	
+	while (kb_AnyKey()) kb_Scan();
+
 	while(true) {
-		keyPress = os_GetCSC();
-		if(keyPress == sk_2nd || keyPress == sk_Enter)
+		kb_Scan();
+		
+		if(kb_IsDown(kb_Key2nd) || kb_IsDown(kb_KeyEnter)){
+			while (kb_AnyKey()) kb_Scan();
 			return true;
-		if(keyPress == sk_Clear)
+		}
+		
+		if(kb_IsDown(kb_KeyClear)){
+			while (kb_AnyKey()) kb_Scan();
 			return false;
+		}
 	}
+	
 	return false;
 }
 
