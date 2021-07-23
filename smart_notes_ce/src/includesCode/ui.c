@@ -201,9 +201,16 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 		return QUIT;
 	
 	// delete file
-   if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel)) && HS->numFiles>0) {
-		if (checkIfDeleteFile(HS->fileNames[HS->selectedFile]))
-			loadFiles(HS);
+   if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel))) {
+		// make sure there is a file to delete
+		if(HS->numFiles == 0) {
+			alert("There aren't any files to delete!");
+			return CANCEL;
+		}
+		// if there is at least 1 file...
+		checkIfDeleteFile(HS->fileNames[HS->selectedFile]);
+		loadFiles(HS);
+		return CANCEL;
    }
 	
 	// other (opens fun menu with sprites)
@@ -323,10 +330,11 @@ bool checkIfDeleteFile(char *name) {
 	strcat(message, name);
 	strcat(message, "?");
 	
-	if(alert(message)){
+	if(alert(message) == true) {
 		ti_Delete(name);
 		return 1;
 	}
+	
 	return 0;
 }
 
@@ -469,7 +477,8 @@ bool alert(char *txt) {
 	
 	gfx_BlitRectangle(1, x-2, y-2, width+4, height+4);
 		
-	checkForInput();
+	if (checkForInput() == true)
+		return 1;
 	
 	return 0;
 }
