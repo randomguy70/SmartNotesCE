@@ -239,9 +239,9 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 				// displaySettings();
 				return 4;
 				
-			// quit
+			// if the user simply wants to close the menu
 			default:
-				return QUIT;
+				return CANCEL;
 			
 		}
 		
@@ -549,6 +549,8 @@ int displayMenu(struct menu * menu) {
 		gfx_SetColor(LIGHT_BLUE);
 		thick_Rectangle(menu->x, menu->y, width, height, 2);
 		
+		// draw the entries' sprites and text
+		
 		gfx_SetTextFGColor(BLACK);
 		
 		for(uint8_t i = offset; i < menu->numOptions && i < maxOnScrn; i++) {
@@ -573,8 +575,7 @@ int displayMenu(struct menu * menu) {
 			
 		}
 		
-		// gfx_Wait();
-		gfx_Blit(1); // I might change this to just blitting the menu rect, but who knows if anybody is even going to ever read this comment...
+		gfx_BlitRectangle(1, menu->x, menu->y, width, height); // I might change this to just blitting the menu rect, but who knows if anybody is even going to ever read this comment...
 		
 		// keyPresses
 		
@@ -604,7 +605,7 @@ int displayMenu(struct menu * menu) {
 		
 		// quit the menu
 		if(os_GetCSC() == sk_Clear) {
-			return 0;
+			return CANCEL;
 		}
 		
 	}

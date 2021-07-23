@@ -43,7 +43,8 @@
 #define LIGHT_BLUE    8  // light blue
 #define PAPER_YELLOW  9  // color of yellow paper stickypads
 
-#define QUIT 0           // integer return signifying a quit request
+#define QUIT          0  // Integer return signifying a quit request
+#define CANCEL      100  // Integer returning a cancel / close window request. NOT the same as QUIT
 
 struct window {
 	uint8_t fillIndex;
