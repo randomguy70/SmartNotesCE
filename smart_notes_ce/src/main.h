@@ -29,22 +29,25 @@
 #define VERSION 1
 #define AUTHOR "Randomguy"
 
-#define SCRN_WIDTH 320
-#define SCRN_HEIGHT 240
+#define SCRN_WIDTH    320
+#define SCRN_HEIGHT   240
 
-#define BLACK         0  // black
-#define WHITE         1  // white
-#define TRANSPARENT   2  // gfx transparent color (would otherwise be hot pink :P)
-#define DARK_GREY     3  // dark grey
-#define MEDIUM_GREY   4  // medium grey
-#define LIGHT_GREY    5  // light grey
-#define DARK_BLUE     6  // electric blue. I was too lazy to change the name, but it really is a nice color.
-#define RED           7  // red
-#define LIGHT_BLUE    8  // light blue
-#define PAPER_YELLOW  9  // color of yellow paper stickypads
-
-#define QUIT          0  // Integer return signifying a quit request
-#define CANCEL      100  // Integer returning a cancel / close window request. NOT the same as QUIT
+#define START_OF_TEXT  20
+#define BLACK           0  // black
+#define WHITE           1  // white
+#define TRANSPARENT     2  // gfx transparent color (would otherwise be hot pink :P)
+#define DARK_GREY       3  // dark grey
+#define MEDIUM_GREY     4  // medium grey
+#define LIGHT_GREY      5  // light grey
+#define DARK_BLUE       6  // electric blue. I was too lazy to change the name, but it really is a nice color.
+#define RED             7  // red
+#define LIGHT_BLUE      8  // light blue
+#define PAPER_YELLOW    9  // color of yellow paper stickypads
+  
+#define QUIT            0  // Integer return signifying a quit request.
+#define CANCEL        100  // Integer return signigying a cancel / close window request. NOT the same as QUIT.
+#define OPEN            2  // Integer return signigying a file open request. Should lead to a given file being opened in the editor.
+#define CLOSE           3  // Integer return signigying request to close the file currently opened in the editor. Should reset the editor variables and either quit the program or open the file menu.
 
 struct window {
 	uint8_t fillIndex;

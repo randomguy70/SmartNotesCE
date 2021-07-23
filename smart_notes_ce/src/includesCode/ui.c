@@ -185,6 +185,8 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
       }
    }
 
+	// open file
+	
    // new file
    if (kb_IsDown(kb_KeyWindow) && HS->numFiles<30) {
 		newFile();

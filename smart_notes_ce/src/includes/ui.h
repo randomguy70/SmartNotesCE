@@ -51,14 +51,17 @@ struct file {
 	char *txtPtr; // pointer to the start of ascii data in the file compatable with my program
 	char *txtEnd; // pointer to the end of the printable ascii data in the file
 	
-	int numLines;
+	int numLines; // number of lines in the file
 	char *linePtr[200]; // pointers to the start of each line (for cursor and text insertion purposes)
 	
 };
 
-// contains the settings data, mostly booleans
+// contains the settings data, should be mostly booleans & small integers
 struct settingsStruct {
-	uint8_t saveState;
+	bool autoSaveFiles;
+	bool autoSaveState;
+	bool showLines;
+	bool cursorBlinks;
 	char lastFileOpened[9];
 };
 

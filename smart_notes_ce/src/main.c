@@ -22,6 +22,9 @@ int main(void) {
 	
 	}
 	
+	// define main structs
+	struct fileViewerStruct HS;
+	
 	// dispHomeScreen needs to return 0 to exit the program, else, it returns 1
 	uint8_t mode;
 	do {
