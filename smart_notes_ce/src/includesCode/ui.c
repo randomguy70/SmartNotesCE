@@ -199,8 +199,8 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 	
 	// delete file
    if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel)) && HS->numFiles>0) {
-      checkIfDeleteSelected(HS);
-		loadFiles(HS);
+		if (checkIfDeleteFile(HS->fileNames[HS->selectedFile]))
+			loadFiles(HS);
    }
 	
 	// other (opens fun menu with sprites)
@@ -310,65 +310,15 @@ void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness) {
 }
 
 // gives an option whether or not to delete the selected file
-uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS ) {
-	uint8_t keyPressed = 0;
+bool checkIfDeleteFile(char *name) {	
+	char message[100] = {"Are you sure you want to delete "};
+	strcat(message, name);
+	strcat(message, "?");
 	
-	// the alert function uses drawing routines, so you have to set the draw buffer
-	gfx_SetDraw(0);
-	
-	uint16_t width = 200;
-	uint16_t height = 50;
-	
-	// text box (literally a rectangle)
-	gfx_SetColor(MEDIUM_GREY);
-	gfx_FillRectangle((320/2)-(width/2), (240/2)-(height/2), width, height);
-	
-	gfx_SetColor(DARK_BLUE);
-	thick_Rectangle((320/2)-(width/2), (240/2)-(height/2), width, height, 2);
-	
-	gfx_SetTextFGColor(RED);
-	gfx_PrintStringXY("ALERT!", (320/2)-(gfx_GetStringWidth("ALERT!")/2), (240/2)-(height/2) + 5);
-	
-	// bar under "ALERT!"
-	gfx_SetColor(DARK_BLUE);
-	gfx_HorizLine((SCRN_WIDTH/2)-(100/2), (240/2)-(height/2) + 14, 100);
-	gfx_HorizLine((SCRN_WIDTH/2)-(100/2), (240/2)-(height/2) + 15, 100);
-	
-	gfx_SetTextFGColor(BLACK);
-	gfx_PrintStringXY("Are you sure you want to ", (320/2)-(width/2) + 13, (240/2)-(height/2) + 18);
-	gfx_PrintStringXY("delete the file ", (320/2)-(width/2) + 13, (240/2)-(height/2) + 33);
-	
-	gfx_SetTextFGColor(DARK_BLUE);
-	gfx_PrintString(HS->fileNames[HS->selectedFile]);
-	
-	gfx_SetTextFGColor(BLACK);
-	gfx_PrintChar('?');
-	
-	// obviously, to see the graphics, you have to swap the buffers
-	gfx_SwapDraw();
-	
-	// wait for keypress
-	while(keyPressed != sk_Clear && keyPressed != sk_2nd && keyPressed != sk_Enter) {
-		keyPressed = os_GetCSC();
-	}
-	
-	// if the user doesn't want to delete the file...
-	if(keyPressed == sk_Clear) {
-		return 0;
-	}
-	
-	// if the user wants to delete the file...
-	if(keyPressed == sk_2nd || keyPressed == sk_Enter) {
-		ti_Delete(HS->fileNames[HS->selectedFile]);
-		
-		if(HS->selectedFile>0 && HS->numFiles>10) {
-         HS->selectedFile--;		
-         HS->offset--;
-      }
-		
+	if(alert(message)){
+		ti_Delete(name);
 		return 1;
 	}
-	
 	return 0;
 }
 
@@ -433,22 +383,25 @@ bool renameFile(const char *name) {
 	return false;
 }
 
-bool alert(char *txt, int width, int maxLines) {
+bool alert(char *txt) {
 	// put this first to get the font's height and use that to calculate the window height to display 5 lines
-	fontlib_SetLineSpacing(2, 2);
+	fontlib_SetLineSpacing(0, 0);
 	uint8_t fontHeight = fontlib_GetCurrentFontHeight();
 	
 	// window vars
-	// uint8_t maxLines = 4;
-	// int width = 150; 
+	uint8_t maxLines = 4;
+	int width = 150; 
 	int height = (2*fontHeight)+(maxLines*fontHeight); // height of the window. has 2 extra line spaces for a header
 	int x = SCRN_WIDTH/2 - width/2;
 	int y = SCRN_HEIGHT/2 - height/2;
 	
 	// text vars
-	char* readPos = txt;
+	int headerX;
+	int headerY;
+	
+	char *readPos = txt;
 	int txtX = x;
-	int txtY = y + 2*fontHeight;
+	int txtY = y + fontHeight;
 	int strWidth;
 	
 	// other
@@ -461,7 +414,7 @@ bool alert(char *txt, int width, int maxLines) {
 	fontlib_SetAlternateStopCode(' ');
 	fontlib_SetCursorPosition(txtX, txtY);
 	fontlib_SetBackgroundColor(LIGHT_GREY);
-	fontlib_SetTransparency(0);
+	fontlib_SetTransparency(true);
 	
 	gfx_SetDraw(1);
 	
@@ -470,6 +423,24 @@ bool alert(char *txt, int width, int maxLines) {
 	gfx_FillRectangle_NoClip(x, y, width, height);
 	gfx_SetColor(LIGHT_BLUE);
 	thick_Rectangle(x-2, y-2, width + 4, height + 4, 2);
+	
+	// header text
+	const char *headerTxt = "Warning";
+	headerY = y-1;
+	headerX = (SCRN_WIDTH/2) - (fontlib_GetStringWidth(headerTxt)/2);
+	fontlib_SetCursorPosition(headerX, headerY);
+	fontlib_SetForegroundColor(RED);
+	fontlib_DrawString(headerTxt);
+	
+	// header line
+	uint8_t length = 100;
+	gfx_SetColor(LIGHT_BLUE);
+	gfx_HorizLine(SCRN_WIDTH/2-length/2, y+fontHeight-1, length);
+	gfx_HorizLine(SCRN_WIDTH/2-length/2, y+fontHeight, length);
+	
+	// reset the cursor position
+	fontlib_SetCursorPosition(txtX, txtY);
+	fontlib_SetForegroundColor(BLACK);
 	
 	while(linesPrinted < maxLines-1 && charsRead < messageLen) {
 	

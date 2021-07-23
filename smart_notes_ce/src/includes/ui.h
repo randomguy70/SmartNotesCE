@@ -106,7 +106,7 @@ prints a message window with wordwrap
  -returns 1 if the user presses enter or 2nd
  -returns 0 if the user presses clear
 */
-bool alert(char *txt, int width, int maxLines);
+bool alert(char *txt);
 
 struct button {
 	uint8_t type; // buttons can trigger menues, or returns a value
@@ -190,7 +190,7 @@ static const struct menu *loadHomeScreenOtherMenu(void);
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);
 
 // check if user wants to delete a file, and deleted the selected file if so
-uint8_t checkIfDeleteSelected(struct fileViewerStruct *HS );
+bool checkIfDeleteFile(char *name);
 
 // renames a file with an inputted string
 bool renameFile(const char *name);
