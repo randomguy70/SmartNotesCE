@@ -185,6 +185,11 @@ bool checkIfDeleteFile(char *name);
 // renames a file with an inputted string
 bool renameFile(const char *name);
 
+// waits for the user to press enter or second to affirm a decision, or clear to cancel
+// -returns true if the user pressed enter or second
+// -returns false if the user pressed clear
+bool checkForInput();
+
 // returns 1 if the user is pressing clear for a significant duration
 int chooseToQuit();
 

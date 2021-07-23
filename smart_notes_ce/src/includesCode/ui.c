@@ -244,7 +244,7 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 				
 			// settings
 			case 4:
-				// displaySettings();
+				// displaySettings(); // i haven't defined this either...
 				return 1;
 				
 			// if the user simply wants to close the menu
@@ -468,16 +468,7 @@ bool alert(char *txt) {
 	
 	gfx_Blit(1);
 	
-	sk_key_t keyPressed = '\0';
-	
-	while(true) {
-		keyPressed = os_GetCSC();
-		
-		if(keyPressed == sk_2nd || keyPressed == sk_Enter)
-			return 1;
-		if(keyPressed == sk_Clear)
-			return 0;
-	}
+	checkForInput();
 	
 	return 0;
 }
@@ -598,6 +589,19 @@ int drawScrollbar(struct scrollBar * scrollBar) {
 	
 	return 0;
 };
+
+bool checkForInput() {
+	sk_key_t keyPress = 0;
+	
+	while(true) {
+		keyPress = os_GetCSC();
+		if(keyPress == sk_2nd || keyPress == sk_Enter)
+			return true;
+		if(keyPress == sk_Clear)
+			return false;
+	}
+	return false;
+}
 
 int chooseToQuit() {
 	#define SIG_HOLD_TIME 100
