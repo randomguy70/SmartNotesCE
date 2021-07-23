@@ -6,9 +6,9 @@
 #define BUTTON_TYPE_TRIGGER_ACTION  1 // Returns the value of the selected option when the button is pressed
 #define BUTTON_TYPE_TRIGGER_MENU    2 // Opens a menu when the button is pressed (a menu is an array of buttons). However, there aren't recursive menus and buttons (yet).
 
-struct cursorStruct CS;
+// struct cursorStruct CS;
 struct fileViewerStruct HS;
-struct editorStruct ES;
+struct editor ES;
 struct fileStruct file;
 struct message message;
 
@@ -56,6 +56,11 @@ struct file {
 	
 };
 
+struct editor {
+	struct file file; // contains data about the opened file in the editor
+	// struct cursorStruct cursor; 
+};
+
 // contains the settings data, should be mostly booleans & small integers
 struct settingsStruct {
 	bool autoSaveFiles;
@@ -65,10 +70,6 @@ struct settingsStruct {
 	char lastFileOpened[9];
 };
 
-struct editor {
-	struct file file; // contains data about the opened file in the editor
-	
-};
 
 // contains properties of a cursor
 struct cursorStruct {
@@ -111,14 +112,6 @@ prints a message window with wordwrap
 */
 bool alert(char *txt);
 
-struct button {
-	uint8_t type; // buttons can trigger menues, or returns a value
-	char string[15]; // text to display on button
-	bool hasSprite; // whether or not the button has a sprite
-	gfx_sprite_t * sprite; // sprite to display next to the button's text. only used if hasSprite == true
-	uint8_t spriteHeight; // Height of the button's sprite. Don't initialise this unless the button has a sprite
-};
-
 // this is what it looks like. thank you mateo :P
 struct menu_entry {
 	const char * str;
@@ -142,12 +135,6 @@ struct scrollBar{
 	uint8_t width;
 	uint8_t height;
 	uint8_t colorIndex;
-};
-
-// contains properties of the editor
-struct editorStruct {
-   struct cursorStruct cursor;
-   
 };
 
 // handles all editor key presses

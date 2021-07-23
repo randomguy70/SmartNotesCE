@@ -32,14 +32,14 @@
 #define SCRN_WIDTH    320
 #define SCRN_HEIGHT   240
 
-#define START_OF_TEXT  20
+#define START_OF_TEXT  20  // Offset of the text data in files; in other words, the number of bytes at the beginning of the file to ignore.
 #define BLACK           0  // black
 #define WHITE           1  // white
 #define TRANSPARENT     2  // gfx transparent color (would otherwise be hot pink :P)
 #define DARK_GREY       3  // dark grey
 #define MEDIUM_GREY     4  // medium grey
 #define LIGHT_GREY      5  // light grey
-#define DARK_BLUE       6  // electric blue. I was too lazy to change the name, but it really is a nice color.
+#define DARK_BLUE       6  // electric blue. I was too lazy to change the name...
 #define RED             7  // red
 #define LIGHT_BLUE      8  // light blue
 #define PAPER_YELLOW    9  // color of yellow paper stickypads
