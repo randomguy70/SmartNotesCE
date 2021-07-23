@@ -13,7 +13,7 @@ struct fileStruct file;
 struct message message;
 
 // displays homescreen and deals with all the homescreen functions and options
-uint8_t dispHomeScreen();
+uint8_t dispHomeScreen(struct fileViewerStruct *HS);
 
 // displays the buttons for the homescreen
 void dispHSButtons();
@@ -41,6 +41,17 @@ struct fileViewerStruct {
 	int holdTime;
 };
 
+// contains properties of a cursor
+struct cursorStruct {
+   uint8_t cursorState; // number of cycles completed so far in 1 animation. Is incremented until it is == cyclesPerAnimation, and then reset.
+   uint8_t cyclesPerAnimation; // the total number of cycles that should be completed per an animation (blink), also called the speed :P
+   uint8_t invisibleTime; // how many cycles the cursor should be invisible for
+   int row; // current text row the cursor is in
+   int column; // current text column the cursor is in
+   int x; // current x coord of cursor
+   int y; // current y coord of cursor
+};
+
 // contains data about an opened file
 struct file {
 	uint8_t slot;
@@ -58,7 +69,7 @@ struct file {
 
 struct editor {
 	struct file file; // contains data about the opened file in the editor
-	// struct cursorStruct cursor; 
+	struct cursorStruct cursor; 
 };
 
 // contains the settings data, should be mostly booleans & small integers
@@ -70,17 +81,6 @@ struct settingsStruct {
 	char lastFileOpened[9];
 };
 
-
-// contains properties of a cursor
-struct cursorStruct {
-   uint8_t cursorState; // number of cycles completed so far in 1 animation. Is incremented until it is == cyclesPerAnimation, and then reset.
-   uint8_t cyclesPerAnimation; // the total number of cycles that should be completed per an animation (blink), also called the speed :P
-   uint8_t invisibleTime; // how many cycles the cursor should be invisible for
-   int row; // current text row the cursor is in
-   int column; // current text column the cursor is in
-   int x; // current x coord of cursor
-   int y; // current y coord of cursor
-};
 
 struct message {
 	bool hasHeader;
@@ -107,8 +107,8 @@ struct message {
 
 /*
 prints a message window with wordwrap
- -returns 1 if the user presses enter or 2nd
- -returns 0 if the user presses clear
+ -returns true if the user presses enter or 2nd
+ -returns false if the user presses clear
 */
 bool alert(char *txt);
 

@@ -23,13 +23,23 @@ int main(void) {
 	}
 	
 	// define main structs
-	struct fileViewerStruct HS;
+	struct fileViewerStruct homeScrn;
+	struct editor editor;
 	
 	// dispHomeScreen needs to return 0 to exit the program, else, it returns 1
-	uint8_t mode;
+	uint8_t mode = 1;
+	
 	do {
-      mode = dispHomeScreen();
-	} while (mode);
+		if(!mode)
+			break;
+			
+		if(mode == 1)
+      	mode = dispHomeScreen(&homeScrn);
+			
+		//if(mode == 2)
+			//mode = displayEditor(&editor);
+			
+	} while (true);
 
 	cleanup();
 	return 0;

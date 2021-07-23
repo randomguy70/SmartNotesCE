@@ -2,30 +2,31 @@
 
 
 // btw, HS stands for homescreen
-uint8_t dispHomeScreen() {
-   // set up struct for homescreen variables & data
-   struct fileViewerStruct HS;
-   HS.selectedFile = 0;
-   HS.offset = 0;
-   HS.numFiles = loadFiles(&HS);
-	HS.shouldQuit = false;
+uint8_t dispHomeScreen(struct fileViewerStruct *HS) {
+	// initialise / reset variables
+   HS->selectedFile = 0;
+   HS->offset = 0;
+   HS->numFiles = loadFiles(HS);
+	HS->shouldQuit = false;
 	archiveAll();
 	
 	uint8_t result = 1;
 
    while(true) {
-      dispHomeScreenBG(&HS);
+      dispHomeScreenBG(HS);
       dispHSButtons();
 		
-      dispFiles(&HS);
+      dispFiles(HS);
 		
 		gfx_Wait();
 		gfx_SwapDraw();
 		
-      result = handleHomeScrnKeyPresses(&HS);
+      result = handleHomeScrnKeyPresses(HS);
 		
 		if(result == QUIT)
 			return QUIT;
+		if(result == OPEN)
+			return OPEN;
 			
    }
 }
@@ -217,29 +218,34 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 		*/
 		switch(result) {
 			
-			// 
+			// quit
 			case QUIT:
 				return QUIT;
 				
 			// back
 			case 1:
-				return 1;
+				return CANCEL;
 			
 			// rename
 			case 2:
-				renameFile(HS->fileNames[HS->selectedFile]);
-				loadFiles(HS);
-				return 2;
+				if(HS->numFiles>0) {
+					if(renameFile(HS->fileNames[HS->selectedFile]))
+						loadFiles(HS);
+						return 1;
+				}
+				// if it didn't return, then there aren't any files to rename...
+				alert("There aren't any files to delete!");
+				return 1;
 				
 			// hide
 			case 3: 
 				// hideFile(char* name); // haven't defined this yet btw...
-				return 3;
+				return 1;
 				
 			// settings
 			case 4:
 				// displaySettings();
-				return 4;
+				return 1;
 				
 			// if the user simply wants to close the menu
 			default:
@@ -444,21 +450,6 @@ bool alert(char *txt) {
 		// if some person was fooling around and the current word is too long for a whole line by itself... then print it until it hits the endge of the window (the default) and create a new line
 		if(txtX == x && strWidth > width) {
 			
-			// draw it
-			// if(fontlib_GetStringWidth(readPos) < width) {
-				
-				// fontlib_DrawString(readPos);
-				
-			// } else {
-				
-				// int chars = fontlib_GetStrLen(readPos);
-				// do {
-					// chars--;
-				// } while(fontlib_GetStringWidthL(readPos, chars) > width - 10);
-				// 
-				// fontlib_DrawString(readPos);
-			// }
-			
 			fontlib_DrawString(readPos);
 			
 			charsRead += (fontlib_GetLastCharacterRead()+1) - readPos;
@@ -476,13 +467,18 @@ bool alert(char *txt) {
 	}
 	
 	gfx_Blit(1);
-	sk_key_t result = '\0';
-	while(result!=sk_2nd && result != sk_Enter && result != sk_Clear)
-		result = os_GetCSC();
 	
-	if(result == sk_2nd || result == sk_Enter)
-		return 1;
+	sk_key_t keyPressed = '\0';
+	
+	while(true) {
+		keyPressed = os_GetCSC();
 		
+		if(keyPressed == sk_2nd || keyPressed == sk_Enter)
+			return 1;
+		if(keyPressed == sk_Clear)
+			return 0;
+	}
+	
 	return 0;
 }
 
