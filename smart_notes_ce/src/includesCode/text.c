@@ -6,9 +6,11 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
    uint8_t txtMode = CAPS; // caps, math, or lowercase
    uint8_t strLen = 0; // current character length & offset of inputted string
    char character; // current inputted character buffer
+	
    uint16_t cursorX;
 	uint16_t cursorY;
    uint8_t cursorBlink = 0;
+	
 	uint16_t windowWidth = 150;
 	uint16_t windowHeight = 50;
 	int outerBoxX = (SCRN_WIDTH/2)-(windowWidth/2);
@@ -84,26 +86,32 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		
 		// keypresses
 		{
+		kb_Scan();
 		keyPressed = os_GetCSC();
 		
 		// enter creates a new file with the inputted string for a name
-      if (keyPressed == sk_Enter && strLen > 0 && strLen <= maxLength) { // enter finishes string input and returns 1
+      if (kb_IsDown(kb_Enter) && strLen > 0 && strLen <= maxLength) { // enter finishes string input and returns 1
+			while(kb_AnyKey) kb_Scan();
          return 1;
       }
 		
 		// clear quits and returns failure (0)
-      if (keyPressed == sk_Clear) {
+      if (kb_IsDown(kb_KeyClear)) {
+			// wait for the delete key to be released before moving on
+			while(kb_AnyKey) kb_Scan();
 			return 0;
 		}
 		
 		// delete deletes one character (obviously)
-      if (keyPressed == sk_Del && strLen>0) {
+      if (kb_IsDown(kb_KeyDel) && strLen>0) {
          buffer[strLen-1] = 0;
          strLen--;
+			// wait for the delete key to be released before moving on
+			while(kb_AnyKey) kb_Scan();
       }
 		
 		// switching text modes
-      if (keyPressed == sk_Alpha) {
+      if (kb_IsDown(kb_KeyAlpha)) {
 			if(txtMode == MATH) {
 				txtMode = CAPS;
 			}
@@ -113,6 +121,8 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 			else if(txtMode == LOWER_CASE) {
 				txtMode = MATH;
 			}
+			// wait for the delete key to be released before moving on
+			while(kb_AnyKey) kb_Scan();
 		}
 		
 		// input character and add the character to the current offset in the string buffer
@@ -173,47 +183,12 @@ uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed)
    return 0;
 }
 
-int varToArray(uint8_t slot, int varSize, char array[])
-{
-   int i;
-
-   ti_Seek(10, 0, slot);
-
-   for(i=0; i<varSize-10; i++) {
-      array[i] = ti_GetC(slot);
-   }
-   return varSize;
-}
-
-int arrayToVar(char array[], int arraySize, uint8_t slot)
-{
-   ti_Resize(arraySize+10, slot);
-   ti_Seek(10, 0, slot);
-   ti_Write(array, 1, arraySize, slot);
-   return 0;
-}
-
-int getWordLen(char* loc, struct wordStruct *word)
-{
-   int chars = 0;
-	int pixelLen;
-	char wordBuffer[200]; // make it large if somebody is messing around with typing random letters and no spaces :Ps
-   while(loc[chars] != '\0' && loc[chars] != ' ') {
-		wordBuffer[chars] = loc[chars];
-      chars++;
-   }
-	wordBuffer[chars]='\0';
-	pixelLen = gfx_GetStringWidth(wordBuffer);
-	word->pixelLen=pixelLen;
-	word->numChars = chars;
-   return pixelLen;
-}
-
 int fontlib_GetStrLen(const char *string) {
 	int i = 0;
 	
-	while(string[i]!='\0' && string[i++]!=' ')
-	
+	while(string[i]!='\0' && string[i]!=' ')
+		i++;
+		
 	return i;
 }
 

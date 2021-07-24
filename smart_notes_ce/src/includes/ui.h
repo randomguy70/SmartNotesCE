@@ -6,12 +6,15 @@
 #define BUTTON_TYPE_TRIGGER_ACTION  1 // Returns the value of the selected option when the button is pressed
 #define BUTTON_TYPE_TRIGGER_MENU    2 // Opens a menu when the button is pressed (a menu is an array of buttons). However, there aren't recursive menus and buttons (yet).
 
-// struct cursorStruct CS;
-struct fileViewerStruct HS;
-struct editor *editor;
-struct fileStruct file;
-struct message message;
+//////////////////////////////////////////////
+//				struct prototypes
+//////////////////////////////////////////////
 
+struct fileViewerStruct;
+struct editor;
+struct file;
+
+//////////////////////////////////////////////
 /**
  * homescreen stuff
 **/
@@ -45,24 +48,10 @@ struct fileViewerStruct {
 	int holdTime;
 };
 
-// contains data about an opened file
-struct file {
-	uint8_t slot;
-	char *os_name;
-	char *full_name;
-	int size;
-	
-	char *txtPtr; // pointer to the start of ascii data in the file compatable with my program
-	char *txtEnd; // pointer to the end of the printable ascii data in the file
-	
-	int numLines; // number of lines in the file
-	char *linePtr[200]; // pointers to the start of each line (for cursor and text insertion purposes)
-	
-};
-
 struct editor {
-	struct file file; // contains data about the opened file in the editor
-	struct cursorStruct cursor; 
+	bool running; // whether or not to repeat the editor loop. if 0, then the editor will quit at the first opportunity
+	bool refresh; // whether or not to go through the editor loop again
+	struct file; // contains data about the opened file in the editor
 };
 
 // contains the settings data, should be mostly booleans & small integers
@@ -104,14 +93,10 @@ struct scrollBar{
 void handleEditorKeyPresses();
 
 // main text editing loop
-// uint8_t dispEditor(struct editorStruct *editor);
+uint8_t dispEditor(struct editor *editor);
 
 // displays the background graphics for the editor, such as the title, text box, buttons, etc...
-void dispEditorBK();
-
-// prints the text in a given file starting at a given line offset
-void printText(struct fileStruct * file);
-
+void dispEditorBK(struct editorStruct *editor);
 
 ///////////////////////////////////////
 /**

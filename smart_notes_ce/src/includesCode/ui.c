@@ -209,10 +209,10 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
    }
 	
 	// quit program
-	sk_key_t key = os_GetCSC();
-	
-	if (key == sk_Clear || key == sk_Zoom)
+	if (kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyZoom)) {
+		while(kb_AnyKey) kb_Scan();
 		return QUIT;
+	}
 	
 	// delete file
    if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel))) {
@@ -282,6 +282,65 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 
 	// if the user doesn't want to quit, then return 1
 	return 1;
+}
+
+/////////////////////////////////////
+//     Editor
+/////////////////////////////////////
+
+uint8_t dispEditor(struct editor *editor) {
+	uint8_t action; // action triggered by keypresses
+	
+	loadFile()
+	
+	while(true) {
+		dispEditorBK(editor);
+		
+		action = handleEditorKeyPresses(editor);
+		
+		if(action == QUIT)
+			return QUIT;
+	}
+	
+	
+}
+
+// displays the editor background
+void dispEditorBK(struct editor *editor) {
+	
+	gfx_SetDraw(1);
+	
+	gfx_FillScreen(WHITE);
+	
+	// header
+	gfx_SetColor(MEDIUM_GREY);
+	gfx_FillRectangle_NoClip(0, 0, SCRN_WIDTH, 15);
+	
+	gfx_SetTextFGColor(LIGHT_BLUE);
+	
+	// footer
+	gfx_SetColor();
+	gfx_FillRectangle_NoClip(0, 220, SCRN_WIDTH, 20);
+	
+	gfx_Blit(1);
+	
+	return;
+	
+}
+
+uint8_t handleEditorKeyPresses(struct editor *editor) {
+	kb_Scan();
+	
+	if(kb_IsDown(kb_KeyClear)) {
+		while(kb_AnyKey) kb_Scan();
+		return QUIT;
+	}
+	
+	if(kb_IsDown(kb_Key2nd) {
+		alert("Well well, it worked!!!");
+		return CANCEL;
+	}
+	
 }
 
 // cursor stuff

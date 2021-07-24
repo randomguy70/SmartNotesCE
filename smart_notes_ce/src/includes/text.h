@@ -23,27 +23,6 @@ char* strcopy(char* dest, const char* src);
 // deleteChar() seeks to a given offset in an os variable (such as a program or appvar) and deletes 1 byte from that offset by moving all the data past the given offset back 1 byte and resizing the variable to be 1 byte smaller
 //uint8_t deleteChar(uint8_t slot, short offset);
 
-// writes the text contents of an appvar into a given array (the text in an array starts at an offset of 10)
-int varToArray(uint8_t slot, int varSize, char array[]);
-
-// writes the contents of an array into a given appvar starting at an offset of 10
-int arrayToVar(char array[], int arraySize, uint8_t slot);
-
-struct wordStruct {
-	unsigned int pixelLen;
-	unsigned int numChars;
-};
-
-struct lineStruct {
-	char line[40];            // the line data, formatted as a string
-	unsigned int pixelLen;    // the pixel length of the line
-	unsigned int numChars;    // the number of characters in the line
-	struct lineStruct * next; // Pointer to next line struct. Yes, I am making a linked list of lines :P
-};
-
-// returns the pixel length of the next word (terminated with either ' ' or '\0')
-int getWordLen(char * loc, struct wordStruct * word);
-
 // returns the number of characters in a word (a string terminated with a space or null character)
 int fontlib_GetStrLen(const char *string);
 
