@@ -44,6 +44,7 @@
 #define LIGHT_BLUE      8  // light blue
 #define PAPER_YELLOW    9  // color of yellow paper stickypads
   
+#define HOME            1  // Integer return signifying a request to go to the homescreen (file viwer)
 #define QUIT            0  // Integer return signifying a quit request.
 #define CANCEL        100  // Integer return signifying a cancel / close window request. NOT the same as QUIT.
 #define OPEN          101  // Integer return signigying a file open request. Should lead to a given file being opened in the editor.

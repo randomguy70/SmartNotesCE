@@ -8,9 +8,13 @@
 
 // struct cursorStruct CS;
 struct fileViewerStruct HS;
-struct editor ES;
+struct editor *editor;
 struct fileStruct file;
 struct message message;
+
+/**
+ * homescreen stuff
+**/
 
 // displays homescreen and deals with all the homescreen functions and options
 uint8_t dispHomeScreen(struct fileViewerStruct *HS);
@@ -41,17 +45,6 @@ struct fileViewerStruct {
 	int holdTime;
 };
 
-// contains properties of a cursor
-struct cursorStruct {
-   uint8_t cursorState; // number of cycles completed so far in 1 animation. Is incremented until it is == cyclesPerAnimation, and then reset.
-   uint8_t cyclesPerAnimation; // the total number of cycles that should be completed per an animation (blink), also called the speed :P
-   uint8_t invisibleTime; // how many cycles the cursor should be invisible for
-   int row; // current text row the cursor is in
-   int column; // current text column the cursor is in
-   int x; // current x coord of cursor
-   int y; // current y coord of cursor
-};
-
 // contains data about an opened file
 struct file {
 	uint8_t slot;
@@ -74,43 +67,13 @@ struct editor {
 
 // contains the settings data, should be mostly booleans & small integers
 struct settingsStruct {
+	int password;
 	bool autoSaveFiles;
 	bool autoSaveState;
 	bool showLines;
 	bool cursorBlinks;
-	char lastFileOpened[9];
+	char recents[];
 };
-
-
-struct message {
-	bool hasHeader;
-	char * strings[3]; // there are up to three separate strings allowed in a message: the header, the body, and the footer.
-	char * options [5]; // put the option strings here, ex: "Delete?", "Cancel", "Quit"
-	/*
-	Example:
-	-----------------------------
-	|         Alert!            |
-	-----------------------------
-	|  Are you sure you want    |
-	|  to do that?              |
-	|                           |
-	|                           |
-	-----------------------------
-	|   Yes   |  No  |  Cancel  |
-	-----------------------------
-	
-	"Alert" and "Are you sure you want to do that?" are the strings
-	the options are "Yes", "No", and "Cancel"
-	If Yes is chosen, then 0 will be returned, if No is chosen, then 1 will be returned, if Cancel is chosen, then 2 will be returned
-	*/
-};
-
-/*
-prints a message window with wordwrap
- -returns true if the user presses enter or 2nd
- -returns false if the user presses clear
-*/
-bool alert(char *txt);
 
 // this is what it looks like. thank you mateo :P
 struct menu_entry {
@@ -140,16 +103,31 @@ struct scrollBar{
 // handles all editor key presses
 void handleEditorKeyPresses();
 
-/*
 // main text editing loop
-uint8_t dispEditor(struct editorStruct * ES);
-*/
+// uint8_t dispEditor(struct editorStruct *editor);
 
 // displays the background graphics for the editor, such as the title, text box, buttons, etc...
 void dispEditorBK();
 
 // prints the text in a given file starting at a given line offset
 void printText(struct fileStruct * file);
+
+
+///////////////////////////////////////
+/**
+ * cursor things
+**/
+
+// contains properties of a cursor
+struct cursorStruct {
+   uint8_t cursorState; // number of cycles completed so far in 1 animation. Is incremented until it is == cyclesPerAnimation, and then reset.
+   uint8_t cyclesPerAnimation; // the total number of cycles that should be completed per an animation (blink), also called the speed :P
+   uint8_t invisibleTime; // how many cycles the cursor should be invisible for
+   int row; // current text row the cursor is in
+   int column; // current text column the cursor is in
+   int x; // current x coord of cursor
+   int y; // current y coord of cursor
+};
 
 // draws a cursor given the properties in a given cursor struct
 void animateCursor(struct cursorStruct *CS);
@@ -158,14 +136,19 @@ void animateCursor(struct cursorStruct *CS);
 void drawCursor(struct cursorStruct * cursor);
 
 
-/** displays a given alert text string in a text box of given proportions. will add text wrapping (and later, scrolling if there isn't enough room in the text box)
-*@param text pointer to the alert message
-*@param boxLength pixel length of the text box which will display the alert message
-*@param boxHeight pixel height of the text box which will display the alert message
-*@param boxX the x coord of the upper left corner of the text box
-*@param boxY the Y coord of the upper left corner of the text box
+//////////////////////////////////////////////
+/**
+ * text window /menu things
 **/
 
+/*
+prints a message window with wordwrap
+ -returns true if the user presses enter or 2nd
+ -returns false if the user presses clear
+*/
+bool alert(char *txt);
+
+// prints word-wrapped text inside of given boundaries
 int8_t textBox(const char *text, int boxWidth, int boxHeight, int boxX, int boxY);
 
 /** displays a menu with sprites
@@ -176,14 +159,15 @@ int displayMenu(struct menu * menu);
 // loads the menu for the "other" button in the homescreen fileViewer and returns its adress
 static const struct menu *loadHomeScreenOtherMenu(void);
 
+
+///////////////////////////////////////
+
+/**
+ * graphics routines
+**/
+
 // draws a rectangle with a given thickness
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);
-
-// check if user wants to delete a file, and deleted the selected file if so
-bool checkIfDeleteFile(char *name);
-
-// renames a file with an inputted string
-bool renameFile(const char *name);
 
 // waits for the user to press enter or second to affirm a decision, or clear to cancel
 // -returns true if the user pressed enter or second

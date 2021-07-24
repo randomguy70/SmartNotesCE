@@ -187,6 +187,15 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
    }
 
 	// open file
+	if(kb_IsDown(kb_KeyYequ)) {
+		// if there aren't any files to open...
+		if(HS->numFiles <= 0) {
+			alert("There aren't any files to open (obviously).");
+			return CANCEL;
+		}
+		// otherwise...open the selected file.
+		return OPEN;
+	}
 	
    // new file
    if (kb_IsDown(kb_KeyWindow)) {
@@ -215,6 +224,10 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 		// if there is at least 1 file...
 		checkIfDeleteFile(HS->fileNames[HS->selectedFile]);
 		loadFiles(HS);
+		// check if you need to shift the cursor
+		if(HS->numFiles > 0 && HS->selectedFile >= HS->numFiles)
+			HS->selectedFile--;
+			
 		return CANCEL;
    }
 	
@@ -246,7 +259,7 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 						return 1;
 				}
 				// if it didn't return, then there aren't any files to rename...
-				alert("There aren't any files to delete!");
+				alert("There aren't any files to rename!");
 				return 1;
 				
 			// hide

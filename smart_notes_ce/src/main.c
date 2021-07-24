@@ -5,6 +5,11 @@ static uint8_t setupFontlibc();
 
 // prepares for the program to exit
 static void cleanup();
+static bool setupAppvars();
+static bool formatSaveStateAppvar(char *name);
+static bool formatSettingsAppvar(char *name);
+static bool formatUserInfoAppvar(char *name);
+
 
 int main(void) {
 	// one-time setup things
@@ -19,25 +24,27 @@ int main(void) {
 	gfx_SetTransparentColor(2);
 	gfx_SetTextTransparentColor(2);
 	gfx_SetTextBGColor(2);
-	
 	}
+	
+	// checks for the data appvars and creates & formats new ones if necessary
+	setupAppvars();
 	
 	// define main structs
 	struct fileViewerStruct homeScrn;
 	struct editor editor;
 	
 	// dispHomeScreen needs to return 0 to exit the program, else, it returns 1
-	uint8_t mode = 1;
+	uint8_t mode = HOME;
 	
 	do {
 		if(!mode)
 			break;
 			
-		if(mode == 1)
+		if(mode == HOME)
       	mode = dispHomeScreen(&homeScrn);
 			
-		//if(mode == 2)
-			//mode = displayEditor(&editor);
+		if(mode == OPEN)
+			mode = dispEditor(&editor);
 			
 	} while (true);
 
@@ -74,6 +81,48 @@ static uint8_t setupFontlibc() {
 	
 	return 1;
 	
+}
+
+static bool setupAppvars() {
+	char *saveStateAppvarName = "SMNTSSV";
+	char *settingsAppvarName = "SMNTSTNG";
+	char *userInfoAppvarName = "SMNTUI";
+	
+	uint8_t saveStateAppvarSlot;
+	uint8_t settingsAppvarSlot;
+	uint8_t userInfoAppvarSlot;
+	
+	saveStateAppvarSlot = ti_Open(saveStateAppvarName, "r+");
+	settingsAppvarSlot = ti_Open(settingsAppvarName, "r+");
+	userInfoAppvarSlot = ti_Open(userInfoAppvarName, "r+");
+	
+	// make sure they all exist
+	if(!saveStateAppvarSlot)
+		formatSaveStateAppvar(saveStateAppvarName);
+	if(!settingsAppvarSlot)
+		formatSaveStateAppvar(settingsAppvarName);
+	if(!userInfoAppvarSlot)
+		formatUserInfoAppvar(userInfoAppvarName);
+	
+	return true;
+}
+
+static bool formatSaveStateAppvar(char *name) {
+	uint8_t saveStateAppvarSlot = ti_Open(name, "w+");
+	ti_Resize(100, saveStateAppvarSlot);
+	return true;
+}
+
+static bool formatSettingsAppvar(char *name) {
+	uint8_t settingsAppvarSlot = ti_Open(name, "w+");
+	ti_Resize(100, settingsAppvarSlot);
+	return true;
+}
+
+static bool formatUserInfoAppvar(char *name) {
+	uint8_t uiSlot = ti_Open(name, "w+");
+	ti_Resize(100, uiSlot);
+	return true;
 }
 
 static void cleanup() {

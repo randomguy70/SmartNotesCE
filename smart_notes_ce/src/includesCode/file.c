@@ -27,18 +27,23 @@ uint8_t getNumFiles(const char * txt) {
 uint8_t newFile(void) {
    char buffer[9] = {0};
    uint8_t file = 0;
+	
    ti_CloseAll();
+	
    if (inputString(buffer, 8, "New File")>0) {
-      file = ti_Open(buffer, "r+");
+      file = ti_Open(buffer, "r");
       if (!file) {
          file = ti_Open(buffer, "w+");
       }
 		if (file) {
       	ti_Write("TXT", 3, 1, file);
 		}
+		
 		ti_CloseAll();
+		
       return 1;
    }
+	
    return 0;
 }
 
@@ -79,54 +84,21 @@ uint8_t loadFiles(struct fileViewerStruct *HS) {
 
 // formats the raw file data into an organized structure (hence the struct...obviously)
 // P.S. I will completely change function this very soon, because it is horrible code and I am actually going to switch to the greedy method with displaying text.
-int loadFile(struct fileStruct * file) {
+int loadFile(struct file *file) {
+	
+	// reset editing variables
+	file->curCol = 0;
+	file->curLine = 0;
+	file->lineDisplayOffset = 0;
+	
+	ti_CloseAll();
+	file->slot = ti_Open(file->os_name, "r+");
+	if(!file->slot)
+		return 0;
+	
+	// load the 
+};
 
-   char * readPos; // pointer to the current reading position in the file
-	uint8_t loopIsDone = 0; // whether or not the while loop is finished yet. I was going to make this a bool except for the fact that I forgot the syntax and I will probably forget about this later, so don't worry if you see this because it  will (perhaps, maybe, hopefully) be corrected soon (in several years). :P P.S. It is June 25, 2021 right now when I am creating this if you are (will be) wondering.
-	unsigned int curLine = 0;
-	uint8_t linePos = 0; // offset in the line array where you are writing words into
-
-	// seek to the beginning of the text data and store the pointer into both the fileStruct, if I didn't already get the pointer, and the readPos (for this while loop)	
-   ti_Seek(TEXT_ORIGIN, 0, file->slot);
-	if(file->txtDat==NULL) {
-		file->txtDat = ti_GetDataPtr(file->slot);
-	}
-	readPos = file->txtDat;
-
-	// initialize the file's 2 dim line array
-	for(uint8_t i=0; i<200; i++) {
-		for(uint8_t ii=0; i<40; i++) {
-			file->linesArray[i][ii] = '\0';
-		}
-	}
-
-   while(!loopIsDone) {
-		struct wordStruct word;
-		getWordLen(readPos, &word);
-		file->lineLengths[curLine] = gfx_GetStringWidth(file->linesArray[curLine]);
-
-		// if the current word is short enough to be added to the current line
-      if(word.pixelLen + file->lineLengths[curLine] < 300) {
-			ti_Read(&(file->linesArray[curLine][linePos]), 1, word.numChars, file->slot);
-			linePos+=word.numChars;
-			readPos+=word.numChars;
-		}
-
-		// if a single word is greater than a line because somebody was messing around
-		if(file->lineLengths[curLine]==0 && word.pixelLen>300) {
-			while(gfx_GetStringWidth(file->linesArray[curLine])<300) {
-				file->linesArray[curLine][linePos] = ti_GetC(file->slot);
-				linePos++;
-				readPos++;
-			}
-			linePos = 0;
-			curLine++;
-		}
-		
-		if(word.pixelLen + file->lineLengths[curLine] > 300) {
-			curLine++;
-			linePos = 0;
-		}
-   }
-	return file->numLines;
-}
+int getLinePtrs(struct file *file) {
+	
+};
