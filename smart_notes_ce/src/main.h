@@ -24,6 +24,8 @@
 #include "includes/text.h"
 #include "includes/file.h"
 #include "includes/specialChars.h"
+#include "includes/homescreen.h"
+#include "includes/editor.h"
 
 // defines
 #define VERSION 1

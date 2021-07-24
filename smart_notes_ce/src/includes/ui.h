@@ -10,49 +10,9 @@
 //				struct prototypes
 //////////////////////////////////////////////
 
-struct fileViewerStruct;
+struct fileViewerStruct HS;
 struct editor;
 struct file;
-
-//////////////////////////////////////////////
-/**
- * homescreen stuff
-**/
-
-// displays homescreen and deals with all the homescreen functions and options
-uint8_t dispHomeScreen(struct fileViewerStruct *HS);
-
-// displays the buttons for the homescreen
-void dispHSButtons();
-
-// displays the homescreen background
-void dispHomeScreenBG(struct fileViewerStruct * HS);
-
-// handles the keypresses in the fileViewer
-uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS);
-
-// displays files at a given offset using the data in the homescreen struct (HS)
-uint8_t dispFiles(struct fileViewerStruct *HS);
-
-// contains properties of the file viewer
-struct fileViewerStruct {
-   char fileNames[30][9];     // array of detected text file names
-   int fileSizes[30];         // array of detected text file sizes
-   uint8_t numFiles;          // total number of files detected. shouldn't be more than 30
-	uint8_t numFilesDisplayed; // number of files displayed on the screen at a single time (10 >= num >=0)
-   uint8_t offset;            // the number of files that were shifted UP off the screen for the cursor to move more than  10 files down
-   uint8_t selectedFile;      // the offset of the name of the selected file from the beginnning of the fileNames array
-	bool shouldQuit; // whether or not the program should quit
-	
-	kb_key_t lastKeyPressed;
-	int holdTime;
-};
-
-struct editor {
-	bool running; // whether or not to repeat the editor loop. if 0, then the editor will quit at the first opportunity
-	bool refresh; // whether or not to go through the editor loop again
-	struct file; // contains data about the opened file in the editor
-};
 
 // contains the settings data, should be mostly booleans & small integers
 struct settingsStruct {
@@ -88,15 +48,6 @@ struct scrollBar{
 	uint8_t height;
 	uint8_t colorIndex;
 };
-
-// handles all editor key presses
-void handleEditorKeyPresses();
-
-// main text editing loop
-uint8_t dispEditor(struct editor *editor);
-
-// displays the background graphics for the editor, such as the title, text box, buttons, etc...
-void dispEditorBK(struct editorStruct *editor);
 
 ///////////////////////////////////////
 /**
@@ -141,26 +92,12 @@ int8_t textBox(const char *text, int boxWidth, int boxHeight, int boxX, int boxY
  * */
 int displayMenu(struct menu * menu);
 
-// loads the menu for the "other" button in the homescreen fileViewer and returns its adress
-static const struct menu *loadHomeScreenOtherMenu(void);
-
-
-///////////////////////////////////////
-
-/**
- * graphics routines
-**/
-
 // draws a rectangle with a given thickness
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);
 
 // waits for the user to press enter or second to affirm a decision, or clear to cancel
 // -returns true if the user pressed enter or second
 // -returns false if the user pressed clear
-bool checkForInput();
-
-// returns 1 if the user is pressing clear for a significant duration
-int chooseToQuit();
-
+bool waitForInput();
 
 #endif
