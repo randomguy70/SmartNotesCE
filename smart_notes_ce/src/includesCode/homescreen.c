@@ -217,7 +217,6 @@ static uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 	
 	// quit program
 	if (kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyZoom)) {
-		while(kb_AnyKey) kb_Scan();
 		return QUIT;
 	}
 	

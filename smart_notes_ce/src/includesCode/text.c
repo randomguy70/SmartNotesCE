@@ -74,10 +74,10 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
       gfx_SetColor(DARK_BLUE);
 		
 		// deal with cursor cycles
-      if(cursorBlink > 15) {
+      if(cursorBlink > 10) {
 			gfx_VertLine(cursorX, cursorY, 11);
 			gfx_VertLine(cursorX+1, cursorY, 11);
-         if(cursorBlink == 40) {
+         if(cursorBlink == 30) {
             cursorBlink = 0;
          }
       }
@@ -90,15 +90,15 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		keyPressed = os_GetCSC();
 		
 		// enter creates a new file with the inputted string for a name
-      if (kb_IsDown(kb_Enter) && strLen > 0 && strLen <= maxLength) { // enter finishes string input and returns 1
-			while(kb_AnyKey) kb_Scan();
+      if (kb_IsDown(kb_KeyEnter) && strLen > 0 && strLen <= maxLength) { // enter finishes string input and returns 1
          return 1;
       }
 		
 		// clear quits and returns failure (0)
       if (kb_IsDown(kb_KeyClear)) {
 			// wait for the delete key to be released before moving on
-			while(kb_AnyKey) kb_Scan();
+			while(kb_AnyKey()) kb_Scan();
+				
 			return 0;
 		}
 		
@@ -106,8 +106,8 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
       if (kb_IsDown(kb_KeyDel) && strLen>0) {
          buffer[strLen-1] = 0;
          strLen--;
-			// wait for the delete key to be released before moving on
-			while(kb_AnyKey) kb_Scan();
+			
+			while(kb_AnyKey()) kb_Scan();
       }
 		
 		// switching text modes
@@ -122,7 +122,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 				txtMode = MATH;
 			}
 			// wait for the delete key to be released before moving on
-			while(kb_AnyKey) kb_Scan();
+			while(kb_AnyKey()) kb_Scan();
 		}
 		
 		// input character and add the character to the current offset in the string buffer
