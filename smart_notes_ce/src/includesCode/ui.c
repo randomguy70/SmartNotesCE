@@ -189,9 +189,14 @@ uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 	// open file
 	
    // new file
-   if (kb_IsDown(kb_KeyWindow) && HS->numFiles<30) {
+   if (kb_IsDown(kb_KeyWindow)) {
+		if(HS->numFiles >= 30 ) {
+			alert("You can't have more than 30 files, my note-crazy friend!");
+			return CANCEL;
+		}
 		newFile();
 		loadFiles(HS);
+		return true;
    }
 	
 	// quit program
@@ -413,28 +418,10 @@ bool alert(char *txt) {
 	fontlib_SetCursorPosition(txtX, txtY);
 	fontlib_SetForegroundColor(BLACK);
 	
-	while(linesPrinted < maxLines-1 && charsRead < messageLen) {
+	while(linesPrinted < maxLines-1 && charsRead <= messageLen) {
 	
 		strWidth = fontlib_GetStringWidth(readPos);
-		
-		// quit printing if the message is ended, need to modify this to count the strlen too
-		if(readPos == NULL)
-			break;
-			
-		// if the first character of the read line is the new line code..., then create a new line OBVS
-		if(readPos == NEW_LINE) {
-			if(linesPrinted<maxLines) {
-				fontlib_Newline();
-				txtY += fontHeight;
-				txtX = x;
-				readPos++;
-				charsRead++;
-				linesPrinted++;
-			} else {
-				break;
-			}
-		}
-		
+	
 		// if the string is short enough to be displayed... then display it!
 		if(strWidth + txtX < width + x) {
 			fontlib_DrawString(readPos);
@@ -465,7 +452,7 @@ bool alert(char *txt) {
 			readPos = fontlib_GetLastCharacterRead()+1;
 			
 			// new line
-			if(linesPrinted >= maxLines)
+			if(linesPrinted > maxLines)
 				break;
 				
 			fontlib_Newline();
