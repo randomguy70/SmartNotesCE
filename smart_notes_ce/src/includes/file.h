@@ -47,9 +47,6 @@ bool checkIfDeleteFile(char *name);
 // renames a file with an inputted string
 bool renameFile(const char *name);
 
-// detects all txt appvars (up to 30 are allowed) and writes their names into a given 2d string buffer, returns the number of files found
-uint8_t loadFiles(struct fileViewerStruct *HS);
-
 // get a file's data (usually before opening it)
 int loadFile(struct file *file);
 

@@ -95,6 +95,9 @@ int displayMenu(struct menu * menu);
 // draws a rectangle with a given thickness
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);
 
+// does what it sounds like. it draws a string at a given x and y coord.
+void fontlib_DrawStringXY(char *str, int x, int y);
+
 // waits for the user to press enter or second to affirm a decision, or clear to cancel
 // -returns true if the user pressed enter or second
 // -returns false if the user pressed clear

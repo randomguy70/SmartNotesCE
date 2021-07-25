@@ -58,6 +58,12 @@ void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness) {
 	return;
 }
 
+void fontlib_DrawStringXY(char *str, int x, int y) {
+	fontlib_SetCursorPosition(x, y);
+	fontlib_DrawString(str);
+	return;
+}
+
 // gives an option whether or not to delete the selected file
 bool checkIfDeleteFile(char *name) {	
 	char message[100] = {"Are you sure you want to delete "};

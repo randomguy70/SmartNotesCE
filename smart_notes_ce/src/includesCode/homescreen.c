@@ -5,6 +5,7 @@ static void dispHomeScreenBG(struct fileViewerStruct * HS);
 static uint8_t dispFiles(struct fileViewerStruct *HS);
 static void dispHSButtons(void);
 static uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS);
+static uint8_t loadFiles(struct fileViewerStruct *HS);
 static const struct menu *loadHomeScreenOtherMenu(void);
 
 
@@ -291,6 +292,41 @@ static uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 }
 
 //loads the data into the struct for the homescreen menu that is triggered by the "other" menu option (literally)
+
+static uint8_t loadFiles(struct fileViewerStruct *HS) {
+   uint8_t numFiles = 0;
+   uint8_t fileSlot = 0; // slot of currently detected file
+   char * namePtr = NULL;
+   void * search_pos = NULL; // mem location of the currently detected file in the VAT
+	
+	ti_CloseAll();
+	
+   while ((namePtr = ti_Detect(&search_pos, "TXT")) != NULL) {
+		
+		// copy the currently detected file's name into the fileviewer struct's names array
+      strcpy(HS->fileNames[numFiles], namePtr);
+		
+		//get some info from the currently detected file
+      fileSlot = ti_Open(namePtr, "r+");
+		
+      HS->fileSizes[numFiles] = ti_GetSize(fileSlot);
+		
+		// files have to be at least 10 bytes large for future formatting data purposes
+		if(HS->fileSizes[numFiles] < 10) {
+			ti_Seek(3, 0, fileSlot);
+			ti_Write((const void *)0xE40000, 7, 1, fileSlot);
+		}
+		
+		// "always close files after opening them" -Jacobly, ergo...
+		ti_Close(fileSlot);
+      numFiles++;
+   }
+	
+	ti_CloseAll();
+	
+   HS->numFiles = numFiles;
+   return numFiles;
+}
 
 static const struct menu *loadHomeScreenOtherMenu(void) {
 	static const struct menu menu = { 

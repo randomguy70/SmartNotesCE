@@ -47,41 +47,6 @@ uint8_t newFile(void) {
    return 0;
 }
 
-uint8_t loadFiles(struct fileViewerStruct *HS) {
-   uint8_t numFiles = 0;
-   uint8_t fileSlot = 0; // slot of currently detected file
-   char * namePtr = NULL;
-   void * search_pos = NULL; // mem location of the currently detected file in the VAT
-	
-	ti_CloseAll();
-	
-   while ((namePtr = ti_Detect(&search_pos, "TXT")) != NULL) {
-		
-		// copy the currently detected file's name into the fileviewer struct's names array
-      strcpy(HS->fileNames[numFiles], namePtr);
-		
-		//get some info from the currently detected file
-      fileSlot = ti_Open(namePtr, "r+");
-		
-      HS->fileSizes[numFiles] = ti_GetSize(fileSlot);
-		
-		// files have to be at least 10 bytes large for future formatting data purposes
-		if(HS->fileSizes[numFiles] < 10) {
-			ti_Seek(3, 0, fileSlot);
-			ti_Write((const void *)0xE40000, 7, 1, fileSlot);
-		}
-		
-		// "always close files after opening them" -Jacobly, ergo...
-		ti_Close(fileSlot);
-      numFiles++;
-   }
-	
-	ti_CloseAll();
-	
-   HS->numFiles = numFiles;
-   return numFiles;
-}
-
 // formats the raw file data into an organized structure (hence the struct...obviously)
 // P.S. I will completely change function this very soon, because it is horrible code and I am actually going to switch to the greedy method with displaying text.
 int loadFile(struct file *file) {
@@ -94,9 +59,17 @@ int loadFile(struct file *file) {
 	ti_CloseAll();
 	file->slot = ti_Open(file->os_name, "r+");
 	if(!file->slot)
-		return 0;
+		return false;
 	
-	// load the 
+	// get its name (full name and os_name. the extra characters of the full name(if there are any) are stored as a string starting at the 4th byte in the file). ps, haven't added full name (yet)
+	char fullName[20];
+	char OSName[10];
+	
+	ti_GetName(OSName, file->slot);
+	
+	
+	
+	return true;
 };
 
 int getLinePtrs(struct file *file) {

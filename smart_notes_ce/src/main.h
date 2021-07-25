@@ -29,6 +29,7 @@
 
 // defines
 #define VERSION 1
+#define RELEASE_STRING "V.1.0"
 #define AUTHOR "Randomguy"
 
 #define SCRN_WIDTH    320
