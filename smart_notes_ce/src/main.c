@@ -37,7 +37,7 @@ int main(void) {
 	uint8_t mode = HOME;
 	
 	do {
-		if(!mode)
+		if(mode == QUIT)
 			break;
 			
 		if(mode == HOME || mode == CANCEL) {
