@@ -56,6 +56,7 @@
 #define CANCEL        100  // Integer return signifying a cancel / close window request. NOT the same as QUIT.
 #define OPEN          101  // Integer return signigying a file open request. Should lead to a given file being opened in the editor.
 #define CLOSE         102  // Integer return signigying request to close the file currently opened in the editor. Should reset the editor variables and either quit the program or open the file menu.
+#define BACK          103  // Integer return signifying a request to go back 1 scope level / return level
 
 struct window {
 	uint8_t fillIndex;

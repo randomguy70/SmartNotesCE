@@ -17,6 +17,8 @@ uint8_t dispEditor(struct editor *editor) {
 		
 		if(action == QUIT)
 			return QUIT;
+		if(action == HOME)
+			return HOME;
 	}
 }
 
