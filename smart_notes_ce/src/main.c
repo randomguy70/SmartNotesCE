@@ -40,11 +40,14 @@ int main(void) {
 		if(!mode)
 			break;
 			
-		if(mode == HOME)
-      	mode = dispHomeScreen(&homeScrn);
+		if(mode == HOME || mode == CANCEL) {
+			mode = dispHomeScreen(&homeScrn);
+		}
 			
-		if(mode == OPEN)
+		if(mode == OPEN) {
+			strcpy(editor.fileName, homeScrn.fileNames[homeScrn.selectedFile]);
 			mode = dispEditor(&editor);
+		}
 			
 	} while (true);
 

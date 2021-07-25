@@ -296,12 +296,13 @@ static uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 static uint8_t loadFiles(struct fileViewerStruct *HS) {
    uint8_t numFiles = 0;
    uint8_t fileSlot = 0; // slot of currently detected file
+	int fileSize;
    char * namePtr = NULL;
    void * search_pos = NULL; // mem location of the currently detected file in the VAT
 	
 	ti_CloseAll();
 	
-   while ((namePtr = ti_Detect(&search_pos, "TXT")) != NULL) {
+   while ((namePtr = ti_Detect(&search_pos, TXT_STR)) != NULL) {
 		
 		// copy the currently detected file's name into the fileviewer struct's names array
       strcpy(HS->fileNames[numFiles], namePtr);
@@ -309,13 +310,15 @@ static uint8_t loadFiles(struct fileViewerStruct *HS) {
 		//get some info from the currently detected file
       fileSlot = ti_Open(namePtr, "r+");
 		
-      HS->fileSizes[numFiles] = ti_GetSize(fileSlot);
+      fileSize = ti_GetSize(fileSlot);
 		
 		// files have to be at least 10 bytes large for future formatting data purposes
-		if(HS->fileSizes[numFiles] < 10) {
+		if(fileSize < MIN_FILE_SIZE) {
 			ti_Seek(3, 0, fileSlot);
-			ti_Write((const void *)0xE40000, 7, 1, fileSlot);
+			ti_Write((const void *)0xE40000, MIN_FILE_SIZE-3, 1, fileSlot);
 		}
+		
+		HS->fileSizes[numFiles] = fileSize;
 		
 		// "always close files after opening them" -Jacobly, ergo...
 		ti_Close(fileSlot);

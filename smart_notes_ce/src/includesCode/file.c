@@ -47,9 +47,10 @@ uint8_t newFile(void) {
    return 0;
 }
 
-// formats the raw file data into an organized structure (hence the struct...obviously)
-// P.S. I will completely change function this very soon, because it is horrible code and I am actually going to switch to the greedy method with displaying text.
-int loadFile(struct file *file) {
+// formats the file data into an organized structure (hence the struct)
+int loadFile(struct file *file, char *name) {
+	
+	strcpy(file->os_name, name);
 	
 	// reset editing variables
 	file->curCol = 0;
@@ -57,19 +58,19 @@ int loadFile(struct file *file) {
 	file->lineDisplayOffset = 0;
 	
 	ti_CloseAll();
-	file->slot = ti_Open(file->os_name, "r+");
+	file->slot = ti_Open(name, "r+");
 	if(!file->slot)
 		return false;
 	
-	// get its name (full name and os_name. the extra characters of the full name(if there are any) are stored as a string starting at the 4th byte in the file). ps, haven't added full name (yet)
-	char fullName[20];
-	char OSName[10];
+	// get its full name the extra characters of the full name(if there are any) are stored as a string starting at the 4th byte in the file). ps, haven't added full name (yet)
 	
-	ti_GetName(OSName, file->slot);
+	// get its size
+	file->size = ti_GetSize(file->slot);
 	
+	// get some pointers
+	file->txtPtr = ti_GetDataPtr(file->slot) + MIN_FILE_SIZE;
 	
-	
-	return true;
+	return 1;
 };
 
 int getLinePtrs(struct file *file) {

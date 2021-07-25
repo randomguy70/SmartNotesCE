@@ -35,7 +35,11 @@
 #define SCRN_WIDTH    320
 #define SCRN_HEIGHT   240
 
-#define START_OF_TEXT  20  // Offset of the text data in files; in other words, the number of bytes at the beginning of the file to ignore.
+// text editing specific things
+#define TXT_STR "TXT" // bytes written to the beginning of a text file to distinguish them from other files
+#define START_OF_TEXT  50  // Offset of the text data in files; in other words, the number of bytes at the beginning of the file to ignore.
+#define MIN_FILE_SIZE (3+START_OF_TEXT)
+
 #define BLACK           0  // black
 #define WHITE           1  // white
 #define TRANSPARENT     2  // gfx transparent color (would otherwise be hot pink :P)

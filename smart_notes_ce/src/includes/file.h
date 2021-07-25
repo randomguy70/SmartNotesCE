@@ -17,7 +17,7 @@ struct file {
 	// general information
 	
 	uint8_t slot;
-	char *os_name;
+	char os_name[10];
 	char *full_name;
 	int size;
 	
@@ -48,7 +48,7 @@ bool checkIfDeleteFile(char *name);
 bool renameFile(const char *name);
 
 // get a file's data (usually before opening it)
-int loadFile(struct file *file);
+int loadFile(struct file *file, char *name);
 
 // gets the pointers to the start of each line in the file, as well as their byte offset from the text origin
 int getLinePtrs(struct file *file);

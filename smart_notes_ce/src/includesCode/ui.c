@@ -198,7 +198,7 @@ bool alert(char *txt) {
 	}
 	
 	gfx_BlitRectangle(1, x-2, y-2, width+4, height+4);
-		
+	
 	if (waitForInput() == true)
 		return 1;
 	

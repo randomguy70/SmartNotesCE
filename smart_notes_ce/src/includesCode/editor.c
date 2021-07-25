@@ -8,6 +8,8 @@ static uint8_t handleEditorKeyPresses(struct editor *editor);
 uint8_t dispEditor(struct editor *editor) {
 	uint8_t action; // action triggered by keypresses
 	
+	loadFile(&(editor->file), editor->fileName);
+	
 	while(true) {
 		dispEditorBK(editor);
 		
@@ -34,8 +36,8 @@ static void dispEditorBK(struct editor *editor) {
 	// header txt
 	fontlib_SetTransparency(true);
 	fontlib_SetForegroundColor(BLACK);
-	fontlib_SetCursorPosition(1, 2);
-	fontlib_DrawString(editor->file.full_name);
+	fontlib_SetAlternateStopCode(0); // the name might have spaces in it
+	fontlib_DrawStringXY(editor->file.os_name, 1, 2);
 	
 	// footer
 	gfx_SetColor(MEDIUM_GREY);
