@@ -31,7 +31,7 @@ struct file {
 	char *txtEnd; // pointer to the end of the printable ascii data in the file
 	
 	int numLines; // number of lines in the file
-	char *linePtr[200]; // pointers to the start of each line (for cursor and text insertion purposes)
+	char *linePtrs[200]; // pointers to the start of each line (for cursor and text insertion purposes)
 	
 	// editing specific information
 	

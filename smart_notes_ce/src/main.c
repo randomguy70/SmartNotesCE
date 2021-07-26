@@ -43,12 +43,12 @@ int main(void) {
 		if(mode == HOME || mode == CANCEL) {
 			mode = dispHomeScreen(&homeScrn);
 		}
-			
+		
 		if(mode == OPEN) {
 			strcpy(editor.fileName, homeScrn.fileNames[homeScrn.selectedFile]);
 			mode = dispEditor(&editor);
 		}
-			
+		
 	} while (true);
 
 	cleanup();
@@ -78,7 +78,6 @@ static uint8_t setupFontlibc() {
 	
    // Use font for whatever
    fontlib_SetFont(my_font, 0);
-	fontlib_SetAlternateStopCode(' ');
 	fontlib_SetBackgroundColor(2);
 	fontlib_SetTransparency(true);
 	

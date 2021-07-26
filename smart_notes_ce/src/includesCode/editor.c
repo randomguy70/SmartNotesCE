@@ -3,7 +3,7 @@
 //// declarations
 static void dispEditorBK(struct editor *editor);
 static uint8_t handleEditorKeyPresses(struct editor *editor);
-
+static int getLinePtrs(struct file *file);
 
 uint8_t dispEditor(struct editor *editor) {
 	uint8_t action; // action triggered by keypresses
@@ -64,6 +64,55 @@ static uint8_t handleEditorKeyPresses(struct editor *editor) {
 	if(kb_IsDown(kb_Key2nd)) {
 		alert("Well well, it worked!!!");
 		return CANCEL;
+	}
+	
+}
+
+static int getLinePtrs(struct file *file) {
+	
+	char *readPos = file->txtPtr;
+	int linesRead = 0;
+	int charsRead = 0;
+	
+	int windowWidth = SCRN_WIDTH;
+	int windowHeight = SCRN_HEIGHT - 40;
+	
+	int txtX = 0; // used to determine how long each line should be, relative to the given window dimensions
+	int txtY = 0; // used to determine how long each line should be, relative to the given window dimensions
+
+	fontlib_SetAlternateStopCode(' ');
+	fontlib_SetLineSpacing(2, 2);
+	uint8_t fontHeight = fontlib_GetCurrentFontHeight();
+	int strWidth;
+	
+	while(true) {
+		
+		// new line character
+		if(readPos == NEW_LINE) {
+			file->linePtrs[linesRead] = readPos;
+			fontlib_Newline();
+			linesRead++;
+			readPos++;
+			txtX = 0;
+			txtY += fontHeight;
+		}
+		
+		// get the pixel length of the next word
+		strWidth = fontlib_GetStringWidth(readPos);
+		
+		if(strWidth + txtX <= windowWidth) {
+			readPos += fontlib_GetStrLen(readPos) + 1; // the one extra counts for the space or null terminator
+			txtX += strWidth + SPACE_WIDTH;
+		}
+		
+		if(strWidth + txtX > windowWidth) {
+			fontlib_Newline();
+			linesRead++;
+			txtX = 0;
+			txtY += fontHeight;
+			file->linePtrs[linesRead] = readPos;
+		}
+		
 	}
 	
 }
