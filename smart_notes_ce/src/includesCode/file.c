@@ -1,4 +1,11 @@
 #include "main.h"
+#include <fileioc.h>
+#include <stdint.h>
+#include <string.h>
+
+#include <includes/file.h>
+#include <includes/text.h>
+#include <includes/ui.h>
 
 void archiveAll()
 {
@@ -47,6 +54,35 @@ uint8_t newFile(void) {
    return 0;
 }
 
+// gives an option whether or not to delete the selected file
+bool checkIfDeleteFile(char *name) {	
+	char message[100] = {"Are you sure you want to delete "};
+	strcat(message, name);
+	strcat(message, "?");
+	
+	if(alert(message) == true) {
+		ti_Delete(name);
+		return 1;
+	}
+	
+	return 0;
+}
+
+bool renameFile(const char *name) {
+	
+	char newNameBuffer[10] = {0};
+	char message[25] = {"Rename "};
+	
+	strcat(message, name);
+	
+	if(inputString(newNameBuffer, 8, message) > 0) {
+		ti_Rename(name, newNameBuffer);
+		return true;
+	}
+	
+	return false;
+}
+
 // formats the file data into an organized structure (hence the struct)
 int loadFile(struct file *file, char *name) {
 	
@@ -71,8 +107,4 @@ int loadFile(struct file *file, char *name) {
 	file->txtPtr = ti_GetDataPtr(file->slot) + MIN_FILE_SIZE;
 	
 	return 1;
-};
-
-int getLinePtrs(struct file *file) {
-	
 };

@@ -1,7 +1,7 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include "main.h"
+#include <includes/file.h>
 
 //// declarations
 struct editor;

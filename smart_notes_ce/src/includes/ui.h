@@ -1,6 +1,8 @@
 #ifndef UI_H
 #define UI_H
 
+#include <graphx.h>
+
 #include "main.h"
 
 #define BUTTON_TYPE_TRIGGER_ACTION  1 // Returns the value of the selected option when the button is pressed
@@ -9,10 +11,6 @@
 //////////////////////////////////////////////
 //				struct prototypes
 //////////////////////////////////////////////
-
-struct fileViewerStruct HS;
-struct editor;
-struct file;
 
 // contains the settings data, should be mostly booleans & small integers
 struct settingsStruct {
@@ -94,9 +92,6 @@ int displayMenu(struct menu * menu);
 
 // draws a rectangle with a given thickness
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);
-
-// does what it sounds like. it draws a string at a given x and y coord.
-void fontlib_DrawStringXY(char *str, int x, int y);
 
 // waits for the user to press enter or second to affirm a decision, or clear to cancel
 // -returns true if the user pressed enter or second

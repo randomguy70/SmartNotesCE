@@ -1,6 +1,8 @@
 #ifndef HOME_SCREEN_H
 #define HOME_SCREEN_H
 
+#include <keypadc.h>
+
 #include "main.h"
 
 //// declarations

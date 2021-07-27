@@ -1,7 +1,9 @@
 #ifndef TEXT_H
 #define TEXT_H
 
-#define ZERO_WIDTH_SPACE '\6'
+#define MATH                 1
+#define CAPS                 2
+#define LOWER_CASE           3
 
 struct fileStruct;
 struct wordStruct;
@@ -25,6 +27,8 @@ char* strcopy(char* dest, const char* src);
 
 // returns the number of characters in a word (a string terminated with a space or null character)
 int fontlib_GetStrLen(const char *string);
+
+void fontlib_DrawStringXY(char *str, int x, int y);
 
 // copies a null or space terminated string into a given location
 int copyWord(char * dest, char * src);

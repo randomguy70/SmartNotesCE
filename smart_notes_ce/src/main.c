@@ -1,4 +1,14 @@
+#include <fileioc.h>
+#include <fontlibc.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <graphx.h>
+#include <string.h>
+
 #include "main.h"
+#include <includes/editor.h>
+#include <includes/homescreen.h>
+#include <gfx/gfx.h>
 
 // checks for font appvar(s), loads font, and deals with technical font details
 static uint8_t setupFontlibc();
@@ -45,7 +55,7 @@ int main(void) {
 		}
 		
 		if(mode == OPEN) {
-			strcpy(editor.fileName, homeScrn.fileNames[homeScrn.selectedFile]);
+			strcpy (editor.fileName, homeScrn.fileNames[homeScrn.selectedFile]);
 			mode = dispEditor(&editor);
 		}
 		
@@ -102,7 +112,7 @@ static bool setupAppvars() {
 	if(!saveStateAppvarSlot)
 		formatSaveStateAppvar(saveStateAppvarName);
 	if(!settingsAppvarSlot)
-		formatSaveStateAppvar(settingsAppvarName);
+		formatSettingsAppvar(settingsAppvarName);
 	if(!userInfoAppvarSlot)
 		formatUserInfoAppvar(userInfoAppvarName);
 	

@@ -1,4 +1,13 @@
 #include "main.h"
+#include <fontlibc.h>
+#include <keypadc.h>
+#include <graphx.h>
+#include <fileioc.h>
+#include <string.h>
+
+#include <includes/text.h>
+#include <includes/ui.h>
+#include <tice.h>
 
 // cursor stuff
 void animateCursor(struct cursorStruct *CS) {
@@ -56,41 +65,6 @@ void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness) {
 	}
 	
 	return;
-}
-
-void fontlib_DrawStringXY(char *str, int x, int y) {
-	fontlib_SetCursorPosition(x, y);
-	fontlib_DrawString(str);
-	return;
-}
-
-// gives an option whether or not to delete the selected file
-bool checkIfDeleteFile(char *name) {	
-	char message[100] = {"Are you sure you want to delete "};
-	strcat(message, name);
-	strcat(message, "?");
-	
-	if(alert(message) == true) {
-		ti_Delete(name);
-		return 1;
-	}
-	
-	return 0;
-}
-
-bool renameFile(const char *name) {
-	
-	char newNameBuffer[10] = {0};
-	char message[25] = {"Rename "};
-	
-	strcat(message, name);
-	
-	if(inputString(newNameBuffer, 8, message) > 0) {
-		ti_Rename(name, newNameBuffer);
-		return true;
-	}
-	
-	return false;
 }
 
 bool alert(char *txt) {
@@ -278,8 +252,9 @@ int displayMenu(struct menu * menu) {
 			return selected + 1;
 		}
 		
-		// quit the menu
-		if(os_GetCSC() == sk_Clear) {
+		// quit the menu (once the clear key has been released)
+		if(kb_IsDown(kb_KeyClear)) {
+			while(kb_AnyKey()) kb_Scan();
 			return CANCEL;
 		}
 		

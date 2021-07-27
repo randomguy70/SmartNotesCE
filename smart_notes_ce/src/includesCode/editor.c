@@ -1,9 +1,19 @@
 #include "main.h"
+#include <fontlibc.h>
+#include <graphx.h>
+#include <keypadc.h>
+#include <fontlibc.h>
+
+#include <includes/file.h>
+#include <includes/editor.h>
+#include <includes/text.h>
+#include <includes/characters.h>
+#include <includes/ui.h>
 
 //// declarations
 static void dispEditorBK(struct editor *editor);
 static uint8_t handleEditorKeyPresses(struct editor *editor);
-static int getLinePtrs(struct file *file);
+int getLinePtrs(struct file *file);
 
 uint8_t dispEditor(struct editor *editor) {
 	uint8_t action; // action triggered by keypresses
@@ -57,6 +67,8 @@ static void dispEditorBK(struct editor *editor) {
 static uint8_t handleEditorKeyPresses(struct editor *editor) {
 	kb_Scan();
 	
+	editor->running = true; // this is only to prevent the unused parameter warning
+	
 	if(kb_IsDown(kb_KeyClear)) {
 		return QUIT;
 	}
@@ -66,16 +78,16 @@ static uint8_t handleEditorKeyPresses(struct editor *editor) {
 		return CANCEL;
 	}
 	
+	return CANCEL;
 }
 
-static int getLinePtrs(struct file *file) {
+int getLinePtrs(struct file *file) {
 	
 	char *readPos = file->txtPtr;
 	int linesRead = 0;
-	int charsRead = 0;
+	// int charsRead = 0;
 	
 	int windowWidth = SCRN_WIDTH;
-	int windowHeight = SCRN_HEIGHT - 40;
 	
 	int txtX = 0; // used to determine how long each line should be, relative to the given window dimensions
 	int txtY = 0; // used to determine how long each line should be, relative to the given window dimensions
@@ -99,13 +111,15 @@ static int getLinePtrs(struct file *file) {
 		
 		// get the pixel length of the next word
 		strWidth = fontlib_GetStringWidth(readPos);
-		
+	
+		// if the word can fit on to the end of the line	
 		if(strWidth + txtX <= windowWidth) {
 			readPos += fontlib_GetStrLen(readPos) + 1; // the one extra counts for the space or null terminator
 			txtX += strWidth + SPACE_WIDTH;
 		}
 		
-		if(strWidth + txtX > windowWidth) {
+		// if something has already been printed on the line and the next word can't fit on to the end of the line
+		if(strWidth + txtX > windowWidth && txtX > 0) {
 			fontlib_Newline();
 			linesRead++;
 			txtX = 0;
@@ -113,6 +127,9 @@ static int getLinePtrs(struct file *file) {
 			file->linePtrs[linesRead] = readPos;
 		}
 		
+		// if nothing has been printed on to the line but the word is still too long for a whole line, then character-wrap i
+		if(txtX <= 0 && strWidth > windowWidth) {
+		}
 	}
 	
 }

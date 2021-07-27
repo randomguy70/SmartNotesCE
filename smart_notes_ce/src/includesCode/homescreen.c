@@ -1,5 +1,15 @@
 #include "main.h"
 
+#include <graphx.h>
+#include <keypadc.h>
+#include <fileioc.h>
+#include <string.h>
+
+#include <includes/homescreen.h>
+#include <gfx/gfx.h>
+#include <includes/file.h>
+#include <includes/ui.h>
+
 //// declarations
 static void dispHomeScreenBG(struct fileViewerStruct * HS);
 static uint8_t dispFiles(struct fileViewerStruct *HS);
@@ -261,10 +271,12 @@ static uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 			// rename
 			case 2:
 				if(HS->numFiles>0) {
-					if(renameFile(HS->fileNames[HS->selectedFile]))
+					if(renameFile(HS->fileNames[HS->selectedFile])) {
 						loadFiles(HS);
 						return 1;
+					}
 				}
+					
 				// if it didn't return, then there aren't any files to rename...
 				alert("There aren't any files to rename!");
 				return 1;

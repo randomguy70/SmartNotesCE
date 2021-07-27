@@ -1,31 +1,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-// standard includes. i don't want to have to type them out at the beginning of every last .c file, so i just put include main.h instead. I don't care what MateoC says if he comes with some obscure rule about includes that says i am in error :P....
 #include <stdbool.h>
-#include <stddef.h>
 #include <stdint.h>
-#include <math.h>
-#include <stdbool.h>
-
-#include <tice.h>
-#include <string.h>
-
-#include <keypadc.h>
-#include <compression.h>
-#include <graphx.h>
-#include <fileioc.h>
-#include <fontlibc.h>
-
-// my includes
-#include "gfx/gfx.h"
-#include "includes/key.h"
-#include "includes/ui.h"
-#include "includes/text.h"
-#include "includes/file.h"
-#include "includes/specialChars.h"
-#include "includes/homescreen.h"
-#include "includes/editor.h"
 
 // defines
 #define VERSION 1
@@ -34,11 +11,6 @@
 
 #define SCRN_WIDTH    320
 #define SCRN_HEIGHT   240
-
-// text editing specific things
-#define TXT_STR "TXT" // bytes written to the beginning of a text file to distinguish them from other files
-#define START_OF_TEXT  50  // Offset of the text data in files; in other words, the number of bytes at the beginning of the file to ignore.
-#define MIN_FILE_SIZE (3+START_OF_TEXT)
 
 #define BLACK           0  // black
 #define WHITE           1  // white
@@ -50,7 +22,7 @@
 #define RED             7  // red
 #define LIGHT_BLUE      8  // light blue
 #define PAPER_YELLOW    9  // color of yellow paper stickypads
-  
+
 #define HOME            1  // Integer return signifying a request to go to the homescreen (file viwer)
 #define QUIT            0  // Integer return signifying a quit request.
 #define CANCEL        100  // Integer return signifying a cancel / close window request. NOT the same as QUIT.
@@ -88,11 +60,5 @@ struct globalPalette{
 	struct editorScrn editorScrn;
 	struct buttons buttons;
 };
-
-#define MATH          1
-#define CAPS          2
-#define LOWER_CASE    3
-
-#define TEXT_ORIGIN   10 // the text in a file begins at offset of 10 bytes from the beginning
 
 #endif

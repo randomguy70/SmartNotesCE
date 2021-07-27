@@ -1,6 +1,17 @@
 #ifndef FILE_H
 #define FILE_H
 
+/* -------------- txt file byte format -------------- 
+
+
+
+*/
+
+// text editing specific things
+#define TXT_STR "TXT" // bytes written to the beginning of a text file to distinguish them from other files
+#define START_OF_TEXT  50  // Offset of the text data in files; in other words, the number of bytes at the beginning of the file to ignore.
+#define MIN_FILE_SIZE (3+START_OF_TEXT)
+
 struct lineStruct;
 struct file;
 
@@ -12,6 +23,12 @@ uint8_t getNumFiles(const char *txt);
 
 // creates a new text file with an inputted name (a text file is an appvar with TXT as the first 3 bytes, sortof like an extension a file has on a computer)
 uint8_t newFile(void);
+
+// deletes the appvar with the given name
+bool checkIfDeleteFile(char *name);
+
+// renames a file with an inputted name
+bool renameFile(const char *name);
 
 struct file {
 	// general information

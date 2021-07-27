@@ -1,4 +1,13 @@
 #include "main.h"
+#include <stdint.h>
+#include <graphx.h>
+#include <keypadc.h>
+#include <fileioc.h>
+#include <fontlibc.h>
+#include <string.h>
+
+#include <includes/text.h>
+#include <includes/ui.h>
 
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 {
@@ -201,4 +210,10 @@ int copyWord(char* dest, char* src)
    }
 	dest[pos] = '\0';
    return pos;
+}
+
+void fontlib_DrawStringXY(char *str, int x, int y) {
+	fontlib_SetCursorPosition(x, y);
+	fontlib_DrawString(str);
+	return;
 }
