@@ -16,7 +16,7 @@ static uint8_t dispFiles(struct fileViewerStruct *HS);
 static void dispHSButtons(void);
 static uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS);
 static uint8_t loadFiles(struct fileViewerStruct *HS);
-static const struct menu *loadHomeScreenOtherMenu(void);
+static struct menu *loadHomeScreenOtherMenu(void);
 
 
 // btw, HS stands for homescreen
@@ -343,8 +343,8 @@ static uint8_t loadFiles(struct fileViewerStruct *HS) {
    return numFiles;
 }
 
-static const struct menu *loadHomeScreenOtherMenu(void) {
-	static const struct menu menu = { 
+static struct menu *loadHomeScreenOtherMenu(void) {
+	static struct menu menu = { 
 		.title = "Options",
 		.x = 200, .y = 100,
 		.numOptions = 5,
