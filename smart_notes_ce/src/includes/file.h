@@ -30,17 +30,14 @@ bool checkIfDeleteFile(char *name);
 // renames a file with an inputted name
 bool renameFile(const char *name);
 
+// contains data about a certain (open) file
 struct file {
 	// general information
 	
 	uint8_t slot;
-	char os_name[10];
+	char *os_name;
 	char *full_name;
 	int size;
-	
-	// window display information
-	
-	int lineDisplayOffset; // how many lines have been shifted off the screen so that the user could scroll down
 	
 	// text-specific information
 	
@@ -67,7 +64,10 @@ bool renameFile(const char *name);
 // get a file's data (usually before opening it)
 int loadFile(struct file *file, char *name);
 
-// gets the pointers to the start of each line in the file, as well as their byte offset from the text origin
-int getLinePtrs(struct file *file);
+// Copies the data from a file into an array. The array should always be the maximum possible size of a file
+int fileToArray(const char *name, char *array);
+
+// copies the data from an array into a file
+int arrayToFile(char *array, const char *name, int bytes);
 
 #endif

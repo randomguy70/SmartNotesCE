@@ -81,7 +81,7 @@ static uint8_t handleEditorKeyPresses(struct editor *editor) {
 	return CANCEL;
 }
 
-int getLinePtrs(struct file *file) {
+int getLinePtrs(char *array) {
 	
 	char *readPos = file->txtPtr;
 	int linesRead = 0;

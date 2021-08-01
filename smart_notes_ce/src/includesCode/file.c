@@ -84,7 +84,7 @@ bool renameFile(const char *name) {
 }
 
 // formats the file data into an organized structure (hence the struct)
-int loadFile(struct file *file, char *name) {
+int loadFile(char *name, struct file file) {
 	
 	strcpy(file->os_name, name);
 	
@@ -129,7 +129,7 @@ int fileToArray(const char *name, char *array) {
 	return fileSize;
 }
 
-arrayToFile(char *array, const char *name, int bytes) {
+int arrayToFile(char *array, const char *name, int bytes) {
 	uint8_t fileSlot;
 	int fileSize;
 	
