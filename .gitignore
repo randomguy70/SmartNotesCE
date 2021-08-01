@@ -3,3 +3,5 @@
 smart_notes_ce/bin
 smart_notes_ce/obj
 .VSCodeCounter
+src/gfx/*.c
+src/gfx/*.h
