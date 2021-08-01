@@ -128,3 +128,23 @@ int fileToArray(const char *name, char *array) {
 	
 	return fileSize;
 }
+
+arrayToFile(char *array, const char *name, int bytes) {
+	uint8_t fileSlot;
+	int fileSize;
+	
+	// safely open the file and return if there isn't a file with the given name
+	ti_CloseAll();
+	fileSlot = ti_Open(name, "r");
+	
+	if(!fileSlot)
+		return 0;
+	
+	fileSize = ti_GetSize(fileSlot);
+	
+	// read the appropriate number of bytes from the array into the file
+	ti_Seek(MIN_FILE_SIZE, 0, fileSlot);
+	ti_Write(array, bytes, 1, fileSlot);
+	
+	return fileSize;
+}
