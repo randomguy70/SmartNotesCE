@@ -108,3 +108,23 @@ int loadFile(struct file *file, char *name) {
 	
 	return 1;
 };
+
+int fileToArray(const char *name, char *array) {
+	uint8_t fileSlot;
+	int fileSize;
+	
+	// safely open the file and return if there isn't a file with the given name
+	ti_CloseAll();
+	fileSlot = ti_Open(name, "r");
+	
+	if(!fileSlot)
+		return 0;
+	
+	fileSize = ti_GetSize(fileSlot);
+	
+	// read the appropriate number of bytes from the file into the array
+	ti_Seek(MIN_FILE_SIZE, 0, fileSlot);
+	ti_Read(array, fileSize, 1, fileSlot);
+	
+	return fileSize;
+}
