@@ -217,3 +217,15 @@ void fontlib_DrawStringXY(char *str, int x, int y) {
 	fontlib_DrawString(str);
 	return;
 }
+
+// copies a string ended either by the NULL terminator OR a given number of characters
+int copyChars(char *dest, char *src, int chars) {
+	int pos = 0;
+	
+	while(pos<chars && src[pos] != '\0')
+		dest[pos] = src[pos++];
+	
+	dest[pos] = '\0';
+	
+	return pos;
+}

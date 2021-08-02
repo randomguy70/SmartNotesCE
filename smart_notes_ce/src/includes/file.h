@@ -11,6 +11,7 @@
 #define TXT_STR "TXT" // bytes written to the beginning of a text file to distinguish them from other files
 #define START_OF_TEXT  50  // Offset of the text data in files; in other words, the number of bytes at the beginning of the file to ignore.
 #define MIN_FILE_SIZE (3+START_OF_TEXT)
+#define MAX_FILE_NAME_SIZE = 18;
 
 struct lineStruct;
 struct file;
@@ -32,27 +33,22 @@ bool renameFile(const char *name);
 
 // contains data about a certain (open) file
 struct file {
+	
 	// general information
 	
 	uint8_t slot;
-	char *os_name;
-	char *full_name;
-	int size;
+	char os_name[10];
+	char full_name[19];
+	int size;        // byte size of the file BEFORE its data was copied into an array and edited
 	
 	// text-specific information
 	
-	char *txtPtr; // pointer to the start of ascii data in the file compatable with my program
-	char *txtEnd; // pointer to the end of the printable ascii data in the file
+	char *txtStart; // pointer to the start of ascii data in the file compatable with my program
+	char *txtEnd;   // pointer to the end of the printable ascii data in the file
 	
-	int numLines; // number of lines in the file
-	char *linePtrs[200]; // pointers to the start of each line (for cursor and text insertion purposes)
+	int numLines;   // number of lines in the file
+	char *linePtrs[200]; // Pointers to the start of each line (the lines are all contained in an array, so these aren't pointers to an actual file's contents)
 	
-	// editing specific information
-	
-	char *editPos;
-	int selectedChars; // number of characters highlighted / selected. default is 0
-	int curLine; // line that cursor is on
-	int curCol; // column that cursor is after
 };
 
 // check if user wants to delete a file, and deleted the selected file if so
@@ -69,5 +65,8 @@ int fileToArray(const char *name, char *array);
 
 // copies the data from an array into a file
 int arrayToFile(char *array, const char *name, int bytes);
+
+// copies 10 characters or a string from the given file, appending that on to its os name. starts copying from an offset of 3 bytes in the file's data
+uint8_t getFullName(char *fullNameBuffer, char *osName);
 
 #endif

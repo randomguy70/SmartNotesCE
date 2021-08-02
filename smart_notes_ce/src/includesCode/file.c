@@ -84,27 +84,21 @@ bool renameFile(const char *name) {
 }
 
 // formats the file data into an organized structure (hence the struct)
-int loadFile(char *name, struct file file) {
+int loadFile(struct file *file, char *name) {
 	
-	strcpy(file->os_name, name);
-	
-	// reset editing variables
-	file->curCol = 0;
-	file->curLine = 0;
-	file->lineDisplayOffset = 0;
+	getFullName(file->full_name, name);
 	
 	ti_CloseAll();
 	file->slot = ti_Open(name, "r+");
+	
 	if(!file->slot)
 		return false;
-	
-	// get its full name the extra characters of the full name(if there are any) are stored as a string starting at the 4th byte in the file). ps, haven't added full name (yet)
 	
 	// get its size
 	file->size = ti_GetSize(file->slot);
 	
 	// get some pointers
-	file->txtPtr = ti_GetDataPtr(file->slot) + MIN_FILE_SIZE;
+	file->txtStart = ti_GetDataPtr(file->slot) + MIN_FILE_SIZE;
 	
 	return 1;
 };
@@ -147,4 +141,22 @@ int arrayToFile(char *array, const char *name, int bytes) {
 	ti_Write(array, bytes, 1, fileSlot);
 	
 	return fileSize;
+}
+
+uint8_t getFullName(char *fullNameBuffer, char *osName) {
+	
+	uint8_t osNameLen;
+	uint8_t fullNameLen;
+	uint8_t fileSlot;
+	char *extraCharsPtr;
+	
+	ti_CloseAll();
+	fileSlot = ti_Open(osName, "r");
+	extraCharsPtr = ti_GetDataPtr(fileSlot) + 3;
+	osNameLen = strlen(osName);
+	
+	strcpy(fullNameBuffer, osName);
+	copyChars(&(fullNameBuffer[osNameLen]), extraCharsPtr, 10);
+	
+	return strlen(fullNameBuffer);
 }

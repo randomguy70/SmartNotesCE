@@ -15,10 +15,11 @@ struct editor {
 	bool shouldRefresh;      // whether or not to go through the editor loop again (calculate line ptrs, display text again)
 	
 	int editOffset;    // cursor offset in the text array that is being edited
-	char *editPos;     // current char *  that the cursor is after
-	int selectedChars; // number of characters highlighted / selected. default is 0
+	int selectedChars; // Number of characters highlighted / selected (to perform actions upon these characters, they can be found directly after the cursor offset in the text array). Default is 0
 	int curLine;       // line that cursor is on
 	int curCol;        // column that cursor is after
+	
+	char *text;        // array of the text data that was copied from a file, will be edited, and will be copied back into the file
 };
 
 // main text editing loop
