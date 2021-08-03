@@ -83,7 +83,7 @@ bool renameFile(const char *name) {
 	return false;
 }
 
-// formats the file data into an organized structure (hence the struct)
+// formats the file with the given name into an organized structure (hence the struct)
 int loadFile(struct file *file, char *name) {
 	
 	getFullName(file->full_name, name);
@@ -97,7 +97,7 @@ int loadFile(struct file *file, char *name) {
 	// get its size
 	file->size = ti_GetSize(file->slot);
 	
-	// get some pointers
+	// get some pointers (a SHARP idea! hah hah hah :)
 	file->txtStart = ti_GetDataPtr(file->slot) + MIN_FILE_SIZE;
 	
 	return 1;

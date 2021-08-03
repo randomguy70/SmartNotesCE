@@ -1,19 +1,22 @@
 #ifndef FILE_H
 #define FILE_H
 
-/* -------------- txt file byte format -------------- 
+#include <stdbool.h>
+#include <stdint.h>
 
-
-
+/* -------------- file byte format -------------- 
+bytes 1-3: "TXT"
+bytes 4-14: reserved for extra characters in the file's name
+bytes 15-50: reserved for other data (not decided what yet, but probably will use them in the future)
+bytes 50->end of the file: text data
 */
 
 // text editing specific things
 #define TXT_STR "TXT" // bytes written to the beginning of a text file to distinguish them from other files
 #define START_OF_TEXT  50  // Offset of the text data in files; in other words, the number of bytes at the beginning of the file to ignore.
 #define MIN_FILE_SIZE (3+START_OF_TEXT)
-#define MAX_FILE_NAME_SIZE = 18;
+#define MAX_FILE_NAME_SIZE 18
 
-struct lineStruct;
 struct file;
 
 // archives all files with "TXT" as the first 3 bytes
@@ -34,19 +37,19 @@ bool renameFile(const char *name);
 // contains data about a certain (open) file
 struct file {
 	
-	// general information
+	// general info
 	
 	uint8_t slot;
 	char os_name[10];
 	char full_name[19];
-	int size;        // byte size of the file BEFORE its data was copied into an array and edited
+	int size;            // byte size of the file BEFORE its data was copied into an array and edited
 	
-	// text-specific information
+	// text-specific info
 	
-	char *txtStart; // pointer to the start of ascii data in the file compatable with my program
-	char *txtEnd;   // pointer to the end of the printable ascii data in the file
+	char *fileTxtStart;  // pointer to the start of ascii data in the file compatable with my program
+	char *fileTxtEnd;    // pointer to the end of the printable ascii data in the file
 	
-	int numLines;   // number of lines in the file
+	int numLines;        // number of lines in the file
 	char *linePtrs[200]; // Pointers to the start of each line (the lines are all contained in an array, so these aren't pointers to an actual file's contents)
 	
 };

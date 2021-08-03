@@ -1,3 +1,11 @@
+/*
+////////////////////////////////////////
+// { SmartNotes CE } { 1.0 }
+// Author: JohnPaul Malloy (Randomguy)
+// Description: A text editor for the TI 84 Plus CE
+////////////////////////////////////////
+*/
+
 #include <fileioc.h>
 #include <fontlibc.h>
 #include <stdbool.h>

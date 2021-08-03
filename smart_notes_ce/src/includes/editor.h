@@ -19,7 +19,7 @@ struct editor {
 	int curLine;       // line that cursor is on
 	int curCol;        // column that cursor is after
 	
-	char *text;        // array of the text data that was copied from a file, will be edited, and will be copied back into the file
+	char *buffer;      // array of the text data that was copied from a file, will be edited, and will be copied back into the file
 };
 
 // main text editing loop
