@@ -114,14 +114,19 @@ int getLinePtrs(struct file *file) {
 	fontlib_SetLineSpacing(2, 2);
 	uint8_t fontHeight = fontlib_GetCurrentFontHeight();
 	
+	// record the first line pointer
+	file->linePtrs[linesRead] = readPos;
+	
 	while(true) {
 		
 		// new line character
 		if(*readPos == NEW_LINE) {
-			file->linePtrs[linesRead] = readPos;
+			
+			// record the adress of the new line
+			file->linePtrs[linesRead++] = ++readPos;
+			
 			fontlib_Newline();
-			linesRead++;
-			readPos++;
+			
 			txtX = 0;
 			txtY += fontHeight;
 		}
