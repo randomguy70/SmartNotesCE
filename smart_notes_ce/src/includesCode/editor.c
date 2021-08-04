@@ -16,11 +16,18 @@ static uint8_t handleEditorKeyPresses(struct editor *editor);
 int getLinePtrs(struct file *file);
 
 uint8_t dispEditor(struct editor *editor) {
+	editor->isRunning = true;
+	editor->curCol = 0;
+	editor->curLine = 0;
+	editor->editOffset = 0;
+	editor->selectedChars = 0;
+	editor->shouldRefresh = 1;
+	
 	uint8_t action; // action triggered by keypresses
 	
 	loadFile(&(editor->file), editor->fileName);
 	
-	while(true) {
+	while(editor->shouldRefresh) {
 		dispEditorBK(editor);
 		
 		action = handleEditorKeyPresses(editor);
@@ -67,7 +74,7 @@ static void dispEditorBK(struct editor *editor) {
 static uint8_t handleEditorKeyPresses(struct editor *editor) {
 	kb_Scan();
 	
-	editor->running = true; // this is only to prevent the unused parameter warning
+	editor->isRunning = true; // this is only to prevent the unused parameter warning
 	
 	if(kb_IsDown(kb_KeyClear)) {
 		return QUIT;

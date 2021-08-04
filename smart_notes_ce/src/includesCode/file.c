@@ -97,9 +97,9 @@ int loadFile(struct file *file, char *name) {
 	// get its size
 	file->size = ti_GetSize(file->slot);
 	
-	// get some pointers (a SHARP idea! hah hah hah :)
+	// get some direct pointers to the file's data (a SHARP idea! hah hah hah :)
 	file->txtStart = ti_GetDataPtr(file->slot) + MIN_FILE_SIZE;
-	
+	file->txtEnd = file->txtStart + file->size;
 	return 1;
 };
 
