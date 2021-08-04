@@ -83,7 +83,6 @@ bool renameFile(const char *name) {
 	return false;
 }
 
-// formats the file with the given name into an organized structure (hence the struct)
 int loadFile(struct file *file, const char *name) {
 	
 	// deal with both the names (os name and the full name. the os name is what the os calls the file, and the full name is what the user sees. the extra characters of the full name are stored in the file itself and appended on to the os name to form the full name)

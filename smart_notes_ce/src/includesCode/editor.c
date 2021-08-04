@@ -70,8 +70,22 @@ static void dispEditorBK(struct editor *editor) {
 	
 	gfx_Blit(1);
 	
-	waitForInput();
-	return;
+	return;	
+}
+
+static void dispEditorFG(struct editor *editor) {
+	uint8_t fontHeight;
+	uint8_t numLinesOnScreen;
+	int windowHeight;
+	
+	fontHeight = fontlib_GetCurrentFontHeight();
+	windowHeight = fontlib_GetWindowHeight();
+	numLinesOnScreen = windowHeight / fontHeight;
+	
+	// I will change this to be relative to the screen offset, just using this for debugging as of now
+	for(uint8_t i = 0; i<numLinesOnScreen || i<editor->file.numLines; i++) {
+		fontlib_DrawStringL(editor->file.linePtrs[i], editor->file.linePtrs[i] - editor->file.linePtrs[i]);
+	}
 	
 }
 
