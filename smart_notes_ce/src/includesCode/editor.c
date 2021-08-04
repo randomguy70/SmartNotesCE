@@ -92,32 +92,44 @@ static uint8_t handleEditorKeyPresses(struct editor *editor) {
 	return CANCEL;
 }
 
-int getLinePtrs(char *array) {
+int getLinePtrs(struct file *file) {
 	
-	char *readPos = file->txtPtr;
+	// i am thinking about making this only calculate the pointers of the lines onscreen at any given time, but who knows...maybe later
+	char *readPos = file->buffer; // acts like a cursor
 	int linesRead = 0;
-	// int charsRead = 0;
+	int charsRead = 0;
 	
-	int windowWidth = SCRN_WIDTH;
+	int windowWidth  = fontlib_GetWindowWidth;
+	int windowHeight = fontlib_GetWindowHeight;
 	
-	int txtX = 0; // used to determine how long each line should be, relative to the given window dimensions
-	int txtY = 0; // used to determine how long each line should be, relative to the given window dimensions
+	int txtX   = 0;  // used to determine how long each line should be, relative to the window dimensions
+	int txtY   = 0;  // used to determine how long each line should be, relative to the window dimensions
+	int curRow = 0;  // current row the readPos is in
+	int curCol = 0;  // current column the readPos is in
 
+	int strWidth;    // pixel length of the word starting at the readPos
+	
+	// fontlib things
 	fontlib_SetAlternateStopCode(' ');
 	fontlib_SetLineSpacing(2, 2);
 	uint8_t fontHeight = fontlib_GetCurrentFontHeight();
-	int strWidth;
 	
 	while(true) {
 		
 		// new line character
-		if(readPos == NEW_LINE) {
+		if(*readPos == NEW_LINE) {
 			file->linePtrs[linesRead] = readPos;
 			fontlib_Newline();
 			linesRead++;
 			readPos++;
 			txtX = 0;
 			txtY += fontHeight;
+		}
+		
+		if(*readPos == SPACE) {
+			fontlib_SetAlternateStopCode(0);
+			fontlib_DrawString(' ');
+			fontlib_SetAlternateStopCode(' ');
 		}
 		
 		// get the pixel length of the next word

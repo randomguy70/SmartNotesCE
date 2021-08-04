@@ -103,15 +103,22 @@ int loadFile(struct file *file, const char *name) {
 	file->txtStart = ti_GetDataPtr(file->slot) + MIN_FILE_SIZE;
 	file->txtEnd = file->txtStart + file->size;
 	
-	// copy the file's text data into a malloced array
-	file->buffer = malloc(file->size + 20);
+	// create a malloced array to hold the file's text data
+	file->buffer = (char *) malloc(file->size + 20);
 	
-	// record the size of the array (for resizing because of insertion and deletion)
-	
+	// copy the file's data into the array
 	fileToArray(name, file->buffer);
+	
+	// record the current byte size of the array (for resizing because of insertion and deletion)
+	file->bufferSize = file->size + 20;
+	file->charsInBuffer = file->size;
 	
 	return 1;
 };
+
+int saveFile(struct file *file, char *name) {
+	
+}
 
 int closeFile(struct file *file) {
 	ti_CloseAll();

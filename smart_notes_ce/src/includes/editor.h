@@ -24,6 +24,6 @@ struct editor {
 uint8_t dispEditor(struct editor *editor);
 
 // gets the pointers to the start of each line in the file, as well as their byte offset from the text origin
-int getLinePtrs(char *array);
+int getLinePtrs(struct file *file);
 
 #endif

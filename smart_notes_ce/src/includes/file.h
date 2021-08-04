@@ -47,12 +47,14 @@ struct file {
 	// text-specific info
 	
 	char *buffer;        // array of the text data copied from the file for faster editing
+	int charsInBuffer;   // number of text characters stored in the buffer
+	int bufferSize;      // the current byte size of the buffer
 	
-	char *txtStart;  // pointer to the start of ascii data in the open file (not in the buffer)
-	char *txtEnd;    // pointer to the end of the printable ascii data in the open file (not in the buffer)
+	char *txtStart;      // pointer to the start of ascii data in the open file (not in the buffer)
+	char *txtEnd;        // pointer to the end of the printable ascii data in the open file (not in the buffer)
 	
 	int numLines;        // number of lines in the file
-	char *linePtrs[200]; // Pointers to the start of each line (the lines are all contained in an array, so these aren't pointers to an actual file's contents)
+	char *linePtrs[200]; // Pointers to the start of each line (these lines are all contained in an array, not a file)
 	
 };
 
