@@ -3,5 +3,5 @@
 .VSCodeCounter
 smart_notes_ce/bin
 smart_notes_ce/obj
-smart_notes_ce/src/gfx
-smart_notes_ce/src/gfx
+smart_notes_ce/src/gfx/*.c
+smart_notes_ce/src/gfx/*.h
