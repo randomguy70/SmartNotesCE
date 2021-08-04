@@ -40,14 +40,16 @@ struct file {
 	// general info
 	
 	uint8_t slot;
-	char os_name[10];
-	char full_name[19];
+	char os_name[10];    // os name of the file
+	char full_name[19];  // full name of the file, can be up to 18 digits (different from os name!!!)
 	int size;            // byte size of the file BEFORE its data was copied into an array and edited
 	
 	// text-specific info
 	
-	char *fileTxtStart;  // pointer to the start of ascii data in the file compatable with my program
-	char *fileTxtEnd;    // pointer to the end of the printable ascii data in the file
+	char *buffer;        // array of the text data copied from the file for faster editing
+	
+	char *fileTxtStart;  // pointer to the start of ascii data in the open file (not in the buffer)
+	char *fileTxtEnd;    // pointer to the end of the printable ascii data in the open file (not in the buffer)
 	
 	int numLines;        // number of lines in the file
 	char *linePtrs[200]; // Pointers to the start of each line (the lines are all contained in an array, so these aren't pointers to an actual file's contents)

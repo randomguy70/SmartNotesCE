@@ -18,8 +18,6 @@ struct editor {
 	int selectedChars; // Number of characters highlighted / selected (to perform actions upon these characters, they can be found directly after the cursor offset in the text array). Default is 0
 	int curLine;       // line that cursor is on
 	int curCol;        // column that cursor is after
-	
-	char *buffer;      // array of the text data that was copied from a file, will be edited, and will be copied back into the file
 };
 
 // main text editing loop
