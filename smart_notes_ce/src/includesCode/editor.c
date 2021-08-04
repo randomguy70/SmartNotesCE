@@ -94,7 +94,7 @@ static uint8_t handleEditorKeyPresses(struct editor *editor) {
 
 int getLinePtrs(struct file *file) {
 	
-	// i am thinking about making this only calculate the pointers of the lines onscreen at any given time, but who knows...maybe later
+	// I am thinking about making this only calculate the pointers of the lines onscreen at any given time, but who knows...maybe later
 	char *readPos = file->buffer; // acts like a cursor
 	int linesRead = 0;
 	int charsRead = 0;
