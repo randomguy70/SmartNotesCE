@@ -116,15 +116,14 @@ int loadFile(struct file *file, const char *name) {
 	return 1;
 };
 
-int saveFile(struct file *file, char *name) {
-	
+int saveFile(struct file *file) {
+	arrayToFile(file->buffer, file->os_name, file->charsInBuffer);
+	return file->charsInBuffer;
 }
 
-int closeFile(struct file *file) {
-	ti_CloseAll();
+bool closeFile(struct file *file) {
 	free(file->buffer);
-	
-	return 1;
+	return true;
 };
 
 int fileToArray(const char *name, char *array) {

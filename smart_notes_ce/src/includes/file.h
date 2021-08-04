@@ -71,8 +71,11 @@ bool renameFile(const char *name);
 // get a file's data (usually before opening it)
 int loadFile(struct file *file, const char *name);
 
+// copies the data in the buffer into the actual file itself
+int saveFile(struct file *file);
+
 // frees the mem used by the given file struct
-int closeFile(struct file *file);
+bool closeFile(struct file *file);
 
 // Copies the data from a file into an array. The array should always be the maximum possible size of a file
 int fileToArray(const char *name, char *array);

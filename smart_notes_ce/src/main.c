@@ -5,6 +5,7 @@
 // Description: A text editor for the TI 84 Plus CE
 ////////////////////////////////////////
 */
+#include "main.h"
 
 #include <fileioc.h>
 #include <fontlibc.h>
@@ -13,7 +14,6 @@
 #include <graphx.h>
 #include <string.h>
 
-#include "main.h"
 #include <includes/editor.h>
 #include <includes/homescreen.h>
 #include <gfx/gfx.h>
