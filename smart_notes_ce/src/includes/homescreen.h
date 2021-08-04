@@ -1,6 +1,10 @@
 #ifndef HOME_SCREEN_H
 #define HOME_SCREEN_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <keypadc.h>
 
 #include "main.h"
@@ -28,5 +32,9 @@ struct fileViewerStruct {
 
 // displays homescreen and deals with all the homescreen functions and options
 uint8_t dispHomeScreen(struct fileViewerStruct *HS);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

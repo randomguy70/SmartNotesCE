@@ -1,6 +1,10 @@
 #ifndef TEXT_H
 #define TEXT_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define MATH                 1
 #define CAPS                 2
 #define LOWER_CASE           3
@@ -35,5 +39,9 @@ int copyWord(char * dest, char * src);
 
 // copies a string ended either by the NULL terminator OR a given number of characters
 int copyChars(char *dest, char *src, int chars);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

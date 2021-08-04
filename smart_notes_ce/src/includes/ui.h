@@ -1,6 +1,10 @@
 #ifndef UI_H
 #define UI_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <graphx.h>
 
 #include "main.h"
@@ -97,5 +101,9 @@ void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);
 // -returns true if the user pressed enter or second
 // -returns false if the user pressed clear
 bool waitForInput();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

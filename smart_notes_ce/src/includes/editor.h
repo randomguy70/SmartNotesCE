@@ -1,6 +1,10 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <includes/file.h>
 
 //// declarations
@@ -25,5 +29,9 @@ uint8_t dispEditor(struct editor *editor);
 
 // gets the pointers to the start of each line in the file, as well as their byte offset from the text origin
 int getLinePtrs(struct file *file);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -1,6 +1,10 @@
 #ifndef FILE_H
 #define FILE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -78,5 +82,9 @@ int arrayToFile(char *array, const char *name, int bytes);
 
 // copies 10 characters or a string from the given file, appending that on to its os name. starts copying from an offset of 3 bytes in the file's data
 uint8_t getFullName(char *fullNameBuffer, char *osName);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
