@@ -84,8 +84,10 @@ bool renameFile(const char *name) {
 }
 
 // formats the file with the given name into an organized structure (hence the struct)
-int loadFile(struct file *file, char *name) {
+int loadFile(struct file *file, const char *name) {
 	
+	// deal with both the names (os name and the full name. the os name is what the os calls the file, and the full name is what the user sees. the extra characters of the full name are stored in the file itself and appended on to the os name to form the full name)
+	strcpy(file->os_name, name);
 	getFullName(file->full_name, name);
 	
 	ti_CloseAll();
@@ -100,6 +102,21 @@ int loadFile(struct file *file, char *name) {
 	// get some direct pointers to the file's data (a SHARP idea! hah hah hah :)
 	file->txtStart = ti_GetDataPtr(file->slot) + MIN_FILE_SIZE;
 	file->txtEnd = file->txtStart + file->size;
+	
+	// copy the file's text data into a malloced array
+	file->buffer = malloc(file->size + 20);
+	
+	// record the size of the array (for resizing because of insertion and deletion)
+	
+	fileToArray(name, file->buffer);
+	
+	return 1;
+};
+
+int closeFile(struct file *file) {
+	ti_CloseAll();
+	free(file->buffer);
+	
 	return 1;
 };
 

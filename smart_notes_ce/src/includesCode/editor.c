@@ -16,25 +16,29 @@ static uint8_t handleEditorKeyPresses(struct editor *editor);
 int getLinePtrs(struct file *file);
 
 uint8_t dispEditor(struct editor *editor) {
-	editor->isRunning = true;
-	editor->curCol = 0;
-	editor->curLine = 0;
-	editor->editOffset = 0;
+	
+	// initialise some editor struct variables
+	editor->isRunning     = true;
+	editor->curCol        = 0;
+	editor->curLine       = 0;
+	editor->editOffset    = 0;
 	editor->selectedChars = 0;
 	editor->shouldRefresh = 1;
 	
-	uint8_t action; // action triggered by keypresses
+	uint8_t keyPressed;
 	
 	loadFile(&(editor->file), editor->fileName);
 	
 	while(editor->shouldRefresh) {
 		dispEditorBK(editor);
 		
-		action = handleEditorKeyPresses(editor);
+		kb_Scan();
 		
-		if(action == QUIT)
+		keyPressed = handleEditorKeyPresses(editor);
+		
+		if(keyPressed == QUIT)
 			return QUIT;
-		if(action == HOME)
+		if(keyPressed == HOME)
 			return HOME;
 	}
 }

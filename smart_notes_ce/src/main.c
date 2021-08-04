@@ -44,7 +44,7 @@ int main(void) {
 	gfx_SetTextBGColor(2);
 	}
 	
-	// checks for the data appvars and creates & formats new ones if necessary
+	// checks for the data appvars, creates & formats new ones if necessary
 	setupAppvars();
 	
 	// define main structs
@@ -55,6 +55,7 @@ int main(void) {
 	uint8_t mode = HOME;
 	
 	do {
+		
 		if(mode == QUIT)
 			break;
 			

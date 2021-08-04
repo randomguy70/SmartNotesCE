@@ -63,7 +63,10 @@ bool checkIfDeleteFile(char *name);
 bool renameFile(const char *name);
 
 // get a file's data (usually before opening it)
-int loadFile(struct file *file, char *name);
+int loadFile(struct file *file, const char *name);
+
+// frees the mem used by the given file struct
+int closeFile(struct file *file);
 
 // Copies the data from a file into an array. The array should always be the maximum possible size of a file
 int fileToArray(const char *name, char *array);
