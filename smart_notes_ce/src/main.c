@@ -59,7 +59,7 @@ int main(void) {
 		if(mode == QUIT)
 			break;
 			
-		if(mode == HOME || mode == CANCEL) {
+		if(mode == HOME) {
 			mode = dispHomeScreen(&homeScrn);
 		}
 		

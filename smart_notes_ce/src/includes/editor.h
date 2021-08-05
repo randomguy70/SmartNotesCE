@@ -12,7 +12,7 @@ struct editor;
 
 //// definitions
 struct editor {
-	char *fileName;    // hmmm??? maybe the name of the open file?!!!
+	char fileName[10];    // hmmm??? maybe the name of the open file?!!!
 	struct file file;  // contains data about the opened file in the editor
 	
 	bool isRunning;      // Whether or not to repeat the editor loop. If 0, then the editor will quit at the first opportunity

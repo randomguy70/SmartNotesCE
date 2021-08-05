@@ -19,20 +19,20 @@ uint8_t dispEditor(struct editor *editor) {
 	
 	// initialise some editor struct variables
 	editor->isRunning     = true;
+	editor->shouldRefresh = true;
 	editor->curCol        = 0;
 	editor->curLine       = 0;
 	editor->editOffset    = 0;
 	editor->selectedChars = 0;
-	editor->shouldRefresh = 1;
 	
 	uint8_t keyPressed;
 	
 	loadFile(&(editor->file), editor->fileName);
 	
-	while(editor->shouldRefresh) {
-		dispEditorBK(editor);
-		
-		kb_Scan();
+	while(true) {
+		if(editor->shouldRefresh) {
+			dispEditorBK(editor);
+		}
 		
 		keyPressed = handleEditorKeyPresses(editor);
 		
@@ -47,7 +47,6 @@ uint8_t dispEditor(struct editor *editor) {
 static void dispEditorBK(struct editor *editor) {
 	
 	gfx_SetDraw(1);
-	
 	gfx_FillScreen(WHITE);
 	
 	// header rect
