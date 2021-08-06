@@ -76,16 +76,25 @@ static void dispEditorFG(struct editor *editor) {
 	uint8_t fontHeight;
 	uint8_t numLinesOnScreen;
 	int windowHeight;
+	int windowXMin;
+	int windowYMin;
+	
+	windowXMin = fontlib_GetWindowXMin;
+	windowYMin = fontlib_GetWindowYMin;
 	
 	fontHeight = fontlib_GetCurrentFontHeight();
 	windowHeight = fontlib_GetWindowHeight();
 	numLinesOnScreen = windowHeight / fontHeight;
 	
+	fontlib_SetCursorPosition(windowXMin, windowYMin);
+	
 	// I will change this to be relative to the screen offset, just using this for debugging as of now
-	for(uint8_t i = 0; i<numLinesOnScreen || i<editor->file.numLines; i++) {
+	for(uint8_t i = 0; i<numLinesOnScreen && i<editor->file.numLines; i++) {
 		fontlib_DrawStringL(editor->file.linePtrs[i], editor->file.linePtrs[i] - editor->file.linePtrs[i]);
+		fontlib_Newline();
 	}
 	
+	return;
 }
 
 static uint8_t handleEditorKeyPresses(struct editor *editor) {
