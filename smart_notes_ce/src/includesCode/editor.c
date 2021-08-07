@@ -149,7 +149,7 @@ int getLinePtrs(struct file *file) {
 		// new line character
 		if(*readPos == NEW_LINE) {
 			
-			// record the adress of the new line
+			// record the address of the new line
 			file->linePtrs[linesRead++] = ++readPos;
 			
 			fontlib_Newline();
@@ -159,14 +159,13 @@ int getLinePtrs(struct file *file) {
 		}
 		
 		if(*readPos == SPACE) {
-			fontlib_SetAlternateStopCode(0);
-			fontlib_DrawString(' ');
-			fontlib_SetAlternateStopCode(' ');
+			txtX += 3;
+			readPos++;
 		}
 		
 		// get the pixel length of the next word
 		strWidth = fontlib_GetStringWidth(readPos);
-	
+		
 		// if the word can fit on to the end of the line	
 		if(strWidth + txtX <= windowWidth) {
 			readPos += fontlib_GetStrLen(readPos) + 1; // the one extra counts for the space or null terminator
