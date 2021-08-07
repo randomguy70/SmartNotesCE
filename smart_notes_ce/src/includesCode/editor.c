@@ -116,8 +116,8 @@ static uint8_t handleEditorKeyPresses(struct editor *editor) {
 
 int getLinePtrs(struct file *file) {
 	
-	// I am thinking about making this only calculate the pointers of the lines onscreen at any given time, but who knows...maybe later
-	char *readPos = file->buffer; // acts like a cursor
+	// I am thinking about making this only calculate the pointers of the lines onscreen at any given time for optimization, but who knows...maybe later
+	char *readPos = file->buffer; // acts like a cursor in the buffer
 	int linesRead = 0;
 	int charsRead = 0;
 	
@@ -136,10 +136,15 @@ int getLinePtrs(struct file *file) {
 	fontlib_SetLineSpacing(2, 2);
 	uint8_t fontHeight = fontlib_GetCurrentFontHeight();
 	
+	uint8_t maxLinesViewable = windowHeight / fontHeight;
+	
 	// record the first line pointer
 	file->linePtrs[linesRead] = readPos;
 	
 	while(true) {
+		
+		// get the pixel length of the next word
+		strWidth = fontlib_GetStringWidth(readPos);
 		
 		// new line character
 		if(*readPos == NEW_LINE) {
@@ -175,11 +180,21 @@ int getLinePtrs(struct file *file) {
 			txtX = 0;
 			txtY += fontHeight;
 			file->linePtrs[linesRead] = readPos;
+			linesRead++;
 		}
 		
-		// if nothing has been printed on to the line but the word is still too long for a whole line, then character-wrap i
+		// if nothing has been printed on to the line but the word is still too long for a whole line, then force wrap it
 		if(txtX <= 0 && strWidth > windowWidth) {
+			fontlib_DrawStringL(readPos, getMaxCharsPerLine(readPos));
+			
+			readPos+=getMaxCharsPerLine(readPos);
+			fontlib_Newline();
+			txtX = 0;
+			txtY += fontHeight;
+			linesRead++;
 		}
+		
+		if()
 	}
 	
 }

@@ -40,6 +40,11 @@ int copyWord(char * dest, char * src);
 // copies a string ended either by the NULL terminator OR a given number of characters
 int copyChars(char *dest, char *src, int chars);
 
+// calculates the 
+int getMaxCharsPerLine(char *src);
+
+int getByteDifference(void *ptrOne, void *ptrTwo);
+
 #ifdef __cplusplus
 }
 #endif

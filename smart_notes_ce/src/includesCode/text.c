@@ -229,3 +229,26 @@ int copyChars(char *dest, char *src, int chars) {
 	
 	return pos;
 }
+
+int getMaxCharsPerLine(char *src) {
+	int maxLineWidth = fontlib_GetWindowWidth;
+	int lineLen = 0; // the pixe length of the current line
+	uint8_t chars = 0; // how many characters are fitting on the line currently
+	
+	while(lineLen < maxLineWidth)
+		lineLen = fontlib_GetStringWidthL(src, chars++);
+	
+	return chars;
+}
+
+int getByteDifference(void *ptrOne, void *ptrTwo) {
+	int byteDifference = 0;
+	
+	if(ptrOne <= ptrTwo) {
+		while(ptrOne + byteDifference++ < ptrTwo)
+		return byteDifference;
+	}
+	
+	while(ptrTwo + byteDifference++ < ptrOne)
+	return byteDifference;
+}
