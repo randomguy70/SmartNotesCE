@@ -150,7 +150,7 @@ int getLinePtrs(struct file *file) {
 		if(*readPos == NEW_LINE) {
 			
 			// record the address of the new line
-			file->linePtrs[linesRead++] = ++readPos;
+			file->linePtrs[linesRead++] = readPos++;
 			
 			fontlib_Newline();
 			
