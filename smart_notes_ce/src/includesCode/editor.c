@@ -143,6 +143,11 @@ int getLinePtrs(struct file *file) {
 	
 	while(true) {
 		
+		// i am putting this in several spots in this loop for safety puroses
+		if(linesRead > maxLinesViewable) {
+			break;
+		}
+		
 		// get the pixel length of the next word
 		strWidth = fontlib_GetStringWidth(readPos);
 		
@@ -156,9 +161,18 @@ int getLinePtrs(struct file *file) {
 			
 			txtX = 0;
 			txtY += fontHeight;
+			
+			if(linesRead > maxLinesViewable) {
+				break;
+			}
 		}
 		
 		if(*readPos == SPACE) {
+			
+			if(linesRead > maxLinesViewable) {
+				break;
+			}
+			
 			if(txtX + 3 < windowWidth) {
 				txtX += 3;
 				readPos++;
@@ -169,6 +183,7 @@ int getLinePtrs(struct file *file) {
 				txtX = 0;
 				txtY += fontHeight;
 			}
+			
 		}
 		
 		// get the pixel length of the next word
@@ -182,6 +197,10 @@ int getLinePtrs(struct file *file) {
 		
 		// if something has already been printed on the line and the next word can't fit on to the end of the line
 		if(strWidth + txtX > windowWidth && txtX > 0) {
+			if(linesRead > maxLinesViewable) {
+				break;
+			}
+			
 			fontlib_Newline();
 			linesRead++;
 			txtX = 0;
@@ -192,6 +211,10 @@ int getLinePtrs(struct file *file) {
 		
 		// if nothing has been printed on to the line but the word is still too long for a whole line, then force wrap it
 		if(txtX <= 0 && strWidth > windowWidth) {
+			if(linesRead > maxLinesViewable) {
+				break;
+			}
+			
 			fontlib_DrawStringL(readPos, getMaxCharsPerLine(readPos));
 			
 			readPos+=getMaxCharsPerLine(readPos);
@@ -201,7 +224,6 @@ int getLinePtrs(struct file *file) {
 			linesRead++;
 		}
 		
-		if()
 	}
 	
 }
