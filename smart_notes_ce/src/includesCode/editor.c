@@ -159,8 +159,16 @@ int getLinePtrs(struct file *file) {
 		}
 		
 		if(*readPos == SPACE) {
-			txtX += 3;
-			readPos++;
+			if(txtX + 3 < windowWidth) {
+				txtX += 3;
+				readPos++;
+			}
+			else {
+				file->linePtrs[linesRead++] = readPos++;
+				fontlib_Newline();
+				txtX = 0;
+				txtY += fontHeight;
+			}
 		}
 		
 		// get the pixel length of the next word
