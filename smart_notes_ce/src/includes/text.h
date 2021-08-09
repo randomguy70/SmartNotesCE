@@ -45,6 +45,8 @@ int getMaxCharsPerLine(char *src);
 
 int getByteDifference(void *ptrOne, void *ptrTwo);
 
+int drawSpace();
+
 #ifdef __cplusplus
 }
 #endif

@@ -54,6 +54,10 @@ int main(void) {
 	// dispHomeScreen needs to return 0 to exit the program, else, it returns 1
 	uint8_t mode = HOME;
 	
+	uint8_t fileSlot = ti_Open("ex", "w+");
+	ti_Write("So, this is an experiment, obviously, and I hope my spelling isn't too atrocious...", 84, 1, fileSlot);
+	ti_CloseAll();
+	
 	do {
 		
 		if(mode == QUIT)

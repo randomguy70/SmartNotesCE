@@ -25,9 +25,9 @@ uint8_t dispEditor(struct editor *editor) {
 	editor->editOffset    = 0;
 	editor->selectedChars = 0;
 	
-	uint8_t keyPressed;
-	
 	loadFile(&(editor->file), editor->fileName);
+	
+	uint8_t keyPressed;
 	
 	while(true) {
 		if(editor->shouldRefresh) {
@@ -116,7 +116,7 @@ static uint8_t handleEditorKeyPresses(struct editor *editor) {
 
 int getLinePtrs(struct file *file) {
 	
-	// I am thinking about making this only calculate the pointers of the lines onscreen at any given time for optimization, but who knows...maybe later
+	// I am thinking about making this only calculate the pointers of the lines onscreen at any given time for optimization, but who knows...maybe later...
 	char *readPos = file->buffer; // acts like a cursor in the buffer
 	int linesRead = 0;
 	int charsRead = 0;
@@ -154,7 +154,7 @@ int getLinePtrs(struct file *file) {
 		if(*readPos == NEW_LINE) {
 			
 			// record the address of the new line
-			file->linePtrs[linesRead++] = readPos++;
+			file->linePtrs[linesRead++] = ++readPos;
 			
 			fontlib_Newline();
 			
@@ -168,8 +168,8 @@ int getLinePtrs(struct file *file) {
 		
 		if(*readPos == SPACE) {
 			
-			if(txtX + 3 < windowWidth) {
-				txtX += 3;
+			if(txtX + SPACE_WIDTH < windowWidth) {
+				txtX += SPACE_WIDTH;
 				readPos++;
 			}
 			else {

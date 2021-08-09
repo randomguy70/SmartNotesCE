@@ -252,3 +252,14 @@ int getByteDifference(void *ptrOne, void *ptrTwo) {
 	while(ptrTwo + byteDifference++ < ptrOne)
 	return byteDifference;
 }
+
+int drawSpace() {
+	int x, y;
+	
+	x = fontlib_GetCursorX() + 4;
+	y = fontlib_GetCursorY();
+	
+	fontlib_SetCursorPosition(x, y);
+	
+	return x;
+}
