@@ -151,7 +151,6 @@ int getLinePtrs(struct file *file) {
 		// get the pixel length of the next word
 		strWidth = fontlib_GetStringWidth(readPos);
 		
-		// new line character
 		if(*readPos == NEW_LINE) {
 			
 			// record the address of the new line
@@ -169,15 +168,16 @@ int getLinePtrs(struct file *file) {
 		
 		if(*readPos == SPACE) {
 			
-			if(linesRead > maxLinesViewable) {
-				break;
-			}
-			
 			if(txtX + 3 < windowWidth) {
 				txtX += 3;
 				readPos++;
 			}
 			else {
+				
+				if(linesRead > maxLinesViewable) {
+					break;
+				}
+				
 				file->linePtrs[linesRead++] = readPos++;
 				fontlib_Newline();
 				txtX = 0;
