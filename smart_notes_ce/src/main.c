@@ -55,11 +55,13 @@ int main(void) {
 	uint8_t mode = HOME;
 	
 	ti_CloseAll();
-	const char *name = "EX";
-	uint8_t fileSlot = ti_Open(name, "w+");
+	ti_var_t fileSlot = ti_Open("EX", "w+");
+	
+	ti_SetArchiveStatus(true, fileSlot);
 	ti_Seek(0, SEEK_SET, fileSlot);
 	// ti_Write("TXT", 3, 1, fileSlot);
 	ti_Write("So, this is an experiment, obviously, and I hope my spelling isn't too atrocious...", 84, 1, fileSlot);
+	
 	ti_CloseAll();
 	
 	while (true)

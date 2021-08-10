@@ -81,8 +81,8 @@ static void dispEditorFG(struct editor *editor) {
 	int windowXMin;
 	int windowYMin;
 	
-	windowXMin = fontlib_GetWindowXMin;
-	windowYMin = fontlib_GetWindowYMin;
+	windowXMin = fontlib_GetWindowXMin();
+	windowYMin = fontlib_GetWindowYMin();
 	
 	fontHeight = fontlib_GetCurrentFontHeight();
 	windowHeight = fontlib_GetWindowHeight();
@@ -123,8 +123,8 @@ int getLinePtrs(struct file *file) {
 	
 	char *readPos = file->buffer; // acts like a cursor in the buffer
 	
-	int windowWidth  = fontlib_GetWindowWidth;
-	int windowHeight = fontlib_GetWindowHeight;
+	uint8_t windowWidth  = fontlib_GetWindowWidth();
+	uint8_t windowHeight = fontlib_GetWindowHeight();
 	
 	int txtX   = 0;
 	int txtY   = 0;
@@ -221,4 +221,5 @@ int getLinePtrs(struct file *file) {
 		
 	}
 	
+	return file->numLines;
 }

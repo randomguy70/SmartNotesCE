@@ -68,7 +68,7 @@ bool checkIfDeleteFile(char *name);
 bool renameFile(const char *name);
 
 // get a file's data (usually before opening it)
-int loadFile(struct file *file, const char *name);
+int loadFile(struct file *file, char *name);
 
 // copies the data in the buffer into the actual file itself
 int saveFile(struct file *file);

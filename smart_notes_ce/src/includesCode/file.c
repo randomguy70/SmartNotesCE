@@ -83,7 +83,7 @@ bool renameFile(const char *name) {
 	return false;
 }
 
-int loadFile(struct file *file, const char *name) {
+int loadFile(struct file *file, char *name) {
 	
 	// deal with both the names (os name and the full name. the os name is what the os calls the file, and the full name is what the user sees. the extra characters of the full name are stored in the file itself and appended on to the os name to form the full name)
 	strcpy(file->os_name, name);
@@ -159,7 +159,6 @@ int arrayToFile(char *array, const char *name, int bytes) {
 uint8_t getFullName(char *fullNameBuffer, char *osName) {
 	
 	uint8_t osNameLen;
-	uint8_t fullNameLen;
 	uint8_t fileSlot;
 	char *extraCharsPtr;
 	
