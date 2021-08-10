@@ -218,8 +218,7 @@ void fontlib_DrawStringXY(char *str, int x, int y) {
 	return;
 }
 
-// copies a string ended either by the NULL terminator OR a given number of characters
-int copyChars(char *dest, char *src, int chars) {
+int copyWordL(char *dest, char *src, int chars) {
 	int pos = 0;
 	
 	while(pos<chars && src[pos] != '\0')
@@ -231,8 +230,8 @@ int copyChars(char *dest, char *src, int chars) {
 }
 
 int getMaxCharsPerLine(char *src) {
-	int maxLineWidth = fontlib_GetWindowWidth;
-	int lineLen = 0; // the pixe length of the current line
+	unsigned int maxLineWidth = fontlib_GetWindowWidth();
+	unsigned int lineLen = 0; // the pixe length of the current line
 	uint8_t chars = 0; // how many characters are fitting on the line currently
 	
 	while(lineLen < maxLineWidth)
@@ -240,16 +239,18 @@ int getMaxCharsPerLine(char *src) {
 	
 	return chars;
 }
-
+4
 int getByteDifference(void *ptrOne, void *ptrTwo) {
 	int byteDifference = 0;
 	
 	if(ptrOne <= ptrTwo) {
-		while(ptrOne + byteDifference++ < ptrTwo)
+		while(ptrOne + byteDifference++ < ptrTwo){}
+		
 		return byteDifference;
 	}
 	
-	while(ptrTwo + byteDifference++ < ptrOne)
+	while(ptrTwo + byteDifference++ < ptrOne){}
+	
 	return byteDifference;
 }
 

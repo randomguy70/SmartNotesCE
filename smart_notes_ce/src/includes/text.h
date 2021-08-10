@@ -37,8 +37,8 @@ void fontlib_DrawStringXY(char *str, int x, int y);
 // copies a null or space terminated string into a given location
 int copyWord(char * dest, char * src);
 
-// copies a string ended either by the NULL terminator OR a given number of characters
-int copyChars(char *dest, char *src, int chars);
+// copies a string ended by the NULL terminator, OR by a space, OR by a given number of characters
+int copyWordL(char *dest, char *src, int chars);
 
 // calculates the 
 int getMaxCharsPerLine(char *src);

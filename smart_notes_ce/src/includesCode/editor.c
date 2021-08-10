@@ -12,6 +12,7 @@
 
 //// declarations
 static void dispEditorBK(struct editor *editor);
+static void dispEditorFG(struct editor *editor);
 static uint8_t handleEditorKeyPresses(struct editor *editor);
 int getLinePtrs(struct file *file);
 
@@ -32,6 +33,7 @@ uint8_t dispEditor(struct editor *editor) {
 	while(true) {
 		if(editor->shouldRefresh) {
 			dispEditorBK(editor);
+			dispEditorFG(editor);
 		}
 		
 		keyPressed = handleEditorKeyPresses(editor);
@@ -89,8 +91,11 @@ static void dispEditorFG(struct editor *editor) {
 	fontlib_SetCursorPosition(windowXMin, windowYMin);
 	
 	// I will change this to be relative to the screen offset, just using this for debugging as of now
-	for(uint8_t i = 0; i<numLinesOnScreen && i<editor->file.numLines; i++) {
-		fontlib_DrawStringL(editor->file.linePtrs[i], editor->file.linePtrs[i] - editor->file.linePtrs[i]);
+	for(uint8_t i = 0; i<editor->file.numLines; i++) {
+		
+		uint8_t strLen = getByteDifference(editor->file.linePtrs[i], editor->file.linePtrs[i]);
+		
+		fontlib_DrawStringL(editor->file.linePtrs[i], strLen);
 		fontlib_Newline();
 	}
 	
