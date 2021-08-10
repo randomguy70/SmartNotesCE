@@ -230,9 +230,9 @@ void fontlib_DrawStringXY(char *str, int x, int y) {
 int copyWordL(char *dest, char *src, int chars) {
 	int pos = 0;
 	
-	while(pos<chars && src[pos] != '\0')
+	while(pos < chars && src[pos] != '\0' && src[pos] != ' ')
 	{
-		dest[pos] = src[pos++];
+		dest[pos] = src[pos];
 		pos++;
 	}
 	
