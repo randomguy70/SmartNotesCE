@@ -55,9 +55,9 @@ int main(void) {
 	uint8_t mode = HOME;
 	
 	ti_CloseAll();
-	uint8_t fileSlot = ti_Open("ex", "w+");
-	
-	ti_Seek(0, 0, fileSlot);
+	const char *name = "EX";
+	uint8_t fileSlot = ti_Open(name, "w+");
+	ti_Seek(0, SEEK_SET, fileSlot);
 	// ti_Write("TXT", 3, 1, fileSlot);
 	ti_Write("So, this is an experiment, obviously, and I hope my spelling isn't too atrocious...", 84, 1, fileSlot);
 	ti_CloseAll();
@@ -65,8 +65,8 @@ int main(void) {
 	while (true)
 	{
 		
-		// if(mode != HOME && mode != OPEN)
-		// 	break;
+		if(mode == QUIT)
+			break;
 		
 		if(mode == HOME) {
 			mode = dispHomeScreen(&homeScrn);
@@ -79,7 +79,7 @@ int main(void) {
 		
 	}
 
-	// cleanup();
+	cleanup();
 	return 0;
 }
 
@@ -158,12 +158,12 @@ static bool formatUserInfoAppvar(char *name) {
 static void cleanup() {
 	gfx_End();
 	archiveAll();
-	ti_CloseAll();
 	
 	/*
 	This command prevents the on-key error message. got this from commandblockguy, so thank you! P.S he added this feature to the toolchain, so it will be available next release https://github.com/CE-Programming/toolchain/commit/fb852c6360bb30ad79da9e65bdf363da38cfdf83
 	*/
 
 	(*(volatile uint8_t*)0xF00008) = 1;
+	
 	return;
 }
