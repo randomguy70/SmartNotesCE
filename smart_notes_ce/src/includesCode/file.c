@@ -98,19 +98,10 @@ int loadFile(struct file *file, const char *name) {
 	// get its size
 	file->size = ti_GetSize(file->slot);
 	
-	// get some direct pointers to the file's data (a SHARP idea! hah hah hah :)
-	file->txtStart = ti_GetDataPtr(file->slot) + MIN_FILE_SIZE;
-	file->txtEnd = file->txtStart + file->size;
-	
-	// create a malloced array to hold the file's text data
-	file->buffer = (char *) malloc(file->size + 20);
-	
 	// copy the file's data into the array
 	fileToArray(name, file->buffer);
 	
-	// record the current byte size of the array (for resizing because of insertion and deletion)
-	file->bufferSize = file->size + 20;
-	file->charsInBuffer = file->size;
+	file->charsInBuffer = file->size - MIN_FILE_SIZE;
 	
 	return 1;
 };
@@ -174,11 +165,12 @@ uint8_t getFullName(char *fullNameBuffer, char *osName) {
 	
 	ti_CloseAll();
 	fileSlot = ti_Open(osName, "r");
-	extraCharsPtr = ti_GetDataPtr(fileSlot) + 3;
+	extraCharsPtr = ti_GetDataPtr(fileSlot) + strlen(HEADER_STR);
 	osNameLen = strlen(osName);
 	
 	strcpy(fullNameBuffer, osName);
-	copyChars(&(fullNameBuffer[osNameLen]), extraCharsPtr, 10);
+	// copyChars(&(fullNameBuffer[osNameLen]), extraCharsPtr, 10);
+	copyWordL(fullNameBuffer + osNameLen, extraCharsPtr, 10);
 	
 	return strlen(fullNameBuffer);
 }

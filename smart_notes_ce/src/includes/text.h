@@ -40,6 +40,9 @@ int copyWord(char * dest, char * src);
 // copies a string ended by the NULL terminator, OR by a space, OR by a given number of characters
 int copyWordL(char *dest, char *src, int chars);
 
+// returns the character length of a word terminated by 0 or a space
+int getWordLen(char *src);
+
 // calculates the 
 int getMaxCharsPerLine(char *src);
 

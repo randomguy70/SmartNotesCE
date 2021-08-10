@@ -314,7 +314,7 @@ static uint8_t loadFiles(struct fileViewerStruct *HS) {
 	
 	ti_CloseAll();
 	
-   while ((namePtr = ti_Detect(&search_pos, TXT_STR)) != NULL) {
+   while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL) {
 		
 		// copy the currently detected file's name into the fileviewer struct's names array
       strcpy(HS->fileNames[numFiles], namePtr);

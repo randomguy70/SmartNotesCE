@@ -121,40 +121,37 @@ static uint8_t handleEditorKeyPresses(struct editor *editor) {
 
 int getLinePtrs(struct file *file) {
 	
-	// I am thinking about making this only calculate the pointers of the lines onscreen at any given time for optimization, but who knows...maybe later...
 	char *readPos = file->buffer; // acts like a cursor in the buffer
-	int linesRead = 0;
-	int charsRead = 0;
 	
 	int windowWidth  = fontlib_GetWindowWidth;
 	int windowHeight = fontlib_GetWindowHeight;
 	
-	int txtX   = 0;  // used to determine how long each line should be, relative to the window dimensions
-	int txtY   = 0;  // used to determine how long each line should be, relative to the window dimensions
-	int curRow = 0;  // current row the readPos is in
-	int curCol = 0;  // current column the readPos is in
+	int txtX   = 0;
+	int txtY   = 0;
+	
+	int linesRead = 0;
+	uint8_t maxLinesViewable;
 
-	int strWidth;    // pixel length of the word starting at the readPos
+	int strWidth;    // pixel length of the word starting at readPos
+	int strLen;      // character length of the word starting at readPos
 	
 	// fontlib things
 	fontlib_SetAlternateStopCode(' ');
 	fontlib_SetLineSpacing(2, 2);
 	uint8_t fontHeight = fontlib_GetCurrentFontHeight();
 	
-	uint8_t maxLinesViewable = windowHeight / fontHeight;
+	maxLinesViewable = windowHeight / fontHeight;
 	
 	// record the first line pointer
 	file->linePtrs[linesRead] = readPos;
 	
-	while(true) {
+	while(readPos < file->dataEnd && linesRead < maxLinesViewable) {
 		
-		// i am putting this in several spots in this loop for safety puroses
-		if(linesRead > maxLinesViewable) {
-			break;
-		}
-		
-		// get the pixel length of the next word
 		strWidth = fontlib_GetStringWidth(readPos);
+		strLen   = getWordLen(readPos);
+		
+		if(readPos + strLen > file->dataEnd)
+			strLen = getByteDifference(readPos, file->dataEnd);
 		
 		if(*readPos == NEW_LINE) {
 			
@@ -166,9 +163,6 @@ int getLinePtrs(struct file *file) {
 			txtX = 0;
 			txtY += fontHeight;
 			
-			if(linesRead > maxLinesViewable) {
-				break;
-			}
 		}
 		
 		if(*readPos == SPACE) {
@@ -178,10 +172,6 @@ int getLinePtrs(struct file *file) {
 				readPos++;
 			}
 			else {
-				
-				if(linesRead > maxLinesViewable) {
-					break;
-				}
 				
 				file->linePtrs[linesRead++] = readPos++;
 				fontlib_Newline();

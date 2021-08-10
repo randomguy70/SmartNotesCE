@@ -212,6 +212,15 @@ int copyWord(char* dest, char* src)
    return pos;
 }
 
+int getWordLen(char *src) {
+	int chars = 0;
+	
+	while(src[chars] != '\0' && src[chars] != ' ')
+		chars++;
+	
+	return chars;
+}
+
 void fontlib_DrawStringXY(char *str, int x, int y) {
 	fontlib_SetCursorPosition(x, y);
 	fontlib_DrawString(str);
@@ -222,7 +231,10 @@ int copyWordL(char *dest, char *src, int chars) {
 	int pos = 0;
 	
 	while(pos<chars && src[pos] != '\0')
+	{
 		dest[pos] = src[pos++];
+		pos++;
+	}
 	
 	dest[pos] = '\0';
 	
@@ -239,7 +251,7 @@ int getMaxCharsPerLine(char *src) {
 	
 	return chars;
 }
-4
+
 int getByteDifference(void *ptrOne, void *ptrTwo) {
 	int byteDifference = 0;
 	

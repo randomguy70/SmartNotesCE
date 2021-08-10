@@ -54,15 +54,20 @@ int main(void) {
 	// dispHomeScreen needs to return 0 to exit the program, else, it returns 1
 	uint8_t mode = HOME;
 	
+	ti_CloseAll();
 	uint8_t fileSlot = ti_Open("ex", "w+");
+	
+	ti_Seek(0, 0, fileSlot);
+	// ti_Write("TXT", 3, 1, fileSlot);
 	ti_Write("So, this is an experiment, obviously, and I hope my spelling isn't too atrocious...", 84, 1, fileSlot);
 	ti_CloseAll();
 	
-	do {
+	while (true)
+	{
 		
-		if(mode == QUIT)
-			break;
-			
+		// if(mode != HOME && mode != OPEN)
+		// 	break;
+		
 		if(mode == HOME) {
 			mode = dispHomeScreen(&homeScrn);
 		}
@@ -72,9 +77,9 @@ int main(void) {
 			mode = dispEditor(&editor);
 		}
 		
-	} while (true);
+	}
 
-	cleanup();
+	// cleanup();
 	return 0;
 }
 
