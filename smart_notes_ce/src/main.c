@@ -30,11 +30,9 @@ static bool formatUserInfoAppvar(char *name);
 
 
 int main(void) {
-	// one-time setup things
-	{
-	if(!setupFontlibc()) {
+	
+	if(!setupFontlibc())
 		return 0;
-	}
 	
 	// necessary gfx stuff
 	gfx_Begin();
@@ -42,10 +40,14 @@ int main(void) {
 	gfx_SetTransparentColor(2);
 	gfx_SetTextTransparentColor(2);
 	gfx_SetTextBGColor(2);
-	}
 	
-	// checks for the data appvars, creates & formats new ones if necessary
+	// checks for the data appvars. Creates new ones if necessary
 	setupAppvars();
+	
+	ti_CloseAll();
+	ti_var_t file = ti_Open("NEW", "w+");
+	ti_Write("TXT", 3, 1, file);
+	ti_SetArchiveStatus(true, file);
 	
 	// define main structs
 	struct fileViewerStruct homeScrn;
@@ -53,20 +55,7 @@ int main(void) {
 	
 	// dispHomeScreen needs to return 0 to exit the program, else, it returns 1
 	uint8_t mode = HOME;
-	
-	ti_CloseAll();
-	ti_var_t fileSlot = ti_Open("EX", "w+");
-	
-	if(fileSlot == 0)
-		return 0;
 		
-	ti_SetArchiveStatus(true, fileSlot);
-	// ti_Seek(0, SEEK_SET, fileSlot);
-	// // ti_Write("TXT", 3, 1, fileSlot);
-	// ti_Write("So, this is an experiment, obviously, and I hope my spelling isn't too atrocious...", 84, 1, fileSlot);
-	
-	ti_CloseAll();
-	
 	while (true)
 	{
 		
