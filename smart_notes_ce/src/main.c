@@ -14,9 +14,10 @@
 #include <graphx.h>
 #include <string.h>
 
-#include <includes/editor.h>
-#include <includes/homescreen.h>
-#include <gfx/gfx.h>
+#include "includes/editor.h"
+#include "includes/homescreen.h"
+#include "gfx/gfx.h"
+#include "includes/ui.h"
 
 // checks for font appvar(s), loads font, and deals with technical font details
 static uint8_t setupFontlibc();
@@ -44,14 +45,6 @@ int main(void) {
 	// checks for the data appvars. Creates new ones if necessary
 	setupAppvars();
 	
-	ti_CloseAll();
-	ti_var_t file = ti_Open("NEW", "w");
-	if(!file)
-		return 0;
-		
-	ti_Write("HELLO, WHAT is the matter with this program???", 47, 1, file);
-	// ti_SetArchiveStatus(true, file);
-	
 	// define main structs
 	struct fileViewerStruct homeScrn;
 	struct editor editor;
@@ -77,6 +70,7 @@ int main(void) {
 	}
 
 	// cleanup();
+	ti_CloseAll();
 	gfx_End();
 	(*(volatile uint8_t*)0xF00008) = 1;
 		
