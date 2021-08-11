@@ -46,8 +46,8 @@ int main(void) {
 	
 	ti_CloseAll();
 	ti_var_t file = ti_Open("NEW", "w+");
-	ti_Write("TXT", 3, 1, file);
-	ti_SetArchiveStatus(true, file);
+	// ti_Write("TXT", 3, 1, file);
+	// ti_SetArchiveStatus(true, file);
 	
 	// define main structs
 	struct fileViewerStruct homeScrn;
@@ -73,7 +73,10 @@ int main(void) {
 		
 	}
 
-	cleanup();
+	// cleanup();
+	gfx_End();
+	(*(volatile uint8_t*)0xF00008) = 1;
+		
 	return 0;
 }
 
@@ -154,7 +157,7 @@ static void cleanup() {
 	archiveAll();
 	
 	/*
-	This command prevents the on-key error message. got this from commandblockguy, so thank you! P.S he added this feature to the toolchain, so it will be available next release https://github.com/CE-Programming/toolchain/commit/fb852c6360bb30ad79da9e65bdf363da38cfdf83
+	This command prevents the on-key error message. got this from commandblockguy, so thank you! P.S. he added this feature to the toolchain, so it will be available next release (unless you build the toolchain from src before then) https://github.com/CE-Programming/toolchain/commit/fb852c6360bb30ad79da9e65bdf363da38cfdf83
 	*/
 
 	(*(volatile uint8_t*)0xF00008) = 1;
