@@ -40,13 +40,16 @@ int main(void) {
 	gfx_SetTransparentColor(2);
 	gfx_SetTextTransparentColor(2);
 	gfx_SetTextBGColor(2);
-	
+
 	// checks for the data appvars. Creates new ones if necessary
 	setupAppvars();
 	
 	ti_CloseAll();
-	ti_var_t file = ti_Open("NEW", "w+");
-	// ti_Write("TXT", 3, 1, file);
+	ti_var_t file = ti_Open("NEW", "w");
+	if(!file)
+		return 0;
+		
+	ti_Write("TXT", 3, 1, file);
 	// ti_SetArchiveStatus(true, file);
 	
 	// define main structs
