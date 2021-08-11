@@ -9,21 +9,23 @@
 
 void archiveAll()
 {
-   uint8_t fileSlot;
+   ti_var_t fileSlot;
    char * fileName;
    void * search_pos = NULL;
    
-   ti_CloseAll();
    while (((fileName = ti_Detect(&search_pos, "TXT")) != NULL)) {
       fileSlot = ti_Open(fileName, "r");
-      ti_SetArchiveStatus(1, fileSlot);
+      ti_SetArchiveStatus(true, fileSlot);
+		ti_Close(fileSlot);
    }
-   ti_CloseAll();
+	
 }
 
-uint8_t getNumFiles(const char * txt) {
+uint8_t getNumFiles(const char * txt)
+{
    uint8_t result = 0;
    void * pos = NULL;
+	
    while (ti_Detect(&pos, txt) != NULL)
       result++;
 	
@@ -35,7 +37,6 @@ uint8_t newFile(void) {
    char buffer[9] = {0};
    uint8_t file = 0;
 	
-   ti_CloseAll();
 	
    if (inputString(buffer, 8, "New File")>0) {
       file = ti_Open(buffer, "r");

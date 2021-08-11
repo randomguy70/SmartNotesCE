@@ -307,19 +307,17 @@ static uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 
 static uint8_t loadFiles(struct fileViewerStruct *HS) {
    uint8_t numFiles = 0;
-   uint8_t fileSlot = 0; // slot of currently detected file
+   ti_var_t fileSlot = 0; // slot of currently detected file
 	int fileSize;
    char * namePtr = NULL;
    void * search_pos = NULL; // mem location of the currently detected file in the VAT
-	
-	ti_CloseAll();
-	
+		
    while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL) {
 		
 		// copy the currently detected file's name into the fileviewer struct's names array
       strcpy(HS->fileNames[numFiles], namePtr);
 		
-		//get some info from the currently detected file
+		// get some info from the currently detected file
       fileSlot = ti_Open(namePtr, "r+");
 		
       fileSize = ti_GetSize(fileSlot);
@@ -336,9 +334,7 @@ static uint8_t loadFiles(struct fileViewerStruct *HS) {
 		ti_Close(fileSlot);
       numFiles++;
    }
-	
-	ti_CloseAll();
-	
+		
    HS->numFiles = numFiles;
    return numFiles;
 }

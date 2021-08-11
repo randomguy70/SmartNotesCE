@@ -33,6 +33,8 @@ static bool formatUserInfoAppvar(char *name);
 
 int main(void) {
 	
+	ti_CloseAll();
+	
 	if(!setupFontlibc())
 		return 0;
 	
@@ -56,17 +58,17 @@ int main(void) {
 	while (true)
 	{
 		
-		if(mode == QUIT)
-			break;
-		
 		if(mode == HOME) {
 			mode = dispHomeScreen(&homeScrn);
 		}
 		
-		if(mode == OPEN) {
+		else if(mode == OPEN) {
 			strcpy (editor.fileName, homeScrn.fileNames[homeScrn.selectedFile]);
 			mode = dispEditor(&editor);
 		}
+		
+		else
+			break;
 		
 	}
 
@@ -104,15 +106,15 @@ static uint8_t setupFontlibc() {
 	fontlib_SetBackgroundColor(2);
 	fontlib_SetTransparency(true);
 	
-	return 1;
+	return true;
 	
 }
 
 static bool setupAppvars() {
 	
-	uint8_t saveStateAppvarSlot;
-	uint8_t settingsAppvarSlot;
-	uint8_t userInfoAppvarSlot;
+	ti_var_t saveStateAppvarSlot;
+	ti_var_t settingsAppvarSlot;
+	ti_var_t userInfoAppvarSlot;
 	
 	saveStateAppvarSlot = ti_Open(SAVE_STATE_APPVAR_NAME, "r");
 	settingsAppvarSlot  = ti_Open(SETTINGS_APPVAR_NAME  , "r");
@@ -126,24 +128,35 @@ static bool setupAppvars() {
 	if(!userInfoAppvarSlot)
 		formatUserInfoAppvar(USER_INFO_APPVAR_NAME);
 	
+	ti_Close(saveStateAppvarSlot);
+	ti_Close(settingsAppvarSlot);
+	ti_Close(userInfoAppvarSlot);
+
 	return true;
 }
 
 static bool formatSaveStateAppvar(char *name) {
-	uint8_t saveStateAppvarSlot = ti_Open(name, "w+");
+	
+	ti_var_t saveStateAppvarSlot = ti_Open(name, "w");
 	ti_Resize(100, saveStateAppvarSlot);
+	ti_Close(saveStateAppvarSlot);
+	
 	return true;
 }
 
 static bool formatSettingsAppvar(char *name) {
-	uint8_t settingsAppvarSlot = ti_Open(name, "w+");
+	ti_var_t settingsAppvarSlot = ti_Open(name, "w");
 	ti_Resize(100, settingsAppvarSlot);
+	ti_Close(settingsAppvarSlot);
+	
 	return true;
 }
 
 static bool formatUserInfoAppvar(char *name) {
-	uint8_t uiSlot = ti_Open(name, "w+");
+	ti_var_t uiSlot = ti_Open(name, "w");
 	ti_Resize(100, uiSlot);
+	ti_Close(uiSlot);
+	
 	return true;
 }
 
