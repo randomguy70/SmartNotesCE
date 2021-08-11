@@ -38,7 +38,7 @@ uint8_t newFile(void) {
    uint8_t file = 0;
 	
 	
-   if (inputString(buffer, 8, "New File")>0) {
+   if (inputString(buffer, 8, "New File") > 0) {
       file = ti_Open(buffer, "r");
       if (!file) {
          file = ti_Open(buffer, "w+");

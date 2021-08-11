@@ -31,7 +31,7 @@ static bool formatSettingsAppvar(char *name);
 static bool formatUserInfoAppvar(char *name);
 
 
-int main(void) {
+int main(int argc, char **argv) {
 	
 	ti_CloseAll();
 	

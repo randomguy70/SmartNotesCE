@@ -20,9 +20,9 @@ bytes 50->end of the file: text data
 #define USER_INFO_APPVAR_NAME  "SMNTUI"
 	
 // text editing specific things
-#define HEADER_STR              "TXT"                // header string of all text files
-#define TEXT_OFFSET        50                   // Offset of the text data in files
-#define MIN_FILE_SIZE        (3+TEXT_OFFSET)
+#define HEADER_STR           "TXT"                // header string of all text files
+#define TEXT_OFFSET          50                   // Offset of the text data in files
+#define MIN_FILE_SIZE        TEXT_OFFSET
 #define MAX_FILE_NAME_SIZE   18
 
 #define FILE_BUFFER_SIZE     60000

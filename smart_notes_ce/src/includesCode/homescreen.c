@@ -60,6 +60,7 @@ static uint8_t dispFiles(struct fileViewerStruct *HS) {
    for(i=HS->offset, HS->numFilesDisplayed = 0; i < 10+HS->offset && i  <HS->numFiles; i++, HS->numFilesDisplayed++) {
       fileSlot = ti_Open(HS->fileNames[i],"r+");
       fileSize = ti_GetSize(fileSlot);
+		ti_Close(fileSlot);
 
       // display currently selected file with a scrollbar on top of it
       if (HS->selectedFile == i) {
@@ -319,7 +320,6 @@ static uint8_t loadFiles(struct fileViewerStruct *HS) {
 		
 		// get some info from the currently detected file
       fileSlot = ti_Open(namePtr, "r+");
-		
       fileSize = ti_GetSize(fileSlot);
 		
 		// files have to be at least 10 bytes large for future formatting data purposes
