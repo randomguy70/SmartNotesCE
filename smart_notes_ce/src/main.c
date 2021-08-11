@@ -49,7 +49,7 @@ int main(void) {
 	if(!file)
 		return 0;
 		
-	ti_Write("TXT", 3, 1, file);
+	ti_Write("HELLO, WHAT is the matter with this program???", 47, 1, file);
 	// ti_SetArchiveStatus(true, file);
 	
 	// define main structs
