@@ -18,6 +18,7 @@
 #include "includes/homescreen.h"
 #include "gfx/gfx.h"
 #include "includes/ui.h"
+#include "includes/file.h"
 
 // checks for font appvar(s), loads font, and deals with technical font details
 static uint8_t setupFontlibc();
@@ -108,25 +109,22 @@ static uint8_t setupFontlibc() {
 }
 
 static bool setupAppvars() {
-	char *saveStateAppvarName = "SMNTSSV";
-	char *settingsAppvarName = "SMNTSTNG";
-	char *userInfoAppvarName = "SMNTUI";
 	
 	uint8_t saveStateAppvarSlot;
 	uint8_t settingsAppvarSlot;
 	uint8_t userInfoAppvarSlot;
 	
-	saveStateAppvarSlot = ti_Open(saveStateAppvarName, "r+");
-	settingsAppvarSlot = ti_Open(settingsAppvarName, "r+");
-	userInfoAppvarSlot = ti_Open(userInfoAppvarName, "r+");
+	saveStateAppvarSlot = ti_Open(SAVE_STATE_APPVAR_NAME, "r");
+	settingsAppvarSlot  = ti_Open(SETTINGS_APPVAR_NAME  , "r");
+	userInfoAppvarSlot  = ti_Open(USER_INFO_APPVAR_NAME , "r");
 	
 	// make sure they all exist
 	if(!saveStateAppvarSlot)
-		formatSaveStateAppvar(saveStateAppvarName);
+		formatSaveStateAppvar(SAVE_STATE_APPVAR_NAME);
 	if(!settingsAppvarSlot)
-		formatSettingsAppvar(settingsAppvarName);
+		formatSettingsAppvar(SETTINGS_APPVAR_NAME);
 	if(!userInfoAppvarSlot)
-		formatUserInfoAppvar(userInfoAppvarName);
+		formatUserInfoAppvar(USER_INFO_APPVAR_NAME);
 	
 	return true;
 }

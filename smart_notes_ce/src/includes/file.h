@@ -15,6 +15,10 @@ bytes 15-50: reserved for other data (not decided what yet, but probably will us
 bytes 50->end of the file: text data
 */
 
+#define SAVE_STATE_APPVAR_NAME "SMNTSSV"
+#define SETTINGS_APPVAR_NAME   "SMNTSTNG"
+#define USER_INFO_APPVAR_NAME  "SMNTUI"
+	
 // text editing specific things
 #define HEADER_STR              "TXT"                // header string of all text files
 #define TEXT_OFFSET        50                   // Offset of the text data in files
