@@ -309,26 +309,28 @@ static uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 static uint8_t loadFiles(struct fileViewerStruct *HS) {
    uint8_t numFiles = 0;
    ti_var_t fileSlot = 0; // slot of currently detected file
-	int fileSize;
-   char * namePtr = NULL;
-   void * search_pos = NULL; // mem location of the currently detected file in the VAT
-		
+   char *namePtr = NULL;
+   void *search_pos = NULL; // mem location of the currently detected file in the VAT
+	
+	ti_CloseAll();
+	
    while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL) {
-		
-		// copy the currently detected file's name into the fileviewer struct's names array
-      strcpy(HS->fileNames[numFiles], namePtr);
 		
 		// get some info from the currently detected file
       fileSlot = ti_Open(namePtr, "r+");
-      fileSize = ti_GetSize(fileSlot);
+		if(!fileSlot)
+			return 0;
+		
+		ti_GetName(HS->fileNames[numFiles], fileSlot);
+		
+      HS->fileSizes[numFiles] = ti_GetSize(fileSlot);
 		
 		// files have to be at least 10 bytes large for future formatting data purposes
-		if(fileSize < MIN_FILE_SIZE) {
+		if(HS->fileSizes[numFiles] < MIN_FILE_SIZE) {
 			ti_Seek(3, 0, fileSlot);
-			ti_Write((const void *)0xE40000, MIN_FILE_SIZE-3, 1, fileSlot);
+			ti_Write((const void *)0xE40000, MIN_FILE_SIZE, 1, fileSlot);
+			HS->fileSizes[numFiles] = MIN_FILE_SIZE;
 		}
-		
-		HS->fileSizes[numFiles] = fileSize;
 		
 		// "always close files after opening them" -Jacobly, ergo...
 		ti_Close(fileSlot);

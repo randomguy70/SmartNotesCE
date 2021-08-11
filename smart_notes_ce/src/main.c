@@ -96,7 +96,11 @@ static uint8_t setupFontlibc() {
 			gfx_PrintString("if you can't find it, ask for help on Cemetech,");
 			gfx_SetTextXY(0, 45);
 			gfx_PrintString("or email me at onlychessfreeze0515@gmail.com.");
-			while(!os_GetCSC());
+			
+			// make sure that a key was pressed AFTER all the keys were released
+			while(kb_AnyKey()){}
+			while(!kb_AnyKey()){}
+			
 			gfx_End();
       	return 0;
    }
