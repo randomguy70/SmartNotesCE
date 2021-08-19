@@ -1,4 +1,5 @@
 #include "main.h"
+#include "main.c"
 #include <fontlibc.h>
 #include <graphx.h>
 #include <keypadc.h>
@@ -11,32 +12,32 @@
 #include <includes/ui.h>
 
 //// declarations
-static void dispEditorBK(struct editor *editor);
-static void dispEditorFG(struct editor *editor);
-static uint8_t handleEditorKeyPresses(struct editor *editor);
+static void dispEditorBK(void);
+static void dispEditorFG(void);
+static uint8_t handleEditorKeyPresses(void);
 int getLinePtrs(struct file *file);
 
-uint8_t dispEditor(struct editor *editor) {
+uint8_t dispEditor(void) {
 	
 	// initialise some editor struct variables
-	editor->isRunning     = true;
-	editor->shouldRefresh = true;
-	editor->curCol        = 0;
-	editor->curLine       = 0;
-	editor->editOffset    = 0;
-	editor->selectedChars = 0;
+	editor.isRunning     = true;
+	editor.shouldRefresh = true;
+	editor.curCol        = 0;
+	editor.curLine       = 0;
+	editor.editOffset    = 0;
+	editor.selectedChars = 0;
 	
-	loadFile(&(editor->file), editor->fileName);
+	loadFile(&(editor.file), editor.fileName);
 	
 	uint8_t keyPressed;
 	
 	while(true) {
-		if(editor->shouldRefresh) {
-			dispEditorBK(editor);
-			dispEditorFG(editor);
+		if(editor.shouldRefresh) {
+			dispEditorBK();
+			dispEditorFG();
 		}
 		
-		keyPressed = handleEditorKeyPresses(editor);
+		keyPressed = handleEditorKeyPresses();
 		
 		if(keyPressed == QUIT)
 			return QUIT;
@@ -46,7 +47,7 @@ uint8_t dispEditor(struct editor *editor) {
 }
 
 // displays the editor background
-static void dispEditorBK(struct editor *editor) {
+static void dispEditorBK(void) {
 	
 	gfx_SetDraw(1);
 	gfx_FillScreen(WHITE);
@@ -61,7 +62,7 @@ static void dispEditorBK(struct editor *editor) {
 	fontlib_SetTransparency(true);
 	fontlib_SetForegroundColor(BLACK);
 	fontlib_SetAlternateStopCode(0); // the name might have spaces in it
-	fontlib_DrawStringXY(editor->file.os_name, 1, 2);
+	fontlib_DrawStringXY(editor.file.os_name, 1, 2);
 	
 	// footer
 	gfx_SetColor(MEDIUM_GREY);
@@ -74,7 +75,7 @@ static void dispEditorBK(struct editor *editor) {
 	return;	
 }
 
-static void dispEditorFG(struct editor *editor) {
+static void dispEditorFG(void) {
 	uint8_t fontHeight;
 	uint8_t numLinesOnScreen;
 	int windowHeight;
@@ -91,21 +92,19 @@ static void dispEditorFG(struct editor *editor) {
 	fontlib_SetCursorPosition(windowXMin, windowYMin);
 	
 	// I will change this to be relative to the screen offset, just using this for debugging as of now
-	for(uint8_t i = 0; i<editor->file.numLines; i++) {
+	for(uint8_t i = 0; i<editor.file.numLines; i++) {
 		
-		uint8_t strLen = getByteDifference(editor->file.linePtrs[i], editor->file.linePtrs[i]);
+		uint8_t strLen = getByteDifference(editor.file.linePtrs[i], editor.file.linePtrs[i]);
 		
-		fontlib_DrawStringL(editor->file.linePtrs[i], strLen);
+		fontlib_DrawStringL(editor.file.linePtrs[i], strLen);
 		fontlib_Newline();
 	}
 	
 	return;
 }
 
-static uint8_t handleEditorKeyPresses(struct editor *editor) {
+static uint8_t handleEditorKeyPresses(void) {
 	kb_Scan();
-	
-	editor->isRunning = true; // this is only to prevent the unused parameter warning
 	
 	if(kb_IsDown(kb_KeyClear)) {
 		return QUIT;

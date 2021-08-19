@@ -31,7 +31,7 @@ struct fileViewerStruct {
 };
 
 // displays homescreen and deals with all the homescreen functions and options
-uint8_t dispHomeScreen(struct fileViewerStruct *HS);
+void dispHomeScreen(void);
 
 #ifdef __cplusplus
 }

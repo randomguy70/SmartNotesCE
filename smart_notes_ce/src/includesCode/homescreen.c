@@ -1,3 +1,4 @@
+#include "main.c"
 #include "main.h"
 
 #include <graphx.h>
@@ -11,59 +12,56 @@
 #include <includes/ui.h>
 
 //// declarations
-static void dispHomeScreenBG(struct fileViewerStruct * HS);
-static uint8_t dispFiles(struct fileViewerStruct *HS);
+static void dispHomeScreenBG(void);
+static uint8_t dispFiles(void);
 static void dispHSButtons(void);
-static uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS);
-static uint8_t loadFiles(struct fileViewerStruct *HS);
+static uint8_t handleHomeScrnKeyPresses(void);
+static uint8_t loadFiles(void);
 static struct menu *loadHomeScreenOtherMenu(void);
 
-
 // btw, HS stands for homescreen
-uint8_t dispHomeScreen(struct fileViewerStruct *HS) {
-	// initialise / reset variables
-   HS->selectedFile = 0;
-   HS->offset = 0;
-   HS->numFiles = loadFiles(HS);
-	HS->shouldQuit = false;
-	archiveAll();
+void dispHomeScreen(void) {
 	
-	uint8_t result = 1;
+   homescreen.selectedFile = 0;
+   homescreen.offset = 0;
+	homescreen.shouldQuit = false;
+	
+	loadFiles();
+	archiveAll();
 
    while(true) {
-      dispHomeScreenBG(HS);
+      dispHomeScreenBG();
       dispHSButtons();
 		
-      dispFiles(HS);
+      dispFiles();
 		
 		gfx_Wait();
 		gfx_SwapDraw();
 		
-      result = handleHomeScrnKeyPresses(HS);
+      handleHomeScrnKeyPresses();
 		
-		if(result == QUIT)
-			return QUIT;
-		if(result == OPEN)
-			return OPEN;
-			
+		if(state == should_exit)
+			return;
+		if(state == show_homescreen)
+			return;
    }
 }
 
 // display the file names & info stored in the fileViewerStruct *HS
-static uint8_t dispFiles(struct fileViewerStruct *HS) {
+static uint8_t dispFiles(void) {
    uint8_t i;          // starting increment of file display, ends up as the number of files displayed onscreen (should be <=10)
    uint8_t ii = 0;     // how many files have been displayed so far
    uint8_t fileSlot;   // slot number of currently detected file
    uint8_t fileSize;   // size of currently detected and drawn file
    int fileY = 61;
 
-   for(i=HS->offset, HS->numFilesDisplayed = 0; i < 10+HS->offset && i  <HS->numFiles; i++, HS->numFilesDisplayed++) {
-      fileSlot = ti_Open(HS->fileNames[i],"r+");
+   for(i=homescreen.offset, homescreen.numFilesDisplayed = 0; i < 10+homescreen.offset && i  <homescreen.numFiles; i++, homescreen.numFilesDisplayed++) {
+      fileSlot = ti_Open(homescreen.fileNames[i],"r+");
       fileSize = ti_GetSize(fileSlot);
 		ti_Close(fileSlot);
 
       // display currently selected file with a scrollbar on top of it
-      if (HS->selectedFile == i) {
+      if (homescreen.selectedFile == i) {
 			// draw scrollbar & leave some pixels at the edge of the window for the scrollbar
          gfx_SetColor(LIGHT_GREY);
          gfx_FillRectangle_NoClip(36,fileY-5,242,15);
@@ -74,7 +72,7 @@ static uint8_t dispFiles(struct fileViewerStruct *HS) {
 		
       gfx_SetTextFGColor(BLACK);
 		
-      gfx_PrintStringXY(HS->fileNames[i],40,fileY);
+      gfx_PrintStringXY(homescreen.fileNames[i],40,fileY);
       gfx_SetTextXY(135,fileY);
       gfx_PrintInt(fileSize,4);
       gfx_SetTextFGColor(0);
@@ -82,22 +80,22 @@ static uint8_t dispFiles(struct fileViewerStruct *HS) {
       ii++;
    }
    // display when no files were detected because you forgot to take notes :P
-   if (HS->numFiles == 0) {
+   if (homescreen.numFiles == 0) {
       gfx_SetTextFGColor(244);
       gfx_PrintStringXY("--NO FILES FOUND--)",93,80);
       gfx_PrintStringXY("That's too bad for you :(",93,100);
    }
 
-   // Return the number of files displayed, I guess. This really isn't necessary at all btw. If I run low on bytes in the stack, which is very unlikely (since I am writing in C && am not defining a ton of variables && am such an efficient programmer lol && never use globals && always use tons of small functions), I will delete this. :P
+   // Return the number of files displayed, I guess. This really isn't necessary at all, but maybe somebody somewhere cares somewhat for some reason...
    return i;
 }
 
 // homescreen for the fileViewer, rectangles, title, etc...
-static void dispHomeScreenBG(struct fileViewerStruct * HS) {
+static void dispHomeScreenBG(void) {
 	int width;
 	
 	// scrollbar math
-	uint8_t scrollbarHeight = 148 * HS->numFilesDisplayed / HS->numFiles;
+	uint8_t scrollbarHeight = 148 * homescreen.numFilesDisplayed / homescreen.numFiles;
 	
 	// just making sure that the scrollbar is a reasonable size...
 	if(scrollbarHeight>148)
@@ -106,7 +104,7 @@ static void dispHomeScreenBG(struct fileViewerStruct * HS) {
 		scrollbarHeight = 10;
 	
 	int scrollbarX = 280;
-	int scrollbarY = (150 - (scrollbarHeight) + 1) * HS->selectedFile / (HS->numFiles-1) + 56;
+	int scrollbarY = (150 - (scrollbarHeight) + 1) * homescreen.selectedFile / (homescreen.numFiles-1) + 56;
 	
    gfx_SetDraw(1);
 	
@@ -150,6 +148,8 @@ static void dispHomeScreenBG(struct fileViewerStruct * HS) {
    gfx_PrintStringXY("NAME",40,45);
    gfx_PrintStringXY("SIZE",135,45);
    gfx_PrintStringXY("STATUS",210,45);
+	
+	return;
 }
 
 static void dispHSButtons(void) {
@@ -186,29 +186,29 @@ static void dispHSButtons(void) {
 	
 }
 
-static uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
+static uint8_t handleHomeScrnKeyPresses(void) {
    kb_Scan();
 
    // move cursor down
-   if(kb_IsDown(kb_KeyDown) && HS->selectedFile < HS->numFiles-1) {
-      HS->selectedFile++;
-      if(HS->selectedFile >= HS->offset+10){
-         HS->offset++;
+   if(kb_IsDown(kb_KeyDown) && homescreen.selectedFile < homescreen.numFiles-1) {
+      homescreen.selectedFile++;
+      if(homescreen.selectedFile >= homescreen.offset+10){
+         homescreen.offset++;
       }
    }
 
 	// move cursor up
-   if (kb_IsDown(kb_KeyUp) && HS->selectedFile>0) {
-      HS->selectedFile--;
-      if(HS->selectedFile < HS->offset){
-         HS->offset--;
+   if (kb_IsDown(kb_KeyUp) && homescreen.selectedFile>0) {
+      homescreen.selectedFile--;
+      if(homescreen.selectedFile < homescreen.offset){
+         homescreen.offset--;
       }
    }
 
 	// open file
 	if(kb_IsDown(kb_KeyYequ)) {
 		// if there aren't any files to open...
-		if(HS->numFiles <= 0) {
+		if(homescreen.numFiles <= 0) {
 			alert("There aren't any files to open (obviously).");
 			return CANCEL;
 		}
@@ -218,12 +218,12 @@ static uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 	
    // new file
    if (kb_IsDown(kb_KeyWindow)) {
-		if(HS->numFiles >= 30 ) {
+		if(homescreen.numFiles >= 30 ) {
 			alert("You can't have more than 30 files, my note-crazy friend!");
 			return CANCEL;
 		}
 		newFile();
-		loadFiles(HS);
+		loadFiles();
 		return true;
    }
 	
@@ -235,16 +235,16 @@ static uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 	// delete file
    if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel))) {
 		// make sure there is a file to delete
-		if(HS->numFiles == 0) {
+		if(homescreen.numFiles == 0) {
 			alert("There aren't any files to delete!");
 			return CANCEL;
 		}
 		// if there is at least 1 file...
-		checkIfDeleteFile(HS->fileNames[HS->selectedFile]);
-		loadFiles(HS);
+		checkIfDeleteFile(homescreen.fileNames[homescreen.selectedFile]);
+		loadFiles();
 		// check if you need to shift the cursor
-		if(HS->numFiles > 0 && HS->selectedFile >= HS->numFiles)
-			HS->selectedFile--;
+		if(homescreen.numFiles > 0 && homescreen.selectedFile >= homescreen.numFiles)
+			homescreen.selectedFile--;
 			
 		return CANCEL;
    }
@@ -271,9 +271,9 @@ static uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 			
 			// rename
 			case 2:
-				if(HS->numFiles>0) {
-					if(renameFile(HS->fileNames[HS->selectedFile])) {
-						loadFiles(HS);
+				if(homescreen.numFiles>0) {
+					if(renameFile(homescreen.fileNames[homescreen.selectedFile])) {
+						loadFiles();
 						return 1;
 					}
 				}
@@ -304,16 +304,14 @@ static uint8_t handleHomeScrnKeyPresses(struct fileViewerStruct *HS) {
 	return 1;
 }
 
-//loads the data into the struct for the homescreen menu that is triggered by the "other" menu option (literally)
+//loads the data into the struct for a homescreen menu
 
-static uint8_t loadFiles(struct fileViewerStruct *HS) {
+static uint8_t loadFiles(void) {
    uint8_t numFiles = 0;
    ti_var_t fileSlot = 0; // slot of currently detected file
    char *namePtr = NULL;
    void *search_pos = NULL; // mem location of the currently detected file in the VAT
-	
-	ti_CloseAll();
-	
+		
    while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL) {
 		
 		// get some info from the currently detected file
@@ -321,23 +319,25 @@ static uint8_t loadFiles(struct fileViewerStruct *HS) {
 		if(!fileSlot)
 			return 0;
 		
-		ti_GetName(HS->fileNames[numFiles], fileSlot);
+		ti_GetName(homescreen.fileNames[numFiles], fileSlot);
 		
-      HS->fileSizes[numFiles] = ti_GetSize(fileSlot);
+      homescreen.fileSizes[numFiles] = ti_GetSize(fileSlot);
 		
-		// files have to be at least 10 bytes large for future formatting data purposes
-		if(HS->fileSizes[numFiles] < MIN_FILE_SIZE) {
+		// files have to be at least 50 bytes large for (future) formatting purposes
+		if(homescreen.fileSizes[numFiles] < MIN_FILE_SIZE) {
 			ti_Seek(3, 0, fileSlot);
-			ti_Write((const void *)0xE40000, MIN_FILE_SIZE, 1, fileSlot);
-			HS->fileSizes[numFiles] = MIN_FILE_SIZE;
+			
+			ti_Write((const void *)0xE40000, MIN_FILE_SIZE-3, 1, fileSlot);
+			homescreen.fileSizes[numFiles] = MIN_FILE_SIZE;
 		}
 		
 		// "always close files after opening them" -Jacobly, ergo...
+		ti_SetArchiveStatus(true, fileSlot);
 		ti_Close(fileSlot);
       numFiles++;
    }
-		
-   HS->numFiles = numFiles;
+	
+   homescreen.numFiles = numFiles;
    return numFiles;
 }
 

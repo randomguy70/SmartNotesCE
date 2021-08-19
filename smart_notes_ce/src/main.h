@@ -30,6 +30,13 @@
 #define CLOSE         102  // Integer return signigying request to close the file currently opened in the editor. Should reset the editor variables and either quit the program or open the file menu.
 #define BACK          103  // Integer return signifying a request to go back 1 scope level / return level
 
+enum state {
+	show_homescreen,
+	show_editor, 
+	show_settings,
+	should_exit,
+};
+
 struct window {
 	uint8_t fillIndex;
 	uint8_t outlineIndex;

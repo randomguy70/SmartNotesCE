@@ -30,8 +30,11 @@ static bool formatSaveStateAppvar(char *name);
 static bool formatSettingsAppvar(char *name);
 static bool formatUserInfoAppvar(char *name);
 
+struct fileViewerStruct homescreen;
+struct editor editor;
+enum state state;
 
-int main(int argc, char **argv) {
+int main(void) {
 	
 	ti_CloseAll();
 	
@@ -48,23 +51,17 @@ int main(int argc, char **argv) {
 	// checks for the data appvars. Creates new ones if necessary
 	setupAppvars();
 	
-	// define main structs
-	struct fileViewerStruct homeScrn;
-	struct editor editor;
+	state = show_homescreen;
 	
-	// dispHomeScreen needs to return 0 to exit the program, else, it returns 1
-	uint8_t mode = HOME;
-		
 	while (true)
 	{
 		
-		if(mode == HOME) {
-			mode = dispHomeScreen(&homeScrn);
-		}
+		if(state == show_homescreen)
+			dispHomeScreen();
 		
-		else if(mode == OPEN) {
-			strcpy (editor.fileName, homeScrn.fileNames[homeScrn.selectedFile]);
-			mode = dispEditor(&editor);
+		else if(state == show_editor) {
+			strcpy (editor.fileName, homescreen.fileNames[homescreen.selectedFile]);
+			dispEditor();
 		}
 		
 		else
