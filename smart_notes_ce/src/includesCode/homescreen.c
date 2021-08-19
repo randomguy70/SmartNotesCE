@@ -213,6 +213,7 @@ static uint8_t handleHomeScrnKeyPresses(void) {
 			return CANCEL;
 		}
 		// otherwise...open the selected file.
+		state = show_editor;
 		return OPEN;
 	}
 	
@@ -222,6 +223,7 @@ static uint8_t handleHomeScrnKeyPresses(void) {
 			alert("You can't have more than 30 files, my note-crazy friend!");
 			return CANCEL;
 		}
+		
 		newFile();
 		loadFiles();
 		return true;
@@ -229,6 +231,7 @@ static uint8_t handleHomeScrnKeyPresses(void) {
 	
 	// quit program
 	if (kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyZoom)) {
+		state = should_exit;
 		return QUIT;
 	}
 	
