@@ -25,7 +25,7 @@ bytes 50->end of the file: text data
 #define MIN_FILE_SIZE        TEXT_OFFSET
 #define MAX_FILE_NAME_SIZE   18
 
-#define FILE_BUFFER_SIZE     60000
+#define FILE_BUFFER_SIZE     50000
 
 struct file;
 
@@ -46,23 +46,17 @@ bool renameFile(const char *name);
 
 // contains data about a certain (open) file
 struct file {
-	
-	// general info
-	
-	uint8_t slot;
+	ti_var_t slot;
 	char os_name[10];    // os name of the file
 	char full_name[19];  // full name of the file, can be up to 18 digits (different from os name!!!)
-	int size;            // byte size of the file BEFORE its data was copied into an array and edited
-	
-	// text-specific info
-	
-	char buffer[FILE_BUFFER_SIZE];  // array of the text data copied from the file for faster editing
-	int charsInBuffer;   // number of text characters stored in the buffer
-	char *dataEnd;       // pointer to the end of the significant data in the buffer
-	
-	int numLines;        // number of lines in the buffer
-	char *linePtrs[200]; // Pointers to the start of each line in the buffer
-	
+	size_t size;
+};
+
+struct buffer {
+	char data[FILE_BUFFER_SIZE];
+	size_t sig_chars;
+	uint16_t numLines;
+	char lines[200];
 };
 
 // check if user wants to delete a file, and deleted the selected file if so

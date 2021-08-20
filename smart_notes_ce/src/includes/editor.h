@@ -13,15 +13,19 @@ struct editor;
 //// definitions
 struct editor {
 	char fileName[10];    // hmmm??? maybe the name of the open file?!!!
-	struct file file;  // contains data about the opened file in the editor
+	struct file file;     // contains data about the opened file in the editor
+	struct buffer buffer;
 	
-	bool isRunning;      // Whether or not to repeat the editor loop. If 0, then the editor will quit at the first opportunity
-	bool shouldRefresh;      // whether or not to go through the editor loop again (calculate line ptrs, display text again)
+	bool shouldRefresh;   // whether or not to calculate the line pointers and re-display the text
 	
-	int editOffset;    // cursor offset in the text array that is being edited
-	int selectedChars; // Number of characters highlighted / selected (to perform actions upon these characters, they can be found directly after the cursor offset in the text array). Default is 0
-	int curLine;       // line that cursor is on
-	int curCol;        // column that cursor is after
+	unsigned int editOffset;    // cursor offset in the text array that is being edited
+	unsigned int curLine;       // line that cursor is on
+	unsigned int curCol;        // column that cursor is after
+};
+
+struct clipboard {
+	char *data;
+	uint16_t size;
 };
 
 // main text editing loop

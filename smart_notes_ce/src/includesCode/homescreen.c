@@ -7,7 +7,7 @@
 #include <string.h>
 
 #include <includes/homescreen.h>
-#include <gfx/gfx.h>
+#include <includes/text.h>
 #include <includes/file.h>
 #include <includes/ui.h>
 

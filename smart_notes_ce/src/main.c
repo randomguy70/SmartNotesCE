@@ -33,6 +33,7 @@ static bool formatUserInfoAppvar(char *name);
 struct fileViewerStruct homescreen;
 struct editor editor;
 enum state state;
+struct clipboard clipboard;
 
 int main(void) {
 	

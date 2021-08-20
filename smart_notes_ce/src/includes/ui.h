@@ -9,8 +9,12 @@ extern "C" {
 
 #include "main.h"
 
-#define BUTTON_TYPE_TRIGGER_ACTION  1 // Returns the value of the selected option when the button is pressed
-#define BUTTON_TYPE_TRIGGER_MENU    2 // Opens a menu when the button is pressed (a menu is an array of buttons). However, there aren't recursive menus and buttons (yet).
+enum button_types {
+	return_val,  // returns a value
+	action,      // executes a function
+	menu,        // opens another menu
+	exit,        // quit the current state
+};
 
 //////////////////////////////////////////////
 //				struct prototypes

@@ -19,13 +19,13 @@ int getLinePtrs(struct file *file);
 
 uint8_t dispEditor(void) {
 	
-	// initialise some editor struct variables
-	editor.isRunning     = true;
 	editor.shouldRefresh = true;
 	editor.curCol        = 0;
 	editor.curLine       = 0;
 	editor.editOffset    = 0;
-	editor.selectedChars = 0;
+	
+	clipboard.data = NULL;
+	clipboard.size = 0;
 	
 	loadFile(&(editor.file), editor.fileName);
 	
@@ -92,11 +92,11 @@ static void dispEditorFG(void) {
 	fontlib_SetCursorPosition(windowXMin, windowYMin);
 	
 	// I will change this to be relative to the screen offset, just using this for debugging as of now
-	for(uint8_t i = 0; i<editor.file.numLines; i++) {
+	for(uint8_t i = 0; i<editor.buffer.numLines; i++) {
 		
-		uint8_t strLen = getByteDifference(editor.file.linePtrs[i], editor.file.linePtrs[i]);
+		uint8_t strLen = getByteDifference(editor.buffer.lines[i], editor.buffer.lines[i]);
 		
-		fontlib_DrawStringL(editor.file.linePtrs[i], strLen);
+		fontlib_DrawStringL(editor.buffer.lines[i], strLen);
 		fontlib_Newline();
 	}
 	
