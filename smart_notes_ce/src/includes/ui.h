@@ -9,6 +9,27 @@ extern "C" {
 
 #include "main.h"
 
+struct window {
+	int x, y, width, height;
+	char *title;
+	char *body;
+	enum color header_color;
+	enum color body_color;
+};
+
+enum color {
+	BLACK = 0,
+	WHITE = 1,
+	TRANSPARENT = 2,
+	DARK_GREY = 3,
+	MEDIUM_GREY = 4,
+	LIGHT_GREY = 5,
+	DARK_BLUE = 6,
+	RED = 7,
+	LIGHT_BLUE = 8,
+	PAPER_YELLOW = 9,
+};
+
 enum button_types {
 	return_val,  // returns a value
 	action,      // executes a function
@@ -16,18 +37,23 @@ enum button_types {
 	exit,        // quit the current state
 };
 
-//////////////////////////////////////////////
-//				struct prototypes
-//////////////////////////////////////////////
-
 // contains the settings data, should be mostly booleans & small integers
-struct settingsStruct {
-	int password;
-	bool autoSaveFiles;
-	bool autoSaveState;
-	bool showLines;
-	bool cursorBlinks;
-	char recents[];
+struct settings {
+	// user-specific
+	unsigned int password;
+	
+	// general
+	bool ask_before_save;
+	bool auto_save_state;
+	unsigned int undo_levels;
+	
+	// graphics
+	bool show_line_bars;
+	bool cursor_blinks;
+	uint8_t cursor_width;
+	enum color txtFG;
+	enum color txtBG;
+	enum color windowBG;
 };
 
 // this is what it looks like. thank you mateo :P

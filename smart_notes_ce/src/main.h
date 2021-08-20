@@ -12,17 +12,6 @@
 #define SCRN_WIDTH    320
 #define SCRN_HEIGHT   240
 
-#define BLACK           0  // black
-#define WHITE           1  // white
-#define TRANSPARENT     2  // gfx transparent color (would otherwise be hot pink :P)
-#define DARK_GREY       3  // dark grey
-#define MEDIUM_GREY     4  // medium grey
-#define LIGHT_GREY      5  // light grey
-#define DARK_BLUE       6  // electric blue. I was too lazy to change the name...
-#define RED             7  // red
-#define LIGHT_BLUE      8  // light blue
-#define PAPER_YELLOW    9  // color of yellow paper stickypads
-
 #define HOME            1  // Integer return signifying a request to go to the homescreen (file viwer)
 #define QUIT            0  // Integer return signifying a quit request.
 #define CANCEL        100  // Integer return signifying a cancel / close window request. NOT the same as QUIT.
