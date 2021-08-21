@@ -10,7 +10,13 @@ extern "C" {
 //// declarations
 struct editor;
 
-//// definitions
+struct buffer {
+	char data[FILE_BUFFER_SIZE];
+	size_t sig_chars;
+	uint16_t numLines;
+	char *lines[200];
+};
+
 struct editor {
 	char fileName[10];    // hmmm??? maybe the name of the open file?!!!
 	struct file file;     // contains data about the opened file in the editor
@@ -24,7 +30,7 @@ struct editor {
 };
 
 // main text editing loop
-enum state dispEditor(void);
+enum state dispEditor(struct editor* editor);
 
 // gets the pointers to the start of each line in the file, as well as their byte offset from the text origin
 int getLinePtrs(struct buffer* buffer);

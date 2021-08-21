@@ -9,14 +9,6 @@ extern "C" {
 
 #include "main.h"
 
-struct window {
-	int x, y, width, height;
-	char *title;
-	char *body;
-	enum color header_color;
-	enum color body_color;
-};
-
 enum color {
 	BLACK = 0,
 	WHITE = 1,
@@ -30,11 +22,18 @@ enum color {
 	PAPER_YELLOW = 9,
 };
 
+struct window {
+	int x, y, width, height;
+	char *title;
+	char *body;
+	enum color header_color;
+	enum color body_color;
+};
+
 enum button_types {
 	return_val,  // returns a value
 	action,      // executes a function
 	menu,        // opens another menu
-	exit,        // quit the current state
 };
 
 // contains the settings data, should be mostly booleans & small integers

@@ -12,10 +12,10 @@
 #include <includes/ui.h>
 
 //// declarations
-static void dispHSBG(void);
 static void dispFiles(struct file files[30], uint8_t offset, uint8_t selectedFile);
-static void dispHSButtons(void);
-static enum state handleHomeScrnKeyPresses(struct homescreen* homescreen);
+static void dispHomeScreenBG(struct homescreen* homescreen);
+static void dispHomeScreenButtons(void);
+static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen);
 static uint8_t loadFiles(struct file files[30]);
 static struct menu *loadHomeScreenOtherMenu(void);
 
@@ -83,12 +83,11 @@ static void dispFiles(struct file files[30], uint8_t offset, uint8_t selectedFil
    return;
 }
 
-// homescreen for the fileViewer, rectangles, title, etc...
-static void dispHomeScreenBG(void) {
+static void dispHomeScreenBG(struct homescreen* homescreen) {
 	int width;
 	
 	// scrollbar math
-	uint8_t scrollbarHeight = 148 * homescreen.numFilesDisplayed / homescreen.numFiles;
+	uint8_t scrollbarHeight = 148 * 10 / homescreen->numFiles;
 	
 	// just making sure that the scrollbar is a reasonable size...
 	if(scrollbarHeight>148)
@@ -97,7 +96,7 @@ static void dispHomeScreenBG(void) {
 		scrollbarHeight = 10;
 	
 	int scrollbarX = 280;
-	int scrollbarY = (150 - (scrollbarHeight) + 1) * homescreen.selectedFile / (homescreen.numFiles-1) + 56;
+	int scrollbarY = (150 - (scrollbarHeight) + 1) * homescreen->selectedFile / (homescreen->numFiles-1) + 56;
 	
    gfx_SetDraw(1);
 	
@@ -145,7 +144,7 @@ static void dispHomeScreenBG(void) {
 	return;
 }
 
-static void dispHSButtons(void) {
+static void dispHomeScreenButtons(void) {
 	
 	gfx_sprite_t * sprites[5];
 	sprites[0] = open;
@@ -179,7 +178,7 @@ static void dispHSButtons(void) {
 	
 }
 
-static enum state handleHomeScrnKeyPresses(struct homescreen* homescreen) {
+static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
    kb_Scan();
 
    // move cursor down
@@ -203,8 +202,9 @@ static enum state handleHomeScrnKeyPresses(struct homescreen* homescreen) {
    }
 
 	// open file
-	if(kb_IsDown(kb_KeyYequ)) {
-		// if there aren't any files to open...
+	if(kb_IsDown(kb_KeyYequ))
+	{
+		
 		if(homescreen->numFiles <= 0) {
 			alert("There aren't any files to open (obviously).");
 			return show_homescreen;
@@ -214,93 +214,93 @@ static enum state handleHomeScrnKeyPresses(struct homescreen* homescreen) {
 	}
 	
    // new file
-   if (kb_IsDown(kb_KeyWindow)) {
-		if(homescreen->numFiles >= 30 ) {
+   if (kb_IsDown(kb_KeyWindow))
+	{
+		if(homescreen->numFiles >= 30 )
+		{
 			alert("You can't have more than 30 files, my note-crazy friend!");
 			return show_homescreen;
 		}
 		
-		if(newFile()) {
+		if(newFile())
+		{
 			return should_refresh_all;
 		}
    }
 	
 	// quit program
-	if (kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyZoom)) {
-		state = should_exit;
-		return QUIT;
+	if (kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyZoom))
+	{
+		return should_exit;
 	}
 	
 	// delete file
    if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel))) {
 		// make sure there is a file to delete
-		if(homescreen.numFiles == 0) {
+		if(homescreen->numFiles == 0) {
 			alert("There aren't any files to delete!");
-			return CANCEL;
+			return show_homescreen;
 		}
 		// if there is at least 1 file...
-		checkIfDeleteFile(homescreen.fileNames[homescreen.selectedFile]);
-		loadFiles();
-		// check if you need to shift the cursor
-		if(homescreen.numFiles > 0 && homescreen.selectedFile >= homescreen.numFiles)
-			homescreen.selectedFile--;
-			
-		return CANCEL;
+		checkIfDeleteFile(homescreen->files[homescreen->selectedFile].os_name);
+		// check if I need to shift the cursor
+		if(homescreen->numFiles > 0 && homescreen->selectedFile >= homescreen->numFiles)
+			homescreen->selectedFile--;
+		
+		return should_refresh_all;
    }
 	
 	// other (opens fun menu with sprites)
 	if(kb_IsDown(kb_KeyGraph)) {
 		
-		struct menu *menu = loadHomeScreenOtherMenu();
+		struct menu* menu = loadHomeScreenOtherMenu();
 		
 		uint8_t result = displayMenu(menu);
-			
-		/* --Options--
-			back, rename, hide, settings, help (start at 1 as an offset because 0 signifies quit)
-		*/
-		switch(result) {
+		
+		switch(result)
+		{
 			
 			// quit
 			case QUIT:
-				return QUIT;
+				return should_exit;
 				
 			// back
 			case 1:
-				return CANCEL;
+				return show_homescreen;
 			
 			// rename
 			case 2:
-				if(homescreen.numFiles>0) {
-					if(renameFile(homescreen.fileNames[homescreen.selectedFile])) {
-						loadFiles();
-						return 1;
+				if(homescreen->numFiles>0)
+				{
+					if(renameFile(homescreen->files[homescreen->selectedFile].os_name))
+					{
+						return should_refresh_all;
 					}
 				}
-					
+				
 				// if it didn't return, then there aren't any files to rename...
 				alert("There aren't any files to rename!");
-				return 1;
+				return show_homescreen;
 				
 			// hide
 			case 3: 
 				// hideFile(char* name); // haven't defined this yet btw...
-				return 1;
+				return show_homescreen;
 				
 			// settings
 			case 4:
 				// displaySettings(); // i haven't defined this either...
-				return 1;
+				return show_homescreen;
 				
 			// if the user simply wants to close the menu
 			default:
-				return CANCEL;
+				return show_homescreen;
 			
 		}
 		
 	}
 
-	// if the user doesn't want to quit, then return 1
-	return 1;
+	return show_homescreen;
 }
 
 //loads the data into the struct for a homescreen menu

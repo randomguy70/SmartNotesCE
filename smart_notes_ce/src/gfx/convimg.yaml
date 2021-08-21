@@ -16,7 +16,7 @@ converts:
   - name: myimages
     palette: palette
     images:
-      - settings.png
+      - settings_gear.png
       - left_arrow.png
       - right_arrow.png
       - new_icon.png

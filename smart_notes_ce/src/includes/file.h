@@ -50,13 +50,6 @@ struct file {
 	size_t size;
 };
 
-struct buffer {
-	char data[FILE_BUFFER_SIZE];
-	size_t sig_chars;
-	uint16_t numLines;
-	char *lines[200];
-};
-
 // check if user wants to delete a file, and deleted the selected file if so
 bool checkIfDeleteFile(char *name);
 

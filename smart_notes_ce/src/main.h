@@ -28,36 +28,4 @@ enum state {
 	should_refresh_data,
 	should_refresh_all,
 };
-
-struct window {
-	uint8_t fillIndex;
-	uint8_t outlineIndex;
-};
-struct homeScrn {
-	uint8_t BGFillIndex;
-	bool hasLines;
-	uint8_t lineIndex;
-	
-};
-struct editorScrn {
-	uint8_t BGFillIndex;
-	bool hasLines;
-	uint8_t lineIndex;
-};
-struct buttons{
-	uint8_t fillIndex;
-	uint8_t outlineIndex;
-	uint8_t pressedFillIndex;
-	uint8_t pressedOutlineIndex;
-};
-
-struct globalPalette{
-	uint8_t cursorIndex;
-	
-	struct window window;
-	struct homeScrn homeScrn;
-	struct editorScrn editorScrn;
-	struct buttons buttons;
-};
-
 #endif

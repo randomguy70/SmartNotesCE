@@ -69,7 +69,7 @@ int main(void) {
 				strcpy (editor.fileName, homescreen.files[homescreen.selectedFile].os_name);
 				prevState = state;
 			}
-			state = dispEditor();
+			state = dispEditor(&editor);
 		}
 		
 	}

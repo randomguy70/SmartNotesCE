@@ -6,6 +6,7 @@
 #include <includes/file.h>
 #include <includes/text.h>
 #include <includes/ui.h>
+#include <includes/editor.h>
 
 void archiveAll()
 {
@@ -106,12 +107,12 @@ int loadFile(struct file *file, char *name) {
 	return 1;
 };
 
-int saveFile(struct file *file) {
+int saveFile(char* name, struct buffer* buffer) {
 	arrayToFile(file->buffer, file->os_name, file->charsInBuffer);
 	return file->charsInBuffer;
 };
 
-int fileToArray(const char *name, char *array) {
+int fileToBuffer(const char *name, struct buffer* buffer) {
 	uint8_t fileSlot;
 	int fileSize;
 	
@@ -119,28 +120,30 @@ int fileToArray(const char *name, char *array) {
 	ti_CloseAll();
 	fileSlot = ti_Open(name, "r");
 	
-	if(!fileSlot)
+	if(!fileSlot) {
+		ti_Close(fileSlot);
 		return 0;
-	
+	}
+		
 	fileSize = ti_GetSize(fileSlot);
 	
 	// read the appropriate number of bytes from the file into the array
 	ti_Seek(MIN_FILE_SIZE, 0, fileSlot);
-	ti_Read(array, fileSize, 1, fileSlot);
+	ti_Read(buffer->data, fileSize, 1, fileSlot);
 	
 	return fileSize;
 }
 
-int arrayToFile(char *array, const char *name, int bytes) {
+int bufferToFile(struct buffer* buffer, char* name) {
 	uint8_t fileSlot;
 	int fileSize;
 	
-	// safely open the file and return if there isn't a file with the given name
-	ti_CloseAll();
 	fileSlot = ti_Open(name, "r");
 	
-	if(!fileSlot)
+	if(!fileSlot) {
+		ti_Close(fileSlot);
 		return 0;
+	}
 	
 	fileSize = ti_GetSize(fileSlot);
 	
@@ -148,6 +151,7 @@ int arrayToFile(char *array, const char *name, int bytes) {
 	ti_Seek(MIN_FILE_SIZE, 0, fileSlot);
 	ti_Write(array, bytes, 1, fileSlot);
 	
+	ti_Close(fileSlot);
 	return fileSize;
 }
 

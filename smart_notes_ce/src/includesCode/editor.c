@@ -12,41 +12,40 @@
 #include <includes/ui.h>
 
 //// declarations
-static void dispEditorBK(void);
-static void dispEditorFG(void);
-static uint8_t handleEditorKeyPresses(void);
+static void dispEditorBK(char* name);
+static void dispEditorText(struct editor* editor);
+static enum state handleEditorKeyPresses(void);
 int getLinePtrs(struct buffer* buffer);
 
 enum state dispEditor(struct editor* editor) {
+	
+	enum state ret = show_editor;
 	
 	editor->shouldRefresh = true;
 	editor->curCol        = 0;
 	editor->curLine       = 0;
 	editor->editOffset    = 0;
-	
+		
 	loadFile(&(editor->file), editor->fileName);
 	
-	uint8_t keyPressed;
-	
-	while(true) {
-		if(editor->shouldRefresh) {
-			dispEditorBK();
-			dispEditorFG();
+	while(true)
+	{
+		dispEditorBK(editor->fileName);
+		dispEditorText(editor);
+		
+		ret = handleEditorKeyPresses();
+		
+		if(ret == should_exit || show_homescreen)
+		{
+			return ret;
 		}
-		
-		keyPressed = handleEditorKeyPresses();
-		
-		if(keyPressed == QUIT)
-			return should_exit;
-		if(keyPressed == HOME)
-			return show_homescreen;
 	}
 }
 
 // displays the editor background
-static void dispEditorBK(void) {
+static void dispEditorBK(char* fileName) {
 	
-	gfx_SetDraw(1);
+	gfx_SetDraw(gfx_buffer);
 	gfx_FillScreen(WHITE);
 	
 	// header rect
@@ -59,20 +58,18 @@ static void dispEditorBK(void) {
 	fontlib_SetTransparency(true);
 	fontlib_SetForegroundColor(BLACK);
 	fontlib_SetAlternateStopCode(0); // the name might have spaces in it
-	fontlib_DrawStringXY(editor.file.os_name, 1, 2);
+	fontlib_DrawStringXY(fileName, 1, 2);
 	
 	// footer
 	gfx_SetColor(MEDIUM_GREY);
 	gfx_FillRectangle_NoClip(0, 220, SCRN_WIDTH, 20);
 	gfx_SetColor(BLACK);
 	gfx_HorizLine_NoClip(0, 220, SCRN_WIDTH);
-	
-	gfx_Blit(1);
-	
+		
 	return;	
 }
 
-static void dispEditorFG(void) {
+static void dispEditorText(struct editor* editor) {
 	uint8_t fontHeight;
 	uint8_t numLinesOnScreen;
 	int windowHeight;
@@ -89,30 +86,30 @@ static void dispEditorFG(void) {
 	fontlib_SetCursorPosition(windowXMin, windowYMin);
 	
 	// I will change this to be relative to the screen offset, just using this for debugging as of now
-	for(uint8_t i = 0; i<editor.buffer.numLines; i++) {
+	for(uint8_t i = 0; i<editor->buffer.numLines; i++) {
 		
-		uint8_t strLen = getByteDifference(editor.buffer.lines[i], editor.buffer.lines[i]);
+		uint8_t strLen = getByteDifference(editor->buffer.lines[i], editor->buffer.lines[i]);
 		
-		fontlib_DrawStringL(editor.buffer.lines[i], strLen);
+		fontlib_DrawStringL(editor->buffer.lines[i], strLen);
 		fontlib_Newline();
 	}
 	
 	return;
 }
 
-static uint8_t handleEditorKeyPresses(void) {
+static enum state handleEditorKeyPresses(void) {
 	kb_Scan();
 	
 	if(kb_IsDown(kb_KeyClear)) {
-		return QUIT;
+		return should_exit;
 	}
 	
 	if(kb_IsDown(kb_Key2nd)) {
 		alert("Well well, it worked!!!");
-		return CANCEL;
+		return show_editor;
 	}
 	
-	return CANCEL;
+	return show_editor;
 }
 
 int getLinePtrs(struct buffer* buffer) {
@@ -147,19 +144,21 @@ int getLinePtrs(struct buffer* buffer) {
 		strWidth = fontlib_GetStringWidth(readPos);
 		strLen   = getWordLen(readPos);
 		
-		if(readPos + strLen > file->dataEnd)
-			strLen = getByteDifference(readPos, file->dataEnd);
+		if(readPos + strLen > buffer->data+buffer->sig_chars)
+		{
+			strLen = getByteDifference(readPos, buffer->data+buffer->sig_chars);
+		}
 		
-		if(*readPos == NEW_LINE) {
+		if(*readPos == NEW_LINE)
+		{
 			
 			// record the address of the new line
-			file->linePtrs[linesRead++] = ++readPos;
+			buffer->lines[linesRead++] = ++readPos;
 			
 			fontlib_Newline();
 			
 			txtX = 0;
 			txtY += fontHeight;
-			
 		}
 		
 		if(*readPos == SPACE) {
@@ -170,7 +169,7 @@ int getLinePtrs(struct buffer* buffer) {
 			}
 			else {
 				
-				file->linePtrs[linesRead++] = readPos++;
+				buffer->lines[linesRead++] = readPos++;
 				fontlib_Newline();
 				txtX = 0;
 				txtY += fontHeight;
@@ -197,7 +196,7 @@ int getLinePtrs(struct buffer* buffer) {
 			linesRead++;
 			txtX = 0;
 			txtY += fontHeight;
-			file->linePtrs[linesRead] = readPos;
+			buffer->lines[linesRead] = readPos;
 			linesRead++;
 		}
 		
@@ -218,5 +217,5 @@ int getLinePtrs(struct buffer* buffer) {
 		
 	}
 	
-	return file->numLines;
+	return buffer->numLines;
 }
