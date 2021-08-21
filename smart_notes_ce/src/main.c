@@ -30,11 +30,6 @@ static bool formatSaveStateAppvar(char *name);
 static bool formatSettingsAppvar(char *name);
 static bool formatUserInfoAppvar(char *name);
 
-struct fileViewerStruct homescreen;
-struct editor editor;
-enum state state;
-struct clipboard clipboard;
-
 int main(void) {
 	
 	ti_CloseAll();
@@ -52,29 +47,34 @@ int main(void) {
 	// checks for the data appvars. Creates new ones if necessary
 	setupAppvars();
 	
+	struct homescreen homescreen;
+	struct editor editor;
+	enum state state = show_homescreen;
+	enum state prevState = state;
+
 	state = show_homescreen;
 	
 	while (true)
 	{
-		
-		if(state == show_homescreen)
-			dispHomeScreen();
-		
-		else if(state == show_editor) {
-			strcpy (editor.fileName, homescreen.fileNames[homescreen.selectedFile]);
-			dispEditor();
+		if(state == should_exit) {
+			break;
 		}
 		
-		else
-			break;
+		if(state == show_homescreen) {
+			state = dispHomeScreen(&homescreen);
+		}
+		
+		if(state == show_editor) {
+			if(prevState != state) {
+				strcpy (editor.fileName, homescreen.files[homescreen.selectedFile].os_name);
+				prevState = state;
+			}
+			state = dispEditor();
+		}
 		
 	}
 
-	// cleanup();
-	ti_CloseAll();
-	gfx_End();
-	(*(volatile uint8_t*)0xF00008) = 1;
-		
+	cleanup();
 	return 0;
 }
 
@@ -155,9 +155,13 @@ static bool formatSettingsAppvar(char *name) {
 }
 
 static bool formatUserInfoAppvar(char *name) {
-	ti_var_t uiSlot = ti_Open(name, "w");
-	ti_Resize(100, uiSlot);
-	ti_Close(uiSlot);
+	if(!fileExists(name)) {
+		ti_var_t uiSlot = ti_Open(name, "w");
+		ti_Resize(100, uiSlot);
+		ti_Close(uiSlot);
+		
+		return true;
+	}
 	
 	return true;
 }
@@ -167,9 +171,9 @@ static void cleanup() {
 	archiveAll();
 	
 	/*
-	This command prevents the on-key error message. got this from commandblockguy, so thank you! P.S. he added this feature to the toolchain, so it will be available next release (unless you build the toolchain from src before then) https://github.com/CE-Programming/toolchain/commit/fb852c6360bb30ad79da9e65bdf363da38cfdf83
+		prevents the on-key error message
 	*/
-
+	
 	(*(volatile uint8_t*)0xF00008) = 1;
 	
 	return;

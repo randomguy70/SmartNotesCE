@@ -36,7 +36,7 @@ void archiveAll();
 uint8_t getNumFiles(const char *txt);
 
 // creates a new text file with an inputted name (a text file is an appvar with TXT as the first 3 bytes, sortof like an extension a file has on a computer)
-uint8_t newFile(void);
+bool newFile(void);
 
 // deletes the appvar with the given name
 bool checkIfDeleteFile(char *name);
@@ -46,9 +46,7 @@ bool renameFile(const char *name);
 
 // contains data about a certain (open) file
 struct file {
-	ti_var_t slot;
 	char os_name[10];    // os name of the file
-	char full_name[19];  // full name of the file, can be up to 18 digits (different from os name!!!)
 	size_t size;
 };
 
@@ -56,7 +54,7 @@ struct buffer {
 	char data[FILE_BUFFER_SIZE];
 	size_t sig_chars;
 	uint16_t numLines;
-	char lines[200];
+	char *lines[200];
 };
 
 // check if user wants to delete a file, and deleted the selected file if so
@@ -83,8 +81,9 @@ int arrayToFile(char *array, const char *name, int bytes);
 // copies 10 characters or a string from the given file, appending that on to its os name. starts copying from an offset of 3 bytes in the file's data
 uint8_t getFullName(char *fullNameBuffer, char *osName);
 
+bool fileExists(char* name);
+
 #ifdef __cplusplus
 }
 #endif
-
 #endif

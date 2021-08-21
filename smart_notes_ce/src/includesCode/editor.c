@@ -15,24 +15,21 @@
 static void dispEditorBK(void);
 static void dispEditorFG(void);
 static uint8_t handleEditorKeyPresses(void);
-int getLinePtrs(struct file *file);
+int getLinePtrs(struct buffer* buffer);
 
-uint8_t dispEditor(void) {
+enum state dispEditor(struct editor* editor) {
 	
-	editor.shouldRefresh = true;
-	editor.curCol        = 0;
-	editor.curLine       = 0;
-	editor.editOffset    = 0;
+	editor->shouldRefresh = true;
+	editor->curCol        = 0;
+	editor->curLine       = 0;
+	editor->editOffset    = 0;
 	
-	clipboard.data = NULL;
-	clipboard.size = 0;
-	
-	loadFile(&(editor.file), editor.fileName);
+	loadFile(&(editor->file), editor->fileName);
 	
 	uint8_t keyPressed;
 	
 	while(true) {
-		if(editor.shouldRefresh) {
+		if(editor->shouldRefresh) {
 			dispEditorBK();
 			dispEditorFG();
 		}
@@ -40,9 +37,9 @@ uint8_t dispEditor(void) {
 		keyPressed = handleEditorKeyPresses();
 		
 		if(keyPressed == QUIT)
-			return QUIT;
+			return should_exit;
 		if(keyPressed == HOME)
-			return HOME;
+			return show_homescreen;
 	}
 }
 
@@ -118,9 +115,10 @@ static uint8_t handleEditorKeyPresses(void) {
 	return CANCEL;
 }
 
-int getLinePtrs(struct file *file) {
+int getLinePtrs(struct buffer* buffer) {
 	
-	char *readPos = file->buffer; // acts like a cursor in the buffer
+	char* readPos = buffer->data; // acts like a cursor in the buffer
+	char* dataEnd = readPos + buffer->sig_chars;
 	
 	uint8_t windowWidth  = fontlib_GetWindowWidth();
 	uint8_t windowHeight = fontlib_GetWindowHeight();
@@ -142,9 +140,9 @@ int getLinePtrs(struct file *file) {
 	maxLinesViewable = windowHeight / fontHeight;
 	
 	// record the first line pointer
-	file->linePtrs[linesRead] = readPos;
+	buffer->lines[linesRead] = readPos;
 	
-	while(readPos < file->dataEnd && linesRead < maxLinesViewable) {
+	while(readPos < dataEnd && linesRead < maxLinesViewable) {
 		
 		strWidth = fontlib_GetStringWidth(readPos);
 		strLen   = getWordLen(readPos);

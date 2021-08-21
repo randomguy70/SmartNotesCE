@@ -23,16 +23,11 @@ struct editor {
 	unsigned int curCol;        // column that cursor is after
 };
 
-struct clipboard {
-	char *data;
-	uint16_t size;
-};
-
 // main text editing loop
-uint8_t dispEditor(void);
+enum state dispEditor(void);
 
 // gets the pointers to the start of each line in the file, as well as their byte offset from the text origin
-int getLinePtrs(struct file *file);
+int getLinePtrs(struct buffer* buffer);
 
 #ifdef __cplusplus
 }

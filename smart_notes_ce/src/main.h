@@ -24,6 +24,9 @@ enum state {
 	show_editor, 
 	show_settings,
 	should_exit,
+	should_refresh_rendering,
+	should_refresh_data,
+	should_refresh_all,
 };
 
 struct window {

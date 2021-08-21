@@ -33,26 +33,25 @@ uint8_t getNumFiles(const char * txt)
 }
 
 // asks for user to input a string and makes a new file if one doesn't already exist with that name
-uint8_t newFile(void) {
+bool newFile(void) {
    char buffer[9] = {0};
-   uint8_t file = 0;
-	
+   uint8_t fileSlot = 0;
 	
    if (inputString(buffer, 8, "New File") > 0) {
-      file = ti_Open(buffer, "r");
-      if (!file) {
-         file = ti_Open(buffer, "w+");
-      }
-		if (file) {
-      	ti_Write("TXT", 3, 1, file);
+		if(fileExists(buffer)) {
+			return false;
+		}
+      fileSlot = ti_Open(buffer, "w");
+		
+		if (fileSlot) {
+      	ti_Write("TXT", 3, 1, fileSlot);
 		}
 		
-		ti_CloseAll();
-		
-      return 1;
+		ti_Close(fileSlot);
+      return true;
    }
 	
-   return 0;
+   return false;
 }
 
 // gives an option whether or not to delete the selected file
@@ -110,11 +109,6 @@ int loadFile(struct file *file, char *name) {
 int saveFile(struct file *file) {
 	arrayToFile(file->buffer, file->os_name, file->charsInBuffer);
 	return file->charsInBuffer;
-}
-
-bool closeFile(struct file *file) {
-	free(file->buffer);
-	return true;
 };
 
 int fileToArray(const char *name, char *array) {
@@ -173,4 +167,12 @@ uint8_t getFullName(char *fullNameBuffer, char *osName) {
 	copyWordL(fullNameBuffer + osNameLen, extraCharsPtr, 10);
 	
 	return strlen(fullNameBuffer);
+}
+
+bool fileExists(char* name) {
+	ti_var_t slot = ti_Open(name, "r");
+	ti_Close(slot);
+	if(!slot)
+		return false;
+	return true;
 }
