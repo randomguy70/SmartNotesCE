@@ -1,6 +1,3 @@
-#include "main.c"
-#include "main.h"
-
 #include <graphx.h>
 #include <keypadc.h>
 #include <fileioc.h>
@@ -10,8 +7,8 @@
 #include <includes/text.h>
 #include <includes/file.h>
 #include <includes/ui.h>
+#include <gfx/gfx.h>
 
-//// declarations
 static void dispFiles(struct file files[30], uint8_t offset, uint8_t selectedFile);
 static void dispHomeScreenBG(struct homescreen* homescreen);
 static void dispHomeScreenButtons(void);
@@ -28,15 +25,15 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 	loadFiles(homescreen->files);
 	
    while(true) {
-      dispHSBG();
-      dispHSButtons();
+      dispHomeScreenBG(homescreen);
+      dispHomeScreenButtons();
 		
       dispFiles(homescreen->files, homescreen->offset, homescreen->selectedFile);
 		
 		gfx_Wait();
 		gfx_SwapDraw();
 		
-      ret = handleHomeScrnKeyPresses(homescreen);
+      ret = handleHomeScreenKeyPresses(homescreen);
 		
 		if(ret == should_exit || ret == show_editor)
 		{
@@ -47,7 +44,6 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 	return ret;
 }
 
-// display the file names & info stored in the fileViewerStruct *HS
 static void dispFiles(struct file files[30], uint8_t offset, uint8_t selectedFile) {
    uint8_t i;          // starting increment of file display, ends up as the number of files displayed onscreen (should be <=10)
    int fileY = 61;
@@ -204,7 +200,6 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 	// open file
 	if(kb_IsDown(kb_KeyYequ))
 	{
-		
 		if(homescreen->numFiles <= 0) {
 			alert("There aren't any files to open (obviously).");
 			return show_homescreen;
@@ -303,8 +298,6 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 	return show_homescreen;
 }
 
-//loads the data into the struct for a homescreen menu
-
 static uint8_t loadFiles(struct file files[30]) {
    uint8_t numFiles  = 0;
    ti_var_t fileSlot = 0; // slot of currently detected file
@@ -352,7 +345,7 @@ static struct menu *loadHomeScreenOtherMenu(void) {
 			{"Back", left_arrow, left_arrow_height},
 			{"Rename", rename, rename_height},
 			{"(un)Hide", hide, hide_height},
-			{"Settings", settings, settings_height},
+			{"Settings", settings_gear, settings_gear_height},
 			{"Help", help, help_height},
 		},
 		

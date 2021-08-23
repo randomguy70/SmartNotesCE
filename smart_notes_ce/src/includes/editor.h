@@ -5,17 +5,8 @@
 extern "C" {
 #endif
 
-#include <includes/file.h>
-
-//// declarations
-struct editor;
-
-struct buffer {
-	char data[FILE_BUFFER_SIZE];
-	size_t sig_chars;
-	uint16_t numLines;
-	char *lines[200];
-};
+#include "includes/file.h"
+#include "includes/buffer.h"
 
 struct editor {
 	char fileName[10];    // hmmm??? maybe the name of the open file?!!!
@@ -33,7 +24,7 @@ struct editor {
 enum state dispEditor(struct editor* editor);
 
 // gets the pointers to the start of each line in the file, as well as their byte offset from the text origin
-int getLinePtrs(struct buffer* buffer);
+int getLinePtrs(struct buffer *buffer);
 
 #ifdef __cplusplus
 }

@@ -5,9 +5,8 @@
 extern "C" {
 #endif
 
-#include "main.h"
-
-#include <keypadc.h>
+#include <stdint.h>
+#include <includes/file.h>
 
 #define FILE_SPACING 15
 

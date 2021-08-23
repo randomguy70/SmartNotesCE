@@ -28,6 +28,7 @@ bytes 50->end of the file: text data
 #define FILE_BUFFER_SIZE     50000
 
 struct file;
+struct buffer;
 
 // archives all files with "TXT" as the first 3 bytes
 void archiveAll();
@@ -57,19 +58,13 @@ bool checkIfDeleteFile(char *name);
 bool renameFile(const char *name);
 
 // get a file's data (usually before opening it)
-int loadFile(struct file *file, char *name);
+int saveFile(char* name, struct buffer* buffer);
 
 // copies the data in the buffer into the actual file itself
-int saveFile(struct file *file);
+int saveFile(char* name, struct buffer* buffer);
 
 // frees the mem used by the given file struct
 bool closeFile(struct file *file);
-
-// Copies the data from a file into an array. The array should always be the maximum possible size of a file
-int fileToArray(const char *name, char *array);
-
-// copies the data from an array into a file
-int arrayToFile(char *array, const char *name, int bytes);
 
 // copies 10 characters or a string from the given file, appending that on to its os name. starts copying from an offset of 3 bytes in the file's data
 uint8_t getFullName(char *fullNameBuffer, char *osName);

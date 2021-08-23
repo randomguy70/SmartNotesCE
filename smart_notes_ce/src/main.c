@@ -5,8 +5,8 @@
 // Description: A text editor for the TI 84 Plus CE
 ////////////////////////////////////////
 */
-#include "main.h"
 
+#include <keypadc.h>
 #include <fileioc.h>
 #include <fontlibc.h>
 #include <stdbool.h>

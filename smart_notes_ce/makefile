@@ -8,7 +8,7 @@ DESCRIPTION ?= "A User-friendly text editor, v1.0"
 COMPRESSED ?= YES
 ARCHIVED ?= YES
 
-CFLAGS ?= -Wall -Wextra -Oz
+CFLAGS ?= -Wall -Wextra -O3
 # ----------------------------
 
 ifndef CEDEV

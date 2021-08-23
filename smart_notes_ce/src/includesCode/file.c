@@ -7,6 +7,7 @@
 #include <includes/text.h>
 #include <includes/ui.h>
 #include <includes/editor.h>
+#include <includes/buffer.h>
 
 void archiveAll()
 {
@@ -84,76 +85,21 @@ bool renameFile(const char *name) {
 	return false;
 }
 
-int loadFile(struct file *file, char *name) {
+int loadFile(char *name, struct buffer* buffer) {
 	
-	// deal with both the names (os name and the full name. the os name is what the os calls the file, and the full name is what the user sees. the extra characters of the full name are stored in the file itself and appended on to the os name to form the full name)
-	strcpy(file->os_name, name);
-	getFullName(file->full_name, name);
+	if(!fileExists(name)) {
+		return 0;
+	}
 	
-	ti_CloseAll();
-	file->slot = ti_Open(name, "r+");
-	
-	if(!file->slot)
-		return false;
-	
-	// get its size
-	file->size = ti_GetSize(file->slot);
-	
-	// copy the file's data into the array
-	fileToArray(name, file->buffer);
-	
-	file->charsInBuffer = file->size - MIN_FILE_SIZE;
+	fileToBuffer(name, buffer);
 	
 	return 1;
 };
 
 int saveFile(char* name, struct buffer* buffer) {
-	arrayToFile(file->buffer, file->os_name, file->charsInBuffer);
-	return file->charsInBuffer;
+	bufferToFile(buffer, name);
+	return buffer->sig_chars;
 };
-
-int fileToBuffer(const char *name, struct buffer* buffer) {
-	uint8_t fileSlot;
-	int fileSize;
-	
-	// safely open the file and return if there isn't a file with the given name
-	ti_CloseAll();
-	fileSlot = ti_Open(name, "r");
-	
-	if(!fileSlot) {
-		ti_Close(fileSlot);
-		return 0;
-	}
-		
-	fileSize = ti_GetSize(fileSlot);
-	
-	// read the appropriate number of bytes from the file into the array
-	ti_Seek(MIN_FILE_SIZE, 0, fileSlot);
-	ti_Read(buffer->data, fileSize, 1, fileSlot);
-	
-	return fileSize;
-}
-
-int bufferToFile(struct buffer* buffer, char* name) {
-	uint8_t fileSlot;
-	int fileSize;
-	
-	fileSlot = ti_Open(name, "r");
-	
-	if(!fileSlot) {
-		ti_Close(fileSlot);
-		return 0;
-	}
-	
-	fileSize = ti_GetSize(fileSlot);
-	
-	// read the appropriate number of bytes from the array into the file
-	ti_Seek(MIN_FILE_SIZE, 0, fileSlot);
-	ti_Write(array, bytes, 1, fileSlot);
-	
-	ti_Close(fileSlot);
-	return fileSize;
-}
 
 uint8_t getFullName(char *fullNameBuffer, char *osName) {
 	
