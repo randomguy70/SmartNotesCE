@@ -18,7 +18,6 @@
 #include "includes/homescreen.h"
 #include "gfx/gfx.h"
 #include "includes/ui.h"
-#include "includes/file.h"
 
 // checks for font appvar(s), loads font, and deals with technical font details
 static uint8_t setupFontlibc();
@@ -30,7 +29,7 @@ static bool formatSaveStateAppvar(char *name);
 static bool formatSettingsAppvar(char *name);
 static bool formatUserInfoAppvar(char *name);
 
-int main(void) {
+int main() {
 	
 	ti_CloseAll();
 	
