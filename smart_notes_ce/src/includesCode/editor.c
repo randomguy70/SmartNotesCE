@@ -1,5 +1,4 @@
 #include "main.h"
-#include "main.c"
 #include <fontlibc.h>
 #include <graphx.h>
 #include <keypadc.h>

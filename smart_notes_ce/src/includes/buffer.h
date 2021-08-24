@@ -7,7 +7,7 @@
 
 struct buffer {
 	char data[FILE_BUFFER_SIZE];
-	size_t sig_chars;
+	unsigned int sig_chars;
 	uint16_t numLines;
 	char *lines[200];
 };

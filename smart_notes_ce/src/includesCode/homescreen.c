@@ -45,9 +45,9 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 }
 
 static void dispFiles(struct file files[30], uint8_t offset, uint8_t selectedFile) {
-   uint8_t i;          // starting increment of file display, ends up as the number of files displayed onscreen (should be <=10)
-   int fileY = 61;
-	int numFiles = 0;
+   uint8_t i;
+   unsigned int fileY = 61;
+	unsigned int numFiles = 0;
 	
 	gfx_SetTextFGColor(BLACK);
 	gfx_SetDraw(gfx_buffer);
@@ -55,22 +55,21 @@ static void dispFiles(struct file files[30], uint8_t offset, uint8_t selectedFil
    for(i=offset; i < 10+offset && files[i].os_name!='\0' && i<30; i++) {
 
       // display currently selected file with a scrollbar on top of it
-      if (selectedFile == i) {
+      if (selectedFile == i)
+		{
 			// draw scrollbar & leave some pixels at the edge of the window for the scrollbar
          gfx_SetColor(LIGHT_GREY);
          gfx_FillRectangle_NoClip(36,fileY-5,242,15);
 			gfx_SetColor(BLACK);
 			gfx_Rectangle_NoClip(36,fileY-5,242,15);
-
       }
 		
       gfx_PrintStringXY(files[i].os_name,40,fileY);
-      gfx_SetTextXY(135,fileY);
-      gfx_PrintInt(files[i].size,4);
       fileY+=FILE_SPACING;
    }
    // display when no files were detected because you forgot to take notes :P
-   if (numFiles == 0) {
+   if (numFiles == 0)
+	{
       gfx_SetTextFGColor(244);
       gfx_PrintStringXY("--NO FILES FOUND--)",93,80);
       gfx_PrintStringXY("That's too bad for you :(",93,100);
@@ -134,7 +133,6 @@ static void dispHomeScreenBG(struct homescreen* homescreen) {
 	// print labels for displayed file data columns
    gfx_SetTextFGColor(BLACK);
    gfx_PrintStringXY("NAME",40,45);
-   gfx_PrintStringXY("SIZE",135,45);
    gfx_PrintStringXY("STATUS",210,45);
 	
 	return;

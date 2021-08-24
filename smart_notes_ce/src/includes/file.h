@@ -48,7 +48,7 @@ bool renameFile(const char *name);
 // contains data about a certain (open) file
 struct file {
 	char os_name[10];    // os name of the file
-	size_t size;
+	unsigned int size;
 };
 
 // check if user wants to delete a file, and deleted the selected file if so

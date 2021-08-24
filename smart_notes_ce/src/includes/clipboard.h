@@ -3,7 +3,7 @@
 
 struct clipboard {
 	char* data;
-	size_t size;
+	unsigned int size;
 };
 
 #endif
