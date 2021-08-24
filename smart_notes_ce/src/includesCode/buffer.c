@@ -1,3 +1,5 @@
+#include <fileioc.h>
+
 #include "includes/buffer.h"
 
 int fileToBuffer(const char *name, struct buffer* buffer) {

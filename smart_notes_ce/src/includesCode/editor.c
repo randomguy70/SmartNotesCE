@@ -25,7 +25,7 @@ enum state dispEditor(struct editor* editor) {
 	editor->curLine       = 0;
 	editor->editOffset    = 0;
 		
-	loadFile(&(editor->file), editor->fileName);
+	// loadFile(&(editor->file), editor->fileName);
 	
 	while(true)
 	{

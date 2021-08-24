@@ -5,4 +5,6 @@
 int copyToClipboard(char* data, unsigned int size, struct clipboard* clipboard) {
 	clipboard->data = data;
 	clipboard->size = size;
+	
+	return clipboard->size;
 }

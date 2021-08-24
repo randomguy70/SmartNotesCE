@@ -52,7 +52,7 @@ static void dispFiles(struct file files[30], uint8_t offset, uint8_t selectedFil
 	gfx_SetTextFGColor(BLACK);
 	gfx_SetDraw(gfx_buffer);
 	
-   for(i=offset; i < 10+offset && files[i].os_name!='\0' && i<30; i++) {
+   for(i=offset; i < 10+offset && files[i].os_name[0] != '\0' && i<30; i++) {
 
       // display currently selected file with a scrollbar on top of it
       if (selectedFile == i)
