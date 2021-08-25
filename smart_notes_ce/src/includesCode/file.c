@@ -2,6 +2,7 @@
 #include <fileioc.h>
 #include <stdint.h>
 #include <string.h>
+#include <graphix.h>
 
 #include <includes/file.h>
 #include <includes/text.h>
@@ -131,11 +132,14 @@ bool toggleHiddenStatus(char* name) {
 	if(!fileExists(name) || strlen(name) > 9)
 		return false;
 	
-	char temp[9];
+	char temp[9]={0};
 	strcpy(temp, name);
 	temp[0] ^= 64;
-	ti_Rename(name, temp);
+	uint8_t return = ti_Rename(name, temp);
+	gfx_SetTexTXY()
+	gfx_PrintInt(return, 1);
 	
+	return 0;
 	// return isHidden(temp);
 }
 
