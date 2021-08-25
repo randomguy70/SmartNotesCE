@@ -314,7 +314,7 @@ static uint8_t loadFiles(struct file files[30]) {
 		}
 		
 		strcpy(files[numFiles].os_name, namePtr);
-      files[numFiles].size = ti_GetSize(fileSlot);
+		files[numFiles].size = ti_GetSize(fileSlot);
 		
 		// files have to be at least 50 bytes large for (future) formatting purposes
 		if(files[numFiles].size < MIN_FILE_SIZE)
