@@ -140,9 +140,7 @@ bool toggleHiddenStatus(char* name) {
 }
 
 bool isHidden(char* name) {
-	ti_var_t file = ti_Open(name, "r");
-	if(!file)
+	if(!fileExists(name))
 		return false;
-	ti_Close(file);
 	return (name[0])<(65);
 }
