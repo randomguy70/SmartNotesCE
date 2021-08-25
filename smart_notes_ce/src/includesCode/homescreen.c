@@ -298,40 +298,27 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 }
 
 static uint8_t loadFiles(struct file files[30]) {
-   uint8_t numFiles  = 0;
+	uint8_t numFiles  = 0;
 	ti_var_t fileSlot = 0; // slot of currently detected file
-   char *namePtr     = NULL;
-   void *search_pos  = NULL; // mem location of the currently detected file in the VAT
+	char *namePtr     = NULL;
+	void *search_pos  = NULL; // mem location of the currently detected file in the VAT
 	
-	ti_CloseAll();
 	
-   while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL) {
+	while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL) {
 		
 		fileSlot = ti_Open(namePtr, "r+");
 		
-		if(!fileSlot) {
+		if(!fileSlot)
 			return 0;
-		}
 		
-		strcpy(files[numFiles].os_name, namePtr);
+		ti_GetName(files[numFiles].os_name, fileSlot);
 		files[numFiles].size = ti_GetSize(fileSlot);
 		
-		// files have to be at least 50 bytes large for (future) formatting purposes
-		if(files[numFiles].size < MIN_FILE_SIZE)
-		{
-			ti_Seek(3, 0, fileSlot);
-			
-			ti_Write((const void *)0xE40000, MIN_FILE_SIZE-3, 1, fileSlot);
-			files[numFiles].size = MIN_FILE_SIZE;
-		}
-		
-		// "always close files after opening them" -Jacobly, ergo...
-		ti_SetArchiveStatus(true, fileSlot);
 		ti_Close(fileSlot);
-      numFiles++;
-   }
+		numFiles++;
+	}
 	
-   return numFiles;
+	return numFiles;
 }
 
 static struct menu *loadHomeScreenOtherMenu(void) {
