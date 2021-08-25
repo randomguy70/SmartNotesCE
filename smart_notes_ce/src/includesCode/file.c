@@ -126,3 +126,19 @@ bool fileExists(char* name) {
 		return false;
 	return true;
 }
+
+bool toggleHiddenStatus(char* name) {
+	char tempName[10];
+	strcpy(tempName, name);
+	tempName[0] ^= 64;
+	ti_Rename(name, tempName);
+	return isHidden(name);
+}
+
+bool isHidden(char* name) {
+	ti_var_t file = ti_Open(name, "r");
+	if(!file)
+		return false;
+	ti_Close(file);
+	return (name[0])<(65);
+}
