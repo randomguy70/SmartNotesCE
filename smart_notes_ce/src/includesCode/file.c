@@ -128,7 +128,7 @@ bool fileExists(char* name) {
 }
 
 bool toggleHiddenStatus(char* name) {
-	if(!fileExists(name))
+	if(!fileExists(name) || strlen(name) > 9)
 		return false;
 	
 	char temp[9];
@@ -136,7 +136,7 @@ bool toggleHiddenStatus(char* name) {
 	temp[0] ^= 64;
 	ti_Rename(name, temp);
 	
-	return isHidden(temp);
+	// return isHidden(temp);
 }
 
 bool isHidden(char* name) {
