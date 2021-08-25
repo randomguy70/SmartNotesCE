@@ -128,11 +128,15 @@ bool fileExists(char* name) {
 }
 
 bool toggleHiddenStatus(char* name) {
-	char tempName[10];
-	strcpy(tempName, name);
-	tempName[0] ^= 64;
-	ti_Rename(name, tempName);
-	return isHidden(name);
+	if(!fileExists(name))
+		return false;
+	
+	char temp[9];
+	strcpy(temp, name);
+	temp[0] ^= 64;
+	ti_Rename(name, temp);
+	
+	return isHidden(temp);
 }
 
 bool isHidden(char* name) {

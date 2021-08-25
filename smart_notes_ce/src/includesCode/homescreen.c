@@ -2,6 +2,7 @@
 #include <keypadc.h>
 #include <fileioc.h>
 #include <string.h>
+#include <tice.h>
 
 #include <includes/homescreen.h>
 #include <includes/text.h>
@@ -37,6 +38,10 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 		if(ret == should_exit || ret == show_editor || kb_IsDown(kb_KeyClear))
 		{
 			return ret;
+		}
+		
+		if(os_GetCSC() == sk_Right) {
+			toggleHiddenStatus(homescreen->files[homescreen->selectedFile].os_name);
 		}
    }
 	
@@ -279,12 +284,12 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 				
 			// hide
 			case 3: 
-				// hideFile(char* name); // haven't defined this yet btw...
+				toggleHiddenStatus(homescreen->files[homescreen->selectedFile].os_name);
 				return show_homescreen;
 				
 			// settings
 			case 4:
-				// displaySettings(); // i haven't defined this either...
+				// displaySettings(); // i haven't defined this...
 				return show_homescreen;
 				
 			// if the user simply wants to close the menu
