@@ -76,6 +76,8 @@ void main() {
 	}
 
 	// cleanup();
+	gfx_End();
+	(*(volatile uint8_t*)0xF00008) = 1;
 	return;
 }
 

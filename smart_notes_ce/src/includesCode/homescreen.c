@@ -216,7 +216,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 		
 		if(newFile())
 		{
-			loadFiles(homescreen);
+			loadFiles(homescreen->files);
 			return show_homescreen;
 		}
    }
@@ -268,7 +268,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 				{
 					if(renameFile(homescreen->files[homescreen->selectedFile].os_name))
 					{
-						loadFiles(homescreen);
+						loadFiles(homescreen->files);
 						return show_homescreen;
 					}
 				}
@@ -292,7 +292,6 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 				return show_homescreen;
 			
 		}
-		
 	}
 
 	return show_homescreen;
@@ -304,12 +303,13 @@ static uint8_t loadFiles(struct file files[30]) {
    char *namePtr     = NULL;
    void *search_pos  = NULL; // mem location of the currently detected file in the VAT
 	
+	ti_CloseAll();
+	
    while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL) {
 		
       fileSlot = ti_Open(namePtr, "r+");
 		
 		if(!fileSlot) {
-			ti_Close(fileSlot);
 			return 0;
 		}
 		
@@ -317,7 +317,8 @@ static uint8_t loadFiles(struct file files[30]) {
       files[numFiles].size = ti_GetSize(fileSlot);
 		
 		// files have to be at least 50 bytes large for (future) formatting purposes
-		if(files[numFiles].size < MIN_FILE_SIZE) {
+		if(files[numFiles].size < MIN_FILE_SIZE)
+		{
 			ti_Seek(3, 0, fileSlot);
 			
 			ti_Write((const void *)0xE40000, MIN_FILE_SIZE-3, 1, fileSlot);

@@ -1,5 +1,7 @@
 #include <stdint.h>
 #include <keypadc.h>
+#include <stdbool.h>
+
 #include "includes/key.h"
 
 // all credit for uint8_t get_single_key_pressed(void); should go to Jacobly, because he made it.
@@ -24,4 +26,29 @@ uint8_t get_single_key_pressed(void) {
     }
     last_key = only_key;
     return only_key;
+}
+
+bool pressed_Up() {
+	kb_Scan();
+	return (kb_IsDown(kb_KeyUp) == true);
+}
+bool pressed_Down() {
+	kb_Scan();
+	return (kb_IsDown(kb_KeyDown) == true);
+}
+bool pressed_Left() {
+	kb_Scan();
+	return (kb_IsDown(kb_KeyLeft) == true);
+}
+bool pressed_Right() {
+	kb_Scan();
+	return (kb_IsDown(kb_KeyRight) == true);
+}
+bool pressed_Enter() {
+	kb_Scan();
+	return (kb_IsDown(kb_KeyEnter) == true);
+}
+bool pressed_2nd() {
+	kb_Scan();
+	return (kb_IsDown(kb_Key2nd) == true);
 }
