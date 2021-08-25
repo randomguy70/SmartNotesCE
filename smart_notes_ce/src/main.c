@@ -29,12 +29,12 @@ static bool formatSaveStateAppvar(char *name);
 static bool formatSettingsAppvar(char *name);
 static bool formatUserInfoAppvar(char *name);
 
-int main() {
+void main() {
 	
 	ti_CloseAll();
 	
 	if(!setupFontlibc())
-		return 0;
+		return;
 	
 	// necessary gfx stuff
 	gfx_Begin();
@@ -55,26 +55,28 @@ int main() {
 	
 	while (true)
 	{
-		if(state == should_exit) {
+		if(state == should_exit)
+		{
 			break;
 		}
-		
-		if(state == show_homescreen) {
+
+		if(state == show_homescreen)
+		{
 			state = dispHomeScreen(&homescreen);
 		}
 		
-		if(state == show_editor) {
+		if(state == show_editor)
+		{
 			if(prevState != state) {
 				strcpy (editor.fileName, homescreen.files[homescreen.selectedFile].os_name);
 				prevState = state;
 			}
 			state = dispEditor(&editor);
 		}
-		
 	}
 
-	cleanup();
-	return 0;
+	// cleanup();
+	return;
 }
 
 static uint8_t setupFontlibc() {

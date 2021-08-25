@@ -25,23 +25,22 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 	loadFiles(homescreen->files);
 	
    while(true) {
-      dispHomeScreenBG(homescreen);
-      dispHomeScreenButtons();
-		
-      dispFiles(homescreen->files, homescreen->offset, homescreen->selectedFile);
+		dispHomeScreenBG(homescreen);
+		dispHomeScreenButtons();
+		dispFiles(homescreen->files, homescreen->offset, homescreen->selectedFile);
 		
 		gfx_Wait();
 		gfx_SwapDraw();
-		
+				
       ret = handleHomeScreenKeyPresses(homescreen);
 		
-		if(ret == should_exit || ret == show_editor)
+		if(ret == should_exit || ret == show_editor || kb_IsDown(kb_KeyClear))
 		{
 			return ret;
 		}
    }
 	
-	return ret;
+	return should_exit;
 }
 
 static void dispFiles(struct file files[30], uint8_t offset, uint8_t selectedFile) {
@@ -194,7 +193,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 		
 		return show_homescreen;
    }
-
+	
 	// open file
 	if(kb_IsDown(kb_KeyYequ))
 	{
@@ -217,7 +216,8 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 		
 		if(newFile())
 		{
-			return should_refresh_all;
+			loadFiles(homescreen);
+			return show_homescreen;
 		}
    }
 	
@@ -229,25 +229,26 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 	
 	// delete file
    if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel))) {
-		// make sure there is a file to delete
-		if(homescreen->numFiles == 0) {
+		
+		if(homescreen->numFiles == 0)
+		{
 			alert("There aren't any files to delete!");
 			return show_homescreen;
 		}
-		// if there is at least 1 file...
+		
+		
 		checkIfDeleteFile(homescreen->files[homescreen->selectedFile].os_name);
-		// check if I need to shift the cursor
+		// if I need to shift the cursor...
 		if(homescreen->numFiles > 0 && homescreen->selectedFile >= homescreen->numFiles)
 			homescreen->selectedFile--;
 		
-		return should_refresh_all;
+		return show_homescreen;
    }
 	
 	// other (opens fun menu with sprites)
 	if(kb_IsDown(kb_KeyGraph)) {
 		
 		struct menu* menu = loadHomeScreenOtherMenu();
-		
 		uint8_t result = displayMenu(menu);
 		
 		switch(result)
@@ -267,12 +268,13 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 				{
 					if(renameFile(homescreen->files[homescreen->selectedFile].os_name))
 					{
-						return should_refresh_all;
+						loadFiles(homescreen);
+						return show_homescreen;
 					}
 				}
 				
-				// if it didn't return, then there aren't any files to rename...
-				alert("There aren't any files to rename!");
+				// if it didn't return already then there aren't any files to rename...
+				alert("There aren't any files to rename (obviously)!");
 				return show_homescreen;
 				
 			// hide
