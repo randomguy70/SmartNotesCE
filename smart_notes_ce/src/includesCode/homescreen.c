@@ -41,7 +41,9 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 		}
 		
 		if(os_GetCSC() == sk_Right) {
+			alert("crashes before function!");
 			toggleHiddenStatus(homescreen->files[homescreen->selectedFile].os_name);
+			alert("crashes after return!");
 		}
    }
 	
