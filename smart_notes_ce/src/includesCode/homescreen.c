@@ -14,7 +14,7 @@ static void dispFiles(struct file files[30], uint8_t offset, uint8_t selectedFil
 static void dispHomeScreenBG(struct homescreen* homescreen);
 static void dispHomeScreenButtons(void);
 static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen);
-static uint8_t loadFiles(struct file files[30]);
+static uint8_t loadFiles(struct file files[]);
 static struct menu *loadHomeScreenOtherMenu(void);
 
 enum state dispHomeScreen(struct homescreen* homescreen) {
@@ -23,7 +23,7 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
    homescreen->selectedFile = 0;
    homescreen->offset = 0;
 	
-	loadFiles(homescreen->files);
+	homescreen->numFiles = loadFiles(homescreen->files);
 	
    while(true) {
 		dispHomeScreenBG(homescreen);
@@ -32,7 +32,7 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 		
 		gfx_Wait();
 		gfx_SwapDraw();
-				
+		
       ret = handleHomeScreenKeyPresses(homescreen);
 		
 		if(ret == should_exit || ret == show_editor || kb_IsDown(kb_KeyClear))
@@ -41,9 +41,8 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 		}
 		
 		if(os_GetCSC() == sk_Right) {
-			alert("crashes before function!");
 			toggleHiddenStatus(homescreen->files[homescreen->selectedFile].os_name);
-			alert("crashes after return!");
+			// homescreen->numFiles = loadFiles(homescreen->files);
 		}
    }
 	
@@ -304,21 +303,21 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 	return show_homescreen;
 }
 
-static uint8_t loadFiles(struct file files[30]) {
+static uint8_t loadFiles(struct file files[]) {
 	uint8_t numFiles  = 0;
 	ti_var_t fileSlot = 0; // slot of currently detected file
 	char *namePtr     = NULL;
 	void *search_pos  = NULL; // mem location of the currently detected file in the VAT
 	
-	
-	while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL) {
+	while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL && numFiles < 30) {
 		
-		fileSlot = ti_Open(namePtr, "r+");
+		fileSlot = ti_Open(namePtr, "r");
 		
-		if(!fileSlot)
-			return 0;
+		if(!fileSlot) {
+			return false;
+		}
 		
-		ti_GetName(files[numFiles].os_name, fileSlot);
+		strcpy(files[numFiles].os_name, namePtr);
 		files[numFiles].size = ti_GetSize(fileSlot);
 		
 		ti_Close(fileSlot);

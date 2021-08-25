@@ -140,8 +140,7 @@ int toggleHiddenStatus(char* name) {
 	ti_Close(fileSlot);
 	ti_Rename(name, temp);
 	
-	return true;
-	// return isHidden(temp);
+	return isHidden(temp);
 }
 
 bool isHidden(char* name) {
