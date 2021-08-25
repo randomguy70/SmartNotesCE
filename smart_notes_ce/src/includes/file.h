@@ -63,13 +63,11 @@ int saveFile(char* name, struct buffer* buffer);
 // copies the data in the buffer into the actual file itself
 int saveFile(char* name, struct buffer* buffer);
 
-// frees the mem used by the given file struct
-bool closeFile(struct file *file);
-
 // copies 10 characters or a string from the given file, appending that on to its os name. starts copying from an offset of 3 bytes in the file's data
 uint8_t getFullName(char *fullNameBuffer, char *osName);
-
 bool fileExists(char* name);
+bool toggleHiddenStatus(char* name);
+bool isHidden(char* name);
 
 #ifdef __cplusplus
 }
