@@ -51,7 +51,7 @@ bool newFile(void) {
 		
 		ti_Close(fileSlot);
 		return true;
-   }
+	}
 	
 	return false;
 }
