@@ -10,7 +10,11 @@
 #include <includes/ui.h>
 #include <gfx/gfx.h>
 
-static void dispFiles(struct file files[30], uint8_t offset, uint8_t selectedFile);
+#define MAX_FILES_LOADABLE 30
+#define MAX_FILES_VIEWABLE 10
+#define FILE_SPACING       15
+
+static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile);
 static void dispHomeScreenBG(struct homescreen* homescreen);
 static void dispHomeScreenButtons(void);
 static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen);
@@ -24,11 +28,12 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
    homescreen->offset = 0;
 	
 	homescreen->numFiles = loadFiles(homescreen->files);
-	
+	if(homescreen)
    while(true) {
+		homescreen->numFiles = getNumFiles("TXT");
 		dispHomeScreenBG(homescreen);
 		dispHomeScreenButtons();
-		dispFiles(homescreen->files, homescreen->offset, homescreen->selectedFile);
+		dispFiles(homescreen->files, homescreen->numFiles, homescreen->offset, homescreen->selectedFile);
 		
 		gfx_Wait();
 		gfx_SwapDraw();
@@ -39,30 +44,29 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 		{
 			return ret;
 		}
-		
-		if(os_GetCSC() == sk_Right) {
+			
+		if(os_GetCSC() == sk_Right)
+		{
 			toggleHiddenStatus(homescreen->files[homescreen->selectedFile].os_name);
-			// homescreen->numFiles = loadFiles(homescreen->files);
+			homescreen->numFiles = loadFiles(homescreen->files);
 		}
    }
 	
 	return should_exit;
 }
 
-static void dispFiles(struct file files[30], uint8_t offset, uint8_t selectedFile) {
+static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile) {
    uint8_t i;
    unsigned int fileY = 61;
-	unsigned int numFiles = 0;
 	
 	gfx_SetTextFGColor(BLACK);
 	gfx_SetDraw(gfx_buffer);
 	
-   for(i=offset; i < 10+offset && files[i].os_name[0] != '\0' && i<30; i++) {
-
-      // display currently selected file with a scrollbar on top of it
+   for(i=offset; i < MAX_FILES_VIEWABLE + offset && i<MAX_FILES_LOADABLE && i<numFiles; i++) {
+		
       if (selectedFile == i)
 		{
-			// draw scrollbar & leave some pixels at the edge of the window for the scrollbar
+			// leave some pixels at the edge of the window for the scrollbar
          gfx_SetColor(LIGHT_GREY);
          gfx_FillRectangle_NoClip(36,fileY-5,242,15);
 			gfx_SetColor(BLACK);
@@ -313,7 +317,8 @@ static uint8_t loadFiles(struct file files[]) {
 		
 		fileSlot = ti_Open(namePtr, "r");
 		
-		if(!fileSlot) {
+		if(fileSlot == 0) {
+			ti_Close(fileSlot);
 			return false;
 		}
 		

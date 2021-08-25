@@ -36,24 +36,24 @@ uint8_t getNumFiles(const char * txt)
 
 // asks for user to input a string and makes a new file if one doesn't already exist with that name
 bool newFile(void) {
-   char buffer[9] = {0};
-   uint8_t fileSlot = 0;
+	char buffer[9] = {0};
+	uint8_t fileSlot = 0;
 	
-   if (inputString(buffer, 8, "New File") > 0) {
+	if (inputString(buffer, 8, "New File") > 0) {
 		if(fileExists(buffer)) {
 			return false;
 		}
-      fileSlot = ti_Open(buffer, "w");
+		fileSlot = ti_Open(buffer, "w");
 		
 		if (fileSlot) {
       	ti_Write("TXT", 3, 1, fileSlot);
 		}
 		
 		ti_Close(fileSlot);
-      return true;
+		return true;
    }
 	
-   return false;
+	return false;
 }
 
 // gives an option whether or not to delete the selected file
