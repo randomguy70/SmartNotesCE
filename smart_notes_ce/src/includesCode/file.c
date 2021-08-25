@@ -129,13 +129,15 @@ bool fileExists(char* name) {
 
 int toggleHiddenStatus(char* name) {
 	ti_var_t fileSlot = ti_Open(name, "r");
-	if(!fileSlot) {
+	if(!fileSlot || strlen(name) > 8) {
 		ti_Close(fileSlot);
-		return false;
+		return -1;
 	}
+	
 	char temp[9] = {0};
-	ti_GetName(temp, fileSlot);	
+	ti_GetName(temp, fileSlot);
 	temp[0] ^= 64;
+	ti_Close(fileSlot);
 	ti_Rename(name, temp);
 	
 	return true;
