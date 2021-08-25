@@ -46,7 +46,7 @@ bool newFile(void) {
 		fileSlot = ti_Open(buffer, "w");
 		
 		if (fileSlot) {
-      	ti_Write("TXT", 3, 1, fileSlot);
+			ti_Write("TXT", 3, 1, fileSlot);
 		}
 		
 		ti_Close(fileSlot);
