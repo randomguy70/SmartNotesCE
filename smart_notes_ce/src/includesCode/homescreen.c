@@ -299,7 +299,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 
 static uint8_t loadFiles(struct file files[30]) {
    uint8_t numFiles  = 0;
-   ti_var_t fileSlot = 0; // slot of currently detected file
+	ti_var_t fileSlot = 0; // slot of currently detected file
    char *namePtr     = NULL;
    void *search_pos  = NULL; // mem location of the currently detected file in the VAT
 	
@@ -307,7 +307,7 @@ static uint8_t loadFiles(struct file files[30]) {
 	
    while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL) {
 		
-      fileSlot = ti_Open(namePtr, "r+");
+		fileSlot = ti_Open(namePtr, "r+");
 		
 		if(!fileSlot) {
 			return 0;
