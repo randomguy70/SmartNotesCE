@@ -66,7 +66,7 @@ int saveFile(char* name, struct buffer* buffer);
 // copies 10 characters or a string from the given file, appending that on to its os name. starts copying from an offset of 3 bytes in the file's data
 uint8_t getFullName(char *fullNameBuffer, char *osName);
 bool fileExists(char* name);
-bool toggleHiddenStatus(char* name);
+int toggleHiddenStatus(char* name);
 bool isHidden(char* name);
 
 #ifdef __cplusplus
