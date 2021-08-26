@@ -29,7 +29,8 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 	
 	homescreen->numFiles = loadFiles(homescreen->files);
 
-	while(true) {
+	while(true)
+	{
 		homescreen->numFiles = getNumFiles("TXT");
 		dispHomeScreenBG(homescreen);
 		dispHomeScreenButtons();
@@ -41,7 +42,8 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 		kb_Scan();
 		
 		// move cursor down
-		if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1) {
+		if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1)
+		{
 			homescreen->selectedFile++;
 			if(homescreen->selectedFile >= homescreen->offset+10){
 				homescreen->offset++;
@@ -49,9 +51,10 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 		}
 
 		// move cursor up
-		if (kb_IsDown(kb_KeyUp) && homescreen->selectedFile>0) {
+		if (kb_IsDown(kb_KeyUp) && homescreen->selectedFile>0)
+		{
 			homescreen->selectedFile--;
-			if(homescreen->selectedFile < homescreen->offset){
+			if(homescreen->selectedFile < homescreen->offset) {
 				homescreen->offset--;
 			}
 			
@@ -88,7 +91,8 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 		}
 		
 		// delete file
-		if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel))) {
+		if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel)))
+		{
 			
 			if(homescreen->numFiles == 0)
 			{
@@ -103,7 +107,8 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 		}
 		
 		// other (opens fun menu with sprites)
-		if(kb_IsDown(kb_KeyGraph)) {
+		if(kb_IsDown(kb_KeyGraph))
+		{
 			
 			struct menu* menu = loadHomeScreenOtherMenu();
 			uint8_t result = displayMenu(menu);
