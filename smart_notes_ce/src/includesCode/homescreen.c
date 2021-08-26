@@ -12,7 +12,7 @@
 
 #define MAX_FILES_LOADABLE 30
 #define MAX_FILES_VIEWABLE 10
-#define FILE_SPACING       15
+#define FILE_SPACING			15
 
 void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile);
 static void dispHomeScreenBG(struct homescreen* homescreen);
@@ -40,23 +40,23 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 		
 		kb_Scan();
 		
-      // move cursor down
-   	if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1) {
-      	homescreen->selectedFile++;
+		// move cursor down
+		if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1) {
+			homescreen->selectedFile++;
 			if(homescreen->selectedFile >= homescreen->offset+10){
 				homescreen->offset++;
 			}
 		}
 
 		// move cursor up
-   	if (kb_IsDown(kb_KeyUp) && homescreen->selectedFile>0) {
-   	   homescreen->selectedFile--;
-   	   if(homescreen->selectedFile < homescreen->offset){
-   	      homescreen->offset--;
-   	   }
+		if (kb_IsDown(kb_KeyUp) && homescreen->selectedFile>0) {
+			homescreen->selectedFile--;
+			if(homescreen->selectedFile < homescreen->offset){
+				homescreen->offset--;
+			}
 			
 			return show_homescreen;
-   	}
+		}
 	
 		// open file
 		if(kb_IsDown(kb_KeyYequ))
@@ -67,8 +67,8 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 			}			
 		}
 	
-   	// new file
-   	if (kb_IsDown(kb_KeyWindow))
+		// new file
+		if (kb_IsDown(kb_KeyWindow))
 		{
 			if(homescreen->numFiles >= 30 )
 			{
@@ -79,7 +79,7 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 			{
 				loadFiles(homescreen->files);
 			}
-   	}
+		}
 		
 		// quit program
 		if (kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyZoom))
@@ -88,7 +88,7 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 		}
 		
 		// delete file
-   	if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel))) {
+		if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel))) {
 			
 			if(homescreen->numFiles == 0)
 			{
@@ -100,7 +100,7 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 			// if I need to shift the cursor...
 			if(homescreen->numFiles > 0 && homescreen->selectedFile >= homescreen->numFiles)
 				homescreen->selectedFile--;			
-   	}
+		}
 		
 		// other (opens fun menu with sprites)
 		if(kb_IsDown(kb_KeyGraph)) {
@@ -154,35 +154,35 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 }
 
 void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile) {
-   uint8_t i;
-   unsigned int fileY = 61;
+	uint8_t i;
+	unsigned int fileY = 61;
 	
 	gfx_SetTextFGColor(BLACK);
 	gfx_SetDraw(gfx_buffer);
 	
-   for(i=offset; i < MAX_FILES_VIEWABLE + offset && i<MAX_FILES_LOADABLE && i<numFiles; i++) {
+	for(i=offset; i < MAX_FILES_VIEWABLE + offset && i<MAX_FILES_LOADABLE && i<numFiles; i++) {
 		
-      if (selectedFile == i)
+		if (selectedFile == i)
 		{
 			// leave some pixels at the edge of the window for the scrollbar
-         gfx_SetColor(LIGHT_GREY);
-         gfx_FillRectangle_NoClip(36,fileY-5,242,15);
+			gfx_SetColor(LIGHT_GREY);
+			gfx_FillRectangle_NoClip(36,fileY-5,242,15);
 			gfx_SetColor(BLACK);
 			gfx_Rectangle_NoClip(36,fileY-5,242,15);
-      }
+	}
 		
-      gfx_PrintStringXY(files[i].os_name,40,fileY);
-      fileY+=FILE_SPACING;
-   }
-   // display when no files were detected because you forgot to take notes :P
-   if (numFiles == 0)
+	gfx_PrintStringXY(files[i].os_name,40,fileY);
+	fileY+=FILE_SPACING;
+	}
+	// display when no files were detected because you forgot to take notes :P
+	if (numFiles == 0)
 	{
-      gfx_SetTextFGColor(244);
-      gfx_PrintStringXY("--NO FILES FOUND--)",93,80);
-      gfx_PrintStringXY("That's too bad for you :(",93,100);
-   }
+	gfx_SetTextFGColor(244);
+	gfx_PrintStringXY("--NO FILES FOUND--)",93,80);
+	gfx_PrintStringXY("That's too bad for you :(",93,100);
+	}
 
-   return;
+	return;
 }
 
 static void dispHomeScreenBG(struct homescreen* homescreen) {
@@ -200,10 +200,10 @@ static void dispHomeScreenBG(struct homescreen* homescreen) {
 	int scrollbarX = 280;
 	int scrollbarY = (150 - (scrollbarHeight) + 1) * homescreen->selectedFile / (homescreen->numFiles-1) + 56;
 	
-   gfx_SetDraw(1);
+	gfx_SetDraw(1);
 	
 	// lined-paper background
-   gfx_FillScreen(PAPER_YELLOW);
+	gfx_FillScreen(PAPER_YELLOW);
 	gfx_SetColor(LIGHT_BLUE);
 	gfx_SetTextXY(1, 1);
 	for(uint8_t i = 0; i<11; i++) {
@@ -218,11 +218,11 @@ static void dispHomeScreenBG(struct homescreen* homescreen) {
 	
 	gfx_SetTextFGColor(BLACK);
 	width = gfx_GetStringWidth("VERSION 1.0 BY Randomguy");
-   gfx_PrintStringXY("Version 1.0 BY Randomguy", (SCRN_WIDTH/2)-(width/2), 27);
+	gfx_PrintStringXY("Version 1.0 BY Randomguy", (SCRN_WIDTH/2)-(width/2), 27);
 	
 	// box with file names
-   gfx_SetColor(WHITE);
-   gfx_FillRectangle_NoClip(36,56,248,150);
+	gfx_SetColor(WHITE);
+	gfx_FillRectangle_NoClip(36,56,248,150);
 	gfx_SetColor(LIGHT_BLUE);
 	thick_Rectangle(34, 54, 252, 154, 2);
 	
@@ -238,9 +238,9 @@ static void dispHomeScreenBG(struct homescreen* homescreen) {
 	gfx_Rectangle_NoClip(scrollbarX, scrollbarY, 4, scrollbarHeight);
 	
 	// print labels for displayed file data columns
-   gfx_SetTextFGColor(BLACK);
-   gfx_PrintStringXY("NAME",40,45);
-   gfx_PrintStringXY("STATUS",210,45);
+	gfx_SetTextFGColor(BLACK);
+	gfx_PrintStringXY("NAME",40,45);
+	gfx_PrintStringXY("STATUS",210,45);
 	
 	return;
 }
@@ -254,12 +254,12 @@ static void dispHomeScreenButtons(void) {
 	sprites[3] = trash;
 	sprites[4] = more;
 	
-   for(int i = 1, ii = 0; i < 320; i+=64, ii++) {
+	for(int i = 1, ii = 0; i < 320; i+=64, ii++) {
 		// button rects
-      gfx_SetColor(LIGHT_GREY);
-      gfx_FillRectangle_NoClip(i+1, 215, 60, 24);
+		gfx_SetColor(LIGHT_GREY);
+		gfx_FillRectangle_NoClip(i+1, 215, 60, 24);
 		gfx_SetColor(BLACK);
-      gfx_Rectangle_NoClip(i+1, 215, 60, 24);
+		gfx_Rectangle_NoClip(i+1, 215, 60, 24);
 		
 		// sprites
 		if(i == 1)
@@ -271,35 +271,35 @@ static void dispHomeScreenButtons(void) {
 	// text
 	gfx_SetTextFGColor(0);
 	
-   gfx_PrintStringXY("Open" ,  27, 224);
-   gfx_PrintStringXY("New"  ,  90, 224);
-   gfx_PrintStringXY("Quit" , 157, 224);
-   gfx_PrintStringXY("Del"  , 220, 224);
-   gfx_PrintStringXY("Other", 271, 224);
+	gfx_PrintStringXY("Open" ,  27, 224);
+	gfx_PrintStringXY("New"  ,  90, 224);
+	gfx_PrintStringXY("Quit" , 157, 224);
+	gfx_PrintStringXY("Del"  , 220, 224);
+	gfx_PrintStringXY("Other", 271, 224);
 	
 }
 
 static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
-   kb_Scan();
+	kb_Scan();
 
-   // move cursor down
-   if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1) {
-      homescreen->selectedFile++;
-      if(homescreen->selectedFile >= homescreen->offset+10){
-         homescreen->offset++;
-      }
+	// move cursor down
+	if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1) {
+		homescreen->selectedFile++;
+		if(homescreen->selectedFile >= homescreen->offset+10){
+			homescreen->offset++;
+		}
 		
 		return show_homescreen;
-   }
+	}
 
 	// move cursor up
-   if (kb_IsDown(kb_KeyUp) && homescreen->selectedFile>0)
+	if (kb_IsDown(kb_KeyUp) && homescreen->selectedFile>0)
 	{
-      homescreen->selectedFile--;
-      if(homescreen->selectedFile < homescreen->offset){
-         homescreen->offset--;
-      }
-   }
+		homescreen->selectedFile--;
+		if(homescreen->selectedFile < homescreen->offset){
+			homescreen->offset--;
+		}
+	}
 	
 	// open file
 	if(kb_IsDown(kb_KeyYequ))
@@ -310,8 +310,8 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 		return show_editor;
 	}
 	
-   // new file
-   if (kb_IsDown(kb_KeyWindow))
+	// new file
+	if (kb_IsDown(kb_KeyWindow))
 	{
 		if(homescreen->numFiles < 30)
 		{
@@ -324,7 +324,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 		{
 			alert("You can't have more than 30 files, my note-crazy friend!");
 		}
-   }
+	}
 	
 	// quit program
 	if (kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyZoom))
@@ -333,7 +333,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 	}
 	
 	// delete file
-   if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel))) {
+	if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel))) {
 		
 		if(checkIfDeleteFile(homescreen->files[homescreen->selectedFile].os_name))
 		{
@@ -350,7 +350,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 		{
 			alert("There aren't any files to delete!");
 		}
-   }
+	}
 	
 	// other (opens fun menu with sprites)
 	if(kb_IsDown(kb_KeyGraph)) {
