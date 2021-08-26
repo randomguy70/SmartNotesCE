@@ -33,8 +33,9 @@ void main() {
 	
 	ti_CloseAll();
 	
-	if(!setupFontlibc())
+	if(!setupFontlibc()) {
 		return;
+	}
 	
 	// necessary gfx stuff
 	gfx_Begin();
@@ -44,7 +45,7 @@ void main() {
 	gfx_SetTextBGColor(2);
 
 	// checks for the data appvars. Creates new ones if necessary
-	setupAppvars();
+	// setupAppvars();
 	
 	struct homescreen homescreen;
 	struct editor editor;

@@ -73,7 +73,7 @@ bool checkIfDeleteFile(char *name) {
 bool renameFile(const char *name) {
 	
 	char newNameBuffer[10] = {0};
-	char message[25] = {"Rename "};
+	char message[8+9] = {"Rename "};
 	
 	strcat(message, name);
 	

@@ -31,130 +31,25 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 
 	while(true)
 	{
+		gfx_SetDraw(gfx_buffer);
 		homescreen->numFiles = getNumFiles("TXT");
 		dispHomeScreenBG(homescreen);
 		dispHomeScreenButtons();
 		dispFiles(homescreen->files, homescreen->numFiles, homescreen->offset, homescreen->selectedFile);
-		
 		gfx_Wait();
 		gfx_SwapDraw();
 		
-		kb_Scan();
+		ret = handleHomeScreenKeyPresses(homescreen);
 		
-		// move cursor down
-		if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1)
-		{
-			homescreen->selectedFile++;
-			if(homescreen->selectedFile >= homescreen->offset+10){
-				homescreen->offset++;
-			}
-		}
-
-		// move cursor up
-		if (kb_IsDown(kb_KeyUp) && homescreen->selectedFile>0)
-		{
-			homescreen->selectedFile--;
-			if(homescreen->selectedFile < homescreen->offset) {
-				homescreen->offset--;
-			}
-			
-			return show_homescreen;
-		}
-	
-		// open file
-		if(kb_IsDown(kb_KeyYequ))
-		{
-			if(homescreen->numFiles <= 0) {
-				alert("There aren't any files to open (obviously).");
-				return show_homescreen;
-			}			
-		}
-	
-		// new file
-		if (kb_IsDown(kb_KeyWindow))
-		{
-			if(homescreen->numFiles >= 30 )
-			{
-				alert("You can't have more than 30 files, my note-crazy friend!");
-			}
-			
-			if(newFile() && homescreen->numFiles < 30)
-			{
-				loadFiles(homescreen->files);
-			}
-		}
-		
-		// quit program
-		if (kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyZoom))
+		if(kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyZoom)) 
 		{
 			return should_exit;
 		}
-		
-		// delete file
-		if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel)))
+		if(ret == show_editor) 
 		{
-			
-			if(homescreen->numFiles == 0)
-			{
-				alert("There aren't any files to delete!");
-				return show_homescreen;
-			}
-			
-			checkIfDeleteFile(homescreen->files[homescreen->selectedFile].os_name);
-			// if I need to shift the cursor...
-			if(homescreen->numFiles > 0 && homescreen->selectedFile >= homescreen->numFiles)
-				homescreen->selectedFile--;			
+			return show_editor;
 		}
-		
-		// other (opens fun menu with sprites)
-		if(kb_IsDown(kb_KeyGraph))
-		{
-			
-			struct menu* menu = loadHomeScreenOtherMenu();
-			uint8_t result = displayMenu(menu);
-			
-			switch(result)
-			{
-				
-				// quit
-				case QUIT:
-					break;
-					
-				// back
-				case 1:
-					break;
-				
-				// rename
-				case 2:
-					if(homescreen->numFiles>0)
-					{
-						if(renameFile(homescreen->files[homescreen->selectedFile].os_name))
-						{
-							loadFiles(homescreen->files);
-						}
-						break;;
-					}
-					
-					// if it didn't break already then there aren't any files to rename...
-					alert("There aren't any files to rename (obviously)!");
-					break;
-					
-				// hide
-				case 3: 
-					toggleHiddenStatus(homescreen->files[homescreen->selectedFile].os_name);
-					break;
-					
-				// settings
-				case 4:
-					// displaySettings(); // i haven't defined this...
-					break;
-					
-				// if the user simply wants to close the menu
-				default:
-					break;
-			}
 	}
-	
 	return should_exit;
 }
 
@@ -163,7 +58,6 @@ void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t se
 	unsigned int fileY = 61;
 	
 	gfx_SetTextFGColor(BLACK);
-	gfx_SetDraw(gfx_buffer);
 	
 	for(i=offset; i < MAX_FILES_VIEWABLE + offset && i<MAX_FILES_LOADABLE && i<numFiles; i++) {
 		
@@ -204,8 +98,6 @@ static void dispHomeScreenBG(struct homescreen* homescreen) {
 	
 	int scrollbarX = 280;
 	int scrollbarY = (150 - (scrollbarHeight) + 1) * homescreen->selectedFile / (homescreen->numFiles-1) + 56;
-	
-	gfx_SetDraw(1);
 	
 	// lined-paper background
 	gfx_FillScreen(PAPER_YELLOW);
@@ -304,6 +196,8 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 		if(homescreen->selectedFile < homescreen->offset){
 			homescreen->offset--;
 		}
+		
+		return show_homescreen;
 	}
 	
 	// open file
@@ -312,6 +206,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 		if(homescreen->numFiles <= 0) {
 			alert("There aren't any files to open (obviously).");
 		}
+		
 		return show_editor;
 	}
 	
@@ -329,32 +224,34 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 		{
 			alert("You can't have more than 30 files, my note-crazy friend!");
 		}
-	}
-	
-	// quit program
-	if (kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyZoom))
-	{
-		return should_exit;
+		return show_homescreen;
 	}
 	
 	// delete file
-	if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel))) {
+	if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel)))
+	{
+		if(homescreen->numFiles == 0)
+		{
+			alert("There aren't any files to delete!");
+			return show_homescreen;
+		}
 		
 		if(checkIfDeleteFile(homescreen->files[homescreen->selectedFile].os_name))
 		{
-			// if I need to shift the cursor...
+			// shift the cursor...
 			if(homescreen->numFiles > 0)
 			{
 				homescreen->selectedFile--;
+				if(homescreen->offset > homescreen->selectedFile)
+				{
+					homescreen->offset--;
+				}
 			}
 		
 			loadFiles(homescreen->files);
 		}
 		
-		else if(homescreen->numFiles == 0)
-		{
-			alert("There aren't any files to delete!");
-		}
+		return show_homescreen;
 	}
 	
 	// other (opens fun menu with sprites)
@@ -365,24 +262,22 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 		
 		switch(result)
 		{
-			
-			// quit
-			case QUIT:
-				return should_exit;
-				
 			// back
 			case 1:
-				return show_homescreen;
+				break;
 			
 			// rename
 			case 2:
 				if(homescreen->numFiles>0)
 				{
-					if(renameFile(homescreen->files[homescreen->selectedFile].os_name))
+					bool result = renameFile(homescreen->files[homescreen->selectedFile].os_name);
+					if(result)
 					{
 						loadFiles(homescreen->files);
 						break;
 					}
+					alert("Something went wrong. Tough luck, buddy.");
+					break;
 				}
 				
 				alert("There aren't any files to rename (obviously)!");
@@ -396,13 +291,12 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 				
 			// settings
 			case 4:
-				// displaySettings(); // i haven't defined this...
+				// displaySettings();
 				break;
 				
-			// if the user simply wants to close the menu
 			default:
 				break;
-		}
+		}		
 	}
 
 	return show_homescreen;
