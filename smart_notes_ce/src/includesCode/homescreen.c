@@ -14,7 +14,7 @@
 #define MAX_FILES_VIEWABLE 10
 #define FILE_SPACING       15
 
-static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile);
+void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile);
 static void dispHomeScreenBG(struct homescreen* homescreen);
 static void dispHomeScreenButtons(void);
 static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen);
@@ -28,7 +28,7 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
    homescreen->offset = 0;
 	
 	homescreen->numFiles = loadFiles(homescreen->files);
-	if(homescreen)
+
    while(true) {
 		homescreen->numFiles = getNumFiles("TXT");
 		dispHomeScreenBG(homescreen);
@@ -38,24 +38,122 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 		gfx_Wait();
 		gfx_SwapDraw();
 		
-      ret = handleHomeScreenKeyPresses(homescreen);
+		kb_Scan();
 		
-		if(ret == should_exit || ret == show_editor || kb_IsDown(kb_KeyClear))
-		{
-			return ret;
+      // move cursor down
+   	if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1) {
+      	homescreen->selectedFile++;
+      	if(homescreen->selectedFile >= homescreen->offset+10){
+         	homescreen->offset++;
+      	}
 		}
+
+		// move cursor up
+   	if (kb_IsDown(kb_KeyUp) && homescreen->selectedFile>0) {
+   	   homescreen->selectedFile--;
+   	   if(homescreen->selectedFile < homescreen->offset){
+   	      homescreen->offset--;
+   	   }
 			
-		if(os_GetCSC() == sk_Right)
+			return show_homescreen;
+   	}
+	
+		// open file
+		if(kb_IsDown(kb_KeyYequ))
 		{
-			toggleHiddenStatus(homescreen->files[homescreen->selectedFile].os_name);
-			homescreen->numFiles = loadFiles(homescreen->files);
+			if(homescreen->numFiles <= 0) {
+				alert("There aren't any files to open (obviously).");
+				return show_homescreen;
+			}			
 		}
-   }
+	
+   	// new file
+   	if (kb_IsDown(kb_KeyWindow))
+		{
+			if(homescreen->numFiles >= 30 )
+			{
+				alert("You can't have more than 30 files, my note-crazy friend!");
+			}
+			
+			if(newFile() && homescreen->numFiles < 30)
+			{
+				loadFiles(homescreen->files);
+			}
+   	}
+		
+		// quit program
+		if (kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyZoom))
+		{
+			return should_exit;
+		}
+		
+		// delete file
+   	if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel))) {
+			
+			if(homescreen->numFiles == 0)
+			{
+				alert("There aren't any files to delete!");
+				return show_homescreen;
+			}
+			
+			checkIfDeleteFile(homescreen->files[homescreen->selectedFile].os_name);
+			// if I need to shift the cursor...
+			if(homescreen->numFiles > 0 && homescreen->selectedFile >= homescreen->numFiles)
+				homescreen->selectedFile--;			
+   	}
+		
+		// other (opens fun menu with sprites)
+		if(kb_IsDown(kb_KeyGraph)) {
+			
+			struct menu* menu = loadHomeScreenOtherMenu();
+			uint8_t result = displayMenu(menu);
+			
+			switch(result)
+			{
+				
+				// quit
+				case QUIT:
+					break;
+					
+				// back
+				case 1:
+					break;
+				
+				// rename
+				case 2:
+					if(homescreen->numFiles>0)
+					{
+						if(renameFile(homescreen->files[homescreen->selectedFile].os_name))
+						{
+							loadFiles(homescreen->files);
+						}
+						break;;
+					}
+					
+					// if it didn't break already then there aren't any files to rename...
+					alert("There aren't any files to rename (obviously)!");
+					break;
+					
+				// hide
+				case 3: 
+					toggleHiddenStatus(homescreen->files[homescreen->selectedFile].os_name);
+					break;
+					
+				// settings
+				case 4:
+					// displaySettings(); // i haven't defined this...
+					break;
+					
+				// if the user simply wants to close the menu
+				default:
+					break;
+			}
+	}
 	
 	return should_exit;
 }
 
-static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile) {
+void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile) {
    uint8_t i;
    unsigned int fileY = 61;
 	
@@ -195,13 +293,12 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
    }
 
 	// move cursor up
-   if (kb_IsDown(kb_KeyUp) && homescreen->selectedFile>0) {
+   if (kb_IsDown(kb_KeyUp) && homescreen->selectedFile>0)
+	{
       homescreen->selectedFile--;
       if(homescreen->selectedFile < homescreen->offset){
          homescreen->offset--;
       }
-		
-		return show_homescreen;
    }
 	
 	// open file
@@ -209,25 +306,23 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 	{
 		if(homescreen->numFiles <= 0) {
 			alert("There aren't any files to open (obviously).");
-			return show_homescreen;
 		}
-		
 		return show_editor;
 	}
 	
    // new file
    if (kb_IsDown(kb_KeyWindow))
 	{
-		if(homescreen->numFiles >= 30 )
+		if(homescreen->numFiles < 30)
+		{
+			if(newFile())
+			{
+				loadFiles(homescreen->files);
+			}
+		}
+		else
 		{
 			alert("You can't have more than 30 files, my note-crazy friend!");
-			return show_homescreen;
-		}
-		
-		if(newFile())
-		{
-			loadFiles(homescreen->files);
-			return show_homescreen;
 		}
    }
 	
@@ -240,19 +335,21 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 	// delete file
    if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel))) {
 		
-		if(homescreen->numFiles == 0)
+		if(checkIfDeleteFile(homescreen->files[homescreen->selectedFile].os_name))
 		{
-			alert("There aren't any files to delete!");
-			return show_homescreen;
+			// if I need to shift the cursor...
+			if(homescreen->numFiles > 0)
+			{
+				homescreen->selectedFile--;
+			}
+		
+			loadFiles(homescreen->files);
 		}
 		
-		
-		checkIfDeleteFile(homescreen->files[homescreen->selectedFile].os_name);
-		// if I need to shift the cursor...
-		if(homescreen->numFiles > 0 && homescreen->selectedFile >= homescreen->numFiles)
-			homescreen->selectedFile--;
-		
-		return show_homescreen;
+		else if(homescreen->numFiles == 0)
+		{
+			alert("There aren't any files to delete!");
+		}
    }
 	
 	// other (opens fun menu with sprites)
@@ -279,28 +376,27 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 					if(renameFile(homescreen->files[homescreen->selectedFile].os_name))
 					{
 						loadFiles(homescreen->files);
-						return show_homescreen;
+						break;
 					}
 				}
 				
-				// if it didn't return already then there aren't any files to rename...
 				alert("There aren't any files to rename (obviously)!");
-				return show_homescreen;
+				break;
 				
 			// hide
 			case 3: 
 				toggleHiddenStatus(homescreen->files[homescreen->selectedFile].os_name);
-				return show_homescreen;
+				loadFiles(homescreen->files);
+				break;
 				
 			// settings
 			case 4:
 				// displaySettings(); // i haven't defined this...
-				return show_homescreen;
+				break;
 				
 			// if the user simply wants to close the menu
 			default:
-				return show_homescreen;
-			
+				break;
 		}
 	}
 
@@ -333,7 +429,7 @@ static uint8_t loadFiles(struct file files[]) {
 }
 
 static struct menu *loadHomeScreenOtherMenu(void) {
-	static struct menu menu = { 
+	static struct menu menu = {
 		.title = "Options",
 		.x = 200, .y = 100,
 		.numOptions = 5,

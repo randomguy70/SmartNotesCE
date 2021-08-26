@@ -62,7 +62,7 @@ bool checkIfDeleteFile(char *name) {
 	strcat(message, name);
 	strcat(message, "?");
 	
-	if(alert(message) == true) {
+	if(alert(message) == true && fileExists(name)) {
 		ti_Delete(name);
 		return 1;
 	}
