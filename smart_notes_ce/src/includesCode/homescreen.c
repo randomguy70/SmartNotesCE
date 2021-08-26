@@ -24,12 +24,12 @@ static struct menu *loadHomeScreenOtherMenu(void);
 enum state dispHomeScreen(struct homescreen* homescreen) {
 	enum state ret = show_homescreen;
 	
-   homescreen->selectedFile = 0;
-   homescreen->offset = 0;
+	homescreen->selectedFile = 0;
+	homescreen->offset = 0;
 	
 	homescreen->numFiles = loadFiles(homescreen->files);
 
-   while(true) {
+	while(true) {
 		homescreen->numFiles = getNumFiles("TXT");
 		dispHomeScreenBG(homescreen);
 		dispHomeScreenButtons();
@@ -43,9 +43,9 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
       // move cursor down
    	if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1) {
       	homescreen->selectedFile++;
-      	if(homescreen->selectedFile >= homescreen->offset+10){
-         	homescreen->offset++;
-      	}
+			if(homescreen->selectedFile >= homescreen->offset+10){
+				homescreen->offset++;
+			}
 		}
 
 		// move cursor up
