@@ -5,14 +5,6 @@
 extern "C" {
 #endif
 
-#define MATH                 1
-#define CAPS                 2
-#define LOWER_CASE           3
-
-struct fileStruct;
-struct wordStruct;
-struct lineStruct;
-
 //inputString() writes an inputted string into a given string buffer (array)
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title);
 

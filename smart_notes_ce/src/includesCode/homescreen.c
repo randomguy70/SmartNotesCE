@@ -298,7 +298,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 				break;
 		}		
 	}
-
+	
 	return show_homescreen;
 }
 

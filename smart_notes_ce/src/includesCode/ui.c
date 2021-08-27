@@ -9,6 +9,18 @@
 #include <includes/ui.h>
 #include <tice.h>
 
+void drawWindow(struct window* window) {
+	
+	// body fill
+	gfx_SetColor(window->window_background_color);
+	gfx_FillRectangle_NoClip(window->x, window->y, window->width, window->height);
+	
+	// outline
+	gfx_SetColor(window->window_outline_color);
+	thick_Rectangle(window->x, window->y, window->width, window->height, 2);
+	
+}
+
 // cursor stuff
 void animateCursor(struct cursorStruct *CS) {
    if(CS->cursorState > CS->invisibleTime) {

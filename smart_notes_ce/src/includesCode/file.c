@@ -78,7 +78,7 @@ bool renameFile(const char *name) {
 	strcat(message, name);
 	
 	if(inputString(newNameBuffer, 8, message) > 0) {
-		ti_Rename(name, newNameBuffer);
+		// ti_Rename(name, newNameBuffer);
 		return true;
 	}
 	

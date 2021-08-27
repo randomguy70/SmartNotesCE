@@ -26,8 +26,10 @@ struct window {
 	int x, y, width, height;
 	char *title;
 	char *body;
-	enum color header_color;
-	enum color body_color;
+	enum color title_text_color;
+	enum color body_text_color;
+	enum color window_background_color;
+	enum color window_outline_color;
 };
 
 enum button_types {
@@ -82,6 +84,11 @@ struct scrollBar{
 
 ///////////////////////////////////////
 /**
+ * window things
+**/
+void drawWindow(struct window* window);
+
+/**
  * cursor things
 **/
 
@@ -119,7 +126,7 @@ bool alert(char *txt);
 int8_t textBox(const char *text, int boxWidth, int boxHeight, int boxX, int boxY);
 
 /** displays a menu with sprites
- * @param menu a struct containing the sprite and text data for the menu
+ * @param menu pointer to a struct containing the sprite and text data for the menu
  * */
 int displayMenu(struct menu * menu);
 

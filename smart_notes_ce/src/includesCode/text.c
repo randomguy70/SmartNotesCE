@@ -9,6 +9,12 @@
 #include <includes/text.h>
 #include <includes/ui.h>
 
+enum txt_mode {
+	MATH = 1,
+	CAPS,
+	LOWER_CASE,
+};
+
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 {
    uint8_t keyPressed; // value of key currently pressed
@@ -20,45 +26,38 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 	uint16_t cursorY;
    uint8_t cursorBlink = 0;
 	
-	uint16_t windowWidth = 150;
-	uint16_t windowHeight = 50;
-	int outerBoxX = (SCRN_WIDTH/2)-(windowWidth/2);
-	int outerBoxY = (SCRN_HEIGHT/2)-(windowHeight/2);
+	struct window window;
+	window.width = 150;
+	window.height = 50;
+	window.x = (SCRN_WIDTH/2)-(window.width/2);
+	window.y = (SCRN_HEIGHT/2)-(window.height/2);
+	
+	window.window_outline_color = LIGHT_BLUE;
+	window.window_background_color = LIGHT_GREY;
+	
 	int titleX = (SCRN_WIDTH/2) - (gfx_GetStringWidth(title) / 2);
 	
    while(1) {
 
 		gfx_SetDraw(1);
 		
-      // display current string/new filename with outline box
-      // fill the outer text box white
+		drawWindow(&window);
 		
-      gfx_SetColor(LIGHT_GREY);
-      gfx_FillRectangle_NoClip(outerBoxX, outerBoxY, windowWidth, windowHeight);
-
-		// blue outline for the outer text box
-      gfx_SetColor(LIGHT_BLUE);
-		thick_Rectangle(outerBoxX, outerBoxY, windowWidth, windowHeight, 2);
-		
-		// black outline for the blue outline for the outer text box lol
-		gfx_SetColor(BLACK);
-		gfx_Rectangle_NoClip(outerBoxX-1, outerBoxY-1, windowWidth+2, windowHeight+2);
-
       // fill inner text box white
 		int textBoxWidth = 72;
 		int textBoxHeight = 15;
 		int textBoxX = (SCRN_WIDTH/2)-(textBoxWidth/2);
-		int textBoxY = outerBoxY + 20;
+		int textBoxY = window.y + 20;
       gfx_SetColor(1);
 		gfx_FillRectangle(textBoxX, textBoxY, textBoxWidth, textBoxHeight);
 
       // inner text box outline
       gfx_SetColor(DARK_BLUE);
-		gfx_Rectangle(textBoxX, outerBoxY+20, textBoxWidth, textBoxHeight);
+		gfx_Rectangle(textBoxX, window.y+20, textBoxWidth, textBoxHeight);
 
       // display alpha mode (either A, a, or 1)
-		int alphaXPos = outerBoxX + windowWidth - 10;
-		int alphaYPos = outerBoxY + 5;
+		int alphaXPos = window.x + window.width - 10;
+		int alphaYPos = window.y + 5;
       gfx_SetTextFGColor(BLACK);
 		gfx_SetTextXY(alphaXPos, alphaYPos);
 		
@@ -74,8 +73,8 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		
 		// display the title and inputted string
       gfx_SetTextFGColor(BLACK);
-		gfx_PrintStringXY(title, titleX, (SCRN_HEIGHT/2)-(windowHeight/2)+5);
-		gfx_PrintStringXY(buffer, (SCRN_WIDTH/2)-(72/2)+2, (SCRN_HEIGHT/2)-(windowHeight/2)+24);
+		gfx_PrintStringXY(title, titleX, (SCRN_HEIGHT/2)-(window.height/2)+5);
+		gfx_PrintStringXY(buffer, (SCRN_WIDTH/2)-(72/2)+2, (SCRN_HEIGHT/2)-(window.height/2)+24);
 
       // display cursor
       cursorX = gfx_GetTextX() + 2;
@@ -83,10 +82,10 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
       gfx_SetColor(DARK_BLUE);
 		
 		// deal with cursor cycles
-      if(cursorBlink > 10) {
+      if(cursorBlink > 20) {
 			gfx_VertLine(cursorX, cursorY, 11);
 			gfx_VertLine(cursorX+1, cursorY, 11);
-         if(cursorBlink == 30) {
+         if(cursorBlink == 40) {
             cursorBlink = 0;
          }
       }
