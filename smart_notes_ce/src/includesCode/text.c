@@ -9,16 +9,19 @@
 #include "includes/text.h"
 #include "includes/ui.h"
 #include "includes/colors.h"
+#include "includes/key.h"
 
 static enum txt_mode checkIfSwitchTxtMode(enum txt_mode mode);
 
 
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 {
-   uint8_t keyPressed; // value of key currently pressed
-   enum txt_mode txtMode = CAPS; // caps, math, or lowercase
-   uint8_t strLen = 0; // current character length & offset of inputted string
-   char character; // current inputted character buffer
+   struct keys keys;
+	keys.firstLoad = true;
+	
+   enum txt_mode txtMode = CAPS;
+   uint8_t strLen = 0;
+   char character;
 	
    uint16_t cursorX;
 	uint16_t cursorY;
@@ -36,34 +39,29 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 	int titleX = (SCRN_WIDTH/2) - (gfx_GetStringWidth(title) / 2);
 	int titleY = (SCRN_HEIGHT/2)-(window.height/2)+5;
 	
-	gfx_SetDraw(gfx_buffer);
-	drawWindow(&window);
-	gfx_Wait();
-	gfx_Blit(1);
-	
    while(true) {
-		bool second, prev_second;
-		bool alpha, prev_alpha;
-		bool del, prev_del;
+		loadKeys(&keys);
 		
+		kb_Scan();
 		second = kb_IsDown(kb_Key2nd);
 		alpha = kb_IsDown(kb_KeyAlpha);
 		del = kb_IsDown(kb_KeyDel);
 		
-		gfx_SetDraw(1);
+		gfx_SetDraw(gfx_buffer);
 		
 		drawWindow(&window);
+		
       // text box
 		int textBoxWidth = 72;
 		int textBoxHeight = 15;
 		int textBoxX = (SCRN_WIDTH/2)-(textBoxWidth/2);
 		int textBoxY = window.y + 20;
       gfx_SetColor(WHITE);
-		gfx_FillRectangle(textBoxX, textBoxY, textBoxWidth, textBoxHeight);
+		gfx_FillRectangle_NoClip(textBoxX, textBoxY, textBoxWidth, textBoxHeight);
 
       // text box outline
       gfx_SetColor(DARK_BLUE);
-		gfx_Rectangle(textBoxX, window.y+20, textBoxWidth, textBoxHeight);
+		gfx_Rectangle_NoClip(textBoxX, window.y+20, textBoxWidth, textBoxHeight);
 
       // display alpha mode (either A, a, or 1)
 		int alphaXPos = window.x + window.width - 10;
@@ -162,7 +160,7 @@ static enum txt_mode checkIfSwitchTxtMode(enum txt_mode mode) {
 	enum txt_mode ret = mode;
 	kb_Scan();
 	
-	if(kb_IsDown(kb_KeyAlpha) && mode == LOWER_CASE) {
+	if(kb_IsDown(kb_KeyAlpha) && (mode == LOWER_CASE || mode == MATH)) {
 		ret = CAPS;
 	}
 	if(kb_IsDown(kb_KeyAlpha) && mode == CAPS) {

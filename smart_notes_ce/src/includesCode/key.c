@@ -52,3 +52,28 @@ bool pressed_2nd() {
 	kb_Scan();
 	return (kb_IsDown(kb_Key2nd) == true);
 }
+
+void loadKeys(struct keys* keys) {
+	if(keys->firstLoad) {
+		keys->firstLoad = false;
+		keys->alpha_prev = false;
+		keys->second_prev = false;
+		keys->enter_prev = false;
+		keys->del_prev = false;
+		
+		return;
+	}
+	
+	keys->alpha_prev = keys->alpha;
+	keys->second_prev = keys->second;
+	keys->enter_prev = keys->enter;
+	keys->del_prev = keys->del;
+	
+	kb_Scan();
+	keys->alpha = kb_IsDown(kb_KeyAlpha);
+	keys->second = kb_IsDown(kb_Key2nd);
+	keys->enter = kb_IsDown(kb_KeyEnter);
+	keys->del = kb_IsDown(kb_KeyDel);
+	
+	return;
+}
