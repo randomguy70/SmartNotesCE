@@ -5,15 +5,21 @@
 extern "C" {
 #endif
 
+enum txt_mode {
+	MATH = 1,
+	CAPS,
+	LOWER_CASE,
+};
+
 //inputString() writes an inputted string into a given string buffer (array)
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title);
 
 // inputChar() returns the last character inputted based on the value of the last keypress and text mode.
 // text Modes are:
-// 1) Math related ascii characters, such as {} () +-=/"?,. etc...
+// 1) Math related ascii characters, such as {} () */+-="?,. etc...
 // 2) Capital ascii letters, such as ABC...
 // 3) Lowercase ascii letters, such as abc...
-uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed);
+char inputChar(enum txt_mode mode, uint8_t keyPressed);
 
 // writes a string from a given location into a given location. Keeps on copying until a null byte is hit. Returns the pointer to the destination
 char* strcopy(char* dest, const char* src);

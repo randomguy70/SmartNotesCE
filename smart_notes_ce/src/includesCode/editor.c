@@ -9,6 +9,7 @@
 #include <includes/text.h>
 #include <includes/characters.h>
 #include <includes/ui.h>
+#include <includes/colors.h>
 
 //// declarations
 static void dispEditorBK(char* name);

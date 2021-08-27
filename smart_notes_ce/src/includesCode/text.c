@@ -6,19 +6,17 @@
 #include <fontlibc.h>
 #include <string.h>
 
-#include <includes/text.h>
-#include <includes/ui.h>
+#include "includes/text.h"
+#include "includes/ui.h"
+#include "includes/colors.h"
 
-enum txt_mode {
-	MATH = 1,
-	CAPS,
-	LOWER_CASE,
-};
+static enum txt_mode checkIfSwitchTxtMode(enum txt_mode mode);
+
 
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 {
    uint8_t keyPressed; // value of key currently pressed
-   uint8_t txtMode = CAPS; // caps, math, or lowercase
+   enum txt_mode txtMode = CAPS; // caps, math, or lowercase
    uint8_t strLen = 0; // current character length & offset of inputted string
    char character; // current inputted character buffer
 	
@@ -36,22 +34,34 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 	window.window_background_color = LIGHT_GREY;
 	
 	int titleX = (SCRN_WIDTH/2) - (gfx_GetStringWidth(title) / 2);
+	int titleY = (SCRN_HEIGHT/2)-(window.height/2)+5;
 	
-   while(1) {
-
+	gfx_SetDraw(gfx_buffer);
+	drawWindow(&window);
+	gfx_Wait();
+	gfx_Blit(1);
+	
+   while(true) {
+		bool second, prev_second;
+		bool alpha, prev_alpha;
+		bool del, prev_del;
+		
+		second = kb_IsDown(kb_Key2nd);
+		alpha = kb_IsDown(kb_KeyAlpha);
+		del = kb_IsDown(kb_KeyDel);
+		
 		gfx_SetDraw(1);
 		
 		drawWindow(&window);
-		
-      // fill inner text box white
+      // text box
 		int textBoxWidth = 72;
 		int textBoxHeight = 15;
 		int textBoxX = (SCRN_WIDTH/2)-(textBoxWidth/2);
 		int textBoxY = window.y + 20;
-      gfx_SetColor(1);
+      gfx_SetColor(WHITE);
 		gfx_FillRectangle(textBoxX, textBoxY, textBoxWidth, textBoxHeight);
 
-      // inner text box outline
+      // text box outline
       gfx_SetColor(DARK_BLUE);
 		gfx_Rectangle(textBoxX, window.y+20, textBoxWidth, textBoxHeight);
 
@@ -61,31 +71,30 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
       gfx_SetTextFGColor(BLACK);
 		gfx_SetTextXY(alphaXPos, alphaYPos);
 		
-      if(txtMode == MATH) {
+      if(txtMode == MATH)
 			gfx_PrintChar('1');
-      }
-      if(txtMode == CAPS) {
+      if(txtMode == CAPS)
 			gfx_PrintChar('A');
-      }
-      if(txtMode == LOWER_CASE) {
+      if(txtMode == LOWER_CASE)
 			gfx_PrintChar('a');
-      }
+		
+		txtMode = checkIfSwitchTxtMode(txtMode);
 		
 		// display the title and inputted string
       gfx_SetTextFGColor(BLACK);
-		gfx_PrintStringXY(title, titleX, (SCRN_HEIGHT/2)-(window.height/2)+5);
+		gfx_PrintStringXY(title, titleX, titleY);
 		gfx_PrintStringXY(buffer, (SCRN_WIDTH/2)-(72/2)+2, (SCRN_HEIGHT/2)-(window.height/2)+24);
 
       // display cursor
-      cursorX = gfx_GetTextX() + 2;
+      cursorX = gfx_GetTextX()+2;
 		cursorY = gfx_GetTextY()-2;
       gfx_SetColor(DARK_BLUE);
 		
 		// deal with cursor cycles
-      if(cursorBlink > 20) {
+      if(cursorBlink > 10) {
 			gfx_VertLine(cursorX, cursorY, 11);
 			gfx_VertLine(cursorX+1, cursorY, 11);
-         if(cursorBlink == 40) {
+         if(cursorBlink == 30) {
             cursorBlink = 0;
          }
       }
@@ -106,7 +115,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
       if (kb_IsDown(kb_KeyClear)) {
 			// wait for the delete key to be released before moving on
 			while(kb_AnyKey()) kb_Scan();
-				
+			
 			return 0;
 		}
 		
@@ -118,6 +127,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 			while(kb_AnyKey()) kb_Scan();
       }
 		
+		/*
 		// switching text modes
       if (kb_IsDown(kb_KeyAlpha)) {
 			if(txtMode == MATH) {
@@ -132,7 +142,8 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 			// wait for the delete key to be released before moving on
 			while(kb_AnyKey()) kb_Scan();
 		}
-		
+		*/
+	
 		// input character and add the character to the current offset in the string buffer
       // keyPressed = get_single_key_pressed();
       if (strLen < 8) {
@@ -147,7 +158,23 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
    }
 }
 
-uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed)
+static enum txt_mode checkIfSwitchTxtMode(enum txt_mode mode) {
+	enum txt_mode ret = mode;
+	kb_Scan();
+	
+	if(kb_IsDown(kb_KeyAlpha) && mode == LOWER_CASE) {
+		ret = CAPS;
+	}
+	if(kb_IsDown(kb_KeyAlpha) && mode == CAPS) {
+		ret = LOWER_CASE;
+	}
+	if(kb_IsDown(kb_Key2nd)) {
+		ret = MATH;
+	}
+	return ret;
+}
+
+char inputChar(enum txt_mode mode, uint8_t keyPressed)
 {
    unsigned char mathDat[] = {
       0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
@@ -176,19 +203,20 @@ uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed)
 
    char character = '\0';
 
-	if (txtMode == MATH) {
+	if (mode == MATH) {
 		character = mathDat[keyPressed];
 		return character;
    }
-   if (txtMode == CAPS) {
+   if (mode == CAPS) {
       character = capsDat[keyPressed];
       return character;
    }
-   if (txtMode == LOWER_CASE) {
+   if (mode == LOWER_CASE) {
       character = lowerCaseDat[keyPressed];
       return character;
    }
-   return 0;
+	
+   return '\0';
 }
 
 int fontlib_GetStrLen(const char *string) {
