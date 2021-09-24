@@ -31,19 +31,19 @@ void drawWindow(struct window* window) {
 
 // cursor stuff
 void updateCursor(struct cursor* cursor) {
-   if(cursor->cursorState > cursor->invisibleTime) {
-      drawCursor(cursor);
-   }
-   if(cursor->cursorState >= cursor->cyclesPerAnimation) {
-      cursor->cursorState = 0;
-   }
-	cursor->cursorState++;
+	cursor->animation_cycles_completed++;
+	
+	if(cursor->animation_cycles_completed > cursor->cycles_per_animation) {
+		cursor->animation_cycles_completed = 0;
+	}
 }
 
 void drawCursor(struct cursor* cursor) {
-   gfx_SetColor(DARK_BLUE);
-   gfx_VertLine_NoClip(cursor->x, cursor->y, 11);
-   gfx_VertLine_NoClip(cursor->x+1, cursor->y, 11);
+	if(cursor->animation_cycles_completed >= (cursor->cycles_per_animation - cursor->invisibleTime)) {
+		gfx_SetColor(LIGHT_BLUE);
+		gfx_VertLine_NoClip(cursor->x, cursor->y, 13);
+		gfx_VertLine_NoClip(cursor->x+1, cursor->y, 13);
+	}
 }
 
 int8_t textBox(const char *text, int boxWidth, int boxHeight, int boxX, int boxY) {
@@ -253,8 +253,8 @@ int displayMenu(struct menu * menu) {
 		if(kb_IsDown(kb_KeyDown) && selected < menu->numOptions -1) {
 			selected++;
 			if(selected > offset+maxOnScrn){
-         	offset++;
-      	}
+				offset++;
+			}
 			delay(100);
 		}
 		
@@ -262,8 +262,8 @@ int displayMenu(struct menu * menu) {
 		if(kb_IsDown(kb_KeyUp) && selected>0) {
 			selected--;
 			if(selected < offset){
-         	offset--;
-      	}
+				offset--;
+			}
 			delay(100);
 		}
 		

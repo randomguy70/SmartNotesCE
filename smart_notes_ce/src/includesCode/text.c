@@ -20,7 +20,11 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
    uint8_t strLen = 0;
    char character;
 	
-   struct cursor cursor;
+   struct cursor cursor = {
+		.animation_cycles_completed = 0,
+		.cycles_per_animation = 40,
+		.invisibleTime = 15,
+	};
 	
 	struct window window = {
 		.width = 150,
@@ -96,30 +100,17 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		
 		// display cursor
 		cursor.x = textBoxX + fontlib_GetStringWidth(buffer) + 2;
-		cursor.y = textBoxY + 3;
+		cursor.y = textBoxY + 2;
 		
 		drawCursor(&cursor);
-		
-		// deal with cursor cycles
-		if(cursorBlink > 10) {
-			gfx_SetColor(LIGHT_BLUE);
-			gfx_VertLine(cursorX, cursorY, 11);
-			gfx_VertLine(cursorX+1, cursorY, 11);
-			if(cursorBlink == 30) {
-				cursorBlink = 0;
-			}
-		}
-		cursorBlink++;
+		updateCursor(&cursor);
 		
 		gfx_Blit(1);
 		
-		// keypresses
-		{
 		kb_Scan();
 		keyPressed = os_GetCSC();
 		
-		// enter creates a new file with the inputted string for a name
-		if (kb_IsDown(kb_KeyEnter) && strLen > 0 && strLen <= maxLength) { // enter finishes string input and returns 1
+		if (kb_IsDown(kb_KeyEnter) && strLen > 0 && strLen <= maxLength) {
 			return 1;
 		}
 		
@@ -165,7 +156,6 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
                strLen++;
          }
       }
-		}
 		
    }
 }

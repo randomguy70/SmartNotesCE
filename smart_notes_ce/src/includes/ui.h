@@ -14,15 +14,26 @@ extern "C" {
 #define WINDOW_TITLE_BAR_HEIGHT 10
 
 
+enum window_type {
+	DISPLAY_TEXT_TYPE,
+	OPTION_TYPE,
+};
+
 struct window {
+	enum window_type type;
+	
 	int x, y, width, height;
 	const char *title;
 	char *body;
+	
 	enum color title_bar_color;
 	enum color title_text_color;
 	enum color body_color;
 	enum color body_text_color;
 	enum color window_outline_color;
+	
+	char option_text[5][10];
+	uint8_t selected_option;
 };
 
 enum button_types {
