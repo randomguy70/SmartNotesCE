@@ -85,22 +85,22 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		
 		// display the title and inputted string
       gfx_SetTextFGColor(BLACK);
-		fontlib_DrawStringXY(buffer, (SCRN_WIDTH/2)-(72/2)+2, (SCRN_HEIGHT/2)-(window.height/2)+24);
-
+		fontlib_DrawStringXY(buffer, textBoxX, textBoxY);
+		
       // display cursor
       cursorX = gfx_GetTextX()+2;
 		cursorY = gfx_GetTextY()-2;
       gfx_SetColor(LIGHT_BLUE);
 		
-		// // deal with cursor cycles
-      // if(cursorBlink > 10) {
-		// 	gfx_VertLine(cursorX, cursorY, 11);
-		// 	gfx_VertLine(cursorX+1, cursorY, 11);
-      //    if(cursorBlink == 30) {
-      //       cursorBlink = 0;
-      //    }
-      // }
-      // cursorBlink++;
+		// deal with cursor cycles
+      if(cursorBlink > 10) {
+			gfx_VertLine(cursorX, cursorY, 11);
+			gfx_VertLine(cursorX+1, cursorY, 11);
+         if(cursorBlink == 30) {
+            cursorBlink = 0;
+         }
+      }
+      cursorBlink++;
 		
       gfx_Blit(1);
 		
