@@ -20,15 +20,15 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
    uint8_t strLen = 0;
    char character;
 	
-   uint16_t cursorX;
-	uint16_t cursorY;
+   unsigned int cursorX;
+	unsigned int cursorY;
    uint8_t cursorBlink = 0;
 	
 	struct window window = {
 		.width = 150,
 		.height = 50,
-		.x = (SCRN_WIDTH/2)-(window.width/2),
-		.y = (SCRN_HEIGHT/2)-(window.height/2),
+		.x = (LCD_WIDTH/2)-(150/2),
+		.y = (LCD_HEIGHT/2)-(50/2),
 		.window_outline_color = LIGHT_BLUE,
 		.title_bar_color = DARK_GREY,
 		.title_text_color = BLACK,
@@ -41,13 +41,13 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 	int titleY = (SCRN_HEIGHT/2)-(window.height/2)+5;
 	
 	// text box
-	int textBoxWidth  = window.width - 10;
-	int textBoxHeight = 17;
-	int textBoxX      = window.x + 5;
-	int textBoxY      = window.y + WINDOW_TITLE_BAR_HEIGHT + 12;
+	unsigned int textBoxWidth  = window.width - 10;
+	unsigned int textBoxHeight = 17;
+	unsigned int textBoxX      = window.x + 5;
+	unsigned int textBoxY      = window.y + WINDOW_TITLE_BAR_HEIGHT + 12;
 	
-	int alphaXPos = window.x + window.width - 10;
-	int alphaYPos = window.y + 5;
+	unsigned int alphaXPos = window.x + window.width - 10;
+	unsigned int alphaYPos = window.y + 5;
 	
 	sk_key_t keyPressed;
 	
@@ -84,25 +84,25 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		txtMode = checkIfSwitchTxtMode(txtMode);
 		
 		// display the title and inputted string
-      gfx_SetTextFGColor(BLACK);
-		fontlib_DrawStringXY(buffer, textBoxX, textBoxY);
+		gfx_SetTextFGColor(BLACK);
+		fontlib_DrawStringXY(buffer, textBoxX + 2, textBoxY + 2);
 		
-      // display cursor
-      cursorX = gfx_GetTextX()+2;
-		cursorY = gfx_GetTextY()-2;
-      gfx_SetColor(LIGHT_BLUE);
+		// display cursor
+		cursorX = textBoxX + fontlib_GetStringWidth(buffer) + 2;
+		cursorY = textBoxY + 3;
 		
 		// deal with cursor cycles
-      if(cursorBlink > 10) {
+		if(cursorBlink > 10) {
+			gfx_SetColor(LIGHT_BLUE);
 			gfx_VertLine(cursorX, cursorY, 11);
 			gfx_VertLine(cursorX+1, cursorY, 11);
-         if(cursorBlink == 30) {
-            cursorBlink = 0;
-         }
-      }
-      cursorBlink++;
+			if(cursorBlink == 30) {
+				cursorBlink = 0;
+			}
+		}
+		cursorBlink++;
 		
-      gfx_Blit(1);
+		gfx_Blit(1);
 		
 		// keypresses
 		{
@@ -110,12 +110,12 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		keyPressed = os_GetCSC();
 		
 		// enter creates a new file with the inputted string for a name
-      if (kb_IsDown(kb_KeyEnter) && strLen > 0 && strLen <= maxLength) { // enter finishes string input and returns 1
-         return 1;
-      }
+		if (kb_IsDown(kb_KeyEnter) && strLen > 0 && strLen <= maxLength) { // enter finishes string input and returns 1
+			return 1;
+		}
 		
 		// clear quits and returns failure (0)
-      if (kb_IsDown(kb_KeyClear)) {
+		if (kb_IsDown(kb_KeyClear)) {
 			// wait for the delete key to be released before moving on
 			while(kb_AnyKey()) kb_Scan();
 			
