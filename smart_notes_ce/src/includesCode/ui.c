@@ -30,17 +30,17 @@ void drawWindow(struct window* window) {
 }
 
 // cursor stuff
-void animateCursor(struct cursorStruct *CS) {
-   if(CS->cursorState > CS->invisibleTime) {
-      drawCursor(CS);
+void updateCursor(struct cursor* cursor) {
+   if(cursor->cursorState > cursor->invisibleTime) {
+      drawCursor(cursor);
    }
-   if(CS->cursorState >= CS->cyclesPerAnimation) {
-      CS->cursorState = 0;
+   if(cursor->cursorState >= cursor->cyclesPerAnimation) {
+      cursor->cursorState = 0;
    }
-   CS->cursorState++;
+	cursor->cursorState++;
 }
 
-void drawCursor(struct cursorStruct * cursor) {
+void drawCursor(struct cursor* cursor) {
    gfx_SetColor(DARK_BLUE);
    gfx_VertLine_NoClip(cursor->x, cursor->y, 11);
    gfx_VertLine_NoClip(cursor->x+1, cursor->y, 11);

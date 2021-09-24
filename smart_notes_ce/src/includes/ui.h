@@ -86,27 +86,21 @@ void drawWindow(struct window* window);
 **/
 
 // contains properties of a cursor
-struct cursorStruct {
-   uint8_t cursorState; // number of cycles completed so far in 1 animation. Is incremented until it is == cyclesPerAnimation, and then reset.
-   uint8_t cyclesPerAnimation; // the total number of cycles that should be completed per an animation (blink), also called the speed :P
-   uint8_t invisibleTime; // how many cycles the cursor should be invisible for
-   int row; // current text row the cursor is in
-   int column; // current text column the cursor is in
-   int x; // current x coord of cursor
-   int y; // current y coord of cursor
+struct cursor {
+   uint8_t animation_cycles_completed;
+   uint8_t cycles_per_animation;
+   uint8_t invisibleTime; // how many cycles of the animation time the cursor should be invisible for
+   unsigned int row; // current text row the cursor is in
+   unsigned int column; // current text column the cursor is in
+   unsigned int x; // current x coord of cursor
+   unsigned int y; // current y coord of cursor
 };
 
 // draws a cursor given the properties in a given cursor struct
-void animateCursor(struct cursorStruct *CS);
+void updateCursor(struct cursor *cursor);
 
 // draws a cursor at a given x and y location
-void drawCursor(struct cursorStruct * cursor);
-
-
-//////////////////////////////////////////////
-/**
- * text window /menu things
-**/
+void drawCursor(struct cursor * cursor);
 
 /*
 prints a message window with wordwrap

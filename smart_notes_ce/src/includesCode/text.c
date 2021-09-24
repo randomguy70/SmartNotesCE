@@ -20,9 +20,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
    uint8_t strLen = 0;
    char character;
 	
-   unsigned int cursorX;
-	unsigned int cursorY;
-   uint8_t cursorBlink = 0;
+   struct cursor cursor;
 	
 	struct window window = {
 		.width = 150,
@@ -37,40 +35,49 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		.body_text_color = BLACK,
 	};
 	
-	int titleX = (SCRN_WIDTH/2) - (gfx_GetStringWidth(title) / 2);
-	int titleY = (SCRN_HEIGHT/2)-(window.height/2)+5;
-	
 	// text box
-	unsigned int textBoxWidth  = window.width - 10;
+	unsigned int textBoxWidth = window.width - 10;
 	unsigned int textBoxHeight = 17;
-	unsigned int textBoxX      = window.x + 5;
-	unsigned int textBoxY      = window.y + WINDOW_TITLE_BAR_HEIGHT + 12;
+	unsigned int textBoxX = window.x + ((window.width/2) - (textBoxWidth/2));
+	unsigned int textBoxY = window.y + WINDOW_TITLE_BAR_HEIGHT + 12;
 	
 	unsigned int alphaXPos = window.x + window.width - 10;
 	unsigned int alphaYPos = window.y + 5;
 	
 	sk_key_t keyPressed;
 	
+	bool second = false;
+	bool alpha  = false;
+	bool del    = false;
+	
+	bool second_prev;
+	bool alpha_prev;
+	bool del_prev;
+	
    while(true)
 	{
-		
 		kb_Scan();
-		bool second_prev = kb_IsDown(kb_Key2nd);
-		bool alpha_prev  = kb_IsDown(kb_KeyAlpha);
-		bool del_prev    = kb_IsDown(kb_KeyDel);
+		
+		second_prev = second;
+		alpha_prev = alpha;
+		del_prev = del;
+		
+		second = kb_IsDown(kb_Key2nd);
+		alpha  = kb_IsDown(kb_KeyAlpha);
+		del    = kb_IsDown(kb_KeyDel);
 		
 		gfx_SetDraw(gfx_buffer);
 		
 		drawWindow(&window);
-				
+		
+		// text box
       gfx_SetColor(WHITE);
 		gfx_FillRectangle_NoClip(textBoxX, textBoxY, textBoxWidth, textBoxHeight);
 		
-      // text box outline
-      gfx_SetColor(LIGHT_BLUE);
+		gfx_SetColor(LIGHT_BLUE);
 		gfx_Rectangle_NoClip(textBoxX, textBoxY, textBoxWidth, textBoxHeight);
 
-      // display alpha mode (either A, a, or 1)
+      // display text mode (either A, a, or 1)
       gfx_SetTextFGColor(BLACK);
 		gfx_SetTextXY(alphaXPos, alphaYPos);
 		
@@ -88,8 +95,10 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		fontlib_DrawStringXY(buffer, textBoxX + 2, textBoxY + 2);
 		
 		// display cursor
-		cursorX = textBoxX + fontlib_GetStringWidth(buffer) + 2;
-		cursorY = textBoxY + 3;
+		cursor.x = textBoxX + fontlib_GetStringWidth(buffer) + 2;
+		cursor.y = textBoxY + 3;
+		
+		drawCursor(&cursor);
 		
 		// deal with cursor cycles
 		if(cursorBlink > 10) {
