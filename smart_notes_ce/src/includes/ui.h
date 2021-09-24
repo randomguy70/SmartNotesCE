@@ -10,6 +10,10 @@ extern "C" {
 #include "main.h"
 #include "includes/colors.h"
 
+
+#define WINDOW_TITLE_BAR_HEIGHT 10
+
+
 struct window {
 	int x, y, width, height;
 	const char *title;

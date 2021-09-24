@@ -40,10 +40,20 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 	int titleX = (SCRN_WIDTH/2) - (gfx_GetStringWidth(title) / 2);
 	int titleY = (SCRN_HEIGHT/2)-(window.height/2)+5;
 	
+	// text box
+	int textBoxWidth  = window.width - 10;
+	int textBoxHeight = 17;
+	int textBoxX      = window.x + 5;
+	int textBoxY      = window.y + WINDOW_TITLE_BAR_HEIGHT + 12;
+	
+	int alphaXPos = window.x + window.width - 10;
+	int alphaYPos = window.y + 5;
+	
 	sk_key_t keyPressed;
 	
-   while(true) {
-				
+   while(true)
+	{
+		
 		kb_Scan();
 		bool second_prev = kb_IsDown(kb_Key2nd);
 		bool alpha_prev  = kb_IsDown(kb_KeyAlpha);
@@ -52,22 +62,15 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		gfx_SetDraw(gfx_buffer);
 		
 		drawWindow(&window);
-		
-      // text box
-		int textBoxWidth = 72;
-		int textBoxHeight = 15;
-		int textBoxX = (SCRN_WIDTH/2)-(textBoxWidth/2);
-		int textBoxY = window.y + 20;
+				
       gfx_SetColor(WHITE);
 		gfx_FillRectangle_NoClip(textBoxX, textBoxY, textBoxWidth, textBoxHeight);
-
+		
       // text box outline
-      gfx_SetColor(DARK_BLUE);
-		gfx_Rectangle_NoClip(textBoxX, window.y+20, textBoxWidth, textBoxHeight);
+      gfx_SetColor(LIGHT_BLUE);
+		gfx_Rectangle_NoClip(textBoxX, textBoxY, textBoxWidth, textBoxHeight);
 
       // display alpha mode (either A, a, or 1)
-		int alphaXPos = window.x + window.width - 10;
-		int alphaYPos = window.y + 5;
       gfx_SetTextFGColor(BLACK);
 		gfx_SetTextXY(alphaXPos, alphaYPos);
 		
@@ -82,23 +85,23 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		
 		// display the title and inputted string
       gfx_SetTextFGColor(BLACK);
-		gfx_PrintStringXY(title, titleX, titleY);
-		gfx_PrintStringXY(buffer, (SCRN_WIDTH/2)-(72/2)+2, (SCRN_HEIGHT/2)-(window.height/2)+24);
+		fontlib_DrawStringXY(buffer, (SCRN_WIDTH/2)-(72/2)+2, (SCRN_HEIGHT/2)-(window.height/2)+24);
 
       // display cursor
       cursorX = gfx_GetTextX()+2;
 		cursorY = gfx_GetTextY()-2;
-      gfx_SetColor(DARK_BLUE);
+      gfx_SetColor(LIGHT_BLUE);
 		
-		// deal with cursor cycles
-      if(cursorBlink > 10) {
-			gfx_VertLine(cursorX, cursorY, 11);
-			gfx_VertLine(cursorX+1, cursorY, 11);
-         if(cursorBlink == 30) {
-            cursorBlink = 0;
-         }
-      }
-      cursorBlink++;
+		// // deal with cursor cycles
+      // if(cursorBlink > 10) {
+		// 	gfx_VertLine(cursorX, cursorY, 11);
+		// 	gfx_VertLine(cursorX+1, cursorY, 11);
+      //    if(cursorBlink == 30) {
+      //       cursorBlink = 0;
+      //    }
+      // }
+      // cursorBlink++;
+		
       gfx_Blit(1);
 		
 		// keypresses
