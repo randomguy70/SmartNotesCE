@@ -10,15 +10,23 @@
 #include <tice.h>
 
 void drawWindow(struct window* window) {
+	const unsigned int titleBarHeight = 15;
+	const unsigned int outlineThickness = 2;
 	
-	// body fill
-	gfx_SetColor(window->window_background_color);
-	gfx_FillRectangle_NoClip(window->x, window->y, window->width, window->height);
+	// title bar
+	gfx_SetColor(window->title_bar_color);
+	gfx_FillRectangle_NoClip(window->x, window->y, window->width, titleBarHeight);
+	
+	fontlib_SetForegroundColor(window->title_text_color);
+	fontlib_DrawStringXY(window->title, (window->x + window->width/2)- (fontlib_GetStringWidth(window->title)/2), window->y + outlineThickness);
+	
+	// body
+	gfx_SetColor(window->body_color);
+	gfx_FillRectangle_NoClip(window->x, window->y + titleBarHeight, window->width, window->height - titleBarHeight);
 	
 	// outline
 	gfx_SetColor(window->window_outline_color);
-	thick_Rectangle(window->x, window->y, window->width, window->height, 2);
-	
+	thick_Rectangle(window->x, window->y, window->width, window->height, outlineThickness);
 }
 
 // cursor stuff

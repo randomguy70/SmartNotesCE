@@ -12,11 +12,12 @@ extern "C" {
 
 struct window {
 	int x, y, width, height;
-	char *title;
+	const char *title;
 	char *body;
+	enum color title_bar_color;
 	enum color title_text_color;
+	enum color body_color;
 	enum color body_text_color;
-	enum color window_background_color;
 	enum color window_outline_color;
 };
 

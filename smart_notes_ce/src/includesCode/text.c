@@ -16,9 +16,6 @@ static enum txt_mode checkIfSwitchTxtMode(enum txt_mode mode);
 
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 {
-   struct keys keys;
-	keys.firstLoad = true;
-	
    enum txt_mode txtMode = CAPS;
    uint8_t strLen = 0;
    char character;
@@ -27,25 +24,30 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 	uint16_t cursorY;
    uint8_t cursorBlink = 0;
 	
-	struct window window;
-	window.width = 150;
-	window.height = 50;
-	window.x = (SCRN_WIDTH/2)-(window.width/2);
-	window.y = (SCRN_HEIGHT/2)-(window.height/2);
-	
-	window.window_outline_color = LIGHT_BLUE;
-	window.window_background_color = LIGHT_GREY;
+	struct window window = {
+		.width = 150,
+		.height = 50,
+		.x = (SCRN_WIDTH/2)-(window.width/2),
+		.y = (SCRN_HEIGHT/2)-(window.height/2),
+		.window_outline_color = LIGHT_BLUE,
+		.title_bar_color = DARK_GREY,
+		.title_text_color = BLACK,
+		.title = title,
+		.body_color = LIGHT_GREY,
+		.body_text_color = BLACK,
+	};
 	
 	int titleX = (SCRN_WIDTH/2) - (gfx_GetStringWidth(title) / 2);
 	int titleY = (SCRN_HEIGHT/2)-(window.height/2)+5;
 	
+	sk_key_t keyPressed;
+	
    while(true) {
-		loadKeys(&keys);
-		
+				
 		kb_Scan();
-		second = kb_IsDown(kb_Key2nd);
-		alpha = kb_IsDown(kb_KeyAlpha);
-		del = kb_IsDown(kb_KeyDel);
+		bool second_prev = kb_IsDown(kb_Key2nd);
+		bool alpha_prev  = kb_IsDown(kb_KeyAlpha);
+		bool del_prev    = kb_IsDown(kb_KeyDel);
 		
 		gfx_SetDraw(gfx_buffer);
 		
@@ -246,7 +248,7 @@ int getWordLen(char *src) {
 	return chars;
 }
 
-void fontlib_DrawStringXY(char *str, int x, int y) {
+void fontlib_DrawStringXY(const char *str, int x, int y) {
 	fontlib_SetCursorPosition(x, y);
 	fontlib_DrawString(str);
 	return;

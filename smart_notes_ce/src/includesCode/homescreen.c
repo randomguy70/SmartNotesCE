@@ -10,9 +10,9 @@
 #include <includes/ui.h>
 #include <gfx/gfx.h>
 
-#define MAX_FILES_LOADABLE 30
-#define MAX_FILES_VIEWABLE 10
-#define FILE_SPACING			15
+#define MAX_FILES_LOADABLE  30
+#define MAX_FILES_VIEWABLE  10
+#define FILE_SPACING			 15
 
 void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile);
 static void dispHomeScreenBG(struct homescreen* homescreen);
@@ -28,7 +28,7 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 	homescreen->offset = 0;
 	
 	homescreen->numFiles = loadFiles(homescreen->files);
-
+	
 	while(true)
 	{
 		gfx_SetDraw(gfx_buffer);
@@ -304,9 +304,9 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 
 static uint8_t loadFiles(struct file files[]) {
 	uint8_t numFiles  = 0;
-	ti_var_t fileSlot = 0; // slot of currently detected file
+	ti_var_t fileSlot = 0;
 	char *namePtr     = NULL;
-	void *search_pos  = NULL; // mem location of the currently detected file in the VAT
+	void *search_pos  = NULL;
 	
 	while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL && numFiles < 30) {
 		
