@@ -6,7 +6,7 @@
 
 /**
  * returns the os_GetCSC() keypress value using kb_Data[] & kb_Scan()
- * 
+ * * created by Jacobly
 **/
 uint8_t get_single_key_pressed(void) {
     static uint8_t last_key;
