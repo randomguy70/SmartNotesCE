@@ -114,57 +114,41 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		gfx_Blit(1);
 		
 		kb_Scan();
-		// keyPressed = os_GetCSC();
-		keyPressed = get_single_key_pressed();
-		
-		if (kb_IsDown(kb_KeyEnter) && strLen > 0 && strLen <= maxLength) {
+				
+		if (kb_IsDown(kb_KeyEnter) && strLen > 0 && strLen <= maxLength)
+		{
 			return 1;
 		}
 		
-		// clear quits and returns failure (0)
-		if (kb_IsDown(kb_KeyClear)) {
-			// wait for the delete key to be released before moving on
+		// clear quits
+		if (kb_IsDown(kb_KeyClear))
+		{
 			while(kb_AnyKey()) kb_Scan();
 			
 			return 0;
 		}
 		
 		// delete deletes one character (obviously)
-      if (kb_IsDown(kb_KeyDel) && strLen>0) {
+      if (kb_IsDown(kb_KeyDel) && strLen>0)
+		{
          buffer[strLen-1] = 0;
          strLen--;
 			
 			while(kb_AnyKey()) kb_Scan();
       }
 		
-		/*
-		// switching text modes
-      if (kb_IsDown(kb_KeyAlpha)) {
-			if(txtMode == MATH) {
-				txtMode = CAPS;
-			}
-			else if(txtMode == CAPS){
-				txtMode = LOWER_CASE;
-			}
-			else if(txtMode == LOWER_CASE) {
-				txtMode = MATH;
-			}
-			// wait for the delete key to be released before moving on
-			while(kb_AnyKey()) kb_Scan();
-		}
-		*/
-	
 		// input character and add the character to the current offset in the string buffer
-      // keyPressed = get_single_key_pressed();
-      if (strLen < 8) {
-         character = inputChar(txtMode, keyPressed);
-         if (character != '\0' && strLen<=maxLength) {
-               buffer[strLen] = character;
-               strLen++;
-         }
-      }
-		
-   }
+		keyPressed = os_GetCSC();
+      if (strLen < 8)
+		{
+			character = inputChar(txtMode, keyPressed);
+			if (character != '\0' && strLen<=maxLength)
+			{
+				buffer[strLen] = character;
+				strLen++;
+			}
+		}
+	}
 }
 
 char inputChar(enum txt_mode mode, uint8_t keyPressed)
