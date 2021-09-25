@@ -49,21 +49,21 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 	
 	bool second = false;
 	bool alpha  = false;
-	bool del    = false;
+	bool delete    = false;
 	
 	bool alpha_prev;
-	bool del_prev;
+	bool delete_prev;
 	
    while(true)
 	{
 		kb_Scan();
 		
 		alpha_prev = alpha;
-		del_prev = del;
+		delete_prev = delete;
 		
 		second = kb_IsDown(kb_Key2nd);
 		alpha  = kb_IsDown(kb_KeyAlpha);
-		del    = kb_IsDown(kb_KeyDel);
+		delete    = kb_IsDown(kb_KeyDel);
 		
 		gfx_SetDraw(gfx_buffer);
 		
@@ -114,13 +114,14 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		gfx_Blit(1);
 		
 		kb_Scan();
-				
-		if (kb_IsDown(kb_KeyEnter) && strLen > 0 && strLen <= maxLength)
+		
+		// exit successfully
+		if (kb_IsDown(kb_KeyEnter) && strLen > 0 && strLen <= maxLength && strlen > 0)
 		{
 			return 1;
 		}
 		
-		// clear quits
+		// quit
 		if (kb_IsDown(kb_KeyClear))
 		{
 			while(kb_AnyKey()) kb_Scan();
@@ -128,18 +129,16 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 			return 0;
 		}
 		
-		// delete deletes one character (obviously)
-      if (kb_IsDown(kb_KeyDel) && strLen>0)
+		// delete character
+      if (delete && !delete_prev && strLen > 0)
 		{
-         buffer[strLen-1] = 0;
+         buffer[strLen-1] = '\0';
          strLen--;
-			
-			while(kb_AnyKey()) kb_Scan();
       }
 		
-		// input character and add the character to the current offset in the string buffer
+		// input character
 		keyPressed = os_GetCSC();
-      if (strLen < 8)
+      if (strLen < 8 && (keyPressed != sk_Alpha && keyPressed != sk_2nd))
 		{
 			character = inputChar(txtMode, keyPressed);
 			if (character != '\0' && strLen<=maxLength)
@@ -153,7 +152,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 
 char inputChar(enum txt_mode mode, uint8_t keyPressed)
 {
-   unsigned char mathDat[] = {
+   const unsigned char mathDat[] = {
       0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
       0x0, 0x0 , 0x2B, 0x2D, 0x2A, 0x2F, 0x5E, 0x0, 
       0x0, 0x2D, 0x33, 0x36, 0x39, 0x29, 0x0 , 0x0, 
@@ -161,7 +160,7 @@ char inputChar(enum txt_mode mode, uint8_t keyPressed)
       0x0, 0x30, 0x31, 0x34, 0x37, 0x2C, 0x0 , 0x0, 
       0x0, 0x0 , 0x1a, 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
    };
-   unsigned char capsDat[] = {
+   const unsigned char capsDat[] = {
       0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 
       0x0, 0x0 , 0x22, 0x57, 0x52, 0x4D, 0x48, 0x0 , 
       0x0, 0x3F, 0x5B, 0x56, 0x51, 0x4C, 0x47, 0x0 , 
@@ -169,7 +168,7 @@ char inputChar(enum txt_mode mode, uint8_t keyPressed)
       0x0, 0x20, 0x59, 0x54, 0x4F, 0x4A, 0x45, 0x42, 
       0x0, 0x0 , 0x58, 0x53, 0x4E, 0x49, 0x44, 0x41, 
    };
-   unsigned char lowerCaseDat[] = {
+   const unsigned char lowerCaseDat[] = {
       0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 
       0x0, 0x22, 0x22, 0x77, 0x72, 0x6d, 0x68, 0x0 , 
       0x0, 0x3f, 0x0 , 0x76, 0x71, 0x6c, 0x67, 0x0 , 
@@ -179,7 +178,7 @@ char inputChar(enum txt_mode mode, uint8_t keyPressed)
    };
 
    char character = '\0';
-
+	
 	if (mode == MATH) {
 		character = mathDat[keyPressed];
 		return character;
@@ -188,6 +187,7 @@ char inputChar(enum txt_mode mode, uint8_t keyPressed)
       character = capsDat[keyPressed];
       return character;
    }
+	
    if (mode == LOWER_CASE) {
       character = lowerCaseDat[keyPressed];
       return character;
