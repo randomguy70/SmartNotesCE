@@ -11,9 +11,6 @@
 #include "includes/colors.h"
 #include "includes/key.h"
 
-static enum txt_mode checkIfSwitchTxtMode(enum txt_mode mode);
-
-
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 {
    enum txt_mode txtMode = CAPS;
@@ -54,7 +51,6 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 	bool alpha  = false;
 	bool del    = false;
 	
-	bool second_prev;
 	bool alpha_prev;
 	bool del_prev;
 	
@@ -62,7 +58,6 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 	{
 		kb_Scan();
 		
-		second_prev = second;
 		alpha_prev = alpha;
 		del_prev = del;
 		
@@ -80,8 +75,8 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		
 		gfx_SetColor(LIGHT_BLUE);
 		gfx_Rectangle_NoClip(textBoxX, textBoxY, textBoxWidth, textBoxHeight);
-
-      // display text mode (either A, a, or 1)
+		
+      // text mode (caps, lowercase, numbers)
       gfx_SetTextFGColor(BLACK);
 		gfx_SetTextXY(alphaXPos, alphaYPos);
 		
@@ -92,7 +87,18 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
       if(txtMode == LOWER_CASE)
 			gfx_PrintChar('a');
 		
-		txtMode = checkIfSwitchTxtMode(txtMode);
+		if(txtMode == MATH && alpha) {
+			txtMode = CAPS;
+		}
+		else if(txtMode == CAPS && alpha && !alpha_prev) {
+			txtMode = LOWER_CASE;
+		}
+		else if(txtMode == LOWER_CASE && alpha && !alpha_prev) {
+			txtMode = CAPS;
+		}
+		else if((txtMode == LOWER_CASE || txtMode == CAPS) && second) {
+			txtMode = MATH;
+		}
 		
 		// display the title and inputted string
 		gfx_SetTextFGColor(BLACK);
@@ -108,7 +114,8 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		gfx_Blit(1);
 		
 		kb_Scan();
-		keyPressed = os_GetCSC();
+		// keyPressed = os_GetCSC();
+		keyPressed = get_single_key_pressed();
 		
 		if (kb_IsDown(kb_KeyEnter) && strLen > 0 && strLen <= maxLength) {
 			return 1;
@@ -158,22 +165,6 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
       }
 		
    }
-}
-
-static enum txt_mode checkIfSwitchTxtMode(enum txt_mode mode) {
-	enum txt_mode ret = mode;
-	kb_Scan();
-	
-	if(kb_IsDown(kb_KeyAlpha) && (mode == LOWER_CASE || mode == MATH)) {
-		ret = CAPS;
-	}
-	if(kb_IsDown(kb_KeyAlpha) && mode == CAPS) {
-		ret = LOWER_CASE;
-	}
-	if(kb_IsDown(kb_Key2nd)) {
-		ret = MATH;
-	}
-	return ret;
 }
 
 char inputChar(enum txt_mode mode, uint8_t keyPressed)
