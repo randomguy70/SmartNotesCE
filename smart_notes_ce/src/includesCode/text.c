@@ -36,7 +36,6 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		.body_text_color = BLACK,
 	};
 	
-	// text box
 	unsigned int textBoxWidth = window.width - 10;
 	unsigned int textBoxHeight = 17;
 	unsigned int textBoxX = window.x + ((window.width/2) - (textBoxWidth/2));
@@ -100,11 +99,11 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 			txtMode = MATH;
 		}
 		
-		// display the title and inputted string
+		// display input
 		gfx_SetTextFGColor(BLACK);
 		fontlib_DrawStringXY(buffer, textBoxX + 2, textBoxY + 2);
 		
-		// display cursor
+		// cursor
 		cursor.x = textBoxX + fontlib_GetStringWidth(buffer) + 2;
 		cursor.y = textBoxY + 2;
 		
@@ -115,7 +114,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		
 		kb_Scan();
 		
-		// exit successfully
+		// success
 		if (kb_IsDown(kb_KeyEnter) && strLen > 0 && strLen <= maxLength && strlen > 0)
 		{
 			return 1;
@@ -129,16 +128,9 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 			return 0;
 		}
 		
-		// delete character
-      if (delete && !delete_prev && strLen > 0)
-		{
-         buffer[strLen-1] = '\0';
-         strLen--;
-      }
-		
 		// input character
 		keyPressed = os_GetCSC();
-      if (strLen < 8 && (keyPressed != sk_Alpha && keyPressed != sk_2nd))
+      if (strLen < 8 && (keyPressed != sk_Alpha && keyPressed != sk_2nd && keyPressed != sk_Mode && keyPressed != sk_Del && keyPressed != sk_GraphVar && keyPressed != sk_Stat && keyPressed != sk_Enter))
 		{
 			character = inputChar(txtMode, keyPressed);
 			if (character != '\0' && strLen<=maxLength)
@@ -147,6 +139,13 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 				strLen++;
 			}
 		}
+		
+		// delete character
+      if (delete && !delete_prev && strLen > 0)
+		{
+         buffer[strLen-1] = '\0';
+         strLen--;
+      }
 	}
 }
 
@@ -196,12 +195,13 @@ char inputChar(enum txt_mode mode, uint8_t keyPressed)
    return '\0';
 }
 
-int fontlib_GetStrLen(const char *string) {
+int fontlib_GetStrLen(const char *string)
+{
 	int i = 0;
 	
-	while(string[i]!='\0' && string[i]!=' ')
+	while(string[i]!='\0' && string[i] != fontlib_GetAlternateStopCode())
 		i++;
-		
+	
 	return i;
 }
 
@@ -216,7 +216,8 @@ int copyWord(char* dest, char* src)
    return pos;
 }
 
-int getWordLen(char *src) {
+int getWordLen(char *src)
+{
 	int chars = 0;
 	
 	while(src[chars] != '\0' && src[chars] != ' ')
@@ -225,13 +226,15 @@ int getWordLen(char *src) {
 	return chars;
 }
 
-void fontlib_DrawStringXY(const char *str, int x, int y) {
+void fontlib_DrawStringXY(const char *str, int x, int y)
+{
 	fontlib_SetCursorPosition(x, y);
 	fontlib_DrawString(str);
 	return;
 }
 
-int copyWordL(char *dest, char *src, int chars) {
+int copyWordL(char *dest, char *src, int chars)
+{
 	int pos = 0;
 	
 	while(pos < chars && src[pos] != '\0' && src[pos] != ' ')
@@ -245,7 +248,8 @@ int copyWordL(char *dest, char *src, int chars) {
 	return pos;
 }
 
-int getMaxCharsPerLine(char *src) {
+int getMaxCharsPerLine(char *src)
+{
 	unsigned int maxLineWidth = fontlib_GetWindowWidth();
 	unsigned int lineLen = 0; // the pixe length of the current line
 	uint8_t chars = 0; // how many characters are fitting on the line currently
@@ -256,7 +260,8 @@ int getMaxCharsPerLine(char *src) {
 	return chars;
 }
 
-int getByteDifference(void *ptrOne, void *ptrTwo) {
+int getByteDifference(void *ptrOne, void *ptrTwo)
+{
 	int byteDifference = 0;
 	
 	if(ptrOne <= ptrTwo) {
@@ -270,7 +275,8 @@ int getByteDifference(void *ptrOne, void *ptrTwo) {
 	return byteDifference;
 }
 
-int drawSpace() {
+int drawSpace()
+{
 	int x, y;
 	
 	x = fontlib_GetCursorX() + 4;
