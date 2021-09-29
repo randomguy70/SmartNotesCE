@@ -34,7 +34,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title);
 // 1) Math related ascii characters, such as {} () */+-="?,. etc...
 // 2) Capital ascii letters, such as ABC...
 // 3) Lowercase ascii letters, such as abc...
-char inputChar(enum txt_mode mode, uint8_t keyPressed);
+char inputChar(enum textMode mode, uint8_t keyPressed);
 
 // writes a string from a given location into a given location. Keeps on copying until a null byte is hit. Returns the pointer to the destination
 char* strcopy(char* dest, const char* src);
@@ -63,7 +63,7 @@ int getByteDifference(void *ptrOne, void *ptrTwo);
 
 int drawSpace();
 
-void updateInputMode(struct inputMode *inputMode);
+void updateInputMode(struct inputState *inputState);
 void displayTextMode(int x, int y, enum textMode textMode);
 
 #ifdef __cplusplus

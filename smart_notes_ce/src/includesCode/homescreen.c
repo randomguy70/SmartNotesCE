@@ -324,7 +324,6 @@ static uint8_t loadFiles(struct file files[]) {
 		ti_Close(fileSlot);
 		numFiles++;
 	}
-	alert(files[0].os_name);
 	
 	return numFiles;
 }

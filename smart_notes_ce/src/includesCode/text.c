@@ -50,24 +50,16 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 	
 	sk_key_t keyPressed;
 	
-	// bool second = false;
-	// bool alpha  = false;
-	// bool delete = false;
-	
-	// bool alpha_prev;
-	// bool delete_prev;
+	bool delete = false;
+	bool deletePrev = false;
 	
 	while(true)
 	{
 		inputState.alphaPrev = kb_IsDown(kb_KeyAlpha);
+		deletePrev = delete;
+		
 		kb_Scan();
-		
-		// alpha_prev = alpha;
-		// delete_prev = delete;
-		
-		// second = kb_IsDown(kb_Key2nd);
-		// alpha  = kb_IsDown(kb_KeyAlpha);
-		// delete = kb_IsDown(kb_KeyDel);
+		delete = kb_IsDown(kb_KeyDel);
 		
 		gfx_SetDraw(gfx_buffer);
 		
@@ -85,19 +77,20 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		gfx_SetTextXY(alphaXPos, alphaYPos);
 		
 		displayTextMode(alphaXPos, alphaYPos, inputState.textMode);
+		updateInputMode(&inputState);
 		
-		if(textMode == MATH && alpha) {
-			textMode = CAPS;
-		}
-		else if(textMode == CAPS && alpha && !alpha_prev) {
-			textMode = LOWER_CASE;
-		}
-		else if(textMode == LOWER_CASE && alpha && !alpha_prev) {
-			textMode = CAPS;
-		}
-		else if((textMode == LOWER_CASE || textMode == CAPS) && second) {
-			textMode = MATH;
-		}
+		// if(textMode == MATH && alpha) {
+		// 	textMode = CAPS;
+		// }
+		// else if(textMode == CAPS && alpha && !alpha_prev) {
+		// 	textMode = LOWER_CASE;
+		// }
+		// else if(textMode == LOWER_CASE && alpha && !alpha_prev) {
+		// 	textMode = CAPS;
+		// }
+		// else if((textMode == LOWER_CASE || textMode == CAPS) && second) {
+		// 	textMode = MATH;
+		// }
 		
 		// display input
 		gfx_SetTextFGColor(BLACK);
@@ -132,7 +125,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		keyPressed = os_GetCSC();
 		if (strLen < 8 && (keyPressed != sk_Alpha && keyPressed != sk_2nd && keyPressed != sk_Mode && keyPressed != sk_Del && keyPressed != sk_GraphVar && keyPressed != sk_Stat && keyPressed != sk_Enter))
 		{
-			character = inputChar(textMode, keyPressed);
+			character = inputChar(inputState.textMode, keyPressed);
 			if (character != '\0' && strLen<=maxLength)
 			{
 				buffer[strLen] = character;
@@ -141,7 +134,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		}
 		
 		// delete character
-		if (delete && !delete_prev && strLen > 0)
+		if (delete && !deletePrev && strLen > 0)
 		{
 			buffer[strLen-1] = '\0';
 			strLen--;
@@ -312,9 +305,9 @@ void updateInputMode(struct inputState *inputState)
 	bool alpha = kb_IsDown(kb_KeyAlpha);
 	bool second = kb_IsDown(kb_Key2nd);
 	
-	if(inputState->textMode == MATH && alpha && !inputState->alpha_prev)
+	if(inputState->textMode == MATH && alpha && !inputState->alphaPrev)
 	{
-		textMode = CAPS;
+		inputState->textMode = CAPS;
 	}
 	else if(inputState->textMode == CAPS && alpha)
 	{
