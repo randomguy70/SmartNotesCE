@@ -79,19 +79,6 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		displayTextMode(alphaXPos, alphaYPos, inputState.textMode);
 		updateInputMode(&inputState);
 		
-		// if(textMode == MATH && alpha) {
-		// 	textMode = CAPS;
-		// }
-		// else if(textMode == CAPS && alpha && !alpha_prev) {
-		// 	textMode = LOWER_CASE;
-		// }
-		// else if(textMode == LOWER_CASE && alpha && !alpha_prev) {
-		// 	textMode = CAPS;
-		// }
-		// else if((textMode == LOWER_CASE || textMode == CAPS) && second) {
-		// 	textMode = MATH;
-		// }
-		
 		// display input
 		gfx_SetTextFGColor(BLACK);
 		fontlib_DrawStringXY(buffer, textBoxX + 2, textBoxY + 2);
