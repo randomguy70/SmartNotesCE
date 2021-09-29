@@ -13,11 +13,15 @@
 
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 {
-   enum txt_mode txtMode = CAPS;
-   uint8_t strLen = 0;
-   char character;
+	uint8_t strLen = 0;
+	char character;
 	
-   struct cursor cursor = {
+	struct inputState inputState = {
+		.textMode = CAPS,
+		.alphaPrev = false,
+	};
+	
+	struct cursor cursor = {
 		.animation_cycles_completed = 0,
 		.cycles_per_animation = 40,
 		.invisibleTime = 15,
@@ -28,12 +32,12 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		.height = 50,
 		.x = (LCD_WIDTH/2)-(150/2),
 		.y = (LCD_HEIGHT/2)-(50/2),
-		.window_outline_color = LIGHT_BLUE,
-		.title_bar_color = DARK_GREY,
-		.title_text_color = BLACK,
+		.windowOutlineColor = LIGHT_BLUE,
+		.titleBarColor = DARK_GREY,
+		.titleTextColor = BLACK,
 		.title = title,
-		.body_color = LIGHT_GREY,
-		.body_text_color = BLACK,
+		.bodyColor = LIGHT_GREY,
+		.bodyTextColor = BLACK,
 	};
 	
 	unsigned int textBoxWidth = window.width - 10;
@@ -46,57 +50,53 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 	
 	sk_key_t keyPressed;
 	
-	bool second = false;
-	bool alpha  = false;
-	bool delete    = false;
+	// bool second = false;
+	// bool alpha  = false;
+	// bool delete = false;
 	
-	bool alpha_prev;
-	bool delete_prev;
+	// bool alpha_prev;
+	// bool delete_prev;
 	
-   while(true)
+	while(true)
 	{
+		inputState.alphaPrev = kb_IsDown(kb_KeyAlpha);
 		kb_Scan();
 		
-		alpha_prev = alpha;
-		delete_prev = delete;
+		// alpha_prev = alpha;
+		// delete_prev = delete;
 		
-		second = kb_IsDown(kb_Key2nd);
-		alpha  = kb_IsDown(kb_KeyAlpha);
-		delete    = kb_IsDown(kb_KeyDel);
+		// second = kb_IsDown(kb_Key2nd);
+		// alpha  = kb_IsDown(kb_KeyAlpha);
+		// delete = kb_IsDown(kb_KeyDel);
 		
 		gfx_SetDraw(gfx_buffer);
 		
 		drawWindow(&window);
 		
 		// text box
-      gfx_SetColor(WHITE);
+		gfx_SetColor(WHITE);
 		gfx_FillRectangle_NoClip(textBoxX, textBoxY, textBoxWidth, textBoxHeight);
 		
 		gfx_SetColor(LIGHT_BLUE);
 		gfx_Rectangle_NoClip(textBoxX, textBoxY, textBoxWidth, textBoxHeight);
 		
-      // text mode (caps, lowercase, numbers)
-      gfx_SetTextFGColor(BLACK);
+		// text mode (caps, lowercase, numbers)
+		gfx_SetTextFGColor(BLACK);
 		gfx_SetTextXY(alphaXPos, alphaYPos);
 		
-      if(txtMode == MATH)
-			gfx_PrintChar('1');
-      if(txtMode == CAPS)
-			gfx_PrintChar('A');
-      if(txtMode == LOWER_CASE)
-			gfx_PrintChar('a');
+		displayTextMode(alphaXPos, alphaYPos, inputState.textMode);
 		
-		if(txtMode == MATH && alpha) {
-			txtMode = CAPS;
+		if(textMode == MATH && alpha) {
+			textMode = CAPS;
 		}
-		else if(txtMode == CAPS && alpha && !alpha_prev) {
-			txtMode = LOWER_CASE;
+		else if(textMode == CAPS && alpha && !alpha_prev) {
+			textMode = LOWER_CASE;
 		}
-		else if(txtMode == LOWER_CASE && alpha && !alpha_prev) {
-			txtMode = CAPS;
+		else if(textMode == LOWER_CASE && alpha && !alpha_prev) {
+			textMode = CAPS;
 		}
-		else if((txtMode == LOWER_CASE || txtMode == CAPS) && second) {
-			txtMode = MATH;
+		else if((textMode == LOWER_CASE || textMode == CAPS) && second) {
+			textMode = MATH;
 		}
 		
 		// display input
@@ -130,9 +130,9 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		
 		// input character
 		keyPressed = os_GetCSC();
-      if (strLen < 8 && (keyPressed != sk_Alpha && keyPressed != sk_2nd && keyPressed != sk_Mode && keyPressed != sk_Del && keyPressed != sk_GraphVar && keyPressed != sk_Stat && keyPressed != sk_Enter))
+		if (strLen < 8 && (keyPressed != sk_Alpha && keyPressed != sk_2nd && keyPressed != sk_Mode && keyPressed != sk_Del && keyPressed != sk_GraphVar && keyPressed != sk_Stat && keyPressed != sk_Enter))
 		{
-			character = inputChar(txtMode, keyPressed);
+			character = inputChar(textMode, keyPressed);
 			if (character != '\0' && strLen<=maxLength)
 			{
 				buffer[strLen] = character;
@@ -141,15 +141,15 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		}
 		
 		// delete character
-      if (delete && !delete_prev && strLen > 0)
+		if (delete && !delete_prev && strLen > 0)
 		{
-         buffer[strLen-1] = '\0';
-         strLen--;
-      }
+			buffer[strLen-1] = '\0';
+			strLen--;
+		}
 	}
 }
 
-char inputChar(enum txt_mode mode, uint8_t keyPressed)
+char inputChar(enum textMode mode, uint8_t keyPressed)
 {
    const unsigned char mathDat[] = {
       0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
@@ -285,4 +285,49 @@ int drawSpace()
 	fontlib_SetCursorPosition(x, y);
 	
 	return x;
+}
+
+void displayTextMode(int x, int y, enum textMode textMode)
+{
+	gfx_SetColor(BLACK);
+	gfx_SetTextXY(x, y);
+	
+	if(textMode == MATH)
+	{
+		gfx_PrintChar('1');
+	}
+	if(textMode == CAPS)
+	{
+		gfx_PrintChar('A');
+	}
+	if(textMode == LOWER_CASE)
+	{
+		gfx_PrintChar('a');
+	}
+}
+
+void updateInputMode(struct inputState *inputState)
+{
+	kb_Scan();
+	bool alpha = kb_IsDown(kb_KeyAlpha);
+	bool second = kb_IsDown(kb_Key2nd);
+	
+	if(inputState->textMode == MATH && alpha && !inputState->alpha_prev)
+	{
+		textMode = CAPS;
+	}
+	else if(inputState->textMode == CAPS && alpha)
+	{
+		inputState->textMode = LOWER_CASE;
+	}
+	else if(inputState->textMode == LOWER_CASE && alpha)
+	{
+		inputState->textMode = CAPS;
+	}
+	else if(second)
+	{
+		inputState->textMode = MATH;
+	}
+	
+	inputState->alphaPrev = alpha;
 }

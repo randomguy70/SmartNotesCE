@@ -5,10 +5,25 @@
 extern "C" {
 #endif
 
-enum txt_mode {
+enum textMode {
 	MATH = 1,
 	CAPS,
 	LOWER_CASE,
+};
+
+struct inputState {
+	enum textMode textMode;
+	bool alphaPrev;
+};
+
+struct textBox {
+	uint16_t width;
+	uint16_t height;
+	
+	char *startOfText;
+	uint16_t dataSize;
+	
+	uint16_t lineOffset;
 };
 
 //inputString() writes an inputted string into a given string buffer (array)
@@ -47,6 +62,9 @@ int getMaxCharsPerLine(char *src);
 int getByteDifference(void *ptrOne, void *ptrTwo);
 
 int drawSpace();
+
+void updateInputMode(struct inputMode *inputMode);
+void displayTextMode(int x, int y, enum textMode textMode);
 
 #ifdef __cplusplus
 }

@@ -203,7 +203,8 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 	// open file
 	if(kb_IsDown(kb_KeyYequ))
 	{
-		if(homescreen->numFiles <= 0) {
+		if(homescreen->numFiles <= 0)
+		{
 			alert("There aren't any files to open (obviously).");
 		}
 		
@@ -310,7 +311,7 @@ static uint8_t loadFiles(struct file files[]) {
 	
 	while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL && numFiles < 30) {
 		
-		fileSlot = ti_Open(namePtr, "r");
+		fileSlot = ti_Open(namePtr, "r+");
 		
 		if(fileSlot == 0) {
 			ti_Close(fileSlot);
@@ -323,6 +324,7 @@ static uint8_t loadFiles(struct file files[]) {
 		ti_Close(fileSlot);
 		numFiles++;
 	}
+	alert(files[0].os_name);
 	
 	return numFiles;
 }

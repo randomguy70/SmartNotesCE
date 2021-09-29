@@ -19,6 +19,12 @@ enum window_type {
 	OPTION_TYPE,
 };
 
+enum button_types {
+	return_val,  // returns a value
+	action,      // executes a function
+	menu,        // opens another menu
+};
+
 struct window {
 	enum window_type type;
 	
@@ -26,23 +32,18 @@ struct window {
 	const char *title;
 	char *body;
 	
-	enum color title_bar_color;
-	enum color title_text_color;
-	enum color body_color;
-	enum color body_text_color;
-	enum color window_outline_color;
+	enum color titleBarColor;
+	enum color titleTextColor;
+	enum color bodyColor;
+	enum color bodyTextColor;
+	enum color windowOutlineColor;
 	
-	char option_text[5][10];
-	uint8_t selected_option;
+	bool hasOptions;
+	char optionText[5][10];
+	uint8_t numOptions;
+	uint8_t selectedOption;
 };
 
-enum button_types {
-	return_val,  // returns a value
-	action,      // executes a function
-	menu,        // opens another menu
-};
-
-// contains the settings data, should be mostly booleans & small integers
 struct settings {
 	// user-specific
 	unsigned int password;
@@ -86,17 +87,6 @@ struct scrollBar{
 	uint8_t colorIndex;
 };
 
-///////////////////////////////////////
-/**
- * window things
-**/
-void drawWindow(struct window* window);
-
-/**
- * cursor things
-**/
-
-// contains properties of a cursor
 struct cursor {
    uint8_t animation_cycles_completed;
    uint8_t cycles_per_animation;
@@ -107,10 +97,10 @@ struct cursor {
    unsigned int y; // current y coord of cursor
 };
 
-// draws a cursor given the properties in a given cursor struct
+void drawWindow(struct window* window);
+
 void updateCursor(struct cursor *cursor);
 
-// draws a cursor at a given x and y location
 void drawCursor(struct cursor * cursor);
 
 /*
@@ -119,9 +109,6 @@ prints a message window with wordwrap
  -returns false if the user presses clear
 */
 bool alert(char *txt);
-
-// prints word-wrapped text inside of given boundaries
-int8_t textBox(const char *text, int boxWidth, int boxHeight, int boxX, int boxY);
 
 /** displays a menu with sprites
  * @param menu pointer to a struct containing the sprite and text data for the menu

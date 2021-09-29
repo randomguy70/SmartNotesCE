@@ -37,15 +37,18 @@ uint8_t getNumFiles(const char * txt)
 // asks for user to input a string and makes a new file if one doesn't already exist with that name
 bool newFile(void) {
 	char buffer[9] = {0};
-	uint8_t fileSlot = 0;
+	ti_var_t fileSlot = 0;
 	
-	if (inputString(buffer, 8, "New File") > 0) {
-		if(fileExists(buffer)) {
+	if (inputString(buffer, 8, "New File") > 0)
+	{
+		fileSlot = ti_Open(buffer, "w+");
+		if(!fileSlot)
+		{
 			return false;
 		}
-		fileSlot = ti_Open(buffer, "w");
 		
-		if (fileSlot) {
+		if (fileSlot)
+		{
 			ti_Write("TXT", 3, 1, fileSlot);
 		}
 		
@@ -107,7 +110,6 @@ uint8_t getFullName(char *fullNameBuffer, char *osName) {
 	uint8_t fileSlot;
 	char *extraCharsPtr;
 	
-	ti_CloseAll();
 	fileSlot = ti_Open(osName, "r");
 	extraCharsPtr = ti_GetDataPtr(fileSlot) + strlen(HEADER_STR);
 	osNameLen = strlen(osName);
