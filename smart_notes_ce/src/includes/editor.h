@@ -5,19 +5,21 @@
 extern "C" {
 #endif
 
+#include <tice.h>
 #include "includes/file.h"
 #include "includes/buffer.h"
 
 struct editor {
-	char fileName[10];    // hmmm??? maybe the name of the open file?!!!
-	struct file file;     // contains data about the opened file in the editor
+	char fileName[10];
+	struct file file;
+	struct textBox textBox;
 	struct buffer buffer;
 	
-	bool shouldRefresh;   // whether or not to calculate the line pointers and re-display the text
+	bool shouldRefresh;
 	
-	unsigned int editOffset;    // cursor offset in the text array that is being edited
-	unsigned int curLine;       // line that cursor is on
-	unsigned int curCol;        // column that cursor is after
+	unsigned int editOffset;
+	unsigned int curLine;
+	unsigned int curCol;
 };
 
 // main text editing loop

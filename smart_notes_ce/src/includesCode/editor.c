@@ -11,7 +11,6 @@
 #include <includes/ui.h>
 #include <includes/colors.h>
 
-//// declarations
 static void dispEditorBK(char* name);
 static void dispEditorText(struct editor* editor);
 static enum state handleEditorKeyPresses(void);
@@ -21,11 +20,15 @@ enum state dispEditor(struct editor* editor) {
 	
 	enum state ret = show_editor;
 	
-	editor->shouldRefresh = true;
-	editor->curCol        = 0;
-	editor->curLine       = 0;
-	editor->editOffset    = 0;
-		
+	editor->curCol = 0;
+	editor->curLine = 0;
+	editor->editOffset = 0;
+	
+	editor->textBox.width = EDITOR_TEXT_BOX_WIDTH;
+	editor->textBox.height = EDITOR_TEXT_BOX_HEIGHT;
+	editor->textBox.x = SCRN_WIDTH/2 - editor->textBox.width/2;
+	editor->textBox.y = SCRN_HEIGHT/2 - editor->textBox.height/2;
+	
 	// loadFile(&(editor->file), editor->fileName);
 	
 	while(true)
@@ -112,6 +115,7 @@ static enum state handleEditorKeyPresses(void) {
 	return show_editor;
 }
 
+/*
 int getLinePtrs(struct buffer* buffer) {
 	
 	char* readPos = buffer->data; // acts like a cursor in the buffer
@@ -219,3 +223,6 @@ int getLinePtrs(struct buffer* buffer) {
 	
 	return buffer->numLines;
 }
+
+*/
+
