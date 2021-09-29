@@ -311,3 +311,108 @@ void updateInputMode(struct inputState *inputState)
 	
 	inputState->alphaPrev = alpha;
 }
+
+int calculateLinePointers(struct textBox *textBox)
+{
+	fontlib_SetLineSpacing(3, 3);
+	uint8_t fontHeight = fontlib_GetCurrentFontHeight();
+	
+	textBox->width  = EDITOR_TEXT_BOX_WIDTH; 
+	textBox->height = EDITOR_TEXT_BOX_HEIGHT;
+	textBox->x      = SCRN_WIDTH/2 - textBox->width/2;
+	textBox->y      = SCRN_HEIGHT/2 - textBox->height/2;
+	
+	textBox->readPtr = textBox->startOfText + textBox->offset;
+	int txtX = x;
+	int txtY = y + fontHeight;gi
+	int strWidth;
+	
+	// other
+	uint8_t linesPrinted = 0;
+	int messageLen = strlen(txt);
+	int charsRead = 0;
+	
+	// font stuff
+	fontlib_SetWindow(x, y, width, height);
+	fontlib_SetAlternateStopCode(' ');
+	fontlib_SetCursorPosition(txtX, txtY);
+	fontlib_SetBackgroundColor(LIGHT_GREY);
+	fontlib_SetTransparency(true);
+	
+	gfx_SetDraw(1);
+	
+	// box with outline
+	gfx_SetColor(LIGHT_GREY);
+	gfx_FillRectangle_NoClip(x, y, width, height);
+	gfx_SetColor(LIGHT_BLUE);
+	thick_Rectangle(x-2, y-2, width + 4, height + 4, 2);
+	
+	// header text
+	const char *headerTxt = "Warning";
+	headerY = y-1;
+	headerX = (SCRN_WIDTH/2) - (fontlib_GetStringWidth(headerTxt)/2);
+	fontlib_SetCursorPosition(headerX, headerY);
+	fontlib_SetForegroundColor(RED);
+	fontlib_DrawString(headerTxt);
+	
+	// header line
+	uint8_t length = 100;
+	gfx_SetColor(LIGHT_BLUE);
+	gfx_HorizLine(SCRN_WIDTH/2-length/2, y+fontHeight-1, length);
+	gfx_HorizLine(SCRN_WIDTH/2-length/2, y+fontHeight, length);
+	
+	// reset the cursor position
+	fontlib_SetCursorPosition(txtX, txtY);
+	fontlib_SetForegroundColor(BLACK);
+	
+	while(linesPrinted < maxLines-1 && charsRead <= messageLen) {
+	
+		strWidth = fontlib_GetStringWidth(readPos);
+	
+		// if the string is short enough to be displayed... then display it!
+		if(strWidth + txtX < width + x) {
+			fontlib_DrawString(readPos);
+			fontlib_ShiftCursorPosition(2, 0);
+			charsRead += (fontlib_GetLastCharacterRead()+1) - readPos;
+			readPos = fontlib_GetLastCharacterRead()+1;
+			txtX += strWidth;
+		}
+		
+		// if the word won't fit on to the end of the line... then create a new line
+		if(txtX > x && strWidth + txtX > x + width) {
+			if(linesPrinted < maxLines) {
+				fontlib_Newline();
+				txtX = x;
+				txtY += fontHeight;
+				linesPrinted++;
+			} else {
+				break;
+			}
+		}
+		
+		// if some person was fooling around and the current word is too long for a whole line by itself... then print it until it hits the endge of the window (the default) and create a new line
+		if(txtX == x && strWidth > width) {
+			
+			fontlib_DrawString(readPos);
+			
+			charsRead += (fontlib_GetLastCharacterRead()+1) - readPos;
+			readPos = fontlib_GetLastCharacterRead()+1;
+			
+			// new line
+			if(linesPrinted > maxLines)
+				break;
+				
+			fontlib_Newline();
+			txtX = x;
+			txtY += fontHeight;
+			linesPrinted++;
+		}
+	}
+	
+	gfx_BlitRectangle(1, x-2, y-2, width+4, height+4);
+	
+	if (waitForInput() == true)
+		return 1;
+	
+	return 0;
+}

@@ -5,6 +5,12 @@
 extern "C" {
 #endif
 
+#define EDITOR_HEADER_BAR_HEIGHT  20
+#define EDITOR_FOOTER_BAR_HEIGHT  20
+#define EDITOR_TEXT_BOX_Y         EDITOR_HEADER_BAR_HEIGHT
+#define EDITOR_TEXT_BOX_WIDTH     LCD_WIDTH
+#define EDITOR_TEXT_BOX_HEIGHT    (LCD_HEIGHT - (EDITOR_HEADER_BAR_HEIGHT + EDITOR_FOOTER_BAR_HEIGHT))
+
 enum textMode {
 	MATH = 1,
 	CAPS,
@@ -17,16 +23,22 @@ struct inputState {
 };
 
 struct textBox {
-	uint16_t width;
-	uint16_t height;
+	int x, y;
+	
+	int width, height;
 	
 	char *startOfText;
-	uint16_t dataSize;
+	int dataSize;
+	int offset;
+	char *readPtr;
 	
-	uint16_t lineOffset;
+	int lineOffset;
+	int numLines;
+	uint8_t maxLinesViewable;
+	
+	uint8_t fontHeight;
 };
 
-//inputString() writes an inputted string into a given string buffer (array)
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title);
 
 // inputChar() returns the last character inputted based on the value of the last keypress and text mode.
@@ -39,10 +51,7 @@ char inputChar(enum textMode mode, uint8_t keyPressed);
 // writes a string from a given location into a given location. Keeps on copying until a null byte is hit. Returns the pointer to the destination
 char* strcopy(char* dest, const char* src);
 
-// deleteChar() seeks to a given offset in an os variable (such as a program or appvar) and deletes 1 byte from that offset by moving all the data past the given offset back 1 byte and resizing the variable to be 1 byte smaller
-//uint8_t deleteChar(uint8_t slot, short offset);
-
-// returns the number of characters in a word (a string terminated with a space or null character)
+// returns the number of characters in a word terminated with a space or null character)
 int fontlib_GetStrLen(const char *string);
 
 void fontlib_DrawStringXY(const char *str, int x, int y);
@@ -56,7 +65,7 @@ int copyWordL(char *dest, char *src, int chars);
 // returns the character length of a word terminated by 0 or a space
 int getWordLen(char *src);
 
-// calculates the 
+// calculates the maximum characters that would be allowed in a fontlib line
 int getMaxCharsPerLine(char *src);
 
 int getByteDifference(void *ptrOne, void *ptrTwo);
@@ -65,6 +74,8 @@ int drawSpace();
 
 void updateInputMode(struct inputState *inputState);
 void displayTextMode(int x, int y, enum textMode textMode);
+
+int calculateEditorLinePointers(struct textBox *textBox);
 
 #ifdef __cplusplus
 }

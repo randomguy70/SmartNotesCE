@@ -294,18 +294,22 @@ int drawScrollbar(struct scrollBar * scrollBar) {
 };
 
 // Epsilon5++
-bool waitForInput() {
+bool waitForInput()
+{
 	while (kb_AnyKey()) kb_Scan();
 
-	while(true) {
+	while(true)
+	{
 		kb_Scan();
 		
-		if(kb_IsDown(kb_Key2nd) || kb_IsDown(kb_KeyEnter)){
+		if(kb_IsDown(kb_Key2nd) || kb_IsDown(kb_KeyEnter))
+		{
 			while (kb_AnyKey()) kb_Scan();
 			return true;
 		}
 		
-		if(kb_IsDown(kb_KeyClear)){
+		if(kb_IsDown(kb_KeyClear))
+		{
 			while (kb_AnyKey()) kb_Scan();
 			return false;
 		}
@@ -313,5 +317,3 @@ bool waitForInput() {
 	
 	return false;
 }
-
-// Congrats, you actually got to the bottom of this file! Did you actually read everything? :P
