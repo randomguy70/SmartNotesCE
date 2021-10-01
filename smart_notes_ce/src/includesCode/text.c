@@ -175,12 +175,14 @@ char inputChar(enum textMode mode, uint8_t keyPressed)
    return '\0';
 }
 
-int fontlib_GetStrLen(const char *string)
+int fontlib_strlen(char *string)
 {
 	int i = 0;
 	
 	while(string[i]!='\0' && string[i] != fontlib_GetAlternateStopCode())
+	{
 		i++;
+	}
 	
 	return i;
 }
@@ -194,16 +196,6 @@ int copyWord(char* dest, char* src)
    }
 	dest[pos] = '\0';
    return pos;
-}
-
-int getWordLen(char *src)
-{
-	int chars = 0;
-	
-	while(src[chars] != '\0' && src[chars] != ' ')
-		chars++;
-	
-	return chars;
 }
 
 void fontlib_DrawStringXY(const char *str, int x, int y)
@@ -312,28 +304,25 @@ void updateInputMode(struct inputState *inputState)
 	inputState->alphaPrev = alpha;
 }
 
-int calculateLinePointers(struct textBox *textBox)
+/*
+calculates the char * pointer to the start of each visible line in a textBox
+*/
+int textBox_getVisibleLinePointers(struct textBox *textBox)
 {
 	fontlib_SetLineSpacing(3, 3);
 	uint8_t fontHeight = fontlib_GetCurrentFontHeight();
 	
-	textBox->width  = EDITOR_TEXT_BOX_WIDTH; 
-	textBox->height = EDITOR_TEXT_BOX_HEIGHT;
-	textBox->x      = SCRN_WIDTH/2 - textBox->width/2;
-	textBox->y      = SCRN_HEIGHT/2 - textBox->height/2;
-	
-	textBox->readPtr = textBox->startOfText + textBox->offset;
-	int txtX = x;
-	int txtY = y + fontHeight;gi
+	char *readPtr = textBox->startOfText;
+	int txtX = textBox->x;
+	int txtY = textBox->y + fontHeight + 1;
 	int strWidth;
 	
-	// other
 	uint8_t linesPrinted = 0;
 	int messageLen = strlen(txt);
 	int charsRead = 0;
 	
 	// font stuff
-	fontlib_SetWindow(x, y, width, height);
+	fontlib_SetWindow(textBox->x, textBox->y, textBox->width, textBox->height);
 	fontlib_SetAlternateStopCode(' ');
 	fontlib_SetCursorPosition(txtX, txtY);
 	fontlib_SetBackgroundColor(LIGHT_GREY);
@@ -417,11 +406,46 @@ int calculateLinePointers(struct textBox *textBox)
 	return 0;
 }
 
+// XXX
 int displayTextBox(struct textBox *textBox)
 {
 	fontlib_SetCursorPosition(textBox->x, textBox->y);
-	for(uint8_t i=0; i<textBox->numLines && i<textBox->maxLinesViewable; i++)
+	for(uint8_t i=0; i<textBox->numLines && i<EDITOR_MAX_LINES_VIEWABLE; i++)
 	{
 		fontlib_DrawString(textBox->startOfText);
 	}
+}
+
+// XXX
+char *getNextLinePointer(char *line, char *endPoint)
+{
+	int windowWidth = fontlib_GetWindowWidth();
+	int lineWidth = 0;
+	int lineLength = 0;
+	int wordLength = 0;
+	int wordWidth = 0;
+	
+	char *nextLine = line;
+	
+	while(fontlib_GetStringWidthL(line, lineLength) < windowWidth)
+	{
+		if(line[lineLength] == '\\' && line[lineLength] == 'n')
+		{
+			
+		}
+		lineLength++;
+	}
+	
+	nextLine += lineLength;
+	return nextLine;
+}
+
+// XXX
+char *getPrevLinePointer(char *line, char *endPoint)
+{
+	int windowWidth = fontlib_GetWindowWidth();
+	int textX = 0;
+	char *prevLine = NULL;
+	
+	return prevLine;
 }

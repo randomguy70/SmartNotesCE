@@ -21,8 +21,8 @@ enum state dispEditor(struct editor *editor) {
 	
 	enum state ret = show_editor;
 	
-	editor->curCol = 0;
 	editor->curLine = 0;
+	editor->curCol = 0;
 	editor->editOffset = 0;
 	
 	editor->textBox.width = EDITOR_TEXT_BOX_WIDTH;
