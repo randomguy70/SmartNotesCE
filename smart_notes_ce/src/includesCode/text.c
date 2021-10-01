@@ -416,3 +416,12 @@ int calculateLinePointers(struct textBox *textBox)
 	
 	return 0;
 }
+
+int displayTextBox(struct textBox *textBox)
+{
+	fontlib_SetCursorPosition(textBox->x, textBox->y);
+	for(uint8_t i=0; i<textBox->numLines && i<textBox->maxLinesViewable; i++)
+	{
+		fontlib_DrawString(textBox->startOfText);
+	}
+}

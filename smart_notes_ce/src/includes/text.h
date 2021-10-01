@@ -5,11 +5,12 @@
 extern "C" {
 #endif
 
+#define EDITOR_MAX_LINES_VIEWABLE 15
 #define EDITOR_HEADER_BAR_HEIGHT  20
 #define EDITOR_FOOTER_BAR_HEIGHT  20
 #define EDITOR_TEXT_BOX_Y         EDITOR_HEADER_BAR_HEIGHT
 #define EDITOR_TEXT_BOX_WIDTH     LCD_WIDTH
-#define EDITOR_TEXT_BOX_HEIGHT    (LCD_HEIGHT - (EDITOR_HEADER_BAR_HEIGHT + EDITOR_FOOTER_BAR_HEIGHT))
+#define EDITOR_TEXT_BOX_HEIGHT    LCD_HEIGHT - (EDITOR_HEADER_BAR_HEIGHT + EDITOR_FOOTER_BAR_HEIGHT)
 
 enum textMode {
 	MATH = 1,
@@ -23,25 +24,19 @@ struct inputState {
 };
 
 struct textBox {
-	int x, y;
-	
-	int width, height;
+	int x, y, width, height;
 	
 	char *startOfText;
-	int dataSize;
-	int offset;
-	char *readPtr;
+	int textLength;
 	
-	int lineOffset;
-	int numLines;
-	uint8_t maxLinesViewable;
+	int numLines, lineOffset;
 	
-	uint8_t fontHeight;
+	char *onScreenLinePointers[EDITOR_MAX_LINES_VIEWABLE];
 };
 
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title);
 
-// inputChar() returns the last character inputted based on the value of the last keypress and text mode.
+// inputChar() returns the last character inputted based on the value of the current os_GetSCS() value, and the current text mode.
 // text Modes are:
 // 1) Math related ascii characters, such as {} () */+-="?,. etc...
 // 2) Capital ascii letters, such as ABC...
@@ -75,7 +70,7 @@ int drawSpace();
 void updateInputMode(struct inputState *inputState);
 void displayTextMode(int x, int y, enum textMode textMode);
 
-int calculateEditorLinePointers(struct textBox *textBox);
+int calculateLinePointers(struct textBox *textBox);
 
 #ifdef __cplusplus
 }

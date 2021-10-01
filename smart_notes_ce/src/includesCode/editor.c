@@ -1,11 +1,12 @@
-#include "main.h"
+#include <includes/editor.h>
+
 #include <fontlibc.h>
 #include <graphx.h>
 #include <keypadc.h>
 #include <fontlibc.h>
+#include <fileioc.h>
 
 #include <includes/file.h>
-#include <includes/editor.h>
 #include <includes/text.h>
 #include <includes/characters.h>
 #include <includes/ui.h>
@@ -16,7 +17,7 @@ static void dispEditorText(struct editor* editor);
 static enum state handleEditorKeyPresses(void);
 int getLinePtrs(struct buffer* buffer);
 
-enum state dispEditor(struct editor* editor) {
+enum state dispEditor(struct editor *editor) {
 	
 	enum state ret = show_editor;
 	
@@ -26,10 +27,17 @@ enum state dispEditor(struct editor* editor) {
 	
 	editor->textBox.width = EDITOR_TEXT_BOX_WIDTH;
 	editor->textBox.height = EDITOR_TEXT_BOX_HEIGHT;
-	editor->textBox.x = SCRN_WIDTH/2 - editor->textBox.width/2;
-	editor->textBox.y = SCRN_HEIGHT/2 - editor->textBox.height/2;
+	editor->textBox.x = SCRN_WIDTH/2 - EDITOR_TEXT_BOX_WIDTH/2;
+	editor->textBox.y = SCRN_HEIGHT/2 - EDITOR_TEXT_BOX_HEIGHT/2;
 	
-	// loadFile(&(editor->file), editor->fileName);
+	ti_var_t fileSlot = ti_Open(editor->fileName, "r+");
+	if(!fileSlot)
+	{
+		return should_exit;
+	}
+	editor->file.size = ti_GetSize(fileSlot);
+	ti_Read(editor->buffer.data, editor->file.size, 1, fileSlot);
+	calculateLinePointers(&editor->textBox);
 	
 	while(true)
 	{

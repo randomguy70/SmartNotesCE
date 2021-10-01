@@ -14,9 +14,7 @@ struct editor {
 	struct file file;
 	struct textBox textBox;
 	struct buffer buffer;
-	
-	bool shouldRefresh;
-	
+		
 	unsigned int editOffset;
 	unsigned int curLine;
 	unsigned int curCol;

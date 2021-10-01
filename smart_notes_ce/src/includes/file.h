@@ -25,7 +25,7 @@ bytes 50->end of the file: text data
 #define MIN_FILE_SIZE        TEXT_OFFSET
 #define MAX_FILE_NAME_SIZE   18
 
-#define FILE_BUFFER_SIZE     50000
+#define FILE_BUFFER_SIZE     16000
 
 struct file;
 struct buffer;
