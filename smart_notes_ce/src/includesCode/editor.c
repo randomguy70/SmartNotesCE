@@ -91,6 +91,8 @@ static int getTextBoxLinePointers(struct textBox *textBox)
 	
 	fontlib_SetAlternateStopCode(0);
 	
+	textBox->maxLinesOnScreen = 5;
+	
 	// initialise the first line
 	textBox->linePointers[linesCounted] = curLine;
 	
@@ -102,7 +104,7 @@ static int getTextBoxLinePointers(struct textBox *textBox)
 		curWordWidth = fontlib_GetStringWidthL(readPos, curWordLen);
 		
 		// if it reaches the end of the data => return
-		if(readPos >= end)
+		if(readPos >= end || linesCounted > textBox->maxLinesOnScreen);
 		{
 			break;
 		}
@@ -129,6 +131,8 @@ static int getTextBoxLinePointers(struct textBox *textBox)
 			curLineLen = 0;
 			curLineWidth = 0;
 			textBox->linePointers[++linesCounted] = curLine;
+			textBox->numLines++;
+			
 			goto START;
 		}
 		
@@ -142,6 +146,7 @@ static int getTextBoxLinePointers(struct textBox *textBox)
 		}
 	}
 	
+	textBox->numLinesOnScreen = linesCounted;
 	return linesCounted;
 }
 
@@ -152,7 +157,7 @@ static void dispEditorBK(struct editor *editor)
 	gfx_SetDraw(gfx_buffer);
 	gfx_FillScreen(WHITE);
 	
-	// header rect
+	// header rectangle
 	gfx_SetColor(MEDIUM_GREY);
 	gfx_FillRectangle_NoClip(0, 0, SCRN_WIDTH, 20);
 	gfx_SetColor(BLACK);
@@ -173,30 +178,18 @@ static void dispEditorBK(struct editor *editor)
 	return;	
 }
 
-static void dispEditorText(struct editor* editor)
+static void dispEditorText(struct editor *editor)
 {
-	uint8_t fontHeight;
-	uint8_t numLinesOnScreen;
-	int windowHeight;
-	int windowXMin;
-	int windowYMin;
+	int lineLen;
 	
-	windowXMin = fontlib_GetWindowXMin();
-	windowYMin = fontlib_GetWindowYMin();
+	fontlib_SetForegroundColor(BLACK);
 	
-	fontHeight = fontlib_GetCurrentFontHeight();
-	windowHeight = fontlib_GetWindowHeight();
-	numLinesOnScreen = windowHeight / fontHeight;
-	
-	fontlib_SetCursorPosition(windowXMin, windowYMin);
-	
-	// I will change this to be relative to the screen offset, just using this for debugging as of now
-	for(uint8_t i = 0; i<editor->buffer.numLines; i++) {
+	for(int i=0; i<editor->textBox.numLinesOnScreen; i++)
+	{
+		lineLen = editor->textBox.linePointers + i*sizeof(char) - 
 		
-		uint8_t strLen = getByteDifference(editor->buffer.lines[i], editor->buffer.lines[i]);
-		
-		fontlib_DrawStringL(editor->buffer.lines[i], strLen);
-		fontlib_Newline();
+		fontlib_SetCursorPosition(10, i*20 + 25);
+		fontlib_DrawStringL(editor->textBox.linePointers[i], editor->textBox.linePointers + i*sizeof(char));
 	}
 	
 	return;

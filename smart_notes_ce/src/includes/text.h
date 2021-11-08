@@ -35,7 +35,8 @@ struct textBox {
 	int lineOffset;
 	
 	// holds the pointers to the lines on screen
-	char *linePointers[EDITOR_MAX_LINES_VIEWABLE];
+	char *linePointers[EDITOR_MAX_LINES_VIEWABLE + 1];
+	uint8_t lineLengths[EDITOR_MAX_LINES_VIEWABLE + 1];
 };
 
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title);
