@@ -12,7 +12,7 @@
 #include <includes/ui.h>
 #include <includes/colors.h>
 
-static void dispEditorBK(char* name);
+static void dispEditorBK();
 static void dispEditorText(struct editor* editor);
 static enum state handleEditorKeyPresses(void);
 int getLinePtrs(struct buffer* buffer);
@@ -79,6 +79,8 @@ static int getTextBoxLinePointers(struct textBox *textBox)
 	char *pos = textBox->startOfText;
 	char *curLine = textBox->startOfText;
 	
+	// initialise the first line
+	textBox->linePointers[0] = curLine;
 	
 }
 

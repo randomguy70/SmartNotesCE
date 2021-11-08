@@ -34,7 +34,7 @@ struct textBox {
 	int maxLinesOnScreen;
 	int lineOffset;
 	
-	// holds the pointers to the lines on screen and the 1 line before the lines on screen
+	// holds the pointers to the lines on screen
 	char *linePointers[EDITOR_MAX_LINES_VIEWABLE];
 };
 
