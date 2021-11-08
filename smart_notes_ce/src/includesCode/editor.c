@@ -76,12 +76,73 @@ static int initialiseEditor(struct editor *editor)
 
 static int getTextBoxLinePointers(struct textBox *textBox)
 {
-	char *pos = textBox->startOfText;
+	char *end = textBox->startOfText + textBox->textLength;
+	char *readPos = textBox->startOfText;
 	char *curLine = textBox->startOfText;
+	int linesCounted = 0;
+	// pixel width
+	int curLineWidth = 0;
+	// character count
+	int curLineLen = 0;
+	// pixel width
+	int curWordWidth = 0;
+	// character count
+	int curWordLen = 0;
+	
+	fontlib_SetAlternateStopCode(0);
 	
 	// initialise the first line
-	textBox->linePointers[0] = curLine;
+	textBox->linePointers[linesCounted] = curLine;
 	
+	while(true)
+	{
+		START:
+		
+		curWordLen = getWordLen(readPos, end);
+		curWordWidth = fontlib_GetStringWidthL(readPos, curWordLen);
+		
+		// if it reaches the end of the data => return
+		if(readPos >= end)
+		{
+			break;
+		}
+		
+		// make sure it doesn't overflow
+		if (readPos + curWordLen >= end)
+		{
+			curWordLen = end - readPos;
+		}
+		
+		// if word fits => append it
+		if(curLineWidth + curWordWidth < textBox->width)
+		{
+			readPos += curWordLen;
+			curLineLen += curWordLen;
+			curLineWidth += curWordWidth;
+			goto START;
+		}
+		
+		// if word doesn't fit and there is stuff on the line already => new line
+		if((curLineWidth + curWordWidth < textBox->width) && (curLineLen > 0))
+		{
+			curLine += curLineLen;
+			curLineLen = 0;
+			curLineWidth = 0;
+			textBox->linePointers[++linesCounted] = curLine;
+			goto START;
+		}
+		
+		// if the word is too big for an entire line => force wrap it
+		if((curLineWidth + curWordWidth < textBox->width) && (curLineLen == 0))
+		{
+			curLineLen = getMaxCharsPerLine(curLine, end);
+			curLine += curLineLen;
+			textBox->linePointers[++linesCounted] = curLine;
+			goto START;
+		}
+	}
+	
+	return linesCounted;
 }
 
 // displays the editor background

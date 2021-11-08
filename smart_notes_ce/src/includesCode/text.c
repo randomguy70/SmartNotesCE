@@ -416,36 +416,28 @@ int displayTextBox(struct textBox *textBox)
 	}
 }
 
-// XXX
-char *getNextLinePointer(char *line, char *endPoint)
+int getWordLen(char *word, char *end)
 {
-	int windowWidth = fontlib_GetWindowWidth();
-	int lineWidth = 0;
-	int lineLength = 0;
-	int wordLength = 0;
-	int wordWidth = 0;
+	char *pos;
+	int wordLen = 0;
 	
-	char *nextLine = line;
-	
-	while(fontlib_GetStringWidthL(line, lineLength) < windowWidth)
+	while(word[wordLen] != '\0' && word[wordLen] != '\n' && word[wordLen] != ' ' && word + wordLen < end)
 	{
-		if(line[lineLength] == '\\' && line[lineLength] == 'n')
-		{
-			
-		}
-		lineLength++;
+		wordLen++;
 	}
 	
-	nextLine += lineLength;
-	return nextLine;
+	return wordLen;
 }
 
-// XXX
-char *getPrevLinePointer(char *line, char *endPoint)
+int getMaxCharsPerLine(char *start, char *end)
 {
-	int windowWidth = fontlib_GetWindowWidth();
-	int textX = 0;
-	char *prevLine = NULL;
+	fontlib_SetAlternateStopCode(0);
+	int characters = 0;
 	
-	return prevLine;
+	while(fontlib_GetStringWidthL(start, characters) < fontlib_GetWindowWidth() && start + characters < end)
+	{
+		characters++;
+	}
+	
+	return characters;
 }

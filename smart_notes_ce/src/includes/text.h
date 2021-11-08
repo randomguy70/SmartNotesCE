@@ -56,17 +56,18 @@ int fontlib_copyWord(char * dest, char * src);
 int fontlib_copyWordL(char *dest, char *src, int chars);
 int fontlib_strlen(char *string);
 
-// calculates the maximum characters that would be allowed in a fontlib line
-int getMaxCharsPerLine(char *src);
-
-int getByteDifference(void *ptrOne, void *ptrTwo);
-
 int drawSpace();
 
 void updateInputMode(struct inputState *inputState);
 void displayTextMode(int x, int y, enum textMode textMode);
 
 int textBox_getVisibleLinePointers(struct textBox *textBox);
+
+// returns character of next word terminated by space , NULL, or a new line
+int getWordLen(char *word, char *end);
+
+// returns num characters with NO word wrapping
+int getMaxCharsPerLine(char *start, char *end);
 
 #ifdef __cplusplus
 }
