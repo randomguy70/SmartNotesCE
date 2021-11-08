@@ -29,14 +29,19 @@ struct textBox {
 	char *startOfText;
 	int textLength;
 	
-	int numLines, lineOffset;
+	int numLines;
+	int numLinesOnScreen;
+	int maxLinesOnScreen;
+	int lineOffset;
 	
-	char *onScreenLinePointers[EDITOR_MAX_LINES_VIEWABLE];
+	// holds the pointers to the lines on screen and the 1 line before the lines on screen
+	char *linePointers[EDITOR_MAX_LINES_VIEWABLE];
 };
 
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title);
 
 // inputChar() returns the last character inputted based on the value of the current os_GetSCS() value, and the current text mode.
+
 // text Modes are:
 // 1) Math related ascii characters, such as {} () */+-="?,. etc...
 // 2) Capital ascii letters, such as ABC...

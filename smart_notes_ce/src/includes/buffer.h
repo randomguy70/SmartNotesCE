@@ -7,9 +7,7 @@
 
 struct buffer {
 	char data[FILE_BUFFER_SIZE];
-	unsigned int sig_chars;
-	uint16_t numLines;
-	char *lines[200];
+	unsigned int size;
 };
 
 int fileToBuffer(const char *name, struct buffer* buffer);

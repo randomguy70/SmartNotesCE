@@ -25,18 +25,8 @@ enum state dispEditor(struct editor *editor) {
 	editor->curCol = 0;
 	editor->editOffset = 0;
 	
-	editor->textBox.width = EDITOR_TEXT_BOX_WIDTH;
-	editor->textBox.height = EDITOR_TEXT_BOX_HEIGHT;
-	editor->textBox.x = SCRN_WIDTH/2 - EDITOR_TEXT_BOX_WIDTH/2;
-	editor->textBox.y = SCRN_HEIGHT/2 - EDITOR_TEXT_BOX_HEIGHT/2;
+	initialiseEditor(editor);
 	
-	ti_var_t fileSlot = ti_Open(editor->fileName, "r+");
-	if(!fileSlot)
-	{
-		return should_exit;
-	}
-	editor->file.size = ti_GetSize(fileSlot);
-	ti_Read(editor->buffer.data, editor->file.size, 1, fileSlot);
 	calculateLinePointers(&editor->textBox);
 	
 	while(true)
@@ -53,8 +43,42 @@ enum state dispEditor(struct editor *editor) {
 	}
 }
 
+static int initialiseEditor(struct editor *editor)
+{
+	ti_var_t file;
+	
+	file = ti_Open(editor->file.os_name, "r");
+	
+	if(!file)
+	{
+		return 0;
+	}
+	
+	editor->buffer.size = ti_GetSize(file);
+	editor->file.size = editor->buffer.size;
+	
+	ti_Read(editor->buffer.data, editor->buffer.size, 1, file);
+	ti_Close(file);
+	
+	editor->textBox.startOfText = editor->buffer.data;
+	editor->textBox.textLength = editor->buffer.size;
+	
+	editor->textBox.width = EDITOR_TEXT_BOX_WIDTH;
+	editor->textBox.height = EDITOR_TEXT_BOX_HEIGHT;
+	editor->textBox.x = SCRN_WIDTH/2 - EDITOR_TEXT_BOX_WIDTH/2;
+	editor->textBox.y = SCRN_HEIGHT/2 - EDITOR_TEXT_BOX_HEIGHT/2;
+	
+	editor->textBox.maxLinesOnScreen = EDITOR_MAX_LINES_VIEWABLE;
+	editor->textBox.lineOffset = 0;
+	
+	return 1;
+}
+
+
+
 // displays the editor background
-static void dispEditorBK(char* fileName) {
+static void dispEditorBK(char* fileName)
+{
 	
 	gfx_SetDraw(gfx_buffer);
 	gfx_FillScreen(WHITE);
@@ -80,7 +104,8 @@ static void dispEditorBK(char* fileName) {
 	return;	
 }
 
-static void dispEditorText(struct editor* editor) {
+static void dispEditorText(struct editor* editor)
+{
 	uint8_t fontHeight;
 	uint8_t numLinesOnScreen;
 	int windowHeight;
@@ -108,7 +133,8 @@ static void dispEditorText(struct editor* editor) {
 	return;
 }
 
-static enum state handleEditorKeyPresses(void) {
+static enum state handleEditorKeyPresses(void)
+{
 	kb_Scan();
 	
 	if(kb_IsDown(kb_KeyClear)) {
