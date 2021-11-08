@@ -180,16 +180,18 @@ static void dispEditorBK(struct editor *editor)
 
 static void dispEditorText(struct editor *editor)
 {
-	int lineLen;
+	uint8_t lineLen;
+	char *line;
 	
 	fontlib_SetForegroundColor(BLACK);
 	
 	for(int i=0; i<editor->textBox.numLinesOnScreen; i++)
 	{
-		lineLen = editor->textBox.linePointers + i*sizeof(char) - 
+		lineLen = editor->textBox.lineLengths[i];
+		line = editor->textBox.linePointers[i];
 		
 		fontlib_SetCursorPosition(10, i*20 + 25);
-		fontlib_DrawStringL(editor->textBox.linePointers[i], editor->textBox.linePointers + i*sizeof(char));
+		fontlib_DrawStringL(line, lineLen);
 	}
 	
 	return;
