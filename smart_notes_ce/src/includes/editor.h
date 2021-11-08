@@ -26,6 +26,9 @@ enum state dispEditor(struct editor* editor);
 
 static int initialiseEditor(struct editor *editor);
 
+// get the pointers to the lines on screen
+static int getTextBoxLinePointers(struct textBox *textBox);
+
 // gets the pointers to the start of each line in the file, as well as their byte offset from the text origin
 int getLinePtrs(struct buffer *buffer);
 

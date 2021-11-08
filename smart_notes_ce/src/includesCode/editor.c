@@ -31,7 +31,7 @@ enum state dispEditor(struct editor *editor) {
 	
 	while(true)
 	{
-		dispEditorBK(editor->fileName);
+		dispEditorBK(editor);
 		dispEditorText(editor);
 		
 		ret = handleEditorKeyPresses();
@@ -74,10 +74,16 @@ static int initialiseEditor(struct editor *editor)
 	return 1;
 }
 
-
+static int getTextBoxLinePointers(struct textBox *textBox)
+{
+	char *pos = textBox->startOfText;
+	char *curLine = textBox->startOfText;
+	
+	
+}
 
 // displays the editor background
-static void dispEditorBK(char* fileName)
+static void dispEditorBK(struct editor *editor)
 {
 	
 	gfx_SetDraw(gfx_buffer);
@@ -93,7 +99,7 @@ static void dispEditorBK(char* fileName)
 	fontlib_SetTransparency(true);
 	fontlib_SetForegroundColor(BLACK);
 	fontlib_SetAlternateStopCode(0); // the name might have spaces in it
-	fontlib_DrawStringXY(fileName, 1, 2);
+	fontlib_DrawStringXY(editor->file.os_name, 1, 2);
 	
 	// footer
 	gfx_SetColor(MEDIUM_GREY);
