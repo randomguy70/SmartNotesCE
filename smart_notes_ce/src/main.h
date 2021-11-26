@@ -1,9 +1,6 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
 // defines
 #define VERSION 1
 #define RELEASE_STRING "V.1.0"
@@ -28,4 +25,5 @@ enum state {
 	should_refresh_data,
 	should_refresh_all,
 };
+
 #endif
