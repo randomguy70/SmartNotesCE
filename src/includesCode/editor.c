@@ -90,7 +90,7 @@ static int getTextBoxLinePointers(struct textBox *textBox)
 		curWordWidth = fontlib_GetStringWidthL(readPos, curWordLen);
 		
 		// if it reaches the end of the data => return
-		if(readPos >= end || linesCounted > textBox->maxLinesOnScreen);
+		if(readPos >= end || linesCounted > textBox->maxLinesOnScreen)
 		{
 			break;
 		}

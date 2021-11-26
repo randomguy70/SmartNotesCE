@@ -49,8 +49,7 @@ bool newFile(void)
 		}
 		
 		ti_Seek(0, SEEK_SET, fileSlot);
-		// ti_Write(HEADER_STR, sizeof HEADER_STR, 1, fileSlot);
-		ti_Write("UM THIS IS ME", 14, 1, fileSlot);
+		ti_Write(HEADER_STR, sizeof HEADER_STR, 1, fileSlot);
 		
 		ti_Close(fileSlot);
 		return true;
