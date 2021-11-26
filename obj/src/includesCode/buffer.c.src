@@ -72,7 +72,7 @@ BB0_4:
 	call	_ti_Close
 	ld	hl, (ix - 6)
 	pop	de
-	ld	de, 32006
+	ld	de, 32012
 	ld	bc, (ix + 9)
 	push	bc
 	pop	iy

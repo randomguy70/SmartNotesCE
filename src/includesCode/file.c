@@ -34,33 +34,33 @@ uint8_t getNumFiles(const char * txt)
 	return result;
 }
 
-// asks for user to input a string and makes a new file if one doesn't already exist with that name
-bool newFile(void) {
-	char buffer[9] = {0};
-	ti_var_t fileSlot = 0;
+bool newFile(void)
+{
+	char buffer[10] = {0};
+	ti_var_t fileSlot;
 	
 	if (inputString(buffer, 8, "New File") > 0)
 	{
 		fileSlot = ti_Open(buffer, "w+");
+		
 		if(!fileSlot)
 		{
 			return false;
 		}
 		
-		if (fileSlot)
-		{
-			ti_Write("TXT", 3, 1, fileSlot);
-		}
+		ti_Write(HEADER_STR, sizeof HEADER_STR, 1, fileSlot);
 		
 		ti_Close(fileSlot);
 		return true;
+		
 	}
 	
 	return false;
 }
 
 // gives an option whether or not to delete the selected file
-bool checkIfDeleteFile(char *name) {	
+bool checkIfDeleteFile(char *name)
+{	
 	char message[100] = {"Are you sure you want to delete "};
 	strcat(message, name);
 	strcat(message, "?");
@@ -103,7 +103,7 @@ int toggleHiddenStatus(char* name) {
 		return -1;
 	}
 	
-	char temp[9] = {0};
+	char temp[10] = {0};
 	ti_GetName(temp, fileSlot);
 	temp[0] ^= 64;
 	ti_Close(fileSlot);

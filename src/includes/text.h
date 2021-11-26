@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#include "includes/buffer.h"
+
 #define EDITOR_MAX_LINES_VIEWABLE 15
 #define EDITOR_HEADER_BAR_HEIGHT  20
 #define EDITOR_FOOTER_BAR_HEIGHT  20
@@ -64,7 +66,7 @@ void displayTextMode(int x, int y, enum textMode textMode);
 
 int textBox_getVisibleLinePointers(struct textBox *textBox);
 
-static bool isValidWordChar(char character);
+bool isValidWordChar(char character);
 
 int getWordLen(char *pos, struct buffer *buffer);
 

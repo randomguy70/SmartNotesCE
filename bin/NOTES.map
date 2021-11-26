@@ -1,0 +1,205 @@
+Section          Base   Top    High   Length
+---------------- ------ ------ ------ -------
+.icon            D1A882 D1A9AB           129h
+.init.libs       D1A9AB D1AA03            58h
+.libs            D1AA03 D1AB0F           10Ch
+.init.clock      D1AB0F D1AB2A            1Bh
+.init.reruncheck D1AB2A D1AB2A             0h
+.init            D1AB2A D1AB4A            20h
+.fini            D1AB4A D1AB7E            34h
+.text            D1AB7E D1CAA6          1F28h
+.data            D1CAA6 D1D571           ACBh
+.rodata          D1D571 D1D950           3DFh
+.init_array      000000 000000             0h
+.ctors           000000 000000             0h
+.dtors           000000 000000             0h
+.fini_array      000000 000000             0h
+.bss             D052C6 D052C6 D13FD8      0h
+.header          D1A87F D1A882             3h
+
+Label                                 Value
+-----------------------------------   ------
+___low_bss                          = D052C6
+___len_bss                          = 000000
+___heaptop                          = D13FD8
+___heapbot                          = D052C6
+___libs                             = D1AA03
+___init_array_count                 = 000000
+___ctors_count                      = 000000
+___dtors_count                      = 000000
+___fini_array_count                 = 000000
+__stack                             = D1A87E
+_atomic_load_increasing_32          = D1AB7E
+_delay                              = D1ABA3
+_os_DisableHomeTextBuffer           = D1ABCD
+_os_EnableHomeTextBuffer            = D1ABDF
+___sleep_common.3                   = D1ABF3
+_os_GetCSC                          = 021D3C
+_clock                              = D1AC0C
+__frameset                          = D1AC17
+__frameset0                         = D1AC25
+__bshru                             = 000104
+__iand                              = 000134
+__idivs                             = 00013C
+__imulu                             = 000158
+__ishl                              = 000174
+__ishru                             = 000184
+__lmulu                             = 0001CC
+__sand                              = 000200
+__sdivu                             = 00020C
+__setflag                           = 000218
+_strcat                             = 0000C0
+_strcpy                             = 0000CC
+_strlen                             = 0000D4
+.missingappvar                      = D1D571
+.libloadname                        = D1D576
+.libloadnamelen                     = 000007
+.webaddress                         = D1D57E
+___init_clock                       = D1AB0F
+__start                             = D1AB2A
+___exithl                           = D1AB4A
+skip._exit                          = D1AB4A
+skip.__Exit                         = D1AB4A
+skip._abort                         = D1AB4A
+_exit.sp                            = D1AB4B
+_exit.flash_wait_states             = D1AB55
+_help_data                          = D1CAA6
+_hide_data                          = D1CBA8
+_left_arrow_data                    = D1CCCA
+_more_data                          = D1CDB6
+_new_icon_data                      = D1CE1C
+_open_data                          = D1CF4A
+_palette                            = D1D090
+_quit_data                          = D1D0A8
+_rename_data                        = D1D23A
+_settings_gear_data                 = D1D2FF
+_trash_data                         = D1D3C5
+_fileToBuffer                       = D1AC30
+L_.str                              = D1D593
+_dispEditor                         = D1ACF2
+L_.str                              = D1D595
+_archiveAll                         = D1AF7A
+_newFile                            = D1AFCD
+_checkIfDeleteFile                  = D1B050
+_fileExists                         = D1B0C6
+_renameFile                         = D1B0F8
+_toggleHiddenStatus                 = D1B169
+_isHidden                           = D1B1FC
+L_.str                              = D1D5AD
+L_.str.1                            = D1D5B1
+L_.str.2                            = D1D5B3
+L_.str.3                            = D1D5BC
+L___const.checkIfDeleteFile.message = D1D5BF
+L___const.renameFile.message        = D1D623
+_dispHomeScreen                     = D1B229
+_loadFiles                          = D1B8D4
+_dispFiles                          = D1B976
+L_.str                              = D1D634
+L_.str.1                            = D1D648
+L_.str.2                            = D1D662
+L_.str.3                            = D1D670
+L_.str.4                            = D1D67E
+L_.str.5                            = D1D697
+L_.str.6                            = D1D6B0
+L_.str.7                            = D1D6B5
+L_.str.8                            = D1D6BC
+L_.str.9                            = D1D6C1
+L_.str.10                           = D1D6C5
+L_.str.11                           = D1D6CA
+L_.str.12                           = D1D6CE
+L_.str.13                           = D1D6D4
+L_.str.14                           = D1D700
+L_.str.15                           = D1D739
+L_.str.16                           = D1D75B
+L_.str.17                           = D1D784
+_loadHomeScreenOtherMenu.menu       = D1D543
+L_.str.18                           = D1D7B2
+L_.str.19                           = D1D7BA
+L_.str.20                           = D1D7BF
+L_.str.21                           = D1D7C6
+L_.str.22                           = D1D7CF
+L_.str.23                           = D1D7D8
+L_.str.24                           = D1D7DD
+L_.str.25                           = D1D7E1
+_inputString                        = D1BAD1
+_displayTextMode                    = D1BD82
+_updateInputMode                    = D1BDCA
+_fontlib_DrawStringXY               = D1BED0
+_inputChar                          = D1BEFA
+_getWordLen                         = D1BF30
+L___const.inputString.cursor        = D1D7E4
+_inputChar.mathDat                  = D1D7F3
+_inputChar.capsDat                  = D1D823
+_inputChar.lowerCaseDat             = D1D853
+L_switch.table.inputChar            = D1D883
+_drawWindow                         = D1C007
+_thick_Rectangle                    = D1C0FC
+_updateCursor                       = D1C16A
+_drawCursor                         = D1C184
+_alert                              = D1C1EB
+_displayMenu                        = D1C4F1
+_waitForInput                       = D1C841
+L_.str                              = D1D88C
+_main                               = D1C8AA
+L_.str                              = D1D894
+L_.str.1                            = D1D89B
+L_.str.2                            = D1D8C1
+L_.str.3                            = D1D8F2
+L_.str.4                            = D1D922
+_#ti_CloseAll                       = D1AA0D
+_#ti_Open                           = D1AA11
+_#ti_Close                          = D1AA15
+_#ti_Write                          = D1AA19
+_#ti_Read                           = D1AA1D
+_#ti_Delete                         = D1AA21
+_#ti_Seek                           = D1AA25
+_#ti_SetArchiveStatus               = D1AA29
+_#ti_GetSize                        = D1AA2D
+_#ti_Detect                         = D1AA31
+_#ti_GetName                        = D1AA35
+_#ti_Rename                         = D1AA39
+_#fontlib_SetWindow                 = D1AA48
+_#fontlib_SetCursorPosition         = D1AA4C
+_#fontlib_ShiftCursorPosition       = D1AA50
+_#fontlib_SetFont                   = D1AA54
+_#fontlib_SetForegroundColor        = D1AA58
+_#fontlib_SetBackgroundColor        = D1AA5C
+_#fontlib_SetTransparency           = D1AA60
+_#fontlib_SetLineSpacing            = D1AA64
+_#fontlib_GetCurrentFontHeight      = D1AA68
+_#fontlib_SetAlternateStopCode      = D1AA6C
+_#fontlib_GetStringWidth            = D1AA70
+_#fontlib_GetStringWidthL           = D1AA74
+_#fontlib_GetLastCharacterRead      = D1AA78
+_#fontlib_DrawString                = D1AA7C
+_#fontlib_DrawStringL               = D1AA80
+_#fontlib_Newline                   = D1AA84
+_#fontlib_GetFontByIndex            = D1AA88
+_#gfx_Begin                         = D1AA95
+_#gfx_End                           = D1AA99
+_#gfx_SetColor                      = D1AA9D
+_#gfx_SetPalette                    = D1AAA1
+_#gfx_FillScreen                    = D1AAA5
+_#gfx_SetDraw                       = D1AAA9
+_#gfx_SwapDraw                      = D1AAAD
+_#gfx_Blit                          = D1AAB1
+_#gfx_BlitRectangle                 = D1AAB5
+_#gfx_PrintChar                     = D1AAB9
+_#gfx_PrintString                   = D1AABD
+_#gfx_PrintStringXY                 = D1AAC1
+_#gfx_SetTextXY                     = D1AAC5
+_#gfx_SetTextBGColor                = D1AAC9
+_#gfx_SetTextFGColor                = D1AACD
+_#gfx_SetTextTransparentColor       = D1AAD1
+_#gfx_GetStringWidth                = D1AAD5
+_#gfx_HorizLine                     = D1AAD9
+_#gfx_Rectangle                     = D1AADD
+_#gfx_HorizLine_NoClip              = D1AAE1
+_#gfx_VertLine_NoClip               = D1AAE5
+_#gfx_Rectangle_NoClip              = D1AAE9
+_#gfx_FillRectangle_NoClip          = D1AAED
+_#gfx_TransparentSprite_NoClip      = D1AAF1
+_#gfx_SetTransparentColor           = D1AAF5
+_#gfx_Wait                          = D1AAF9
+_#kb_Scan                           = D1AB07
+_#kb_AnyKey                         = D1AB0B

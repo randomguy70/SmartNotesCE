@@ -32,7 +32,6 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 	while(true)
 	{
 		gfx_SetDraw(gfx_buffer);
-		homescreen->numFiles = getNumFiles("TXT");
 		dispHomeScreenBG(homescreen);
 		dispHomeScreenButtons();
 		dispFiles(homescreen->files, homescreen->numFiles, homescreen->offset, homescreen->selectedFile);
@@ -44,7 +43,7 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 		
 		if(ret == should_exit || ret == show_editor) 
 		{
-			return ret;
+			break;
 		}
 	}
 	
@@ -58,7 +57,8 @@ void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t se
 	
 	gfx_SetTextFGColor(BLACK);
 	
-	for(i=offset; i < MAX_FILES_VIEWABLE + offset && i<MAX_FILES_LOADABLE && i<numFiles; i++) {
+	for(i=offset; i < MAX_FILES_VIEWABLE + offset && i<MAX_FILES_LOADABLE && i<numFiles; i++)\
+	{
 		
 		if (selectedFile == i)
 		{
@@ -67,33 +67,39 @@ void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t se
 			gfx_FillRectangle_NoClip(36,fileY-5,242,15);
 			gfx_SetColor(BLACK);
 			gfx_Rectangle_NoClip(36,fileY-5,242,15);
+		}
+	
+		gfx_PrintStringXY(files[i].os_name, 40, fileY);
+		fileY+=FILE_SPACING;
 	}
-		
-	gfx_PrintStringXY(files[i].os_name,40,fileY);
-	fileY+=FILE_SPACING;
-	}
-	// display when no files were detected because you forgot to take notes :P
+	
+	// display when no files were detected
 	if (numFiles == 0)
 	{
-	gfx_SetTextFGColor(244);
-	gfx_PrintStringXY("--NO FILES FOUND--)",93,80);
-	gfx_PrintStringXY("That's too bad for you :(",93,100);
+		gfx_SetTextFGColor(244);
+		gfx_PrintStringXY("--NO FILES FOUND--)",93,80);
+		gfx_PrintStringXY("That's too bad for you :(",93,100);
 	}
 
 	return;
 }
 
-static void dispHomeScreenBG(struct homescreen* homescreen) {
+static void dispHomeScreenBG(struct homescreen *homescreen)
+{
 	int width;
 	
-	// scrollbar math
+	// scrollbar math (needs fixing)
 	uint8_t scrollbarHeight = 148 * 10 / homescreen->numFiles;
 	
-	// just making sure that the scrollbar is a reasonable size...
+	// make sure that the scrollbar is a reasonable size
 	if(scrollbarHeight>148)
+	{
 		scrollbarHeight = 148;
+	}
 	if(scrollbarHeight<10)
+	{
 		scrollbarHeight = 10;
+	}
 	
 	int scrollbarX = 280;
 	int scrollbarY = (150 - (scrollbarHeight) + 1) * homescreen->selectedFile / (homescreen->numFiles-1) + 56;
@@ -231,6 +237,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 		{
 			alert("You can't have more than 30 files, my note-crazy friend!");
 		}
+		
 		return show_homescreen;
 	}
 	
@@ -309,22 +316,22 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 }
 
 static uint8_t loadFiles(struct file files[]) {
-	uint8_t numFiles  = 0;
-	ti_var_t fileSlot = 0;
-	char *namePtr     = NULL;
-	void *search_pos  = NULL;
+	uint8_t numFiles = 0;
+	ti_var_t fileSlot;
+	char *namePtr = NULL;
+	void *search_pos = NULL;
 	
 	while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL && numFiles < 30) {
 		
-		fileSlot = ti_Open(namePtr, "r");
+		fileSlot = ti_Open(namePtr, "r+");
 		
-		if(fileSlot == 0) {
+		if(!fileSlot)
+		{
 			ti_Close(fileSlot);
 			return false;
 		}
 		
 		strcpy(files[numFiles].os_name, namePtr);
-		files[numFiles].size = ti_GetSize(fileSlot);
 		
 		ti_Close(fileSlot);
 		numFiles++;

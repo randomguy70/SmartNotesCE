@@ -239,6 +239,7 @@ void fontlib_DrawStringXY(const char *str, int x, int y)
 	return;
 }
 
+// XXX NEEDS TO BE CONVERTED TO THE NEW BUFFER FORMAT
 int copyWordL(char *dest, char *src, int chars)
 {
 	int pos = 0;
@@ -254,7 +255,7 @@ int copyWordL(char *dest, char *src, int chars)
 	return pos;
 }
 
-static bool isValidWordChar(char character)
+bool isValidWordChar(char character)
 {
 	if(character != ' ' && character != '\0' && character != '\n')
 	{
@@ -263,7 +264,6 @@ static bool isValidWordChar(char character)
 	
 	return false;
 }
-
 
 void displayTextMode(int x, int y, enum textMode textMode)
 {

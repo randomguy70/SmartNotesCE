@@ -16,7 +16,7 @@ struct buffer {
 	
 	int buf1_size;
 	int buf2_size;
-	int buf2_pos;
+	int buf1_pos;
 	int buf2_pos;
 	
 	int total_size;

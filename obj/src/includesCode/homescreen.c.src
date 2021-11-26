@@ -34,12 +34,8 @@ BB0_2:
 	push	bc
 	call	_gfx_SetDraw
 	pop	hl
-	ld	hl, L_.str
-	push	hl
-	call	_getNumFiles
-	pop	hl
 	ld	hl, (ix - 27)
-	ld	(hl), a
+	ld	a, (hl)
 	ld	b, 0
 	ld	(ix - 21), a
 	ld	c, a
@@ -143,7 +139,7 @@ BB0_9:
 	push	hl
 	call	_gfx_SetTextFGColor
 	pop	hl
-	ld	hl, L_.str.3
+	ld	hl, L_.str.2
 	push	hl
 	call	_gfx_GetStringWidth
 	pop	de
@@ -156,7 +152,7 @@ BB0_9:
 	ld	de, 8
 	push	de
 	push	hl
-	ld	hl, L_.str.4
+	ld	hl, L_.str.3
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -167,7 +163,7 @@ BB0_9:
 	push	hl
 	call	_gfx_SetTextFGColor
 	pop	hl
-	ld	hl, L_.str.5
+	ld	hl, L_.str.4
 	push	hl
 	call	_gfx_GetStringWidth
 	pop	de
@@ -178,7 +174,7 @@ BB0_9:
 	ld	de, 27
 	push	de
 	push	hl
-	ld	hl, L_.str.6
+	ld	hl, L_.str.5
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -293,7 +289,7 @@ BB0_9:
 	push	hl
 	ld	hl, 40
 	push	hl
-	ld	hl, L_.str.7
+	ld	hl, L_.str.6
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -303,7 +299,7 @@ BB0_9:
 	push	hl
 	ld	hl, 210
 	push	hl
-	ld	hl, L_.str.8
+	ld	hl, L_.str.7
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -411,7 +407,7 @@ BB0_15:
 	push	hl
 	ld	hl, 27
 	push	hl
-	ld	hl, L_.str.9
+	ld	hl, L_.str.8
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -421,7 +417,7 @@ BB0_15:
 	push	hl
 	ld	hl, 90
 	push	hl
-	ld	hl, L_.str.10
+	ld	hl, L_.str.9
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -431,7 +427,7 @@ BB0_15:
 	push	hl
 	ld	hl, 157
 	push	hl
-	ld	hl, L_.str.11
+	ld	hl, L_.str.10
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -441,7 +437,7 @@ BB0_15:
 	push	hl
 	ld	hl, 220
 	push	hl
-	ld	hl, L_.str.12
+	ld	hl, L_.str.11
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -451,7 +447,7 @@ BB0_15:
 	push	hl
 	ld	hl, 271
 	push	hl
-	ld	hl, L_.str.13
+	ld	hl, L_.str.12
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -488,7 +484,7 @@ BB0_15:
 	pop	de
 	ld	a, l
 	bit	6, a
-	jq	nz, BB0_16
+	jq	nz, BB0_56
 	ld	hl, -720878
 	push	de
 	ld	e, (hl)
@@ -499,7 +495,7 @@ BB0_15:
 	pop	de
 	ld	a, l
 	bit	2, a
-	jq	nz, BB0_16
+	jq	nz, BB0_56
 	ld	hl, -720866
 	push	de
 	ld	e, (hl)
@@ -516,7 +512,7 @@ BB0_15:
 	xor	a, b
 	bit	0, a
 	ld	iy, (ix - 27)
-	jq	nz, BB0_22
+	jq	nz, BB0_21
 	ld	hl, (ix - 24)
 	ld	a, (hl)
 	ld	de, 0
@@ -528,7 +524,7 @@ BB0_15:
 	or	a, a
 	sbc	hl, de
 	call	__setflag
-	jq	p, BB0_22
+	jq	p, BB0_21
 	inc	a
 	ld	hl, (ix - 24)
 	ld	(hl), a
@@ -550,8 +546,8 @@ BB0_15:
 	push	hl
 	pop	bc
 	jq	c, BB0_2
-	jq	BB0_21
-BB0_22:
+	jq	BB0_20
+BB0_21:
 	ld	hl, -720866
 	push	de
 	ld	e, (hl)
@@ -562,13 +558,13 @@ BB0_22:
 	pop	de
 	ld	a, l
 	bit	3, a
-	jq	z, BB0_26
+	jq	z, BB0_25
 	ld	hl, (ix - 24)
 	ld	c, (hl)
 	ld	a, c
 	or	a, a
-	jq	nz, BB0_24
-BB0_26:
+	jq	nz, BB0_23
+BB0_25:
 	ld	hl, -720878
 	push	de
 	ld	e, (hl)
@@ -579,7 +575,7 @@ BB0_26:
 	pop	de
 	ld	a, l
 	bit	4, a
-	jq	nz, BB0_29
+	jq	nz, BB0_28
 	ld	hl, -720878
 	push	de
 	ld	e, (hl)
@@ -590,7 +586,7 @@ BB0_26:
 	pop	de
 	ld	a, l
 	bit	5, a
-	jq	nz, BB0_29
+	jq	nz, BB0_28
 	ld	hl, -720868
 	push	de
 	ld	e, (hl)
@@ -605,7 +601,7 @@ BB0_26:
 	ld	a, l
 	xor	a, e
 	bit	0, a
-	jq	z, BB0_29
+	jq	z, BB0_28
 	ld	hl, -720878
 	push	de
 	ld	e, (hl)
@@ -616,7 +612,7 @@ BB0_26:
 	pop	de
 	ld	a, l
 	bit	3, a
-	jq	nz, BB0_37
+	jq	nz, BB0_34
 	ld	hl, -720878
 	push	de
 	ld	e, (hl)
@@ -627,7 +623,7 @@ BB0_26:
 	pop	de
 	ld	a, l
 	bit	1, a
-	jq	nz, BB0_43
+	jq	nz, BB0_40
 	ld	hl, -720878
 	push	de
 	ld	e, (hl)
@@ -639,7 +635,7 @@ BB0_26:
 	ld	a, l
 	cp	a, 0
 	call	__setflag
-	jq	m, BB0_43
+	jq	m, BB0_40
 	ld	hl, -720878
 	push	de
 	ld	e, (hl)
@@ -663,29 +659,29 @@ BB0_26:
 	pop	de
 	ld	a, l
 	cp	a, 2
-	jq	nz, BB0_52
+	jq	nz, BB0_49
 	ld	hl, (ix - 27)
 	ld	a, (hl)
 	or	a, a
-	jq	nz, BB0_55
-	ld	hl, L_.str.18
-	jq	BB0_33
-BB0_29:
+	jq	nz, BB0_52
+	ld	hl, L_.str.17
+	jq	BB0_30
+BB0_28:
 	ld	a, (iy)
 	or	a, a
-	jq	nz, BB0_30
-	ld	hl, L_.str.14
-BB0_33:
+	jq	nz, BB0_56
+	ld	hl, L_.str.13
+BB0_30:
 	push	hl
 	call	_alert
-BB0_34:
+BB0_31:
 	pop	hl
-BB0_35:
+BB0_32:
 	ld	hl, 1
 	push	hl
 	pop	bc
 	jq	BB0_2
-BB0_24:
+BB0_23:
 	dec	c
 	ld	hl, (ix - 24)
 	ld	(hl), c
@@ -701,10 +697,10 @@ BB0_24:
 	ld	hl, (ix - 37)
 	ld	(hl), e
 	jq	BB0_2
-BB0_37:
+BB0_34:
 	ld	a, (iy)
 	cp	a, 30
-	jq	nc, BB0_40
+	jq	nc, BB0_37
 	call	_newFile
 	ld	l, 1
 	xor	a, l
@@ -713,17 +709,17 @@ BB0_37:
 	push	hl
 	pop	bc
 	jq	nz, BB0_2
-	jq	BB0_39
-BB0_43:
+	jq	BB0_36
+BB0_40:
 	ld	a, (iy)
 	or	a, a
-	jq	nz, BB0_45
-	ld	hl, L_.str.16
-	jq	BB0_33
-BB0_40:
+	jq	nz, BB0_42
 	ld	hl, L_.str.15
-	jq	BB0_33
-BB0_45:
+	jq	BB0_30
+BB0_37:
+	ld	hl, L_.str.14
+	jq	BB0_30
+BB0_42:
 	or	a, a
 	sbc	hl, hl
 	ld	iy, (ix - 24)
@@ -747,26 +743,26 @@ BB0_45:
 	ld	hl, (ix - 27)
 	ld	a, (hl)
 	or	a, a
-	jq	z, BB0_49
+	jq	z, BB0_46
 	ld	iy, (ix - 24)
 	dec	(iy)
 	ld	hl, (ix - 37)
 	ld	e, (hl)
 	ld	a, (iy)
 	cp	a, e
-	jq	nc, BB0_49
+	jq	nc, BB0_46
 	dec	e
 	ld	hl, (ix - 37)
 	ld	(hl), e
-BB0_49:
+BB0_46:
 	ld	hl, (ix + 6)
 	push	hl
 	call	_loadFiles
 	pop	hl
 	ld	hl, (ix - 27)
 	ld	(hl), a
-	jq	BB0_35
-BB0_52:
+	jq	BB0_32
+BB0_49:
 	ld	a, l
 	cp	a, 3
 	ld	hl, 1
@@ -792,7 +788,7 @@ BB0_52:
 	ld	bc, 1
 	pop	hl
 	jq	BB0_2
-BB0_55:
+BB0_52:
 	or	a, a
 	sbc	hl, hl
 	ld	iy, (ix - 24)
@@ -809,19 +805,19 @@ BB0_55:
 	ld	l, 1
 	xor	a, l
 	bit	0, a
-	jq	nz, BB0_57
+	jq	nz, BB0_54
 	ld	hl, (ix + 6)
 	push	hl
 	call	_loadFiles
-	jq	BB0_34
-BB0_57:
-	ld	hl, L_.str.17
-	jq	BB0_33
-BB0_21:
+	jq	BB0_31
+BB0_54:
+	ld	hl, L_.str.16
+	jq	BB0_30
+BB0_20:
 	inc	a
 	ld	hl, (ix - 37)
 	jq	BB0_1
-BB0_39:
+BB0_36:
 	ld	hl, (ix + 6)
 	push	hl
 	call	_loadFiles
@@ -829,15 +825,11 @@ BB0_39:
 	pop	hl
 	ld	hl, (ix - 27)
 	jq	BB0_1
-BB0_16:
+BB0_56:
 	ld	hl, 3
-BB0_31:
 	ld	sp, ix
 	pop	ix
 	ret
-BB0_30:
-	ld	hl, 1
-	jq	BB0_31
 	section	.text,"ax",@progbits
 
 	section	.text,"ax",@progbits
@@ -848,7 +840,7 @@ _loadFiles:
 	ld	hl, (ix + 6)
 	ld	(ix - 10), hl
 	ld	hl, 0
-	ld	de, L_.str
+	ld	de, L_.str.24
 	xor	a, a
 	ld	bc, 0
 	ld	(ix - 7), bc
@@ -893,15 +885,6 @@ BB1_1:
 	pop	hl
 	ld	hl, (ix - 13)
 	push	hl
-	call	_ti_GetSize
-	pop	de
-	ld	de, 0
-	ld	e, l
-	ld	d, h
-	ld	iy, (ix - 10)
-	ld	(iy + 10), de
-	ld	hl, (ix - 13)
-	push	hl
 	call	_ti_Close
 	pop	hl
 	ld	hl, (ix - 7)
@@ -913,7 +896,7 @@ BB1_1:
 	ld	iy, (ix - 10)
 	lea	iy, iy + 13
 	ld	(ix - 10), iy
-	ld	de, L_.str
+	ld	de, L_.str.24
 	jq	BB1_1
 BB1_2:
 	ld	a, (ix - 4)
@@ -1072,7 +1055,7 @@ BB2_7:
 	push	hl
 	ld	hl, 93
 	push	hl
-	ld	hl, L_.str.1
+	ld	hl, L_.str
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -1082,7 +1065,7 @@ BB2_7:
 	push	hl
 	ld	hl, 93
 	push	hl
-	ld	hl, L_.str.2
+	ld	hl, L_.str.1
 	push	hl
 	call	_gfx_PrintStringXY
 	pop	hl
@@ -1097,156 +1080,156 @@ BB2_9:
 	section	.rodata,"a",@progbits
 	private	L_.str
 L_.str:
-	db	"TXT", 0
+	db	"--NO FILES FOUND--)", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.1
 L_.str.1:
-	db	"--NO FILES FOUND--)", 0
+	db	"That's too bad for you :(", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.2
 L_.str.2:
-	db	"That's too bad for you :(", 0
+	db	"SmartNotes CE", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.3
 L_.str.3:
-	db	"SmartNotes CE", 0
+	db	"SMARTNOTES CE", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.4
 L_.str.4:
-	db	"SMARTNOTES CE", 0
+	db	"VERSION 1.0 BY Randomguy", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.5
 L_.str.5:
-	db	"VERSION 1.0 BY Randomguy", 0
+	db	"Version 1.0 BY Randomguy", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.6
 L_.str.6:
-	db	"Version 1.0 BY Randomguy", 0
+	db	"NAME", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.7
 L_.str.7:
-	db	"NAME", 0
+	db	"STATUS", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.8
 L_.str.8:
-	db	"STATUS", 0
+	db	"Open", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.9
 L_.str.9:
-	db	"Open", 0
+	db	"New", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.10
 L_.str.10:
-	db	"New", 0
+	db	"Quit", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.11
 L_.str.11:
-	db	"Quit", 0
+	db	"Del", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.12
 L_.str.12:
-	db	"Del", 0
+	db	"Other", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.13
 L_.str.13:
-	db	"Other", 0
+	db	"There aren't any files to open (obviously).", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.14
 L_.str.14:
-	db	"There aren't any files to open (obviously).", 0
+	db	"You can't have more than 30 files, my note-crazy friend!", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.15
 L_.str.15:
-	db	"You can't have more than 30 files, my note-crazy friend!", 0
+	db	"There aren't any files to delete!", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.16
 L_.str.16:
-	db	"There aren't any files to delete!", 0
+	db	"Something went wrong. Tough luck, buddy.", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.17
 L_.str.17:
-	db	"Something went wrong. Tough luck, buddy.", 0
-
-	section	.rodata,"a",@progbits
-	private	L_.str.18
-L_.str.18:
 	db	"There aren't any files to rename (obviously)!", 0
 
 	section	.data,"aw",@progbits
 	private	_loadHomeScreenOtherMenu.menu
 _loadHomeScreenOtherMenu.menu:
-	dl	L_.str.19
+	dl	L_.str.18
 	dl	200
 	dl	100
 	db	5
 	db	1
-	dl	L_.str.20
+	dl	L_.str.19
 	dl	_left_arrow_data
 	db	13
-	dl	L_.str.21
+	dl	L_.str.20
 	dl	_rename_data
 	db	15
-	dl	L_.str.22
+	dl	L_.str.21
 	dl	_hide_data
 	db	16
-	dl	L_.str.23
+	dl	L_.str.22
 	dl	_settings_gear_data
 	db	14
-	dl	L_.str.24
+	dl	L_.str.23
 	dl	_help_data
 	db	16
 
 	section	.rodata,"a",@progbits
+	private	L_.str.18
+L_.str.18:
+	db	"Options", 0
+
+	section	.rodata,"a",@progbits
 	private	L_.str.19
 L_.str.19:
-	db	"Options", 0
+	db	"Back", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.20
 L_.str.20:
-	db	"Back", 0
+	db	"Rename", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.21
 L_.str.21:
-	db	"Rename", 0
+	db	"(un)Hide", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.22
 L_.str.22:
-	db	"(un)Hide", 0
+	db	"Settings", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.23
 L_.str.23:
-	db	"Settings", 0
+	db	"Help", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.24
 L_.str.24:
-	db	"Help", 0
+	db	"TXT", 0
 
 	section	.rodata,"a",@progbits
 	private	L_.str.25
 L_.str.25:
-	db	"r", 0
+	db	"r+", 0
 
 	ident	"clang version 14.0.0 (https://github.com/jacobly0/llvm-project a139def90d26173f771eb1eca797633d1fbb2797)"
 	extern	_help_data
@@ -1285,13 +1268,11 @@ L_.str.25:
 	extern	_ti_Open
 	extern	_gfx_Wait
 	extern	_strcpy
-	extern	_ti_GetSize
 	extern	_gfx_TransparentSprite_NoClip
-	extern	_toggleHiddenStatus
 	extern	_gfx_HorizLine_NoClip
 	extern	_gfx_PrintStringXY
-	extern	_getNumFiles
 	extern	_thick_Rectangle
 	extern	_gfx_SetTextXY
 	extern	_new_icon_data
+	extern	_toggleHiddenStatus
 	extern	_renameFile

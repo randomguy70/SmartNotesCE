@@ -582,32 +582,145 @@ BB5_4:
 	section	.text,"ax",@progbits
 
 	section	.text,"ax",@progbits
-	public	_copyWord
-_copyWord:
-	call	__frameset0
-	ld	iy, (ix + 6)
-	ld	de, 0
-BB6_1:
-	ld	hl, (ix + 9)
+	public	_getWordLen
+_getWordLen:
+	ld	hl, -10
+	call	__frameset
+	ld	de, (ix + 6)
+	ld	bc, (ix + 9)
+	ld	iyl, 1
+	ld	a, 2
+	or	a, a
+	sbc	hl, hl
+	ld	(ix - 3), hl
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	jq	nc, BB6_2
+	push	bc
+	pop	hl
+	ld	de, 32000
 	add	hl, de
-	ld	l, (hl)
+	ld	de, (hl)
+	push	bc
+	pop	hl
+	add	hl, de
+	ex	de, hl
+	ld	hl, (ix + 6)
+	or	a, a
+	sbc	hl, de
+	jq	c, BB6_3
+BB6_2:
+	ld	iyl, a
+BB6_3:
+	push	af
+	ld	a, iyl
+	ld	(ix - 4), a
+	pop	af
+	ld	de, 16000
+	push	bc
+	pop	hl
+	add	hl, de
+	ld	(ix - 7), hl
+	ld	c, 1
+	ld	b, 0
+	ld	iy, (ix + 6)
+BB6_4:
+	ld	l, (iy)
 	ld	a, l
 	or	a, a
-	jq	z, BB6_4
+	jq	z, BB6_17
+	ld	a, l
+	cp	a, 10
+	jq	z, BB6_17
 	ld	a, l
 	cp	a, 32
-	jq	z, BB6_4
-	lea	bc, iy
-	add	iy, de
-	ld	(iy), l
-	push	bc
-	pop	iy
+	jq	z, BB6_17
+	lea	de, iy
 	inc	de
-	jq	BB6_1
-BB6_4:
-	add	iy, de
-	ld	(iy), 0
-	ex	de, hl
+	ld	a, (ix - 4)
+	cp	a, 1
+	jq	nz, BB6_15
+	ld	hl, (ix + 9)
+	ld	a, c
+	ld	iyl, b
+	ld	bc, 32000
+	add	hl, bc
+	ld	bc, (hl)
+	ld	hl, (ix + 9)
+	add	hl, bc
+	ld	b, iyl
+	ld	c, a
+	or	a, a
+	sbc	hl, de
+	jq	c, BB6_10
+	ld	a, b
+BB6_10:
+	bit	0, a
+	ld	iy, (ix - 7)
+	jq	nz, BB6_12
+	push	de
+	pop	iy
+BB6_12:
+	bit	0, a
+	ld	a, 2
+	jq	nz, BB6_14
+	ld	a, 1
+BB6_14:
+	ld	(ix - 4), a
+	jq	BB6_16
+BB6_15:
+	ld	iy, (ix + 9)
+	lea	hl, iy
+	ld	(ix - 10), de
+	ld	de, 32003
+	add	hl, de
+	ld	de, (hl)
+	lea	hl, iy
+	ld	a, c
+	ld	iyl, b
+	ld	bc, 16000
+	add	hl, bc
+	ld	b, iyl
+	ld	c, a
+	add	hl, de
+	ld	de, (ix - 10)
+	or	a, a
+	sbc	hl, de
+	push	de
+	pop	iy
+	jq	c, BB6_17
+BB6_16:
+	ld	hl, (ix - 3)
+	inc	hl
+	ld	(ix - 3), hl
+	jq	BB6_4
+BB6_17:
+	ld	hl, (ix - 3)
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_isValidWordChar
+_isValidWordChar:
+	call	__frameset0
+	ld	e, (ix + 6)
+	ld	l, 0
+	ld	a, e
+	or	a, a
+	jq	z, BB7_4
+	ld	a, e
+	cp	a, 10
+	jq	z, BB7_4
+	ld	a, e
+	cp	a, 32
+	jq	z, BB7_4
+	ld	l, 1
+BB7_4:
+	ld	a, l
 	pop	ix
 	ret
 	section	.text,"ax",@progbits
@@ -624,36 +737,36 @@ _copyWordL:
 	sbc	hl, de
 	lea	de, iy
 	call	__setflag
-	jq	p, BB7_2
+	jq	p, BB8_2
 	push	bc
 	pop	de
-BB7_2:
+BB8_2:
 	ld	iy, (ix + 6)
-BB7_3:
+BB8_3:
 	push	de
 	pop	hl
 	or	a, a
 	sbc	hl, bc
-	jq	z, BB7_4
+	jq	z, BB8_4
 	ld	hl, (ix + 9)
 	add	hl, bc
 	ld	l, (hl)
 	ld	a, l
 	or	a, a
-	jq	z, BB7_5
+	jq	z, BB8_5
 	ld	a, l
 	cp	a, 32
-	jq	z, BB7_5
+	jq	z, BB8_5
 	ld	iy, (ix + 6)
 	add	iy, bc
 	ld	(iy), l
 	ld	iy, (ix + 6)
 	inc	bc
-	jq	BB7_3
-BB7_4:
+	jq	BB8_3
+BB8_4:
 	push	de
 	pop	bc
-BB7_5:
+BB8_5:
 	add	iy, bc
 	ld	(iy), 0
 	push	bc

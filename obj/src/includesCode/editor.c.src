@@ -7,17 +7,17 @@ _dispEditor:
 	call	__frameset
 	ld	hl, (ix + 6)
 	ld	bc, 0
-	ld	de, 32119
+	ld	de, 32125
+	push	hl
+	pop	iy
+	add	iy, de
+	ld	(iy), bc
+	ld	de, 32128
 	push	hl
 	pop	iy
 	add	iy, de
 	ld	(iy), bc
 	ld	de, 32122
-	push	hl
-	pop	iy
-	add	iy, de
-	ld	(iy), bc
-	ld	de, 32116
 	push	hl
 	pop	iy
 	add	iy, de
@@ -29,38 +29,38 @@ _dispEditor:
 	call	_fileToBuffer
 	pop	hl
 	pop	hl
-	ld	de, 32028
+	ld	de, 32034
 	ld	bc, (ix + 6)
 	push	bc
 	pop	iy
 	add	iy, de
 	ld	hl, 320
 	ld	(iy), hl
-	ld	de, 32031
+	ld	de, 32037
 	push	bc
 	pop	iy
 	add	iy, de
 	ld	hl, 200
 	ld	(iy), hl
-	ld	de, 32022
+	ld	de, 32028
 	push	bc
 	pop	iy
 	add	iy, de
 	ld	hl, 0
 	ld	(iy), hl
-	ld	de, 32025
+	ld	de, 32031
 	push	bc
 	pop	iy
 	add	iy, de
 	ld	de, -140
 	ld	(iy), de
-	ld	de, 32046
+	ld	de, 32052
 	push	bc
 	pop	iy
 	add	iy, de
 	ld	de, 15
 	ld	(iy), de
-	ld	de, 32049
+	ld	de, 32055
 	push	bc
 	pop	iy
 	add	iy, de
@@ -98,11 +98,11 @@ _dispEditor:
 	or	a, a
 	sbc	hl, hl
 	ld	(iy + 21), hl
-	ld	de, 32052
+	ld	de, 32058
 	lea	hl, iy
 	add	hl, de
 	ld	(ix - 16), hl
-	ld	de, 32100
+	ld	de, 32106
 	lea	hl, iy
 	add	hl, de
 	ld	(ix - 19), hl
@@ -222,7 +222,7 @@ BB0_1:
 	ld	(ix - 6), hl
 	ld	bc, 0
 BB0_2:
-	ld	de, 32043
+	ld	de, 32049
 	add	iy, de
 	ld	de, (iy)
 	push	bc

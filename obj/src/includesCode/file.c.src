@@ -74,16 +74,14 @@ BB1_1:
 	section	.text,"ax",@progbits
 	public	_newFile
 _newFile:
-	ld	hl, -13
+	ld	hl, -14
 	call	__frameset
-	xor	a, a
-	ld	(ix - 10), a
-	lea	iy, ix - 9
-	ld	(ix - 9), 0
+	lea	iy, ix - 10
+	ld	(ix - 10), 0
 	lea	de, iy
 	inc	de
+	ld	bc, 9
 	lea	hl, iy
-	ld	bc, 8
 	ldir
 	ld	hl, L_.str.2
 	push	hl
@@ -92,31 +90,30 @@ _newFile:
 	ld	(ix - 13), iy
 	push	iy
 	call	_inputString
+	ld	e, a
 	pop	hl
 	pop	hl
 	pop	hl
 	or	a, a
-	jq	z, BB2_3
+	jq	z, BB2_2
+	ld	(ix - 14), e
+	call	_ti_CloseAll
 	ld	hl, L_.str.3
 	push	hl
 	ld	hl, (ix - 13)
 	push	hl
 	call	_ti_Open
 	ld	e, a
-	pop	hl
-	pop	hl
-	or	a, a
-	jq	z, BB2_3
-	ld	iy, L_.str
-	ld	hl, 3
-	ld	bc, 1
-	ld	a, 1
-	ld	(ix - 10), a
-	push	de
-	push	bc
-	push	hl
-	push	iy
 	ld	(ix - 13), de
+	pop	hl
+	pop	hl
+	push	de
+	ld	hl, 1
+	push	hl
+	ld	hl, 4
+	push	hl
+	ld	hl, L_.str
+	push	hl
 	call	_ti_Write
 	pop	hl
 	pop	hl
@@ -125,9 +122,17 @@ _newFile:
 	ld	hl, (ix - 13)
 	push	hl
 	call	_ti_Close
+	ld	e, (ix - 14)
 	pop	hl
+BB2_2:
+	ld	a, e
+	or	a, a
+	jq	nz, BB2_3
+	ld	a, 0
+	jq	BB2_5
 BB2_3:
-	ld	a, (ix - 10)
+	ld	a, 1
+BB2_5:
 	ld	sp, ix
 	pop	ix
 	ret
@@ -285,7 +290,7 @@ BB5_3:
 	section	.text,"ax",@progbits
 	public	_toggleHiddenStatus
 _toggleHiddenStatus:
-	ld	hl, -15
+	ld	hl, -16
 	call	__frameset
 	ld	de, (ix + 6)
 	ld	hl, L_.str.1
@@ -299,9 +304,9 @@ _toggleHiddenStatus:
 	jq	z, BB6_2
 	ld	hl, (ix + 6)
 	push	hl
-	ld	(ix - 12), iy
+	ld	(ix - 13), iy
 	call	_strlen
-	ld	iy, (ix - 12)
+	ld	iy, (ix - 13)
 	pop	de
 	ld	de, 9
 	or	a, a
@@ -314,35 +319,35 @@ BB6_2:
 	ld	hl, -1
 	jq	BB6_4
 BB6_3:
-	lea	hl, ix - 9
-	ld	(ix - 9), 0
+	lea	hl, ix - 10
+	ld	(ix - 10), 0
 	push	hl
 	pop	de
-	ld	(ix - 15), hl
+	ld	(ix - 16), hl
 	inc	de
-	ld	bc, 8
+	ld	bc, 9
 	ldir
 	push	iy
-	ld	hl, (ix - 15)
+	ld	hl, (ix - 16)
 	push	hl
 	call	_ti_GetName
 	pop	hl
 	pop	hl
-	ld	a, (ix - 9)
+	ld	a, (ix - 10)
 	xor	a, 64
-	ld	(ix - 9), a
-	ld	hl, (ix - 12)
+	ld	(ix - 10), a
+	ld	hl, (ix - 13)
 	push	hl
 	call	_ti_Close
 	pop	hl
-	ld	hl, (ix - 15)
+	ld	hl, (ix - 16)
 	push	hl
 	ld	hl, (ix + 6)
 	push	hl
 	call	_ti_Rename
 	pop	hl
 	pop	hl
-	ld	hl, (ix - 15)
+	ld	hl, (ix - 16)
 	push	hl
 	call	_isHidden
 	pop	hl
@@ -424,6 +429,7 @@ L___const.renameFile.message:
 	extern	_alert
 	extern	_strlen
 	extern	__setflag
+	extern	_ti_CloseAll
 	extern	__Unwind_SjLj_Unregister
 	extern	_ti_SetArchiveStatus
 	extern	_inputString
