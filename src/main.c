@@ -19,15 +19,8 @@
 #include "gfx/gfx.h"
 #include "includes/ui.h"
 
-// checks for font appvar(s), loads font, and deals with technical font details
 static uint8_t setupFontlibc();
-
-// prepares for the program to exit
 static void cleanup();
-static bool setupAppvars();
-static bool formatSaveStateAppvar(char *name);
-static bool formatSettingsAppvar(char *name);
-static bool formatUserInfoAppvar(char *name);
 
 int main(void) {
 		
@@ -35,7 +28,6 @@ int main(void) {
 		return 0;
 	}
 	
-	// necessary gfx stuff
 	gfx_Begin();
 	gfx_SetPalette(palette, sizeof_palette, 0);
 	gfx_SetTransparentColor(2);
@@ -64,16 +56,14 @@ int main(void) {
 		if(state == show_editor)
 		{
 			if(prevState != state) {
-				strcpy (editor.fileName, homescreen.files[homescreen.selectedFile].os_name);
+				strcpy(editor.file.os_name, homescreen.files[homescreen.selectedFile].os_name);
 				prevState = state;
 			}
 			state = dispEditor(&editor);
 		}
 	}
-
-	// cleanup();
-	gfx_End();
-	(*(volatile uint8_t*)0xF00008) = 1;
+	
+	cleanup();
 	return 0;
 }
 
@@ -102,7 +92,6 @@ static uint8_t setupFontlibc() {
       	return false;
    }
 	
-   // Use font for whatever
    fontlib_SetFont(my_font, 0);
 	fontlib_SetBackgroundColor(2);
 	fontlib_SetTransparency(true);
@@ -111,68 +100,11 @@ static uint8_t setupFontlibc() {
 	
 }
 
-static bool setupAppvars() {
-	
-	ti_var_t saveStateAppvarSlot;
-	ti_var_t settingsAppvarSlot;
-	ti_var_t userInfoAppvarSlot;
-	
-	saveStateAppvarSlot = ti_Open(SAVE_STATE_APPVAR_NAME, "r");
-	settingsAppvarSlot  = ti_Open(SETTINGS_APPVAR_NAME  , "r");
-	userInfoAppvarSlot  = ti_Open(USER_INFO_APPVAR_NAME , "r");
-	
-	// make sure they all exist
-	if(!saveStateAppvarSlot)
-		formatSaveStateAppvar(SAVE_STATE_APPVAR_NAME);
-	if(!settingsAppvarSlot)
-		formatSettingsAppvar(SETTINGS_APPVAR_NAME);
-	if(!userInfoAppvarSlot)
-		formatUserInfoAppvar(USER_INFO_APPVAR_NAME);
-	
-	ti_Close(saveStateAppvarSlot);
-	ti_Close(settingsAppvarSlot);
-	ti_Close(userInfoAppvarSlot);
-
-	return true;
-}
-
-static bool formatSaveStateAppvar(char *name) {
-	
-	ti_var_t saveStateAppvarSlot = ti_Open(name, "w");
-	ti_Resize(100, saveStateAppvarSlot);
-	ti_Close(saveStateAppvarSlot);
-	
-	return true;
-}
-
-static bool formatSettingsAppvar(char *name) {
-	ti_var_t settingsAppvarSlot = ti_Open(name, "w");
-	ti_Resize(100, settingsAppvarSlot);
-	ti_Close(settingsAppvarSlot);
-	
-	return true;
-}
-
-static bool formatUserInfoAppvar(char *name) {
-	if(!fileExists(name)) {
-		ti_var_t uiSlot = ti_Open(name, "w");
-		ti_Resize(100, uiSlot);
-		ti_Close(uiSlot);
-		
-		return true;
-	}
-	
-	return true;
-}
-
 static void cleanup() {
 	gfx_End();
 	archiveAll();
 	
-	/*
-		prevents the on-key error message
-	*/
-	
+	// prevents the on-key error message
 	(*(volatile uint8_t*)0xF00008) = 1;
 	
 	return;

@@ -23,10 +23,11 @@ static struct menu *loadHomeScreenOtherMenu(void);
 
 enum state dispHomeScreen(struct homescreen* homescreen)
 {
-		
 	homescreen->selectedFile = 0;
 	homescreen->offset = 0;
 	homescreen->numFiles = loadFiles(homescreen->files);
+	
+	enum state ret;
 	
 	while(true)
 	{
@@ -39,15 +40,11 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 		gfx_SwapDraw();
 		
 		kb_Scan();
-		handleHomeScreenKeyPresses(homescreen);
+		ret = handleHomeScreenKeyPresses(homescreen);
 		
-		if(kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyZoom)) 
+		if(ret == should_exit || ret == show_editor) 
 		{
-			return should_exit;
-		}
-		if(kb_IsDown(kb_Key2nd) || kb_IsDown(kb_KeyEnter)) 
-		{
-			return show_editor;
+			return ret;
 		}
 	}
 	
@@ -180,6 +177,12 @@ static void dispHomeScreenButtons(void) {
 
 static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 {
+	// quit
+	if(kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyZoom)) 
+	{
+		return should_exit;
+	}
+		
 	// move cursor down
 	if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1)
 	{
@@ -203,11 +206,12 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 	}
 	
 	// open file
-	if(kb_IsDown(kb_KeyYequ))
+	if(kb_IsDown(kb_KeyYequ)|| kb_IsDown(kb_Key2nd) || kb_IsDown(kb_KeyEnter))
 	{
 		if(homescreen->numFiles <= 0)
 		{
 			alert("There aren't any files to open (obviously).");
+			return show_homescreen;
 		}
 		
 		return show_editor;
@@ -220,7 +224,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 		{
 			if(newFile())
 			{
-				loadFiles(homescreen->files);
+				homescreen->numFiles = loadFiles(homescreen->files);
 			}
 		}
 		else
@@ -250,8 +254,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 					homescreen->offset--;
 				}
 			}
-		
-			loadFiles(homescreen->files);
+			homescreen->numFiles = loadFiles(homescreen->files);
 		}
 		
 		return show_homescreen;
@@ -313,7 +316,7 @@ static uint8_t loadFiles(struct file files[]) {
 	
 	while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL && numFiles < 30) {
 		
-		fileSlot = ti_Open(namePtr, "r+");
+		fileSlot = ti_Open(namePtr, "r");
 		
 		if(fileSlot == 0) {
 			ti_Close(fileSlot);

@@ -1,0 +1,433 @@
+	section	.text,"ax",@progbits
+	assume	adl = 1
+	section	.text,"ax",@progbits
+	public	_archiveAll
+_archiveAll:
+	ld	hl, -6
+	call	__frameset
+	ld	hl, 0
+	ld	de, L_.str
+	ld	(ix - 3), hl
+BB0_1:
+	push	de
+	pea	ix - 3
+	call	_ti_Detect
+	pop	de
+	pop	de
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	z, BB0_3
+	ld	de, L_.str.1
+	push	de
+	push	hl
+	call	_ti_Open
+	ld	e, a
+	ld	(ix - 6), de
+	pop	hl
+	pop	hl
+	push	de
+	ld	hl, 1
+	push	hl
+	call	_ti_SetArchiveStatus
+	pop	hl
+	pop	hl
+	ld	hl, (ix - 6)
+	push	hl
+	call	_ti_Close
+	pop	hl
+	ld	de, L_.str
+	jq	BB0_1
+BB0_3:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_getNumFiles
+_getNumFiles:
+	ld	hl, -4
+	call	__frameset
+	ld	hl, 0
+	ld	a, -1
+	ld	(ix - 3), hl
+BB1_1:
+	ld	(ix - 4), a
+	ld	hl, (ix + 6)
+	push	hl
+	pea	ix - 3
+	call	_ti_Detect
+	ld	a, (ix - 4)
+	pop	de
+	pop	de
+	inc	a
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB1_1
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_newFile
+_newFile:
+	ld	hl, -13
+	call	__frameset
+	xor	a, a
+	ld	(ix - 10), a
+	lea	iy, ix - 9
+	ld	(ix - 9), 0
+	lea	de, iy
+	inc	de
+	lea	hl, iy
+	ld	bc, 8
+	ldir
+	ld	hl, L_.str.2
+	push	hl
+	ld	hl, 8
+	push	hl
+	ld	(ix - 13), iy
+	push	iy
+	call	_inputString
+	pop	hl
+	pop	hl
+	pop	hl
+	or	a, a
+	jq	z, BB2_3
+	ld	hl, L_.str.3
+	push	hl
+	ld	hl, (ix - 13)
+	push	hl
+	call	_ti_Open
+	ld	e, a
+	pop	hl
+	pop	hl
+	or	a, a
+	jq	z, BB2_3
+	ld	iy, L_.str
+	ld	hl, 3
+	ld	bc, 1
+	ld	a, 1
+	ld	(ix - 10), a
+	push	de
+	push	bc
+	push	hl
+	push	iy
+	ld	(ix - 13), de
+	call	_ti_Write
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (ix - 13)
+	push	hl
+	call	_ti_Close
+	pop	hl
+BB2_3:
+	ld	a, (ix - 10)
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_checkIfDeleteFile
+_checkIfDeleteFile:
+	ld	hl, -104
+	call	__frameset
+	ld	hl, L___const.checkIfDeleteFile.message
+	ld	bc, 100
+	xor	a, a
+	ld	(ix - 104), a
+	lea	iy, ix - 100
+	ld	(ix - 103), iy
+	lea	de, iy
+	ldir
+	ld	hl, (ix + 6)
+	push	hl
+	push	iy
+	call	_strcat
+	pop	hl
+	pop	hl
+	ld	hl, (ix - 103)
+	push	hl
+	call	_strlen
+	push	hl
+	pop	de
+	pop	hl
+	ld	bc, (ix - 103)
+	push	bc
+	pop	hl
+	add	hl, de
+	ld.sis	de, 63
+	ld	(hl), e
+	inc	hl
+	ld	(hl), d
+	push	bc
+	call	_alert
+	pop	hl
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	jq	nz, BB3_3
+	ld	hl, (ix + 6)
+	push	hl
+	call	_fileExists
+	pop	hl
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	jq	nz, BB3_3
+	ld	a, 1
+	ld	(ix - 104), a
+	ld	hl, (ix + 6)
+	push	hl
+	call	_ti_Delete
+	pop	hl
+BB3_3:
+	ld	a, (ix - 104)
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_fileExists
+_fileExists:
+	ld	hl, -3
+	call	__frameset
+	ld	hl, (ix + 6)
+	ld	de, L_.str.1
+	push	de
+	push	hl
+	call	_ti_Open
+	ld	e, a
+	ld	(ix - 3), de
+	pop	hl
+	pop	hl
+	push	de
+	call	_ti_Close
+	pop	hl
+	ld	hl, (ix - 3)
+	ld	a, l
+	or	a, a
+	jq	nz, BB4_1
+	ld	a, 0
+	jq	BB4_3
+BB4_1:
+	ld	a, 1
+BB4_3:
+	pop	hl
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_renameFile
+_renameFile:
+	ld	hl, -32
+	call	__frameset
+	lea	hl, ix - 9
+	ld	(ix - 29), hl
+	lea	iy, ix - 26
+	ld	(ix - 32), iy
+	ld	(ix - 9), 0
+	push	hl
+	pop	de
+	inc	de
+	ld	bc, 8
+	ldir
+	lea	de, iy
+	ld	hl, L___const.renameFile.message
+	ld	bc, 17
+	ldir
+	ld	hl, (ix + 6)
+	push	hl
+	push	iy
+	call	_strcat
+	pop	hl
+	pop	hl
+	ld	hl, (ix - 32)
+	push	hl
+	ld	hl, 8
+	push	hl
+	ld	hl, (ix - 29)
+	push	hl
+	call	_inputString
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	(ix - 32), a
+	or	a, a
+	ld	hl, (ix - 29)
+	push	hl
+	ld	hl, (ix + 6)
+	push	hl
+	call	nz, _ti_Rename
+	pop	hl
+	pop	hl
+	ld	a, (ix - 32)
+	or	a, a
+	jq	nz, BB5_1
+	ld	a, 0
+	jq	BB5_3
+BB5_1:
+	ld	a, 1
+BB5_3:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_toggleHiddenStatus
+_toggleHiddenStatus:
+	ld	hl, -15
+	call	__frameset
+	ld	de, (ix + 6)
+	ld	hl, L_.str.1
+	push	hl
+	push	de
+	call	_ti_Open
+	ld	iyl, a
+	pop	hl
+	pop	hl
+	or	a, a
+	jq	z, BB6_2
+	ld	hl, (ix + 6)
+	push	hl
+	ld	(ix - 12), iy
+	call	_strlen
+	ld	iy, (ix - 12)
+	pop	de
+	ld	de, 9
+	or	a, a
+	sbc	hl, de
+	jq	c, BB6_3
+BB6_2:
+	push	iy
+	call	_ti_Close
+	pop	hl
+	ld	hl, -1
+	jq	BB6_4
+BB6_3:
+	lea	hl, ix - 9
+	ld	(ix - 9), 0
+	push	hl
+	pop	de
+	ld	(ix - 15), hl
+	inc	de
+	ld	bc, 8
+	ldir
+	push	iy
+	ld	hl, (ix - 15)
+	push	hl
+	call	_ti_GetName
+	pop	hl
+	pop	hl
+	ld	a, (ix - 9)
+	xor	a, 64
+	ld	(ix - 9), a
+	ld	hl, (ix - 12)
+	push	hl
+	call	_ti_Close
+	pop	hl
+	ld	hl, (ix - 15)
+	push	hl
+	ld	hl, (ix + 6)
+	push	hl
+	call	_ti_Rename
+	pop	hl
+	pop	hl
+	ld	hl, (ix - 15)
+	push	hl
+	call	_isHidden
+	pop	hl
+	and	a, 1
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+BB6_4:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_isHidden
+_isHidden:
+	call	__frameset0
+	ld	hl, (ix + 6)
+	push	hl
+	call	_fileExists
+	pop	hl
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	ld	a, 0
+	jq	nz, BB7_4
+	ld	hl, (ix + 6)
+	ld	a, (hl)
+	cp	a, 65
+	call	__setflag
+	jq	m, BB7_2
+	ld	a, 0
+	jq	BB7_4
+BB7_2:
+	ld	a, 1
+BB7_4:
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.rodata,"a",@progbits
+	private	L_.str
+L_.str:
+	db	"TXT", 0
+
+	section	.rodata,"a",@progbits
+	private	L_.str.1
+L_.str.1:
+	db	"r", 0
+
+	section	.rodata,"a",@progbits
+	private	L_.str.2
+L_.str.2:
+	db	"New File", 0
+
+	section	.rodata,"a",@progbits
+	private	L_.str.3
+L_.str.3:
+	db	"w+", 0
+
+	section	.rodata,"a",@progbits
+	private	L___const.checkIfDeleteFile.message
+L___const.checkIfDeleteFile.message:
+	db	"Are you sure you want to delete ", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+
+	section	.rodata,"a",@progbits
+	private	L___const.renameFile.message
+L___const.renameFile.message:
+	db	"Rename ", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+
+	ident	"clang version 14.0.0 (https://github.com/jacobly0/llvm-project a139def90d26173f771eb1eca797633d1fbb2797)"
+	extern	__Unwind_SjLj_Register
+	extern	_ti_Detect
+	extern	__frameset
+	extern	_ti_GetName
+	extern	_ti_Delete
+	extern	_ti_Write
+	extern	_ti_Close
+	extern	_alert
+	extern	_strlen
+	extern	__setflag
+	extern	__Unwind_SjLj_Unregister
+	extern	_ti_SetArchiveStatus
+	extern	_inputString
+	extern	_ti_Open
+	extern	_strcat
+	extern	_ti_Rename
+	extern	__frameset0

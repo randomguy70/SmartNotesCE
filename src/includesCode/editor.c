@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 #include "main.h"
-=======
 #include <includes/editor.h>
 
->>>>>>> 1309ad5c558316517c78f6acd55475c24124bafb
 #include <fontlibc.h>
 #include <graphx.h>
 #include <keypadc.h>

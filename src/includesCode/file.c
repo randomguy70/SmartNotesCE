@@ -75,50 +75,17 @@ bool checkIfDeleteFile(char *name) {
 
 bool renameFile(const char *name) {
 	
-	char newNameBuffer[10] = {0};
+	char newNameBuffer[9] = {0};
 	char message[8+9] = {"Rename "};
 	
 	strcat(message, name);
 	
 	if(inputString(newNameBuffer, 8, message) > 0) {
-		// ti_Rename(name, newNameBuffer);
+		ti_Rename(name, newNameBuffer);
 		return true;
 	}
 	
 	return false;
-}
-
-int loadFile(char *name, struct buffer* buffer) {
-	
-	if(!fileExists(name)) {
-		return 0;
-	}
-	
-	fileToBuffer(name, buffer);
-	
-	return 1;
-};
-
-int saveFile(char* name, struct buffer* buffer) {
-	bufferToFile(buffer, name);
-	return buffer->sig_chars;
-};
-
-uint8_t getFullName(char *fullNameBuffer, char *osName) {
-	
-	uint8_t osNameLen;
-	uint8_t fileSlot;
-	char *extraCharsPtr;
-	
-	fileSlot = ti_Open(osName, "r");
-	extraCharsPtr = ti_GetDataPtr(fileSlot) + strlen(HEADER_STR);
-	osNameLen = strlen(osName);
-	
-	strcpy(fullNameBuffer, osName);
-	// copyChars(&(fullNameBuffer[osNameLen]), extraCharsPtr, 10);
-	copyWordL(fullNameBuffer + osNameLen, extraCharsPtr, 10);
-	
-	return strlen(fullNameBuffer);
 }
 
 bool fileExists(char* name) {
