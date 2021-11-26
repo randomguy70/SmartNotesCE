@@ -6,151 +6,132 @@
 #include <fontlibc.h>
 #include <string.h>
 
-#include <includes/text.h>
-#include <includes/ui.h>
+#include "includes/text.h"
+#include "includes/ui.h"
+#include "includes/colors.h"
+#include "includes/key.h"
 
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 {
-   uint8_t keyPressed; // value of key currently pressed
-   uint8_t txtMode = CAPS; // caps, math, or lowercase
-   uint8_t strLen = 0; // current character length & offset of inputted string
-   char character; // current inputted character buffer
+	uint8_t strLen = 0;
+	char character;
 	
-   uint16_t cursorX;
-	uint16_t cursorY;
-   uint8_t cursorBlink = 0;
+	struct inputState inputState = {
+		.textMode = CAPS,
+		.alphaPrev = false,
+	};
 	
-	uint16_t windowWidth = 150;
-	uint16_t windowHeight = 50;
-	int outerBoxX = (SCRN_WIDTH/2)-(windowWidth/2);
-	int outerBoxY = (SCRN_HEIGHT/2)-(windowHeight/2);
-	int titleX = (SCRN_WIDTH/2) - (gfx_GetStringWidth(title) / 2);
+	struct cursor cursor = {
+		.animation_cycles_completed = 0,
+		.cycles_per_animation = 40,
+		.invisibleTime = 15,
+	};
 	
-   while(1) {
-
-		gfx_SetDraw(1);
+	struct window window = {
+		.width = 150,
+		.height = 50,
+		.x = (LCD_WIDTH/2)-(150/2),
+		.y = (LCD_HEIGHT/2)-(50/2),
+		.windowOutlineColor = LIGHT_BLUE,
+		.titleBarColor = DARK_GREY,
+		.titleTextColor = BLACK,
+		.title = title,
+		.bodyColor = LIGHT_GREY,
+		.bodyTextColor = BLACK,
+	};
+	
+	unsigned int textBoxWidth = window.width - 10;
+	unsigned int textBoxHeight = 17;
+	unsigned int textBoxX = window.x + ((window.width/2) - (textBoxWidth/2));
+	unsigned int textBoxY = window.y + WINDOW_TITLE_BAR_HEIGHT + 12;
+	
+	unsigned int alphaXPos = window.x + window.width - 10;
+	unsigned int alphaYPos = window.y + 5;
+	
+	sk_key_t keyPressed;
+	
+	bool delete = false;
+	bool deletePrev = false;
+	
+	while(true)
+	{
+		inputState.alphaPrev = kb_IsDown(kb_KeyAlpha);
+		deletePrev = delete;
 		
-      // display current string/new filename with outline box
-      // fill the outer text box white
+		kb_Scan();
+		delete = kb_IsDown(kb_KeyDel);
 		
-      gfx_SetColor(LIGHT_GREY);
-      gfx_FillRectangle_NoClip(outerBoxX, outerBoxY, windowWidth, windowHeight);
-
-		// blue outline for the outer text box
-      gfx_SetColor(LIGHT_BLUE);
-		thick_Rectangle(outerBoxX, outerBoxY, windowWidth, windowHeight, 2);
+		gfx_SetDraw(gfx_buffer);
 		
-		// black outline for the blue outline for the outer text box lol
-		gfx_SetColor(BLACK);
-		gfx_Rectangle_NoClip(outerBoxX-1, outerBoxY-1, windowWidth+2, windowHeight+2);
-
-      // fill inner text box white
-		int textBoxWidth = 72;
-		int textBoxHeight = 15;
-		int textBoxX = (SCRN_WIDTH/2)-(textBoxWidth/2);
-		int textBoxY = outerBoxY + 20;
-      gfx_SetColor(1);
-		gfx_FillRectangle(textBoxX, textBoxY, textBoxWidth, textBoxHeight);
-
-      // inner text box outline
-      gfx_SetColor(DARK_BLUE);
-		gfx_Rectangle(textBoxX, outerBoxY+20, textBoxWidth, textBoxHeight);
-
-      // display alpha mode (either A, a, or 1)
-		int alphaXPos = outerBoxX + windowWidth - 10;
-		int alphaYPos = outerBoxY + 5;
-      gfx_SetTextFGColor(BLACK);
+		drawWindow(&window);
+		
+		// text box
+		gfx_SetColor(WHITE);
+		gfx_FillRectangle_NoClip(textBoxX, textBoxY, textBoxWidth, textBoxHeight);
+		
+		gfx_SetColor(LIGHT_BLUE);
+		gfx_Rectangle_NoClip(textBoxX, textBoxY, textBoxWidth, textBoxHeight);
+		
+		// text mode (caps, lowercase, numbers)
+		gfx_SetTextFGColor(BLACK);
 		gfx_SetTextXY(alphaXPos, alphaYPos);
 		
-      if(txtMode == MATH) {
-			gfx_PrintChar('1');
-      }
-      if(txtMode == CAPS) {
-			gfx_PrintChar('A');
-      }
-      if(txtMode == LOWER_CASE) {
-			gfx_PrintChar('a');
-      }
+		displayTextMode(alphaXPos, alphaYPos, inputState.textMode);
+		updateInputMode(&inputState);
 		
-		// display the title and inputted string
-      gfx_SetTextFGColor(BLACK);
-		gfx_PrintStringXY(title, titleX, (SCRN_HEIGHT/2)-(windowHeight/2)+5);
-		gfx_PrintStringXY(buffer, (SCRN_WIDTH/2)-(72/2)+2, (SCRN_HEIGHT/2)-(windowHeight/2)+24);
-
-      // display cursor
-      cursorX = gfx_GetTextX() + 2;
-		cursorY = gfx_GetTextY()-2;
-      gfx_SetColor(DARK_BLUE);
+		// display input
+		gfx_SetTextFGColor(BLACK);
+		fontlib_DrawStringXY(buffer, textBoxX + 2, textBoxY + 2);
 		
-		// deal with cursor cycles
-      if(cursorBlink > 10) {
-			gfx_VertLine(cursorX, cursorY, 11);
-			gfx_VertLine(cursorX+1, cursorY, 11);
-         if(cursorBlink == 30) {
-            cursorBlink = 0;
-         }
-      }
-      cursorBlink++;
-      gfx_Blit(1);
+		// cursor
+		cursor.x = textBoxX + fontlib_GetStringWidth(buffer) + 2;
+		cursor.y = textBoxY + 2;
 		
-		// keypresses
-		{
+		drawCursor(&cursor);
+		updateCursor(&cursor);
+		
+		gfx_Blit(1);
+		
 		kb_Scan();
-		keyPressed = os_GetCSC();
 		
-		// enter creates a new file with the inputted string for a name
-      if (kb_IsDown(kb_KeyEnter) && strLen > 0 && strLen <= maxLength) { // enter finishes string input and returns 1
-         return 1;
-      }
+		// success
+		if (kb_IsDown(kb_KeyEnter) && strLen > 0 && strLen <= maxLength && strlen > 0)
+		{
+			return 1;
+		}
 		
-		// clear quits and returns failure (0)
-      if (kb_IsDown(kb_KeyClear)) {
-			// wait for the delete key to be released before moving on
+		// quit
+		if (kb_IsDown(kb_KeyClear))
+		{
 			while(kb_AnyKey()) kb_Scan();
-				
+			
 			return 0;
 		}
 		
-		// delete deletes one character (obviously)
-      if (kb_IsDown(kb_KeyDel) && strLen>0) {
-         buffer[strLen-1] = 0;
-         strLen--;
-			
-			while(kb_AnyKey()) kb_Scan();
-      }
-		
-		// switching text modes
-      if (kb_IsDown(kb_KeyAlpha)) {
-			if(txtMode == MATH) {
-				txtMode = CAPS;
+		// input character
+		keyPressed = os_GetCSC();
+		if (strLen < 8 && (keyPressed != sk_Alpha && keyPressed != sk_2nd && keyPressed != sk_Mode && keyPressed != sk_Del && keyPressed != sk_GraphVar && keyPressed != sk_Stat && keyPressed != sk_Enter))
+		{
+			character = inputChar(inputState.textMode, keyPressed);
+			if (character != '\0' && strLen<=maxLength)
+			{
+				buffer[strLen] = character;
+				strLen++;
 			}
-			else if(txtMode == CAPS){
-				txtMode = LOWER_CASE;
-			}
-			else if(txtMode == LOWER_CASE) {
-				txtMode = MATH;
-			}
-			// wait for the delete key to be released before moving on
-			while(kb_AnyKey()) kb_Scan();
 		}
 		
-		// input character and add the character to the current offset in the string buffer
-      // keyPressed = get_single_key_pressed();
-      if (strLen < 8) {
-         character = inputChar(txtMode, keyPressed);
-         if (character != '\0' && strLen<=maxLength) {
-               buffer[strLen] = character;
-               strLen++;
-         }
-      }
+		// delete character
+		if (delete && !deletePrev && strLen > 0)
+		{
+			buffer[strLen-1] = '\0';
+			strLen--;
 		}
-		
-   }
+	}
 }
 
-uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed)
+char inputChar(enum textMode mode, uint8_t keyPressed)
 {
-   unsigned char mathDat[] = {
+   const unsigned char mathDat[] = {
       0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
       0x0, 0x0 , 0x2B, 0x2D, 0x2A, 0x2F, 0x5E, 0x0, 
       0x0, 0x2D, 0x33, 0x36, 0x39, 0x29, 0x0 , 0x0, 
@@ -158,7 +139,7 @@ uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed)
       0x0, 0x30, 0x31, 0x34, 0x37, 0x2C, 0x0 , 0x0, 
       0x0, 0x0 , 0x1a, 0x0 , 0x0 , 0x0 , 0x0 , 0x0, 
    };
-   unsigned char capsDat[] = {
+   const unsigned char capsDat[] = {
       0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 
       0x0, 0x0 , 0x22, 0x57, 0x52, 0x4D, 0x48, 0x0 , 
       0x0, 0x3F, 0x5B, 0x56, 0x51, 0x4C, 0x47, 0x0 , 
@@ -166,7 +147,7 @@ uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed)
       0x0, 0x20, 0x59, 0x54, 0x4F, 0x4A, 0x45, 0x42, 
       0x0, 0x0 , 0x58, 0x53, 0x4E, 0x49, 0x44, 0x41, 
    };
-   unsigned char lowerCaseDat[] = {
+   const unsigned char lowerCaseDat[] = {
       0x0, 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 0x0 , 
       0x0, 0x22, 0x22, 0x77, 0x72, 0x6d, 0x68, 0x0 , 
       0x0, 0x3f, 0x0 , 0x76, 0x71, 0x6c, 0x67, 0x0 , 
@@ -176,28 +157,33 @@ uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed)
    };
 
    char character = '\0';
-
-	if (txtMode == MATH) {
+	
+	if (mode == MATH) {
 		character = mathDat[keyPressed];
 		return character;
    }
-   if (txtMode == CAPS) {
+   if (mode == CAPS) {
       character = capsDat[keyPressed];
       return character;
    }
-   if (txtMode == LOWER_CASE) {
+	
+   if (mode == LOWER_CASE) {
       character = lowerCaseDat[keyPressed];
       return character;
    }
-   return 0;
+	
+   return '\0';
 }
 
-int fontlib_GetStrLen(const char *string) {
+int fontlib_strlen(char *string)
+{
 	int i = 0;
 	
-	while(string[i]!='\0' && string[i]!=' ')
+	while(string[i]!='\0' && string[i] != fontlib_GetAlternateStopCode())
+	{
 		i++;
-		
+	}
+	
 	return i;
 }
 
@@ -212,22 +198,15 @@ int copyWord(char* dest, char* src)
    return pos;
 }
 
-int getWordLen(char *src) {
-	int chars = 0;
-	
-	while(src[chars] != '\0' && src[chars] != ' ')
-		chars++;
-	
-	return chars;
-}
-
-void fontlib_DrawStringXY(char *str, int x, int y) {
+void fontlib_DrawStringXY(const char *str, int x, int y)
+{
 	fontlib_SetCursorPosition(x, y);
 	fontlib_DrawString(str);
 	return;
 }
 
-int copyWordL(char *dest, char *src, int chars) {
+int copyWordL(char *dest, char *src, int chars)
+{
 	int pos = 0;
 	
 	while(pos < chars && src[pos] != '\0' && src[pos] != ' ')
@@ -241,7 +220,8 @@ int copyWordL(char *dest, char *src, int chars) {
 	return pos;
 }
 
-int getMaxCharsPerLine(char *src) {
+int getMaxCharsPerLine(char *src)
+{
 	unsigned int maxLineWidth = fontlib_GetWindowWidth();
 	unsigned int lineLen = 0; // the pixe length of the current line
 	uint8_t chars = 0; // how many characters are fitting on the line currently
@@ -252,7 +232,8 @@ int getMaxCharsPerLine(char *src) {
 	return chars;
 }
 
-int getByteDifference(void *ptrOne, void *ptrTwo) {
+int getByteDifference(void *ptrOne, void *ptrTwo)
+{
 	int byteDifference = 0;
 	
 	if(ptrOne <= ptrTwo) {
@@ -266,7 +247,8 @@ int getByteDifference(void *ptrOne, void *ptrTwo) {
 	return byteDifference;
 }
 
-int drawSpace() {
+int drawSpace()
+{
 	int x, y;
 	
 	x = fontlib_GetCursorX() + 4;
@@ -275,4 +257,187 @@ int drawSpace() {
 	fontlib_SetCursorPosition(x, y);
 	
 	return x;
+}
+
+void displayTextMode(int x, int y, enum textMode textMode)
+{
+	gfx_SetColor(BLACK);
+	gfx_SetTextXY(x, y);
+	
+	if(textMode == MATH)
+	{
+		gfx_PrintChar('1');
+	}
+	if(textMode == CAPS)
+	{
+		gfx_PrintChar('A');
+	}
+	if(textMode == LOWER_CASE)
+	{
+		gfx_PrintChar('a');
+	}
+}
+
+void updateInputMode(struct inputState *inputState)
+{
+	kb_Scan();
+	bool alpha = kb_IsDown(kb_KeyAlpha);
+	bool second = kb_IsDown(kb_Key2nd);
+	
+	if(inputState->textMode == MATH && alpha && !inputState->alphaPrev)
+	{
+		inputState->textMode = CAPS;
+	}
+	else if(inputState->textMode == CAPS && alpha)
+	{
+		inputState->textMode = LOWER_CASE;
+	}
+	else if(inputState->textMode == LOWER_CASE && alpha)
+	{
+		inputState->textMode = CAPS;
+	}
+	else if(second)
+	{
+		inputState->textMode = MATH;
+	}
+	
+	inputState->alphaPrev = alpha;
+}
+
+/*
+calculates the char * pointer to the start of each visible line in a textBox
+*/
+int textBox_getVisibleLinePointers(struct textBox *textBox)
+{
+	fontlib_SetLineSpacing(3, 3);
+	uint8_t fontHeight = fontlib_GetCurrentFontHeight();
+	
+	char *readPtr = textBox->startOfText;
+	int txtX = textBox->x;
+	int txtY = textBox->y + fontHeight + 1;
+	int strWidth;
+	
+	uint8_t linesPrinted = 0;
+	int messageLen = strlen(txt);
+	int charsRead = 0;
+	
+	// font stuff
+	fontlib_SetWindow(textBox->x, textBox->y, textBox->width, textBox->height);
+	fontlib_SetAlternateStopCode(' ');
+	fontlib_SetCursorPosition(txtX, txtY);
+	fontlib_SetBackgroundColor(LIGHT_GREY);
+	fontlib_SetTransparency(true);
+	
+	gfx_SetDraw(1);
+	
+	// box with outline
+	gfx_SetColor(LIGHT_GREY);
+	gfx_FillRectangle_NoClip(x, y, width, height);
+	gfx_SetColor(LIGHT_BLUE);
+	thick_Rectangle(x-2, y-2, width + 4, height + 4, 2);
+	
+	// header text
+	const char *headerTxt = "Warning";
+	headerY = y-1;
+	headerX = (SCRN_WIDTH/2) - (fontlib_GetStringWidth(headerTxt)/2);
+	fontlib_SetCursorPosition(headerX, headerY);
+	fontlib_SetForegroundColor(RED);
+	fontlib_DrawString(headerTxt);
+	
+	// header line
+	uint8_t length = 100;
+	gfx_SetColor(LIGHT_BLUE);
+	gfx_HorizLine(SCRN_WIDTH/2-length/2, y+fontHeight-1, length);
+	gfx_HorizLine(SCRN_WIDTH/2-length/2, y+fontHeight, length);
+	
+	// reset the cursor position
+	fontlib_SetCursorPosition(txtX, txtY);
+	fontlib_SetForegroundColor(BLACK);
+	
+	while(linesPrinted < maxLines-1 && charsRead <= messageLen) {
+	
+		strWidth = fontlib_GetStringWidth(readPos);
+	
+		// if the string is short enough to be displayed... then display it!
+		if(strWidth + txtX < width + x) {
+			fontlib_DrawString(readPos);
+			fontlib_ShiftCursorPosition(2, 0);
+			charsRead += (fontlib_GetLastCharacterRead()+1) - readPos;
+			readPos = fontlib_GetLastCharacterRead()+1;
+			txtX += strWidth;
+		}
+		
+		// if the word won't fit on to the end of the line... then create a new line
+		if(txtX > x && strWidth + txtX > x + width) {
+			if(linesPrinted < maxLines) {
+				fontlib_Newline();
+				txtX = x;
+				txtY += fontHeight;
+				linesPrinted++;
+			} else {
+				break;
+			}
+		}
+		
+		// if some person was fooling around and the current word is too long for a whole line by itself... then print it until it hits the endge of the window (the default) and create a new line
+		if(txtX == x && strWidth > width) {
+			
+			fontlib_DrawString(readPos);
+			
+			charsRead += (fontlib_GetLastCharacterRead()+1) - readPos;
+			readPos = fontlib_GetLastCharacterRead()+1;
+			
+			// new line
+			if(linesPrinted > maxLines)
+				break;
+				
+			fontlib_Newline();
+			txtX = x;
+			txtY += fontHeight;
+			linesPrinted++;
+		}
+	}
+	
+	gfx_BlitRectangle(1, x-2, y-2, width+4, height+4);
+	
+	if (waitForInput() == true)
+		return 1;
+	
+	return 0;
+}
+
+// XXX
+int displayTextBox(struct textBox *textBox)
+{
+	fontlib_SetCursorPosition(textBox->x, textBox->y);
+	for(uint8_t i=0; i<textBox->numLines && i<EDITOR_MAX_LINES_VIEWABLE; i++)
+	{
+		fontlib_DrawString(textBox->startOfText);
+	}
+}
+
+int getWordLen(char *word, char *end)
+{
+	char *pos;
+	int wordLen = 0;
+	
+	while(word[wordLen] != '\0' && word[wordLen] != '\n' && word[wordLen] != ' ' && word + wordLen < end)
+	{
+		wordLen++;
+	}
+	
+	return wordLen;
+}
+
+int getMaxCharsPerLine(char *start, char *end)
+{
+	fontlib_SetAlternateStopCode(0);
+	int characters = 0;
+	
+	while(fontlib_GetStringWidthL(start, characters) < fontlib_GetWindowWidth() && start + characters < end)
+	{
+		characters++;
+	}
+	
+	return characters;
 }

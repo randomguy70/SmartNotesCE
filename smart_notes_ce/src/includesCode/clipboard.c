@@ -2,7 +2,9 @@
 
 #include "includes/clipboard.h"
 
-int copyToClipboard(char* data, size_t size, struct clipboard* clipboard) {
+int copyToClipboard(char* data, unsigned int size, struct clipboard* clipboard) {
 	clipboard->data = data;
 	clipboard->size = size;
+	
+	return clipboard->size;
 }

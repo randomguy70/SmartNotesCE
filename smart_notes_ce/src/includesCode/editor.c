@@ -1,35 +1,41 @@
+<<<<<<< HEAD
 #include "main.h"
+=======
+#include <includes/editor.h>
+
+>>>>>>> 1309ad5c558316517c78f6acd55475c24124bafb
 #include <fontlibc.h>
 #include <graphx.h>
 #include <keypadc.h>
 #include <fontlibc.h>
+#include <fileioc.h>
 
 #include <includes/file.h>
-#include <includes/editor.h>
 #include <includes/text.h>
 #include <includes/characters.h>
 #include <includes/ui.h>
+#include <includes/colors.h>
 
-//// declarations
-static void dispEditorBK(char* name);
+static void dispEditorBK();
 static void dispEditorText(struct editor* editor);
 static enum state handleEditorKeyPresses(void);
 int getLinePtrs(struct buffer* buffer);
 
-enum state dispEditor(struct editor* editor) {
+enum state dispEditor(struct editor *editor) {
 	
 	enum state ret = show_editor;
 	
-	editor->shouldRefresh = true;
-	editor->curCol        = 0;
-	editor->curLine       = 0;
-	editor->editOffset    = 0;
-		
-	loadFile(&(editor->file), editor->fileName);
+	editor->curLine = 0;
+	editor->curCol = 0;
+	editor->editOffset = 0;
+	
+	initialiseEditor(editor);
+	
+	getTextBoxLinePointers(editor);
 	
 	while(true)
 	{
-		dispEditorBK(editor->fileName);
+		dispEditorBK(editor);
 		dispEditorText(editor);
 		
 		ret = handleEditorKeyPresses();
@@ -41,13 +47,121 @@ enum state dispEditor(struct editor* editor) {
 	}
 }
 
+static int initialiseEditor(struct editor *editor)
+{
+	ti_var_t file;
+	
+	file = ti_Open(editor->file.os_name, "r");
+	
+	if(!file)
+	{
+		return 0;
+	}
+	
+	editor->buffer.size = ti_GetSize(file);
+	editor->file.size = editor->buffer.size;
+	
+	ti_Read(editor->buffer.data, editor->buffer.size, 1, file);
+	ti_Close(file);
+	
+	editor->textBox.startOfText = editor->buffer.data;
+	editor->textBox.textLength = editor->buffer.size;
+	
+	editor->textBox.width = EDITOR_TEXT_BOX_WIDTH;
+	editor->textBox.height = EDITOR_TEXT_BOX_HEIGHT;
+	editor->textBox.x = SCRN_WIDTH/2 - EDITOR_TEXT_BOX_WIDTH/2;
+	editor->textBox.y = SCRN_HEIGHT/2 - EDITOR_TEXT_BOX_HEIGHT/2;
+	
+	editor->textBox.maxLinesOnScreen = EDITOR_MAX_LINES_VIEWABLE;
+	editor->textBox.lineOffset = 0;
+	
+	return 1;
+}
+
+static int getTextBoxLinePointers(struct textBox *textBox)
+{
+	char *end = textBox->startOfText + textBox->textLength;
+	char *readPos = textBox->startOfText;
+	char *curLine = textBox->startOfText;
+	int linesCounted = 0;
+	// pixel width
+	int curLineWidth = 0;
+	// character count
+	int curLineLen = 0;
+	// pixel width
+	int curWordWidth = 0;
+	// character count
+	int curWordLen = 0;
+	
+	fontlib_SetAlternateStopCode(0);
+	
+	textBox->maxLinesOnScreen = 5;
+	
+	// initialise the first line
+	textBox->linePointers[linesCounted] = curLine;
+	
+	while(true)
+	{
+		START:
+		
+		curWordLen = getWordLen(readPos, end);
+		curWordWidth = fontlib_GetStringWidthL(readPos, curWordLen);
+		
+		// if it reaches the end of the data => return
+		if(readPos >= end || linesCounted > textBox->maxLinesOnScreen);
+		{
+			break;
+		}
+		
+		// make sure it doesn't overflow
+		if (readPos + curWordLen >= end)
+		{
+			curWordLen = end - readPos;
+		}
+		
+		// if word fits => append it
+		if(curLineWidth + curWordWidth < textBox->width)
+		{
+			readPos += curWordLen;
+			curLineLen += curWordLen;
+			curLineWidth += curWordWidth;
+			goto START;
+		}
+		
+		// if word doesn't fit and there is stuff on the line already => new line
+		if((curLineWidth + curWordWidth < textBox->width) && (curLineLen > 0))
+		{
+			curLine += curLineLen;
+			curLineLen = 0;
+			curLineWidth = 0;
+			textBox->linePointers[++linesCounted] = curLine;
+			textBox->numLines++;
+			
+			goto START;
+		}
+		
+		// if the word is too big for an entire line => force wrap it
+		if((curLineWidth + curWordWidth < textBox->width) && (curLineLen == 0))
+		{
+			curLineLen = getMaxCharsPerLine(curLine, end);
+			curLine += curLineLen;
+			textBox->linePointers[++linesCounted] = curLine;
+			goto START;
+		}
+	}
+	
+	textBox->numLinesOnScreen = linesCounted;
+	return linesCounted;
+}
+
 // displays the editor background
-static void dispEditorBK(char* fileName) {
+static void dispEditorBK(struct editor *editor)
+{
 	
 	gfx_SetDraw(gfx_buffer);
 	gfx_FillScreen(WHITE);
 	
-	// header rect
+	// header rectangle
 	gfx_SetColor(MEDIUM_GREY);
 	gfx_FillRectangle_NoClip(0, 0, SCRN_WIDTH, 20);
 	gfx_SetColor(BLACK);
@@ -57,7 +171,7 @@ static void dispEditorBK(char* fileName) {
 	fontlib_SetTransparency(true);
 	fontlib_SetForegroundColor(BLACK);
 	fontlib_SetAlternateStopCode(0); // the name might have spaces in it
-	fontlib_DrawStringXY(fileName, 1, 2);
+	fontlib_DrawStringXY(editor->file.os_name, 1, 2);
 	
 	// footer
 	gfx_SetColor(MEDIUM_GREY);
@@ -68,35 +182,27 @@ static void dispEditorBK(char* fileName) {
 	return;	
 }
 
-static void dispEditorText(struct editor* editor) {
-	uint8_t fontHeight;
-	uint8_t numLinesOnScreen;
-	int windowHeight;
-	int windowXMin;
-	int windowYMin;
+static void dispEditorText(struct editor *editor)
+{
+	uint8_t lineLen;
+	char *line;
 	
-	windowXMin = fontlib_GetWindowXMin();
-	windowYMin = fontlib_GetWindowYMin();
+	fontlib_SetForegroundColor(BLACK);
 	
-	fontHeight = fontlib_GetCurrentFontHeight();
-	windowHeight = fontlib_GetWindowHeight();
-	numLinesOnScreen = windowHeight / fontHeight;
-	
-	fontlib_SetCursorPosition(windowXMin, windowYMin);
-	
-	// I will change this to be relative to the screen offset, just using this for debugging as of now
-	for(uint8_t i = 0; i<editor->buffer.numLines; i++) {
+	for(int i=0; i<editor->textBox.numLinesOnScreen; i++)
+	{
+		lineLen = editor->textBox.lineLengths[i];
+		line = editor->textBox.linePointers[i];
 		
-		uint8_t strLen = getByteDifference(editor->buffer.lines[i], editor->buffer.lines[i]);
-		
-		fontlib_DrawStringL(editor->buffer.lines[i], strLen);
-		fontlib_Newline();
+		fontlib_SetCursorPosition(10, i*20 + 25);
+		fontlib_DrawStringL(line, lineLen);
 	}
 	
 	return;
 }
 
-static enum state handleEditorKeyPresses(void) {
+static enum state handleEditorKeyPresses(void)
+{
 	kb_Scan();
 	
 	if(kb_IsDown(kb_KeyClear)) {
@@ -109,112 +215,4 @@ static enum state handleEditorKeyPresses(void) {
 	}
 	
 	return show_editor;
-}
-
-int getLinePtrs(struct buffer* buffer) {
-	
-	char* readPos = buffer->data; // acts like a cursor in the buffer
-	char* dataEnd = readPos + buffer->sig_chars;
-	
-	uint8_t windowWidth  = fontlib_GetWindowWidth();
-	uint8_t windowHeight = fontlib_GetWindowHeight();
-	
-	int txtX   = 0;
-	int txtY   = 0;
-	
-	int linesRead = 0;
-	uint8_t maxLinesViewable;
-
-	int strWidth;    // pixel length of the word starting at readPos
-	int strLen;      // character length of the word starting at readPos
-	
-	// fontlib things
-	fontlib_SetAlternateStopCode(' ');
-	fontlib_SetLineSpacing(2, 2);
-	uint8_t fontHeight = fontlib_GetCurrentFontHeight();
-	
-	maxLinesViewable = windowHeight / fontHeight;
-	
-	// record the first line pointer
-	buffer->lines[linesRead] = readPos;
-	
-	while(readPos < dataEnd && linesRead < maxLinesViewable) {
-		
-		strWidth = fontlib_GetStringWidth(readPos);
-		strLen   = getWordLen(readPos);
-		
-		if(readPos + strLen > buffer->data+buffer->sig_chars)
-		{
-			strLen = getByteDifference(readPos, buffer->data+buffer->sig_chars);
-		}
-		
-		if(*readPos == NEW_LINE)
-		{
-			
-			// record the address of the new line
-			buffer->lines[linesRead++] = ++readPos;
-			
-			fontlib_Newline();
-			
-			txtX = 0;
-			txtY += fontHeight;
-		}
-		
-		if(*readPos == SPACE) {
-			
-			if(txtX + SPACE_WIDTH < windowWidth) {
-				txtX += SPACE_WIDTH;
-				readPos++;
-			}
-			else {
-				
-				buffer->lines[linesRead++] = readPos++;
-				fontlib_Newline();
-				txtX = 0;
-				txtY += fontHeight;
-			}
-			
-		}
-		
-		// get the pixel length of the next word
-		strWidth = fontlib_GetStringWidth(readPos);
-		
-		// if the word can fit on to the end of the line	
-		if(strWidth + txtX <= windowWidth) {
-			readPos += fontlib_GetStrLen(readPos) + 1; // the one extra counts for the space or null terminator
-			txtX += strWidth + SPACE_WIDTH;
-		}
-		
-		// if something has already been printed on the line and the next word can't fit on to the end of the line
-		if(strWidth + txtX > windowWidth && txtX > 0) {
-			if(linesRead > maxLinesViewable) {
-				break;
-			}
-			
-			fontlib_Newline();
-			linesRead++;
-			txtX = 0;
-			txtY += fontHeight;
-			buffer->lines[linesRead] = readPos;
-			linesRead++;
-		}
-		
-		// if nothing has been printed on to the line but the word is still too long for a whole line, then force wrap it
-		if(txtX <= 0 && strWidth > windowWidth) {
-			if(linesRead > maxLinesViewable) {
-				break;
-			}
-			
-			fontlib_DrawStringL(readPos, getMaxCharsPerLine(readPos));
-			
-			readPos+=getMaxCharsPerLine(readPos);
-			fontlib_Newline();
-			txtX = 0;
-			txtY += fontHeight;
-			linesRead++;
-		}
-		
-	}
-	
-	return buffer->numLines;
 }

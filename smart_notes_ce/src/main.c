@@ -1,6 +1,6 @@
 /*
 ////////////////////////////////////////
-// { SmartNotes CE } { 1.0 }
+// { SmartNotes CE } { Beta } {}
 // Author: JohnPaul Malloy (Randomguy)
 // Description: A text editor for the TI 84 Plus CE
 ////////////////////////////////////////
@@ -29,12 +29,11 @@ static bool formatSaveStateAppvar(char *name);
 static bool formatSettingsAppvar(char *name);
 static bool formatUserInfoAppvar(char *name);
 
-int main() {
-	
-	ti_CloseAll();
-	
-	if(!setupFontlibc())
+int main(void) {
+		
+	if(!setupFontlibc()) {
 		return 0;
+	}
 	
 	// necessary gfx stuff
 	gfx_Begin();
@@ -42,9 +41,6 @@ int main() {
 	gfx_SetTransparentColor(2);
 	gfx_SetTextTransparentColor(2);
 	gfx_SetTextBGColor(2);
-
-	// checks for the data appvars. Creates new ones if necessary
-	setupAppvars();
 	
 	struct homescreen homescreen;
 	struct editor editor;
@@ -55,25 +51,29 @@ int main() {
 	
 	while (true)
 	{
-		if(state == should_exit) {
+		if(state == should_exit)
+		{
 			break;
 		}
 		
-		if(state == show_homescreen) {
+		if(state == show_homescreen)
+		{
 			state = dispHomeScreen(&homescreen);
 		}
 		
-		if(state == show_editor) {
+		if(state == show_editor)
+		{
 			if(prevState != state) {
 				strcpy (editor.fileName, homescreen.files[homescreen.selectedFile].os_name);
 				prevState = state;
 			}
 			state = dispEditor(&editor);
 		}
-		
 	}
 
-	cleanup();
+	// cleanup();
+	gfx_End();
+	(*(volatile uint8_t*)0xF00008) = 1;
 	return 0;
 }
 
@@ -99,7 +99,7 @@ static uint8_t setupFontlibc() {
 			while(!kb_AnyKey()){}
 			
 			gfx_End();
-      	return 0;
+      	return false;
    }
 	
    // Use font for whatever

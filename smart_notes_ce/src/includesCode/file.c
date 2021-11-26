@@ -36,24 +36,27 @@ uint8_t getNumFiles(const char * txt)
 
 // asks for user to input a string and makes a new file if one doesn't already exist with that name
 bool newFile(void) {
-   char buffer[9] = {0};
-   uint8_t fileSlot = 0;
+	char buffer[9] = {0};
+	ti_var_t fileSlot = 0;
 	
-   if (inputString(buffer, 8, "New File") > 0) {
-		if(fileExists(buffer)) {
+	if (inputString(buffer, 8, "New File") > 0)
+	{
+		fileSlot = ti_Open(buffer, "w+");
+		if(!fileSlot)
+		{
 			return false;
 		}
-      fileSlot = ti_Open(buffer, "w");
 		
-		if (fileSlot) {
-      	ti_Write("TXT", 3, 1, fileSlot);
+		if (fileSlot)
+		{
+			ti_Write("TXT", 3, 1, fileSlot);
 		}
 		
 		ti_Close(fileSlot);
-      return true;
-   }
+		return true;
+	}
 	
-   return false;
+	return false;
 }
 
 // gives an option whether or not to delete the selected file
@@ -62,7 +65,7 @@ bool checkIfDeleteFile(char *name) {
 	strcat(message, name);
 	strcat(message, "?");
 	
-	if(alert(message) == true) {
+	if(alert(message) == true && fileExists(name)) {
 		ti_Delete(name);
 		return 1;
 	}
@@ -73,12 +76,12 @@ bool checkIfDeleteFile(char *name) {
 bool renameFile(const char *name) {
 	
 	char newNameBuffer[10] = {0};
-	char message[25] = {"Rename "};
+	char message[8+9] = {"Rename "};
 	
 	strcat(message, name);
 	
 	if(inputString(newNameBuffer, 8, message) > 0) {
-		ti_Rename(name, newNameBuffer);
+		// ti_Rename(name, newNameBuffer);
 		return true;
 	}
 	
@@ -107,7 +110,6 @@ uint8_t getFullName(char *fullNameBuffer, char *osName) {
 	uint8_t fileSlot;
 	char *extraCharsPtr;
 	
-	ti_CloseAll();
 	fileSlot = ti_Open(osName, "r");
 	extraCharsPtr = ti_GetDataPtr(fileSlot) + strlen(HEADER_STR);
 	osNameLen = strlen(osName);
@@ -125,4 +127,26 @@ bool fileExists(char* name) {
 	if(!slot)
 		return false;
 	return true;
+}
+
+int toggleHiddenStatus(char* name) {
+	ti_var_t fileSlot = ti_Open(name, "r");
+	if(!fileSlot || strlen(name) > 8) {
+		ti_Close(fileSlot);
+		return -1;
+	}
+	
+	char temp[9] = {0};
+	ti_GetName(temp, fileSlot);
+	temp[0] ^= 64;
+	ti_Close(fileSlot);
+	ti_Rename(name, temp);
+	
+	return isHidden(temp);
+}
+
+bool isHidden(char* name) {
+	if(!fileExists(name))
+		return false;
+	return (name[0])<(65);
 }

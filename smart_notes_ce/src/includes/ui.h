@@ -8,26 +8,15 @@ extern "C" {
 #include <graphx.h>
 
 #include "main.h"
+#include "includes/colors.h"
 
-enum color {
-	BLACK = 0,
-	WHITE = 1,
-	TRANSPARENT = 2,
-	DARK_GREY = 3,
-	MEDIUM_GREY = 4,
-	LIGHT_GREY = 5,
-	DARK_BLUE = 6,
-	RED = 7,
-	LIGHT_BLUE = 8,
-	PAPER_YELLOW = 9,
-};
 
-struct window {
-	int x, y, width, height;
-	char *title;
-	char *body;
-	enum color header_color;
-	enum color body_color;
+#define WINDOW_TITLE_BAR_HEIGHT 10
+
+
+enum window_type {
+	DISPLAY_TEXT_TYPE,
+	OPTION_TYPE,
 };
 
 enum button_types {
@@ -36,7 +25,25 @@ enum button_types {
 	menu,        // opens another menu
 };
 
-// contains the settings data, should be mostly booleans & small integers
+struct window {
+	enum window_type type;
+	
+	int x, y, width, height;
+	const char *title;
+	char *body;
+	
+	enum color titleBarColor;
+	enum color titleTextColor;
+	enum color bodyColor;
+	enum color bodyTextColor;
+	enum color windowOutlineColor;
+	
+	bool hasOptions;
+	char optionText[5][10];
+	uint8_t numOptions;
+	uint8_t selectedOption;
+};
+
 struct settings {
 	// user-specific
 	unsigned int password;
@@ -80,33 +87,21 @@ struct scrollBar{
 	uint8_t colorIndex;
 };
 
-///////////////////////////////////////
-/**
- * cursor things
-**/
-
-// contains properties of a cursor
-struct cursorStruct {
-   uint8_t cursorState; // number of cycles completed so far in 1 animation. Is incremented until it is == cyclesPerAnimation, and then reset.
-   uint8_t cyclesPerAnimation; // the total number of cycles that should be completed per an animation (blink), also called the speed :P
-   uint8_t invisibleTime; // how many cycles the cursor should be invisible for
-   int row; // current text row the cursor is in
-   int column; // current text column the cursor is in
-   int x; // current x coord of cursor
-   int y; // current y coord of cursor
+struct cursor {
+   uint8_t animation_cycles_completed;
+   uint8_t cycles_per_animation;
+   uint8_t invisibleTime; // how many cycles of the animation time the cursor should be invisible for
+   unsigned int row; // current text row the cursor is in
+   unsigned int column; // current text column the cursor is in
+   unsigned int x; // current x coord of cursor
+   unsigned int y; // current y coord of cursor
 };
 
-// draws a cursor given the properties in a given cursor struct
-void animateCursor(struct cursorStruct *CS);
+void drawWindow(struct window* window);
 
-// draws a cursor at a given x and y location
-void drawCursor(struct cursorStruct * cursor);
+void updateCursor(struct cursor *cursor);
 
-
-//////////////////////////////////////////////
-/**
- * text window /menu things
-**/
+void drawCursor(struct cursor * cursor);
 
 /*
 prints a message window with wordwrap
@@ -115,11 +110,8 @@ prints a message window with wordwrap
 */
 bool alert(char *txt);
 
-// prints word-wrapped text inside of given boundaries
-int8_t textBox(const char *text, int boxWidth, int boxHeight, int boxX, int boxY);
-
 /** displays a menu with sprites
- * @param menu a struct containing the sprite and text data for the menu
+ * @param menu pointer to a struct containing the sprite and text data for the menu
  * */
 int displayMenu(struct menu * menu);
 

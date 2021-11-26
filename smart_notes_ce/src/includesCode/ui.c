@@ -9,21 +9,41 @@
 #include <includes/ui.h>
 #include <tice.h>
 
-// cursor stuff
-void animateCursor(struct cursorStruct *CS) {
-   if(CS->cursorState > CS->invisibleTime) {
-      drawCursor(CS);
-   }
-   if(CS->cursorState >= CS->cyclesPerAnimation) {
-      CS->cursorState = 0;
-   }
-   CS->cursorState++;
+void drawWindow(struct window* window) {
+	const unsigned int titleBarHeight = 15;
+	const unsigned int outlineThickness = 2;
+	
+	// title bar
+	gfx_SetColor(window->titleBarColor);
+	gfx_FillRectangle_NoClip(window->x, window->y, window->width, titleBarHeight);
+	
+	fontlib_SetForegroundColor(window->titleTextColor);
+	fontlib_DrawStringXY(window->title, (window->x + window->width/2)- (fontlib_GetStringWidth(window->title)/2), window->y + outlineThickness);
+	
+	// body
+	gfx_SetColor(window->bodyColor);
+	gfx_FillRectangle_NoClip(window->x, window->y + titleBarHeight, window->width, window->height - titleBarHeight);
+	
+	// outline
+	gfx_SetColor(window->windowOutlineColor);
+	thick_Rectangle(window->x, window->y, window->width, window->height, outlineThickness);
 }
 
-void drawCursor(struct cursorStruct * cursor) {
-   gfx_SetColor(DARK_BLUE);
-   gfx_VertLine_NoClip(cursor->x, cursor->y, 11);
-   gfx_VertLine_NoClip(cursor->x+1, cursor->y, 11);
+// cursor stuff
+void updateCursor(struct cursor* cursor) {
+	cursor->animation_cycles_completed++;
+	
+	if(cursor->animation_cycles_completed > cursor->cycles_per_animation) {
+		cursor->animation_cycles_completed = 0;
+	}
+}
+
+void drawCursor(struct cursor* cursor) {
+	if(cursor->animation_cycles_completed >= (cursor->cycles_per_animation - cursor->invisibleTime)) {
+		gfx_SetColor(LIGHT_BLUE);
+		gfx_VertLine_NoClip(cursor->x, cursor->y, 13);
+		gfx_VertLine_NoClip(cursor->x+1, cursor->y, 13);
+	}
 }
 
 int8_t textBox(const char *text, int boxWidth, int boxHeight, int boxX, int boxY) {
@@ -233,8 +253,8 @@ int displayMenu(struct menu * menu) {
 		if(kb_IsDown(kb_KeyDown) && selected < menu->numOptions -1) {
 			selected++;
 			if(selected > offset+maxOnScrn){
-         	offset++;
-      	}
+				offset++;
+			}
 			delay(100);
 		}
 		
@@ -242,8 +262,8 @@ int displayMenu(struct menu * menu) {
 		if(kb_IsDown(kb_KeyUp) && selected>0) {
 			selected--;
 			if(selected < offset){
-         	offset--;
-      	}
+				offset--;
+			}
 			delay(100);
 		}
 		
@@ -274,18 +294,22 @@ int drawScrollbar(struct scrollBar * scrollBar) {
 };
 
 // Epsilon5++
-bool waitForInput() {
+bool waitForInput()
+{
 	while (kb_AnyKey()) kb_Scan();
 
-	while(true) {
+	while(true)
+	{
 		kb_Scan();
 		
-		if(kb_IsDown(kb_Key2nd) || kb_IsDown(kb_KeyEnter)){
+		if(kb_IsDown(kb_Key2nd) || kb_IsDown(kb_KeyEnter))
+		{
 			while (kb_AnyKey()) kb_Scan();
 			return true;
 		}
 		
-		if(kb_IsDown(kb_KeyClear)){
+		if(kb_IsDown(kb_KeyClear))
+		{
 			while (kb_AnyKey()) kb_Scan();
 			return false;
 		}
@@ -293,5 +317,3 @@ bool waitForInput() {
 	
 	return false;
 }
-
-// Congrats, you actually got to the bottom of this file! Did you actually read everything? :P

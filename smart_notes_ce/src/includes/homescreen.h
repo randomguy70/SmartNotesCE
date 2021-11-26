@@ -8,8 +8,6 @@ extern "C" {
 #include <stdint.h>
 #include <includes/file.h>
 
-#define FILE_SPACING 15
-
 // contains properties of the file viewer
 struct homescreen {
 	struct file files[30];

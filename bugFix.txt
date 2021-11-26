@@ -1,9 +1,8 @@
 Todo:
-- if the scrollbar is on some file except the first one, when you press delete the file names often dissapear and you need to restart the program, but nothing adverse happens (apparently)
-- need to fix the scrollbar going off by 1 pixel
-- need to only update scrollbar when the screen is shifted
-- need to add settings & help windows
-- need to add a hiding/unhiding function that puts the first character of a file's name below 0x30 so that the TI OS can't detect it :P
+- fix scrollbar or take it away
+- only update scrollbar when the screen is shifted
+- add settings & help windows
+- add a file hiding/unhiding function
 - planning on adding longer filenames
-- need to add text viewbox
-- need to reformat some of the main configurations in int main
+- add text viewbox
+- fix selected bar going off screen when deleting only file existing

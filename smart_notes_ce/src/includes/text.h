@@ -5,50 +5,70 @@
 extern "C" {
 #endif
 
-#define MATH                 1
-#define CAPS                 2
-#define LOWER_CASE           3
+#define EDITOR_MAX_LINES_VIEWABLE 15
+#define EDITOR_HEADER_BAR_HEIGHT  20
+#define EDITOR_FOOTER_BAR_HEIGHT  20
+#define EDITOR_TEXT_BOX_Y         EDITOR_HEADER_BAR_HEIGHT
+#define EDITOR_TEXT_BOX_WIDTH     LCD_WIDTH
+#define EDITOR_TEXT_BOX_HEIGHT    LCD_HEIGHT - (EDITOR_HEADER_BAR_HEIGHT + EDITOR_FOOTER_BAR_HEIGHT)
 
-struct fileStruct;
-struct wordStruct;
-struct lineStruct;
+enum textMode {
+	MATH = 1,
+	CAPS,
+	LOWER_CASE,
+};
 
-//inputString() writes an inputted string into a given string buffer (array)
+struct inputState {
+	enum textMode textMode;
+	bool alphaPrev;
+};
+
+struct textBox {
+	int x, y, width, height;
+	
+	char *startOfText;
+	int textLength;
+	
+	int numLines;
+	int numLinesOnScreen;
+	int maxLinesOnScreen;
+	int lineOffset;
+	
+	// holds the pointers to the lines on screen
+	char *linePointers[EDITOR_MAX_LINES_VIEWABLE + 1];
+	uint8_t lineLengths[EDITOR_MAX_LINES_VIEWABLE + 1];
+};
+
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title);
 
-// inputChar() returns the last character inputted based on the value of the last keypress and text mode.
+// inputChar() returns the last character inputted based on the value of the current os_GetSCS() value, and the current text mode.
+
 // text Modes are:
-// 1) Math related ascii characters, such as {} () +-=/"?,. etc...
+// 1) Math related ascii characters, such as {} () */+-="?,. etc...
 // 2) Capital ascii letters, such as ABC...
 // 3) Lowercase ascii letters, such as abc...
-uint8_t inputChar(uint8_t txtMode, uint8_t keyPressed);
+char inputChar(enum textMode mode, uint8_t keyPressed);
 
-// writes a string from a given location into a given location. Keeps on copying until a null byte is hit. Returns the pointer to the destination
-char* strcopy(char* dest, const char* src);
-
-// deleteChar() seeks to a given offset in an os variable (such as a program or appvar) and deletes 1 byte from that offset by moving all the data past the given offset back 1 byte and resizing the variable to be 1 byte smaller
-//uint8_t deleteChar(uint8_t slot, short offset);
-
-// returns the number of characters in a word (a string terminated with a space or null character)
+// returns the number of characters in a word terminated with a null character or alternate stop code
 int fontlib_GetStrLen(const char *string);
 
-void fontlib_DrawStringXY(char *str, int x, int y);
-
-// copies a null or space terminated string into a given location
-int copyWord(char * dest, char * src);
-
-// copies a string ended by the NULL terminator, OR by a space, OR by a given number of characters
-int copyWordL(char *dest, char *src, int chars);
-
-// returns the character length of a word terminated by 0 or a space
-int getWordLen(char *src);
-
-// calculates the 
-int getMaxCharsPerLine(char *src);
-
-int getByteDifference(void *ptrOne, void *ptrTwo);
+void fontlib_DrawStringXY(const char *str, int x, int y);
+int fontlib_copyWord(char * dest, char * src);
+int fontlib_copyWordL(char *dest, char *src, int chars);
+int fontlib_strlen(char *string);
 
 int drawSpace();
+
+void updateInputMode(struct inputState *inputState);
+void displayTextMode(int x, int y, enum textMode textMode);
+
+int textBox_getVisibleLinePointers(struct textBox *textBox);
+
+// returns character of next word terminated by space , NULL, or a new line
+int getWordLen(char *word, char *end);
+
+// returns num characters with NO word wrapping
+int getMaxCharsPerLine(char *start, char *end);
 
 #ifdef __cplusplus
 }

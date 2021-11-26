@@ -2,6 +2,7 @@
 #include <keypadc.h>
 #include <fileioc.h>
 #include <string.h>
+#include <tice.h>
 
 #include <includes/homescreen.h>
 #include <includes/text.h>
@@ -9,74 +10,78 @@
 #include <includes/ui.h>
 #include <gfx/gfx.h>
 
-static void dispFiles(struct file files[30], uint8_t offset, uint8_t selectedFile);
+#define MAX_FILES_LOADABLE  30
+#define MAX_FILES_VIEWABLE  10
+#define FILE_SPACING			 15
+
+void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile);
 static void dispHomeScreenBG(struct homescreen* homescreen);
 static void dispHomeScreenButtons(void);
 static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen);
-static uint8_t loadFiles(struct file files[30]);
+static uint8_t loadFiles(struct file files[]);
 static struct menu *loadHomeScreenOtherMenu(void);
 
 enum state dispHomeScreen(struct homescreen* homescreen) {
 	enum state ret = show_homescreen;
 	
-   homescreen->selectedFile = 0;
-   homescreen->offset = 0;
+	homescreen->selectedFile = 0;
+	homescreen->offset = 0;
 	
-	loadFiles(homescreen->files);
+	homescreen->numFiles = loadFiles(homescreen->files);
 	
-   while(true) {
-      dispHomeScreenBG(homescreen);
-      dispHomeScreenButtons();
-		
-      dispFiles(homescreen->files, homescreen->offset, homescreen->selectedFile);
-		
+	while(true)
+	{
+		gfx_SetDraw(gfx_buffer);
+		homescreen->numFiles = getNumFiles("TXT");
+		dispHomeScreenBG(homescreen);
+		dispHomeScreenButtons();
+		dispFiles(homescreen->files, homescreen->numFiles, homescreen->offset, homescreen->selectedFile);
 		gfx_Wait();
 		gfx_SwapDraw();
 		
-      ret = handleHomeScreenKeyPresses(homescreen);
+		ret = handleHomeScreenKeyPresses(homescreen);
 		
-		if(ret == should_exit || ret == show_editor)
+		if(kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyZoom)) 
 		{
-			return ret;
+			return should_exit;
 		}
-   }
-	
-	return ret;
+		if(ret == show_editor) 
+		{
+			return show_editor;
+		}
+	}
+	return should_exit;
 }
 
-static void dispFiles(struct file files[30], uint8_t offset, uint8_t selectedFile) {
-   uint8_t i;          // starting increment of file display, ends up as the number of files displayed onscreen (should be <=10)
-   int fileY = 61;
-	int numFiles = 0;
+void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile) {
+	uint8_t i;
+	unsigned int fileY = 61;
 	
 	gfx_SetTextFGColor(BLACK);
-	gfx_SetDraw(gfx_buffer);
 	
-   for(i=offset; i < 10+offset && files[i].os_name!='\0' && i<30; i++) {
-
-      // display currently selected file with a scrollbar on top of it
-      if (selectedFile == i) {
-			// draw scrollbar & leave some pixels at the edge of the window for the scrollbar
-         gfx_SetColor(LIGHT_GREY);
-         gfx_FillRectangle_NoClip(36,fileY-5,242,15);
+	for(i=offset; i < MAX_FILES_VIEWABLE + offset && i<MAX_FILES_LOADABLE && i<numFiles; i++) {
+		
+		if (selectedFile == i)
+		{
+			// leave some pixels at the edge of the window for the scrollbar
+			gfx_SetColor(LIGHT_GREY);
+			gfx_FillRectangle_NoClip(36,fileY-5,242,15);
 			gfx_SetColor(BLACK);
 			gfx_Rectangle_NoClip(36,fileY-5,242,15);
-
-      }
+	}
 		
-      gfx_PrintStringXY(files[i].os_name,40,fileY);
-      gfx_SetTextXY(135,fileY);
-      gfx_PrintInt(files[i].size,4);
-      fileY+=FILE_SPACING;
-   }
-   // display when no files were detected because you forgot to take notes :P
-   if (numFiles == 0) {
-      gfx_SetTextFGColor(244);
-      gfx_PrintStringXY("--NO FILES FOUND--)",93,80);
-      gfx_PrintStringXY("That's too bad for you :(",93,100);
-   }
+	gfx_PrintStringXY(files[i].os_name,40,fileY);
+	fileY+=FILE_SPACING;
+	}
+	// display when no files were detected because you forgot to take notes :P
+	if (numFiles == 0)
+	{
+	gfx_SetTextFGColor(244);
+	gfx_PrintStringXY("--NO FILES FOUND--)",93,80);
+	gfx_PrintStringXY("That's too bad for you :(",93,100);
+	}
 
-   return;
+	return;
 }
 
 static void dispHomeScreenBG(struct homescreen* homescreen) {
@@ -94,10 +99,8 @@ static void dispHomeScreenBG(struct homescreen* homescreen) {
 	int scrollbarX = 280;
 	int scrollbarY = (150 - (scrollbarHeight) + 1) * homescreen->selectedFile / (homescreen->numFiles-1) + 56;
 	
-   gfx_SetDraw(1);
-	
 	// lined-paper background
-   gfx_FillScreen(PAPER_YELLOW);
+	gfx_FillScreen(PAPER_YELLOW);
 	gfx_SetColor(LIGHT_BLUE);
 	gfx_SetTextXY(1, 1);
 	for(uint8_t i = 0; i<11; i++) {
@@ -112,11 +115,11 @@ static void dispHomeScreenBG(struct homescreen* homescreen) {
 	
 	gfx_SetTextFGColor(BLACK);
 	width = gfx_GetStringWidth("VERSION 1.0 BY Randomguy");
-   gfx_PrintStringXY("Version 1.0 BY Randomguy", (SCRN_WIDTH/2)-(width/2), 27);
+	gfx_PrintStringXY("Version 1.0 BY Randomguy", (SCRN_WIDTH/2)-(width/2), 27);
 	
 	// box with file names
-   gfx_SetColor(WHITE);
-   gfx_FillRectangle_NoClip(36,56,248,150);
+	gfx_SetColor(WHITE);
+	gfx_FillRectangle_NoClip(36,56,248,150);
 	gfx_SetColor(LIGHT_BLUE);
 	thick_Rectangle(34, 54, 252, 154, 2);
 	
@@ -132,10 +135,9 @@ static void dispHomeScreenBG(struct homescreen* homescreen) {
 	gfx_Rectangle_NoClip(scrollbarX, scrollbarY, 4, scrollbarHeight);
 	
 	// print labels for displayed file data columns
-   gfx_SetTextFGColor(BLACK);
-   gfx_PrintStringXY("NAME",40,45);
-   gfx_PrintStringXY("SIZE",135,45);
-   gfx_PrintStringXY("STATUS",210,45);
+	gfx_SetTextFGColor(BLACK);
+	gfx_PrintStringXY("NAME",40,45);
+	gfx_PrintStringXY("STATUS",210,45);
 	
 	return;
 }
@@ -149,12 +151,12 @@ static void dispHomeScreenButtons(void) {
 	sprites[3] = trash;
 	sprites[4] = more;
 	
-   for(int i = 1, ii = 0; i < 320; i+=64, ii++) {
+	for(int i = 1, ii = 0; i < 320; i+=64, ii++) {
 		// button rects
-      gfx_SetColor(LIGHT_GREY);
-      gfx_FillRectangle_NoClip(i+1, 215, 60, 24);
+		gfx_SetColor(LIGHT_GREY);
+		gfx_FillRectangle_NoClip(i+1, 215, 60, 24);
 		gfx_SetColor(BLACK);
-      gfx_Rectangle_NoClip(i+1, 215, 60, 24);
+		gfx_Rectangle_NoClip(i+1, 215, 60, 24);
 		
 		// sprites
 		if(i == 1)
@@ -166,175 +168,168 @@ static void dispHomeScreenButtons(void) {
 	// text
 	gfx_SetTextFGColor(0);
 	
-   gfx_PrintStringXY("Open" ,  27, 224);
-   gfx_PrintStringXY("New"  ,  90, 224);
-   gfx_PrintStringXY("Quit" , 157, 224);
-   gfx_PrintStringXY("Del"  , 220, 224);
-   gfx_PrintStringXY("Other", 271, 224);
+	gfx_PrintStringXY("Open" ,  27, 224);
+	gfx_PrintStringXY("New"  ,  90, 224);
+	gfx_PrintStringXY("Quit" , 157, 224);
+	gfx_PrintStringXY("Del"  , 220, 224);
+	gfx_PrintStringXY("Other", 271, 224);
 	
 }
 
 static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
-   kb_Scan();
+	kb_Scan();
 
-   // move cursor down
-   if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1) {
-      homescreen->selectedFile++;
-      if(homescreen->selectedFile >= homescreen->offset+10){
-         homescreen->offset++;
-      }
+	// move cursor down
+	if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1) {
+		homescreen->selectedFile++;
+		if(homescreen->selectedFile >= homescreen->offset+10){
+			homescreen->offset++;
+		}
 		
 		return show_homescreen;
-   }
+	}
 
 	// move cursor up
-   if (kb_IsDown(kb_KeyUp) && homescreen->selectedFile>0) {
-      homescreen->selectedFile--;
-      if(homescreen->selectedFile < homescreen->offset){
-         homescreen->offset--;
-      }
+	if (kb_IsDown(kb_KeyUp) && homescreen->selectedFile>0)
+	{
+		homescreen->selectedFile--;
+		if(homescreen->selectedFile < homescreen->offset){
+			homescreen->offset--;
+		}
 		
 		return show_homescreen;
-   }
-
+	}
+	
 	// open file
 	if(kb_IsDown(kb_KeyYequ))
 	{
-		if(homescreen->numFiles <= 0) {
+		if(homescreen->numFiles <= 0)
+		{
 			alert("There aren't any files to open (obviously).");
-			return show_homescreen;
 		}
 		
 		return show_editor;
 	}
 	
-   // new file
-   if (kb_IsDown(kb_KeyWindow))
+	// new file
+	if (kb_IsDown(kb_KeyWindow))
 	{
-		if(homescreen->numFiles >= 30 )
+		if(homescreen->numFiles < 30)
+		{
+			if(newFile())
+			{
+				loadFiles(homescreen->files);
+			}
+		}
+		else
 		{
 			alert("You can't have more than 30 files, my note-crazy friend!");
-			return show_homescreen;
 		}
-		
-		if(newFile())
-		{
-			return should_refresh_all;
-		}
-   }
-	
-	// quit program
-	if (kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyZoom))
-	{
-		return should_exit;
+		return show_homescreen;
 	}
 	
 	// delete file
-   if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel))) {
-		// make sure there is a file to delete
-		if(homescreen->numFiles == 0) {
+	if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel)))
+	{
+		if(homescreen->numFiles == 0)
+		{
 			alert("There aren't any files to delete!");
 			return show_homescreen;
 		}
-		// if there is at least 1 file...
-		checkIfDeleteFile(homescreen->files[homescreen->selectedFile].os_name);
-		// check if I need to shift the cursor
-		if(homescreen->numFiles > 0 && homescreen->selectedFile >= homescreen->numFiles)
-			homescreen->selectedFile--;
 		
-		return should_refresh_all;
-   }
+		if(checkIfDeleteFile(homescreen->files[homescreen->selectedFile].os_name))
+		{
+			// shift the cursor...
+			if(homescreen->numFiles > 0)
+			{
+				homescreen->selectedFile--;
+				if(homescreen->offset > homescreen->selectedFile)
+				{
+					homescreen->offset--;
+				}
+			}
+		
+			loadFiles(homescreen->files);
+		}
+		
+		return show_homescreen;
+	}
 	
 	// other (opens fun menu with sprites)
 	if(kb_IsDown(kb_KeyGraph)) {
 		
 		struct menu* menu = loadHomeScreenOtherMenu();
-		
 		uint8_t result = displayMenu(menu);
 		
 		switch(result)
 		{
-			
-			// quit
-			case QUIT:
-				return should_exit;
-				
 			// back
 			case 1:
-				return show_homescreen;
+				break;
 			
 			// rename
 			case 2:
 				if(homescreen->numFiles>0)
 				{
-					if(renameFile(homescreen->files[homescreen->selectedFile].os_name))
+					bool result = renameFile(homescreen->files[homescreen->selectedFile].os_name);
+					if(result)
 					{
-						return should_refresh_all;
+						loadFiles(homescreen->files);
+						break;
 					}
+					alert("Something went wrong. Tough luck, buddy.");
+					break;
 				}
 				
-				// if it didn't return, then there aren't any files to rename...
-				alert("There aren't any files to rename!");
-				return show_homescreen;
+				alert("There aren't any files to rename (obviously)!");
+				break;
 				
 			// hide
 			case 3: 
-				// hideFile(char* name); // haven't defined this yet btw...
-				return show_homescreen;
+				toggleHiddenStatus(homescreen->files[homescreen->selectedFile].os_name);
+				loadFiles(homescreen->files);
+				break;
 				
 			// settings
 			case 4:
-				// displaySettings(); // i haven't defined this either...
-				return show_homescreen;
+				// displaySettings();
+				break;
 				
-			// if the user simply wants to close the menu
 			default:
-				return show_homescreen;
-			
-		}
-		
+				break;
+		}		
 	}
-
+	
 	return show_homescreen;
 }
 
-static uint8_t loadFiles(struct file files[30]) {
-   uint8_t numFiles  = 0;
-   ti_var_t fileSlot = 0; // slot of currently detected file
-   char *namePtr     = NULL;
-   void *search_pos  = NULL; // mem location of the currently detected file in the VAT
+static uint8_t loadFiles(struct file files[]) {
+	uint8_t numFiles  = 0;
+	ti_var_t fileSlot = 0;
+	char *namePtr     = NULL;
+	void *search_pos  = NULL;
 	
-   while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL) {
+	while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL && numFiles < 30) {
 		
-      fileSlot = ti_Open(namePtr, "r+");
+		fileSlot = ti_Open(namePtr, "r+");
 		
-		if(!fileSlot) {
+		if(fileSlot == 0) {
 			ti_Close(fileSlot);
-			return 0;
+			return false;
 		}
 		
 		strcpy(files[numFiles].os_name, namePtr);
-      files[numFiles].size = ti_GetSize(fileSlot);
+		files[numFiles].size = ti_GetSize(fileSlot);
 		
-		// files have to be at least 50 bytes large for (future) formatting purposes
-		if(files[numFiles].size < MIN_FILE_SIZE) {
-			ti_Seek(3, 0, fileSlot);
-			
-			ti_Write((const void *)0xE40000, MIN_FILE_SIZE-3, 1, fileSlot);
-			files[numFiles].size = MIN_FILE_SIZE;
-		}
-		
-		// "always close files after opening them" -Jacobly, ergo...
-		ti_SetArchiveStatus(true, fileSlot);
 		ti_Close(fileSlot);
-      numFiles++;
-   }
+		numFiles++;
+	}
 	
-   return numFiles;
+	return numFiles;
 }
 
 static struct menu *loadHomeScreenOtherMenu(void) {
-	static struct menu menu = { 
+	static struct menu menu = {
 		.title = "Options",
 		.x = 200, .y = 100,
 		.numOptions = 5,

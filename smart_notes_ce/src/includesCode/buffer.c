@@ -1,3 +1,5 @@
+#include <fileioc.h>
+
 #include "includes/buffer.h"
 
 int fileToBuffer(const char *name, struct buffer* buffer) {
@@ -18,7 +20,7 @@ int fileToBuffer(const char *name, struct buffer* buffer) {
 	// read the appropriate number of bytes from the file into the array
 	ti_Seek(MIN_FILE_SIZE, 0, fileSlot);
 	ti_Read(buffer->data, fileSize, 1, fileSlot);
-	buffer->sig_chars=fileSize;
+	buffer->size = fileSize;
 	
 	return fileSize;
 }
@@ -37,8 +39,8 @@ int bufferToFile(struct buffer* buffer, char* name) {
 	fileSize = ti_GetSize(fileSlot);
 	
 	ti_Seek(MIN_FILE_SIZE, 0, fileSlot);
-	ti_Write(buffer->data, buffer->sig_chars, 1, fileSlot);
-	ti_Resize(MIN_FILE_SIZE + buffer->sig_chars, fileSlot);
+	ti_Write(buffer->data, buffer->size, 1, fileSlot);
+	ti_Resize(MIN_FILE_SIZE + buffer->size, fileSlot);
 	ti_Close(fileSlot);
 	
 	return fileSize;
