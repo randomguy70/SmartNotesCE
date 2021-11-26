@@ -102,13 +102,37 @@ _newFile:
 	ld	hl, (ix - 14)
 	push	hl
 	call	_ti_Open
-	ld	l, a
-	pop	de
-	pop	de
+	ld	e, a
+	pop	hl
+	pop	hl
 	or	a, a
 	jq	z, BB2_3
 	ld	a, 1
 	ld	(ix - 11), a
+	push	de
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	push	hl
+	ld	(ix - 14), de
+	call	_ti_Seek
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (ix - 14)
+	push	hl
+	ld	hl, 1
+	push	hl
+	ld	hl, 4
+	push	hl
+	ld	hl, L_.str
+	push	hl
+	call	_ti_Write
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (ix - 14)
 	push	hl
 	call	_ti_Close
 	pop	hl
@@ -405,8 +429,10 @@ L___const.renameFile.message:
 	extern	__frameset
 	extern	_ti_GetName
 	extern	_ti_Delete
+	extern	_ti_Write
 	extern	_ti_Close
 	extern	_alert
+	extern	_ti_Seek
 	extern	_strlen
 	extern	__setflag
 	extern	__Unwind_SjLj_Unregister

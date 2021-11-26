@@ -48,6 +48,7 @@ bool newFile(void)
 			return false;
 		}
 		
+		ti_Seek(0, SEEK_SET, fileSlot);
 		ti_Write(HEADER_STR, sizeof HEADER_STR, 1, fileSlot);
 		
 		ti_Close(fileSlot);
