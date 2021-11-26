@@ -11,27 +11,27 @@
 
 void archiveAll()
 {
-   ti_var_t fileSlot;
-   char * fileName;
-   void * search_pos = NULL;
-   
-   while (((fileName = ti_Detect(&search_pos, "TXT")) != NULL)) {
-      fileSlot = ti_Open(fileName, "r");
-      ti_SetArchiveStatus(true, fileSlot);
+	ti_var_t fileSlot;
+	char * fileName;
+	void * search_pos = NULL;
+	
+	while (((fileName = ti_Detect(&search_pos, "TXT")) != NULL)) {
+		fileSlot = ti_Open(fileName, "r");
+		ti_SetArchiveStatus(true, fileSlot);
 		ti_Close(fileSlot);
-   }
+	}
 	
 }
 
 uint8_t getNumFiles(const char * txt)
 {
-   uint8_t result = 0;
-   void * pos = NULL;
+	uint8_t result = 0;
+	void * pos = NULL;
 	
-   while (ti_Detect(&pos, txt) != NULL)
-      result++;
+	while (ti_Detect(&pos, txt) != NULL)
+		result++;
 	
-   return result;
+	return result;
 }
 
 // asks for user to input a string and makes a new file if one doesn't already exist with that name

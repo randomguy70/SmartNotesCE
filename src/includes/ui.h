@@ -88,13 +88,13 @@ struct scrollBar{
 };
 
 struct cursor {
-   uint8_t animation_cycles_completed;
-   uint8_t cycles_per_animation;
-   uint8_t invisibleTime; // how many cycles of the animation time the cursor should be invisible for
-   unsigned int row; // current text row the cursor is in
-   unsigned int column; // current text column the cursor is in
-   unsigned int x; // current x coord of cursor
-   unsigned int y; // current y coord of cursor
+	uint8_t animation_cycles_completed;
+	uint8_t cycles_per_animation;
+	uint8_t invisibleTime; // how many cycles of the animation time the cursor should be invisible for
+	unsigned int row; // current text row the cursor is in
+	unsigned int column; // current text column the cursor is in
+	unsigned int x; // current x coord of cursor
+	unsigned int y; // current y coord of cursor
 };
 
 void drawWindow(struct window* window);
