@@ -21,8 +21,7 @@ bytes 50->end of the file: text data
 	
 // text editing specific things
 #define HEADER_STR           "TXT"                // header string of all text files
-#define TEXT_OFFSET          50                   // Offset of the text data in files
-#define MIN_FILE_SIZE        TEXT_OFFSET
+#define MIN_FILE_SIZE        sizeof HEADER_STR
 #define MAX_FILE_NAME_SIZE   18
 
 #define FILE_BUFFER_SIZE     16000

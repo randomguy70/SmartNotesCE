@@ -5,10 +5,9 @@
 _fileToBuffer:
 	ld	hl, -6
 	call	__frameset
-	call	_ti_CloseAll
-	ld	hl, L_.str
-	push	hl
 	ld	hl, (ix + 6)
+	ld	de, L_.str
+	push	de
 	push	hl
 	call	_ti_Open
 	ld	e, a
@@ -154,10 +153,9 @@ L_.str:
 	db	"r", 0
 
 	ident	"clang version 14.0.0 (https://github.com/jacobly0/llvm-project a139def90d26173f771eb1eca797633d1fbb2797)"
-	extern	_ti_CloseAll
 	extern	__Unwind_SjLj_Register
-	extern	__frameset
 	extern	__Unwind_SjLj_Unregister
+	extern	__frameset
 	extern	_ti_Open
 	extern	_ti_GetSize
 	extern	_ti_Write
