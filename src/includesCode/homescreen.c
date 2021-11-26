@@ -21,12 +21,11 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen);
 static uint8_t loadFiles(struct file files[]);
 static struct menu *loadHomeScreenOtherMenu(void);
 
-enum state dispHomeScreen(struct homescreen* homescreen) {
-	enum state ret = show_homescreen;
-	
+enum state dispHomeScreen(struct homescreen* homescreen)
+{
+		
 	homescreen->selectedFile = 0;
 	homescreen->offset = 0;
-	
 	homescreen->numFiles = loadFiles(homescreen->files);
 	
 	while(true)
@@ -39,21 +38,24 @@ enum state dispHomeScreen(struct homescreen* homescreen) {
 		gfx_Wait();
 		gfx_SwapDraw();
 		
-		ret = handleHomeScreenKeyPresses(homescreen);
+		kb_Scan();
+		handleHomeScreenKeyPresses(homescreen);
 		
 		if(kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyZoom)) 
 		{
 			return should_exit;
 		}
-		if(ret == show_editor) 
+		if(kb_IsDown(kb_Key2nd) || kb_IsDown(kb_KeyEnter)) 
 		{
 			return show_editor;
 		}
 	}
+	
 	return should_exit;
 }
 
-void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile) {
+void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile)
+{
 	uint8_t i;
 	unsigned int fileY = 61;
 	
@@ -176,11 +178,11 @@ static void dispHomeScreenButtons(void) {
 	
 }
 
-static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
-	kb_Scan();
-
+static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
+{
 	// move cursor down
-	if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1) {
+	if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1)
+	{
 		homescreen->selectedFile++;
 		if(homescreen->selectedFile >= homescreen->offset+10){
 			homescreen->offset++;
@@ -231,7 +233,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 	// delete file
 	if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel)))
 	{
-		if(homescreen->numFiles == 0)
+		if(homescreen->numFiles <= 0)
 		{
 			alert("There aren't any files to delete!");
 			return show_homescreen;
@@ -297,7 +299,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen) {
 				
 			default:
 				break;
-		}		
+		}
 	}
 	
 	return show_homescreen;
