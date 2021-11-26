@@ -835,71 +835,85 @@ BB0_56:
 	section	.text,"ax",@progbits
 	private	_loadFiles
 _loadFiles:
-	ld	hl, -13
+	ld	hl, -26
 	call	__frameset
 	ld	hl, (ix + 6)
-	ld	(ix - 10), hl
-	ld	hl, 0
-	ld	de, L_.str.24
+	ld	(ix - 20), hl
 	xor	a, a
-	ld	bc, 0
-	ld	(ix - 7), bc
-	ld	(ix - 3), hl
-	ld	(ix - 4), a
+	ld	iy, L_.str.24
+	or	a, a
+	sbc	hl, hl
+	ld	(ix - 17), hl
+	lea	hl, ix - 10
+	ld	(ix - 10), 0
+	push	hl
+	pop	de
+	inc	de
+	ld	bc, 9
+	ld	(ix - 23), hl
+	ldir
+	ld	hl, 0
+	ld	(ix - 13), hl
+	ld	(ix - 14), a
 BB1_1:
-	push	de
-	pea	ix - 3
+	push	iy
+	pea	ix - 13
 	call	_ti_Detect
 	push	hl
-	pop	bc
+	pop	de
 	pop	hl
 	pop	hl
-	push	bc
+	push	de
 	pop	hl
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
 	jq	z, BB1_2
-	ld	hl, (ix - 7)
-	ld	de, 30
+	ld	hl, (ix - 17)
+	ld	bc, 30
 	or	a, a
-	sbc	hl, de
+	sbc	hl, bc
 	jq	nc, BB1_2
 	ld	hl, L_.str.25
 	push	hl
-	push	bc
-	ld	(ix - 13), bc
+	push	de
 	call	_ti_Open
 	ld	e, a
 	pop	hl
 	pop	hl
 	or	a, a
 	jq	z, BB1_5
-	ld	hl, (ix - 13)
+	push	de
+	ld	hl, (ix - 23)
 	push	hl
-	ld	hl, (ix - 10)
+	ld	(ix - 26), de
+	call	_ti_GetName
+	pop	hl
+	pop	hl
+	ld	hl, (ix - 23)
 	push	hl
-	ld	(ix - 13), de
+	ld	hl, (ix - 20)
+	push	hl
 	call	_strcpy
 	pop	hl
 	pop	hl
-	ld	hl, (ix - 13)
+	ld	hl, (ix - 26)
 	push	hl
 	call	_ti_Close
 	pop	hl
-	ld	hl, (ix - 7)
+	ld	hl, (ix - 17)
 	inc	hl
-	ld	(ix - 7), hl
-	ld	a, (ix - 4)
+	ld	(ix - 17), hl
+	ld	a, (ix - 14)
 	inc	a
-	ld	(ix - 4), a
-	ld	iy, (ix - 10)
+	ld	(ix - 14), a
+	ld	iy, (ix - 20)
 	lea	iy, iy + 13
-	ld	(ix - 10), iy
-	ld	de, L_.str.24
+	ld	(ix - 20), iy
+	ld	iy, L_.str.24
 	jq	BB1_1
 BB1_2:
-	ld	a, (ix - 4)
+	ld	a, (ix - 14)
 BB1_6:
 	ld	sp, ix
 	pop	ix
@@ -1242,6 +1256,7 @@ L_.str.25:
 	extern	_gfx_FillRectangle_NoClip
 	extern	_open_data
 	extern	_kb_Scan
+	extern	_ti_GetName
 	extern	_gfx_GetStringWidth
 	extern	_left_arrow_data
 	extern	_ti_Close

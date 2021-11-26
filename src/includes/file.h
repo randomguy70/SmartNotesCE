@@ -46,7 +46,7 @@ bool renameFile(const char *name);
 
 // contains data about a certain (open) file
 struct file {
-	char os_name[10];    // os name of the file
+	char os_name[10];
 	unsigned int size;
 };
 
