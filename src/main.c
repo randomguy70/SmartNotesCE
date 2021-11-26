@@ -71,28 +71,28 @@ static uint8_t setupFontlibc() {
 	fontlib_font_t *my_font;
 	
 	// Get the first font present in the font pack
-   my_font = fontlib_GetFontByIndex("DRSANS", 0);
+	my_font = fontlib_GetFontByIndex("DRSANS", 0);
 	if (!my_font) {
-			gfx_Begin();
-			gfx_SetTextFGColor(BLACK);
-			gfx_SetTextXY(0, 1);
-      	gfx_PrintString("DRSANS appvar not found or invalid :(");
-			gfx_SetTextXY(-1, 15);
-			gfx_PrintString("It was in the same folder my program came in but");
-			gfx_SetTextXY(0, 30);
-			gfx_PrintString("if you can't find it, ask for help on Cemetech,");
-			gfx_SetTextXY(0, 45);
-			gfx_PrintString("or email me at onlychessfreeze0515@gmail.com.");
-			
-			// make sure that a key was pressed AFTER all the keys were released
-			while(kb_AnyKey()){}
-			while(!kb_AnyKey()){}
-			
-			gfx_End();
-      	return false;
-   }
+		gfx_Begin();
+		gfx_SetTextFGColor(BLACK);
+		gfx_SetTextXY(0, 1);
+		gfx_PrintString("DRSANS appvar not found or invalid :(");
+		gfx_SetTextXY(-1, 15);
+		gfx_PrintString("It was in the same folder my program came in but");
+		gfx_SetTextXY(0, 30);
+		gfx_PrintString("if you can't find it, ask for help on Cemetech,");
+		gfx_SetTextXY(0, 45);
+		gfx_PrintString("or email me at onlychessfreeze0515@gmail.com.");
+		
+		// make sure that a key was pressed AFTER all the keys were released
+		while(kb_AnyKey()){}
+		while(!kb_AnyKey()){}
+		
+		gfx_End();
+		return false;
+	}
 	
-   fontlib_SetFont(my_font, 0);
+	fontlib_SetFont(my_font, 0);
 	fontlib_SetBackgroundColor(2);
 	fontlib_SetTransparency(true);
 	

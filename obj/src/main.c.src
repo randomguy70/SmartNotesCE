@@ -3,7 +3,7 @@
 	section	.text,"ax",@progbits
 	public	_main
 _main:
-	ld	hl, -16526
+	ld	hl, -32532
 	call	__frameset
 	ld	hl, L_.str
 	ld	de, 0
@@ -84,17 +84,17 @@ BB0_5:
 	add	iy, bc
 	lea	de, iy
 	push	ix
-	ld	bc, -16526
+	ld	bc, -32532
 	add	ix, bc
 	ld	(ix), de
 	pop	ix
 	push	ix
-	ld	bc, -16519
+	ld	bc, -32525
 	add	ix, bc
 	lea	de, ix
 	pop	ix
 	push	ix
-	ld	bc, -16522
+	ld	bc, -32528
 	add	ix, bc
 	ld	(ix), de
 	pop	ix
@@ -135,7 +135,7 @@ BB0_5:
 	ld	hl, 2
 	push	hl
 	call	_gfx_SetTextBGColor
-	ld	bc, -16522
+	ld	bc, -32528
 	lea	hl, ix
 	add	hl, bc
 	ld	iy, (hl)
@@ -149,17 +149,17 @@ BB0_6:
 	or	a, a
 	sbc	hl, bc
 	jq	nz, BB0_7
-	ld	bc, -16526
+	ld	bc, -32532
 	lea	hl, ix
 	add	hl, bc
 	ld	hl, (hl)
 	push	hl
-	ld	bc, -16523
+	ld	bc, -32529
 	lea	hl, ix
 	add	hl, bc
 	ld	(hl), a
 	call	_dispHomeScreen
-	ld	bc, -16523
+	ld	bc, -32529
 	lea	iy, ix
 	add	iy, bc
 	ld	a, (iy)
@@ -197,7 +197,7 @@ BB0_11:
 	pop	de
 	ld	(ix - 3), bc
 	push	ix
-	ld	bc, -16526
+	ld	bc, -32532
 	add	ix, bc
 	ld	hl, (ix)
 	pop	ix
@@ -206,7 +206,7 @@ BB0_11:
 	push	iy
 	ld	bc, (ix - 3)
 	call	_strcpy
-	ld	bc, -16522
+	ld	bc, -32528
 	lea	hl, ix
 	add	hl, bc
 	ld	iy, (hl)
@@ -215,7 +215,7 @@ BB0_11:
 BB0_14:
 	push	iy
 	call	_dispEditor
-	ld	bc, -16522
+	ld	bc, -32528
 	lea	iy, ix
 	add	iy, bc
 	ld	iy, (iy)

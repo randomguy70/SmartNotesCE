@@ -22,32 +22,43 @@ _fileToBuffer:
 	pop	hl
 	or	a, a
 	sbc	hl, hl
-	jq	BB0_3
+	jq	BB0_5
 BB0_2:
+	ld	(ix - 3), de
 	push	de
-	ld	(ix - 6), de
 	call	_ti_GetSize
 	pop	de
-	ld	de, 0
-	ld	e, l
-	ld	d, h
-	ld	(ix - 3), de
-	ld	hl, (ix - 6)
+	ld	iy, 0
+	ex	de, hl
+	ld	iyl, e
+	ld	iyh, d
+	ex	de, hl
+	ld	de, 16003
+	lea	hl, iy
+	or	a, a
+	sbc	hl, de
+	jq	c, BB0_4
+	ld	iy, 16003
+BB0_4:
+	ld	de, -3
+	add	iy, de
+	ld	(ix - 6), iy
+	ld	hl, (ix - 3)
 	push	hl
 	or	a, a
 	sbc	hl, hl
 	push	hl
-	ld	hl, 50
+	ld	hl, 4
 	push	hl
 	call	_ti_Seek
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	hl, (ix - 6)
+	ld	hl, (ix - 3)
 	push	hl
 	ld	hl, 1
 	push	hl
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	push	hl
 	ld	hl, (ix + 9)
 	push	hl
@@ -56,13 +67,29 @@ BB0_2:
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	de, 16000
-	ld	hl, (ix + 9)
-	add	hl, de
-	ld	de, (ix - 3)
-	ld	(hl), de
-	ex	de, hl
-BB0_3:
+	ld	hl, (ix - 3)
+	push	hl
+	call	_ti_Close
+	ld	hl, (ix - 6)
+	pop	de
+	ld	de, 32006
+	ld	bc, (ix + 9)
+	push	bc
+	pop	iy
+	add	iy, de
+	ld	(iy), hl
+	ld	de, 32000
+	push	bc
+	pop	iy
+	add	iy, de
+	ld	(iy), hl
+	ld	de, 32003
+	push	bc
+	pop	iy
+	add	iy, de
+	ld	de, 0
+	ld	(iy), de
+BB0_5:
 	ld	sp, ix
 	pop	ix
 	ret
@@ -74,7 +101,7 @@ _bufferToFile:
 	ld	hl, -9
 	call	__frameset
 	ld	hl, (ix + 9)
-	ld	de, L_.str
+	ld	de, L_.str.1
 	push	de
 	push	hl
 	call	_ti_Open
@@ -83,37 +110,54 @@ _bufferToFile:
 	pop	hl
 	or	a, a
 	jq	nz, BB1_2
-	xor	a, a
-	ld	e, a
 	or	a, a
 	sbc	hl, hl
-	ld	(ix - 6), hl
+	push	hl
+	call	_ti_Close
+	pop	hl
+	or	a, a
+	sbc	hl, hl
 	jq	BB1_3
 BB1_2:
+	ld	hl, 4
 	push	de
+	ld	bc, 0
+	push	bc
+	push	hl
 	ld	(ix - 3), de
-	call	_ti_GetSize
-	pop	de
-	ld	de, 0
-	ld	e, l
-	ld	d, h
-	ld	(ix - 6), de
+	call	_ti_Seek
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (ix - 3)
+	push	hl
+	ld	hl, 1
+	push	hl
+	ld	hl, 3
+	push	hl
+	ld	hl, L_.str.2
+	push	hl
+	call	_ti_Write
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
 	ld	hl, (ix - 3)
 	push	hl
 	or	a, a
 	sbc	hl, hl
 	push	hl
-	ld	hl, 50
+	ld	hl, 4
 	push	hl
 	call	_ti_Seek
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	de, 16000
+	ld	de, 32000
 	ld	iy, (ix + 6)
 	lea	hl, iy
 	add	hl, de
-	ld	(ix - 9), hl
+	ld	(ix - 6), hl
 	ld	bc, (hl)
 	ld	de, (ix - 3)
 	push	de
@@ -126,22 +170,38 @@ BB1_2:
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	hl, (ix - 9)
-	ld	hl, (hl)
-	ld	de, 50
-	add	hl, de
-	ld	de, (ix - 3)
-	push	de
+	ld	de, 16000
+	ld	hl, (ix + 6)
 	push	hl
-	call	_ti_Resize
-	ld	de, (ix - 3)
-	pop	hl
-	pop	hl
-BB1_3:
+	pop	iy
+	add	iy, de
+	ld	de, 32003
+	add	hl, de
+	ld	(ix - 9), hl
+	ld	de, (hl)
+	ld	hl, (ix - 3)
+	push	hl
+	ld	hl, 1
+	push	hl
 	push	de
+	push	iy
+	call	_ti_Write
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (ix - 3)
+	push	hl
 	call	_ti_Close
 	pop	hl
 	ld	hl, (ix - 6)
+	ld	hl, (hl)
+	ld	de, 4
+	add	hl, de
+	ld	iy, (ix - 9)
+	ld	de, (iy)
+	add	hl, de
+BB1_3:
 	ld	sp, ix
 	pop	ix
 	ret
@@ -152,6 +212,16 @@ BB1_3:
 L_.str:
 	db	"r", 0
 
+	section	.rodata,"a",@progbits
+	private	L_.str.1
+L_.str.1:
+	db	"w", 0
+
+	section	.rodata,"a",@progbits
+	private	L_.str.2
+L_.str.2:
+	db	"TXT", 0
+
 	ident	"clang version 14.0.0 (https://github.com/jacobly0/llvm-project a139def90d26173f771eb1eca797633d1fbb2797)"
 	extern	__Unwind_SjLj_Register
 	extern	__Unwind_SjLj_Unregister
@@ -161,5 +231,4 @@ L_.str:
 	extern	_ti_Write
 	extern	_ti_Close
 	extern	_ti_Seek
-	extern	_ti_Resize
 	extern	_ti_Read

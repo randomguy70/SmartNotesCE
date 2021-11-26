@@ -46,23 +46,8 @@ enum state dispEditor(struct editor *editor) {
 
 static int initialiseEditor(struct editor *editor)
 {
-	ti_var_t file;
+	fileToBuffer(editor->file.os_name, &(editor->buffer));
 	
-	file = ti_Open(editor->file.os_name, "r");
-	
-	if(!file)
-	{
-		return 0;
-	}
-	
-	editor->buffer.size = ti_GetSize(file);
-	editor->file.size = editor->buffer.size;
-	
-	ti_Read(editor->buffer.data, editor->buffer.size, 1, file);
-	ti_Close(file);
-	
-	editor->textBox.startOfText = editor->buffer.data;
-	editor->textBox.textLength = editor->buffer.size;
 	
 	editor->textBox.width = EDITOR_TEXT_BOX_WIDTH;
 	editor->textBox.height = EDITOR_TEXT_BOX_HEIGHT;
@@ -71,7 +56,7 @@ static int initialiseEditor(struct editor *editor)
 	
 	editor->textBox.maxLinesOnScreen = EDITOR_MAX_LINES_VIEWABLE;
 	editor->textBox.lineOffset = 0;
-	
+	 
 	return 1;
 }
 
