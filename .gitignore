@@ -1,5 +1,5 @@
 bin/
-src/
+obj/
 .DS_Store
 .vscode/
 .VSCodeCounter
