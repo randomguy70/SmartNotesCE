@@ -110,7 +110,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		}
 		
 		// input character
-		keyPressed = os_GetCSC();
+		keyPressed = get_single_key_pressed();
 		if (strLen < 8 && (keyPressed != sk_Alpha && keyPressed != sk_2nd && keyPressed != sk_Mode && keyPressed != sk_Del && keyPressed != sk_GraphVar && keyPressed != sk_Stat && keyPressed != sk_Enter))
 		{
 			character = inputChar(inputState.textMode, keyPressed);

@@ -5,9 +5,10 @@
 #include <fileioc.h>
 #include <string.h>
 
-#include <includes/text.h>
-#include <includes/ui.h>
-#include <tice.h>
+#include "includes/text.h"
+#include "includes/ui.h"
+#include "tice.h"
+#include "includes/key.h"
 
 void drawWindow(struct window* window) {
 	const unsigned int titleBarHeight = 15;
@@ -66,7 +67,9 @@ int8_t textBox(const char *text, int boxWidth, int boxHeight, int boxX, int boxY
 	
 	// waits for keypress, if clear is pressed, then return 0, if enter or second is pressed, then return 1
 	while(keyPressed != sk_Clear && keyPressed != sk_2nd && keyPressed != sk_Enter)
-		keyPressed = os_GetCSC();
+	{
+		keyPressed = get_single_key_pressed();
+	}
 		
 	if(keyPressed == sk_Clear) {
 		return 0;
