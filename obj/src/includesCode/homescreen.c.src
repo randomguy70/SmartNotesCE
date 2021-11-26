@@ -835,108 +835,76 @@ BB0_56:
 	section	.text,"ax",@progbits
 	private	_loadFiles
 _loadFiles:
-	ld	hl, -26
+	ld	hl, -13
 	call	__frameset
 	ld	hl, (ix + 6)
-	ld	(ix - 20), hl
-	xor	a, a
-	ld	iy, L_.str.24
-	or	a, a
-	sbc	hl, hl
-	ld	(ix - 17), hl
-	lea	hl, ix - 10
-	ld	(ix - 10), 0
-	push	hl
-	pop	de
-	inc	de
-	ld	bc, 9
-	ld	(ix - 23), hl
-	ldir
+	ld	(ix - 10), hl
 	ld	hl, 0
-	ld	(ix - 13), hl
-	ld	(ix - 14), a
+	ld	de, L_.str.24
+	xor	a, a
+	ld	bc, 0
+	ld	(ix - 7), bc
+	ld	(ix - 3), hl
+	ld	(ix - 4), a
 BB1_1:
-	push	iy
-	pea	ix - 13
+	push	de
+	pea	ix - 3
 	call	_ti_Detect
 	push	hl
-	pop	de
+	pop	bc
 	pop	hl
 	pop	hl
-	push	de
+	push	bc
 	pop	hl
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
 	jq	z, BB1_2
-	ld	hl, (ix - 17)
-	ld	bc, 30
+	ld	hl, (ix - 7)
+	ld	de, 30
 	or	a, a
-	sbc	hl, bc
+	sbc	hl, de
 	jq	nc, BB1_2
 	ld	hl, L_.str.25
 	push	hl
-	push	de
+	push	bc
+	ld	(ix - 13), bc
 	call	_ti_Open
 	ld	e, a
-	ld	(ix - 26), de
 	pop	hl
 	pop	hl
-	or	a, a
-	sbc	hl, hl
-	ld	l, e
-	push	hl
-	ld	hl, L_.str.26
-	push	hl
-	call	_dbg_sprintf
-	pop	hl
-	pop	hl
-	ld	de, (ix - 26)
-	push	de
-	pop	hl
-	ld	a, e
 	or	a, a
 	jq	z, BB1_5
+	ld	hl, (ix - 13)
 	push	hl
-	ld	hl, (ix - 23)
+	ld	hl, (ix - 10)
 	push	hl
-	call	_ti_GetName
-	pop	hl
-	pop	hl
-	ld	hl, (ix - 23)
-	push	hl
-	ld	hl, (ix - 20)
-	push	hl
+	ld	(ix - 13), de
 	call	_strcpy
 	pop	hl
 	pop	hl
-	ld	hl, (ix - 26)
+	ld	hl, (ix - 13)
 	push	hl
 	call	_ti_Close
 	pop	hl
-	ld	hl, (ix - 17)
+	ld	hl, (ix - 7)
 	inc	hl
-	ld	(ix - 17), hl
-	ld	a, (ix - 14)
+	ld	(ix - 7), hl
+	ld	a, (ix - 4)
 	inc	a
-	ld	(ix - 14), a
-	ld	iy, (ix - 20)
+	ld	(ix - 4), a
+	ld	iy, (ix - 10)
 	lea	iy, iy + 13
-	ld	(ix - 20), iy
-	ld	iy, L_.str.24
+	ld	(ix - 10), iy
+	ld	de, L_.str.24
 	jq	BB1_1
 BB1_2:
-	ld	a, (ix - 14)
+	ld	a, (ix - 4)
 BB1_6:
 	ld	sp, ix
 	pop	ix
 	ret
 BB1_5:
-	or	a, a
-	sbc	hl, hl
-	push	hl
-	call	_ti_Close
-	pop	hl
 	xor	a, a
 	jq	BB1_6
 	section	.text,"ax",@progbits
@@ -1258,11 +1226,6 @@ L_.str.24:
 L_.str.25:
 	db	"r+", 0
 
-	section	.rodata,"a",@progbits
-	private	L_.str.26
-L_.str.26:
-	db	"%d", 0
-
 	ident	"clang version 14.0.0 (https://github.com/jacobly0/llvm-project a139def90d26173f771eb1eca797633d1fbb2797)"
 	extern	_help_data
 	extern	__Unwind_SjLj_Register
@@ -1274,7 +1237,6 @@ L_.str.26:
 	extern	_gfx_FillRectangle_NoClip
 	extern	_open_data
 	extern	_kb_Scan
-	extern	_ti_GetName
 	extern	_gfx_GetStringWidth
 	extern	_left_arrow_data
 	extern	_ti_Close
@@ -1295,7 +1257,6 @@ L_.str.26:
 	extern	__Unwind_SjLj_Unregister
 	extern	_hide_data
 	extern	_trash_data
-	extern	_dbg_sprintf
 	extern	__imulu
 	extern	_displayMenu
 	extern	_gfx_SetColor

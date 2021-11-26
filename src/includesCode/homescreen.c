@@ -325,7 +325,7 @@ static uint8_t loadFiles(struct file files[]) {
 	{
 		
 		fileSlot = ti_Open(namePtr, "r+");
-				
+		
 		if(!fileSlot)
 		{
 			return false;
