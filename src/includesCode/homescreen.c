@@ -267,7 +267,6 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 		return show_homescreen;
 	}
 	
-	// other (opens fun menu with sprites)
 	if(kb_IsDown(kb_KeyGraph)) {
 		
 		struct menu* menu = loadHomeScreenOtherMenu();
