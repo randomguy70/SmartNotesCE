@@ -879,14 +879,27 @@ BB1_1:
 	push	de
 	call	_ti_Open
 	ld	e, a
+	ld	(ix - 26), de
 	pop	hl
 	pop	hl
 	or	a, a
-	jq	z, BB1_5
+	sbc	hl, hl
+	ld	l, e
+	push	hl
+	ld	hl, L_.str.26
+	push	hl
+	call	_dbg_sprintf
+	pop	hl
+	pop	hl
+	ld	de, (ix - 26)
 	push	de
+	pop	hl
+	ld	a, e
+	or	a, a
+	jq	z, BB1_5
+	push	hl
 	ld	hl, (ix - 23)
 	push	hl
-	ld	(ix - 26), de
 	call	_ti_GetName
 	pop	hl
 	pop	hl
@@ -1245,6 +1258,11 @@ L_.str.24:
 L_.str.25:
 	db	"r+", 0
 
+	section	.rodata,"a",@progbits
+	private	L_.str.26
+L_.str.26:
+	db	"%d", 0
+
 	ident	"clang version 14.0.0 (https://github.com/jacobly0/llvm-project a139def90d26173f771eb1eca797633d1fbb2797)"
 	extern	_help_data
 	extern	__Unwind_SjLj_Register
@@ -1277,6 +1295,7 @@ L_.str.25:
 	extern	__Unwind_SjLj_Unregister
 	extern	_hide_data
 	extern	_trash_data
+	extern	_dbg_sprintf
 	extern	__imulu
 	extern	_displayMenu
 	extern	_gfx_SetColor

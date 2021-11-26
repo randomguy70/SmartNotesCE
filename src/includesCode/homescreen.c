@@ -319,21 +319,19 @@ static uint8_t loadFiles(struct file files[]) {
 	uint8_t numFiles = 0;
 	ti_var_t fileSlot;
 	char *namePtr = NULL;
-	char name[10] = {0};
 	void *search_pos = NULL;
 	
-	while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL && numFiles < 30) {
+	while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL && numFiles < 30)
+	{
 		
 		fileSlot = ti_Open(namePtr, "r+");
-		
+				
 		if(!fileSlot)
 		{
-			ti_Close(fileSlot);
 			return false;
 		}
 		
-		ti_GetName(name, fileSlot);
-		strcpy(files[numFiles].os_name, name);
+		strcpy(files[numFiles].os_name, namePtr);
 		
 		ti_Close(fileSlot);
 		numFiles++;
