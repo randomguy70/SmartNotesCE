@@ -10,6 +10,7 @@
 #include "includes/ui.h"
 #include "includes/colors.h"
 #include "includes/key.h"
+#include "includes/buffer.h"
 
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 {
@@ -190,7 +191,45 @@ int fontlib_strlen(char *string)
 // finds the character length of the next word in a file buffer
 int getWordLen(char *pos, struct buffer *buffer)
 {
+	// which buffer *pos is located in
+	uint8_t cur_buffer;
+	int len = 0;
 	
+	if(pos > buffer->buf1 && pos < buffer->buf1 + buffer->buf1_size)
+	{
+		cur_buffer = 1;
+	}
+	else if(pos > buffer->buf2 && pos < buffer->buf2 + buffer->buf2_size)
+	{
+		cur_buffer = 2;
+	}
+	
+	while(isValidWordChar(*pos))
+	{
+		pos++;
+		
+		if(cur_buffer == 1)
+		{
+			// if it reads past buffer 1
+			if(pos > buffer->buf1 + buffer->buf1_size)
+			{
+				cur_buffer = 2;
+				pos = buffer->buf2;
+			}
+		}
+		else if(cur_buffer == 2)
+		{
+			// if it reads past buffer 2
+			if(pos > buffer->buf2 + buffer->buf2_size)
+			{
+				break;
+			}
+		}
+		
+		len++;
+	}
+	
+	return len;
 }
 
 void fontlib_DrawStringXY(const char *str, int x, int y)
@@ -214,6 +253,17 @@ int copyWordL(char *dest, char *src, int chars)
 	
 	return pos;
 }
+
+static bool isValidWordChar(char character)
+{
+	if(character != ' ' && character != '\0' && character != '\n')
+	{
+		return true;
+	}
+	
+	return false;
+}
+
 
 void displayTextMode(int x, int y, enum textMode textMode)
 {

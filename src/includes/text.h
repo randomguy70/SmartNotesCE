@@ -64,8 +64,9 @@ void displayTextMode(int x, int y, enum textMode textMode);
 
 int textBox_getVisibleLinePointers(struct textBox *textBox);
 
-// returns character of next word terminated by space , NULL, or a new line
-int getWordLen(char *word, char *end);
+static bool isValidWordChar(char character);
+
+int getWordLen(char *pos, struct buffer *buffer);
 
 // returns num characters with NO word wrapping
 int getMaxCharsPerLine(char *start, char *end);
