@@ -76,6 +76,8 @@ BB1_1:
 _newFile:
 	ld	hl, -14
 	call	__frameset
+	xor	a, a
+	ld	(ix - 11), a
 	lea	iy, ix - 10
 	ld	(ix - 10), 0
 	lea	de, iy
@@ -87,52 +89,31 @@ _newFile:
 	push	hl
 	ld	hl, 8
 	push	hl
-	ld	(ix - 13), iy
+	ld	(ix - 14), iy
 	push	iy
 	call	_inputString
-	ld	e, a
 	pop	hl
 	pop	hl
 	pop	hl
 	or	a, a
-	jq	z, BB2_2
-	ld	(ix - 14), e
-	call	_ti_CloseAll
+	jq	z, BB2_3
 	ld	hl, L_.str.3
 	push	hl
-	ld	hl, (ix - 13)
+	ld	hl, (ix - 14)
 	push	hl
 	call	_ti_Open
-	ld	e, a
-	ld	(ix - 13), de
-	pop	hl
-	pop	hl
-	push	de
-	ld	hl, 1
-	push	hl
-	ld	hl, 4
-	push	hl
-	ld	hl, L_.str
-	push	hl
-	call	_ti_Write
-	pop	hl
-	pop	hl
-	pop	hl
-	pop	hl
-	ld	hl, (ix - 13)
+	ld	l, a
+	pop	de
+	pop	de
+	or	a, a
+	jq	z, BB2_3
+	ld	a, 1
+	ld	(ix - 11), a
 	push	hl
 	call	_ti_Close
-	ld	e, (ix - 14)
 	pop	hl
-BB2_2:
-	ld	a, e
-	or	a, a
-	jq	nz, BB2_3
-	ld	a, 0
-	jq	BB2_5
 BB2_3:
-	ld	a, 1
-BB2_5:
+	ld	a, (ix - 11)
 	ld	sp, ix
 	pop	ix
 	ret
@@ -424,12 +405,10 @@ L___const.renameFile.message:
 	extern	__frameset
 	extern	_ti_GetName
 	extern	_ti_Delete
-	extern	_ti_Write
 	extern	_ti_Close
 	extern	_alert
 	extern	_strlen
 	extern	__setflag
-	extern	_ti_CloseAll
 	extern	__Unwind_SjLj_Unregister
 	extern	_ti_SetArchiveStatus
 	extern	_inputString
