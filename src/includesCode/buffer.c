@@ -6,15 +6,13 @@ int fileToBuffer(const char *name, struct buffer* buffer) {
 	uint8_t fileSlot;
 	int fileSize;
 	
-	// safely open the file and return if there isn't a file with the given name
-	ti_CloseAll();
 	fileSlot = ti_Open(name, "r");
 	
 	if(!fileSlot) {
 		ti_Close(fileSlot);
 		return 0;
 	}
-		
+	
 	fileSize = ti_GetSize(fileSlot);
 	
 	// read the appropriate number of bytes from the file into the array

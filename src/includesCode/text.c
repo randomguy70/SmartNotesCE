@@ -220,33 +220,6 @@ int copyWordL(char *dest, char *src, int chars)
 	return pos;
 }
 
-int getByteDifference(void *ptrOne, void *ptrTwo)
-{
-	int byteDifference = 0;
-	
-	if(ptrOne <= ptrTwo) {
-		while(ptrOne + byteDifference++ < ptrTwo){}
-		
-		return byteDifference;
-	}
-	
-	while(ptrTwo + byteDifference++ < ptrOne){}
-	
-	return byteDifference;
-}
-
-int drawSpace()
-{
-	int x, y;
-	
-	x = fontlib_GetCursorX() + 4;
-	y = fontlib_GetCursorY();
-	
-	fontlib_SetCursorPosition(x, y);
-	
-	return x;
-}
-
 void displayTextMode(int x, int y, enum textMode textMode)
 {
 	gfx_SetColor(BLACK);
@@ -290,40 +263,4 @@ void updateInputMode(struct inputState *inputState)
 	}
 	
 	inputState->alphaPrev = alpha;
-}
-
-// XXX
-int displayTextBox(struct textBox *textBox)
-{
-	fontlib_SetCursorPosition(textBox->x, textBox->y);
-	for(uint8_t i=0; i<textBox->numLines && i<EDITOR_MAX_LINES_VIEWABLE; i++)
-	{
-		fontlib_DrawString(textBox->startOfText);
-	}
-}
-
-int getWordLen(char *word, char *end)
-{
-	char *pos;
-	int wordLen = 0;
-	
-	while(word[wordLen] != '\0' && word[wordLen] != '\n' && word[wordLen] != ' ' && word + wordLen < end)
-	{
-		wordLen++;
-	}
-	
-	return wordLen;
-}
-
-int getMaxCharsPerLine(char *start, char *end)
-{
-	fontlib_SetAlternateStopCode(0);
-	int characters = 0;
-	
-	while(fontlib_GetStringWidthL(start, characters) < fontlib_GetWindowWidth() && start + characters < end)
-	{
-		characters++;
-	}
-	
-	return characters;
 }
