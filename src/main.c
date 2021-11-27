@@ -22,10 +22,10 @@
 static uint8_t setupFontlibc();
 static void cleanup();
 
-int main(void) {
+void main(void) {
 		
 	if(!setupFontlibc()) {
-		return 0;
+		return;
 	}
 	
 	gfx_Begin();
@@ -64,7 +64,7 @@ int main(void) {
 	}
 	
 	cleanup();
-	return 0;
+	return;
 }
 
 static uint8_t setupFontlibc() {

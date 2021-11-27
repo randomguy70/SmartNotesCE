@@ -8,9 +8,13 @@ extern "C" {
 #include <stdint.h>
 #include <includes/file.h>
 
+#define MAX_FILES_LOADABLE  30
+#define MAX_FILES_VIEWABLE  10
+#define FILE_SPACING			 15
+
 // contains properties of the file viewer
 struct homescreen {
-	struct file files[30];
+	struct file files[MAX_FILES_LOADABLE];
    uint8_t numFiles;
 	uint8_t numFilesDisplayed;
    uint8_t offset;             // the number of files that were scrolled up off the screen

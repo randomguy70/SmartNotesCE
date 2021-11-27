@@ -10,10 +10,6 @@
 #include <includes/ui.h>
 #include <gfx/gfx.h>
 
-#define MAX_FILES_LOADABLE  30
-#define MAX_FILES_VIEWABLE  10
-#define FILE_SPACING			 15
-
 void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile);
 static void dispHomeScreenBG(struct homescreen* homescreen);
 static void dispHomeScreenButtons(void);
@@ -23,11 +19,11 @@ static struct menu *loadHomeScreenOtherMenu(void);
 
 enum state dispHomeScreen(struct homescreen* homescreen)
 {
+	enum state ret;
+	
 	homescreen->selectedFile = 0;
 	homescreen->offset = 0;
 	homescreen->numFiles = loadFiles(homescreen->files);
-	
-	enum state ret;
 	
 	while(true)
 	{
@@ -43,7 +39,7 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 		
 		if(ret == should_exit || ret == show_editor) 
 		{
-			break;
+			return ret;
 		}
 	}
 	
@@ -328,22 +324,23 @@ static uint8_t loadFiles(struct file files[]) {
 	return numFiles;
 }
 
-static struct menu *loadHomeScreenOtherMenu(void) {
-	static struct menu menu = {
+static struct menu *loadHomeScreenOtherMenu(void)
+{
+	static struct menu menu =
+	{
 		.title = "Options",
 		.x = 200, .y = 100,
 		.numOptions = 5,
 		.hasSprites = true,
 		
-		// array of menu entries
-		.entry = {
+		.entry =
+		{
 			{"Back", left_arrow, left_arrow_height},
 			{"Rename", rename, rename_height},
 			{"(un)Hide", hide, hide_height},
 			{"Settings", settings_gear, settings_gear_height},
 			{"Help", help, help_height},
 		},
-		
 	};
 	
 	return &menu;
