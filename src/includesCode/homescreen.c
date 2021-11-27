@@ -316,23 +316,12 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 
 static uint8_t loadFiles(struct file files[]) {
 	uint8_t numFiles = 0;
-	ti_var_t fileSlot;
 	char *namePtr = NULL;
 	void *search_pos = NULL;
 	
 	while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL && numFiles < 30)
 	{
-		
-		fileSlot = ti_Open(namePtr, "r+");
-		
-		if(!fileSlot)
-		{
-			return false;
-		}
-		
-		strcpy(files[numFiles].os_name, namePtr);
-		
-		ti_Close(fileSlot);
+		strcpy(files[numFiles].os_name, namePtr);				
 		numFiles++;
 	}
 	

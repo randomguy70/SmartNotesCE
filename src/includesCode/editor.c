@@ -60,6 +60,7 @@ static int initialiseEditor(struct editor *editor)
 	return 1;
 }
 
+// THIS FUNCTION NEEDS TO GO
 static int getTextBoxLinePointers(struct textBox *textBox)
 {
 	char *end = textBox->startOfText + textBox->textLength;
@@ -86,7 +87,7 @@ static int getTextBoxLinePointers(struct textBox *textBox)
 	{
 		START:
 		
-		curWordLen = getWordLen(readPos, end);
+		// curWordLen = getWordLen(readPos, end); REALLY WRONG
 		curWordWidth = fontlib_GetStringWidthL(readPos, curWordLen);
 		
 		// if it reaches the end of the data => return
