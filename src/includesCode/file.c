@@ -52,6 +52,7 @@ bool newFile(void)
 		ti_Write(HEADER_STR, sizeof HEADER_STR, 1, fileSlot);
 		
 		ti_Close(fileSlot);
+		
 		return true;
 		
 	}

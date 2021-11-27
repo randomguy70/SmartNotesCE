@@ -3,6 +3,7 @@
 #include <fileioc.h>
 #include <string.h>
 #include <tice.h>
+#include <fontlibc.h>
 
 #include <includes/homescreen.h>
 #include <includes/text.h>
@@ -10,7 +11,7 @@
 #include <includes/ui.h>
 #include <gfx/gfx.h>
 
-void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile);
+static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile);
 static void dispHomeScreenBG(struct homescreen* homescreen);
 static void dispHomeScreenButtons(void);
 static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen);
@@ -46,37 +47,43 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 	return should_exit;
 }
 
-void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile)
+static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile)
 {
 	uint8_t i;
-	unsigned int fileY = 61;
+	unsigned int fileY = 55;
 	
-	gfx_SetTextFGColor(BLACK);
-	
-	for(i=offset; i < MAX_FILES_VIEWABLE + offset && i<MAX_FILES_LOADABLE && i<numFiles; i++)\
+	for(i=offset; i < MAX_FILES_VIEWABLE + offset && i<MAX_FILES_LOADABLE && i<numFiles; i++)
 	{
 		
 		if (selectedFile == i)
 		{
 			// leave some pixels at the edge of the window for the scrollbar
 			gfx_SetColor(LIGHT_GREY);
-			gfx_FillRectangle_NoClip(36,fileY-5,242,15);
+			gfx_FillRectangle_NoClip(36, fileY + 1, 242, 15);
 			gfx_SetColor(BLACK);
-			gfx_Rectangle_NoClip(36,fileY-5,242,15);
+			gfx_Rectangle_NoClip(36, fileY + 1, 242, 15);
 		}
-	
-		gfx_PrintStringXY(files[i].os_name, 40, fileY);
-		fileY+=FILE_SPACING;
+		
+		fontlib_SetForegroundColor(BLACK);
+		fontlib_DrawStringXY(files[i].os_name, 40, fileY);
+		
+		fileY += FILE_SPACING;
 	}
 	
 	// display when no files were detected
 	if (numFiles == 0)
 	{
-		gfx_SetTextFGColor(244);
-		gfx_PrintStringXY("--NO FILES FOUND--)",93,80);
-		gfx_PrintStringXY("That's too bad for you :(",93,100);
+		const char str1[] = "--NO FILES FOUND--)";
+		const char str2[] = "That's too bad for you :(";
+		
+		const int x1 = (LCD_WIDTH / 2) - (fontlib_GetStringWidth(str1) / 2);
+		const int x2 = (LCD_WIDTH / 2) - (fontlib_GetStringWidth(str2) / 2);
+		
+		fontlib_SetForegroundColor(244);
+		fontlib_DrawStringXY(str1, x1, 80);
+		fontlib_DrawStringXY(str2, x2, 100);
 	}
-
+	
 	return;
 }
 
@@ -103,20 +110,21 @@ static void dispHomeScreenBG(struct homescreen *homescreen)
 	// lined-paper background
 	gfx_FillScreen(PAPER_YELLOW);
 	gfx_SetColor(LIGHT_BLUE);
-	gfx_SetTextXY(1, 1);
-	for(uint8_t i = 0; i<11; i++) {
+	
+	for(uint8_t i = 0; i<11; i++)
+	{
 		gfx_HorizLine_NoClip(0, i*20, SCRN_WIDTH);
 		gfx_HorizLine_NoClip(0, i*20+1, SCRN_WIDTH);
 	}
 
-	// name and credits (to me :P)
-	gfx_SetTextFGColor(DARK_BLUE);
-	width = gfx_GetStringWidth("SmartNotes CE");
-	gfx_PrintStringXY("SMARTNOTES CE", (SCRN_WIDTH/2)-(width/2), 8);
+	// name and credits
+	fontlib_SetForegroundColor(DARK_BLUE);
+	width = fontlib_GetStringWidth("SMARTNOTES CE");
+	fontlib_DrawStringXY("SMARTNOTES CE", (SCRN_WIDTH/2)-(width/2), 8);
 	
-	gfx_SetTextFGColor(BLACK);
-	width = gfx_GetStringWidth("VERSION 1.0 BY Randomguy");
-	gfx_PrintStringXY("Version 1.0 BY Randomguy", (SCRN_WIDTH/2)-(width/2), 27);
+	fontlib_SetForegroundColor(BLACK);
+	width = fontlib_GetStringWidth("VERSION 1.0 BY Randomguy");
+	fontlib_DrawStringXY("Version 1.0 BY Randomguy", (SCRN_WIDTH/2)-(width/2), 25);
 	
 	// box with file names
 	gfx_SetColor(WHITE);
@@ -136,9 +144,9 @@ static void dispHomeScreenBG(struct homescreen *homescreen)
 	gfx_Rectangle_NoClip(scrollbarX, scrollbarY, 4, scrollbarHeight);
 	
 	// print labels for displayed file data columns
-	gfx_SetTextFGColor(BLACK);
-	gfx_PrintStringXY("NAME",40,45);
-	gfx_PrintStringXY("STATUS",210,45);
+	fontlib_SetForegroundColor(BLACK);
+	fontlib_DrawStringXY("NAME",40,42);
+	fontlib_DrawStringXY("STATUS",210,42);
 	
 	return;
 }
@@ -167,13 +175,13 @@ static void dispHomeScreenButtons(void) {
 	}
 	
 	// text
-	gfx_SetTextFGColor(0);
+	fontlib_SetForegroundColor(0);
 	
-	gfx_PrintStringXY("Open" ,  27, 224);
-	gfx_PrintStringXY("New"  ,  90, 224);
-	gfx_PrintStringXY("Quit" , 157, 224);
-	gfx_PrintStringXY("Del"  , 220, 224);
-	gfx_PrintStringXY("Other", 271, 224);
+	fontlib_DrawStringXY("Open" ,  27, 224);
+	fontlib_DrawStringXY("New"  ,  90, 224);
+	fontlib_DrawStringXY("Quit" , 157, 224);
+	fontlib_DrawStringXY("Del"  , 220, 224);
+	fontlib_DrawStringXY("Other", 271, 224);
 	
 }
 

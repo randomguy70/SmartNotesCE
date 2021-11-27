@@ -239,7 +239,7 @@ int displayMenu(struct menu * menu) {
 			}
 			
 			// text
-			gfx_PrintStringXY(menu->entry[i].str, (menu->x + 30), menu->y + (i * spacing) + 10); // add 10 to center the text
+			fontlib_DrawStringXY(menu->entry[i].str, (menu->x + 30), menu->y + (i * spacing) + 10); // add 10 to center the text
 			
 			// sprites
 			if(menu->hasSprites)
