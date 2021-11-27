@@ -220,7 +220,6 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 	{
 		if(homescreen->numFiles <= 0)
 		{
-			alert("There aren't any files to open (obviously).");
 			return show_homescreen;
 		}
 		

@@ -12,8 +12,8 @@
 void archiveAll()
 {
 	ti_var_t fileSlot;
-	char * fileName;
-	void * search_pos = NULL;
+	char *fileName;
+	void *search_pos = NULL;
 	
 	while (((fileName = ti_Detect(&search_pos, "TXT")) != NULL)) {
 		fileSlot = ti_Open(fileName, "r");
@@ -41,7 +41,18 @@ bool newFile(void)
 	
 	if (inputString(buffer, 8, "New File") > 0)
 	{
-		fileSlot = ti_Open(buffer, "w+");
+		fileSlot = ti_Open(buffer, "r");
+		
+		if(fileSlot)
+		{
+			ti_Close(fileSlot);
+			alert("File already exists");
+			return false;
+		}
+		else
+		{
+			fileSlot = ti_Open(buffer, "w");
+		}
 		
 		if(!fileSlot)
 		{
@@ -49,8 +60,7 @@ bool newFile(void)
 		}
 		
 		ti_Seek(0, SEEK_SET, fileSlot);
-		ti_Write(HEADER_STR, sizeof HEADER_STR, 1, fileSlot);
-		
+		ti_Write(HEADER_STR, 3, 1, fileSlot);
 		ti_Close(fileSlot);
 		
 		return true;
