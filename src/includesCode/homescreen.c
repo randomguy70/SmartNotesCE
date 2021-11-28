@@ -29,8 +29,8 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 	while(true)
 	{
 		gfx_SetDraw(gfx_buffer);
-		dispHomeScreenBG(); // not cause of crash
-		dispHomeScreenButtons();      // not cause of crash
+		dispHomeScreenBG();
+		dispHomeScreenButtons();
 		dispFiles(homescreen->files, homescreen->numFiles, homescreen->offset, homescreen->selectedFile); // not cause of crash
 		gfx_Wait();
 		gfx_SwapDraw();
@@ -232,17 +232,21 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 		
 		if(checkIfDeleteFile(homescreen->files[homescreen->selectedFile].os_name))
 		{
-			// shift the cursor...
+			// shift cursor
 			if(homescreen->numFiles > 0)
 			{
-				homescreen->selectedFile--;
+				if(homescreen->selectedFile > 0)
+				{
+					homescreen->selectedFile--;
+				}
 				if(homescreen->offset > homescreen->selectedFile)
 				{
-					homescreen->offset--;
+					homescreen->offset = homescreen->selectedFile;
 				}
 			}
-			homescreen->numFiles = loadFiles(homescreen->files);
 		}
+		
+		homescreen->numFiles = loadFiles(homescreen->files);
 		
 		return show_homescreen;
 	}

@@ -53,24 +53,24 @@ bool newFile(void)
 	return false;
 }
 
-// gives an option whether or not to delete the selected file
 bool checkIfDeleteFile(char *name)
 {	
 	char message[100] = {"Are you sure you want to delete "};
 	strcat(message, name);
 	strcat(message, "?");
 	
-	if(alert(message) == true && fileExists(name))
+	if(alert(message) == true)
 	{
 		if(ti_Delete(name) == true)
 		{
 			return true;
 		}
-		
-		return false;
-	}
-	
-	return false;
+		else
+		{
+			alert("Error encountered.");
+			return false;
+		}
+	}	
 }
 
 bool renameFile(const char *name)
