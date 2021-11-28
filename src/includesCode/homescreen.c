@@ -195,6 +195,9 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 		return show_homescreen;
 	}
 	
+	// about
+	
+	
 	// move cursor down
 	if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1)
 	{
@@ -372,3 +375,4 @@ static struct menu *loadHomeScreenOtherMenu(void)
 	
 	return &menu;
 }
+

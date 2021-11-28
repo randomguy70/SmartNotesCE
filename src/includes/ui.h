@@ -12,7 +12,9 @@ extern "C" {
 
 
 #define WINDOW_TITLE_BAR_HEIGHT 10
+#define WINDOW_BORDER_THICKNESS  2
 
+#define MAX_MENU_ENTRIES_VISIBLE 7
 
 enum window_type {
 	DISPLAY_TEXT_TYPE,
@@ -62,21 +64,20 @@ struct settings {
 	enum color windowBG;
 };
 
-// this is what it looks like. thank you mateo :P
 struct menu_entry {
-	const char * str;
-	gfx_sprite_t * sprite;
-	uint8_t spriteHeight;
-	// void (*func_ptr)(void); 
+	const char *str;
+	gfx_sprite_t *sprite;
 };
 
 // thank you mateo(again)
 struct menu {
-	const char * title; // title of menu
-	int x, y; // x and y coord of menu window
+	const char *title;
+	int x, y, width;
 	uint8_t numOptions;
-	bool hasSprites; // whether or not the menu entries have sprites
-	struct menu_entry entry[]; // contains all of the menu entries
+	uint8_t selected;
+	uint8_t offset;
+	bool hasSprites;
+	struct menu_entry entry[];
 };
 
 struct scrollBar{

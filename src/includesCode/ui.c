@@ -202,12 +202,11 @@ bool alert(char *txt) {
 	return 0;
 }
 
-int displayMenu(struct menu * menu) {
+int displayMenu(struct menu *menu) {
 	int offset = 0;
 	int selected = 0;
-	uint8_t spacing = 22;
-	uint8_t maxOnScrn = 5;
-	uint8_t width = 120;
+	const uint8_t spacing = 22;
+	const uint8_t maxOnScrn = 5;
 	int height = spacing * maxOnScrn + 4;
 	
 	while(true) {
@@ -285,6 +284,8 @@ int displayMenu(struct menu * menu) {
 	
 	return 0;
 };
+
+
 
 int drawScrollbar(struct scrollBar * scrollBar) {
 	gfx_SetColor(scrollBar->colorIndex);
