@@ -56,11 +56,12 @@ void main(void) {
 		
 		if(state == show_editor)
 		{
-			if(prevState != state) {
-				strcpy(editor.file.os_name, homescreen.files[homescreen.selectedFile].os_name);
-				prevState = state;
-			}
-			state = dispEditor(&editor);
+			// if(prevState != state) {
+			// 	strcpy(editor.file.os_name, homescreen.files[homescreen.selectedFile].os_name);
+			// 	prevState = state;
+			// }
+			// state = dispEditor(&editor);
+			state = show_homescreen;
 		}
 	}
 	
