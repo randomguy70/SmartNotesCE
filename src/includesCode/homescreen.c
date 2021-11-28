@@ -131,6 +131,7 @@ static void dispHomeScreenBG(void)
 static void dispHomeScreenButtons(void)
 {
 	const char *text[NUM_HOMESCREEN_BUTTONS] = {"Exit", "Refresh", "About", "Settings", "File"};
+	const uint8_t keys[5] = [kb_Yequ, kb_Window, kb_Zoom, kb_Trace, kb_Graph];
 	const uint8_t spacing = LCD_WIDTH / NUM_HOMESCREEN_BUTTONS;
 	int i, x;
 	
@@ -142,10 +143,21 @@ static void dispHomeScreenButtons(void)
 	gfx_SetColor(BLACK);
 	gfx_HorizLine_NoClip(0, LCD_HEIGHT - 25, LCD_WIDTH);
 	
+	kb_ScanGroup(1);
+	
 	fontlib_SetForegroundColor(0);
 	
 	for(i = 0; i < NUM_HOMESCREEN_BUTTONS; i++)
 	{
+		if(kb_Data[1])
+		{
+			if(kb_Data[1] & keys[i])
+			{
+				gfx_SetColor(DARK_BLUE);
+				gfx_FillRectangle_NoClip(i*spacing, LCD_HEIGHT - 24, spacing, 24);
+			}
+		}
+		
 		x = (i * spacing) + (spacing / 2) - (fontlib_GetStringWidth(text[i]) / 2);
 		fontlib_DrawStringXY(text[i], x, LCD_HEIGHT - 20);
 	}
