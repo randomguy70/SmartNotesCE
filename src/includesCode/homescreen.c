@@ -195,8 +195,56 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 		return show_homescreen;
 	}
 	
-	// about
-	
+	// File Options Menu
+	if(kb_IsDown(kb_KeyGraph)) {
+		
+		struct menu* menu = loadHomeScreenFileMenu();
+		uint8_t result = displayMenu(menu);
+		
+		switch(result)
+		{
+			// New
+			case 1:
+				newFile();
+				break;
+			
+			// Open
+			case 2:
+				return show_editor;
+				break;
+			
+			// rename
+			case 3:
+				if(homescreen->numFiles>0)
+				{
+					bool result = renameFile(homescreen->files[homescreen->selectedFile].os_name);
+					if(result)
+					{
+						loadFiles(homescreen->files);
+						break;
+					}
+					alert("Something went wrong. Tough luck, buddy.");
+					break;
+				}
+				
+				alert("There aren't any files to rename (obviously)!");
+				break;
+				
+			// Delete
+			case 4:
+				checkIfDeleteFile(homescreen->files[homescreen->selectedFile].os_name);
+				break;
+			
+			// (un) Hide
+			case 5: 
+				toggleHiddenStatus(homescreen->files[homescreen->selectedFile].os_name);
+				loadFiles(homescreen->files);
+				break;
+			
+			default:
+				break;
+		}
+	}
 	
 	// move cursor down
 	if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1)
@@ -286,57 +334,6 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 		return show_homescreen;
 	}
 	
-	// File Options Menu
-	if(kb_IsDown(kb_KeyGraph)) {
-		
-		struct menu* menu = loadHomeScreenFileMenu();
-		uint8_t result = displayMenu(menu);
-		
-		switch(result)
-		{
-			// New
-			case 1:
-				newFile();
-				break;
-			
-			// Open
-			case 2:
-				return show_editor;
-				break;
-			
-			// rename
-			case 3:
-				if(homescreen->numFiles>0)
-				{
-					bool result = renameFile(homescreen->files[homescreen->selectedFile].os_name);
-					if(result)
-					{
-						loadFiles(homescreen->files);
-						break;
-					}
-					alert("Something went wrong. Tough luck, buddy.");
-					break;
-				}
-				
-				alert("There aren't any files to rename (obviously)!");
-				break;
-				
-			// Delete
-			case 4:
-				checkIfDeleteFile(homescreen->files[homescreen->selectedFile].os_name);
-				break;
-			
-			// (un) Hide
-			case 5: 
-				toggleHiddenStatus(homescreen->files[homescreen->selectedFile].os_name);
-				loadFiles(homescreen->files);
-				break;
-			
-			default:
-				break;
-		}
-	}
-	
 	refreshHomeScreenGraphics(homescreen);
 	return show_homescreen;
 }
@@ -384,11 +381,16 @@ static struct menu *loadHomeScreenAboutMenu(void)
 
 static struct menu *loadHomeScreenFileMenu(void)
 {
+	const width = 100;
+	const numOptions = 7;
+	
 	static struct menu menu =
 	{
 		.title = "Options",
-		.x = 200,
-		.y = 100,
+		.width = 100,
+		.height = MENU_ENTRY_SPACING * numOptions + WINDOW_BORDER_THICKNESS,
+		.x = LCD_WIDTH - width - ,
+		.y = width,
 		.numOptions = 7,
 		.hasSprites = false,
 		

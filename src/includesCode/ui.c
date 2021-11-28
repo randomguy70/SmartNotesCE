@@ -217,8 +217,8 @@ int displayMenu(struct menu *menu) {
 		visibleOptions = MAX_MENU_ENTRIES_VISIBLE;
 	}
 	
-	menu->width = 120; // eventually will be proportional to width of longest entry
-	int height = MENU_ENTRY_SPACING * visibleOptions + WINDOW_BORDER_THICKNESS;
+	menu->width = 100; // eventually will be proportional to width of longest entry
+	height = MENU_ENTRY_SPACING * visibleOptions + WINDOW_BORDER_THICKNESS;
 	
 	while(true) {
 		gfx_Blit(gfx_screen);
