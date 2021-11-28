@@ -15,7 +15,9 @@ uint8_t getNumFiles(const char * txt)
 	void * pos = NULL;
 	
 	while (ti_Detect(&pos, txt) != NULL)
+	{
 		result++;
+	}
 	
 	return result;
 }

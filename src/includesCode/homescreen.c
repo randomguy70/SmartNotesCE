@@ -321,7 +321,6 @@ static uint8_t loadFiles(struct file files[]) {
 	uint8_t numFiles = 0;
 	char *namePtr = NULL;
 	void *search_pos = NULL;
-	ti_var_t fileSlot;
 	
 	while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL)
 	{
@@ -330,16 +329,8 @@ static uint8_t loadFiles(struct file files[]) {
 			return numFiles;
 		}
 		
-		fileSlot = ti_Open(namePtr, "r");
-		
-		if(!fileSlot)
-		{
-			return numFiles;
-		}
-		
 		strcpy(files[numFiles].os_name, namePtr);
 		numFiles++;
-		ti_Close(fileSlot);
 		
 	}
 	
