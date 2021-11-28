@@ -202,6 +202,8 @@ bool alert(char *txt) {
 	return 0;
 }
 
+
+// XXX
 int displayMenu(struct menu *menu) {
 	int offset = 0;
 	int selected = 0;
@@ -236,8 +238,8 @@ int displayMenu(struct menu *menu) {
 		gfx_VertLine_NoClip(menu->x, menu->y, height);
 		gfx_VertLine_NoClip(menu->x + 1, menu->y, height);
 		
+		gfx_VertLine_NoClip(menu->x + menu->width - 1 - WINDOW_BORDER_THICKNESS, menu->y, height);
 		gfx_VertLine_NoClip(menu->x + menu->width - WINDOW_BORDER_THICKNESS, menu->y, height);
-		gfx_VertLine_NoClip(menu->x + menu->width - WINDOW_BORDER_THICKNESS + 1, menu->y, height);
 		
 		fontlib_SetForegroundColor(BLACK);
 		
@@ -252,12 +254,11 @@ int displayMenu(struct menu *menu) {
 				
 				// outline box
 				gfx_SetColor(BLACK);
-				gfx_Rectangle_NoClip(menu->x+2, menu->y + i * spacing + 2, width - 4, spacing);
+				gfx_Rectangle_NoClip(menu->x + WINDOW_BORDER_THICKNESS, menu->y + i * MENU_ENTRY_SPACING + WINDOW_BORDER_THICKNESS, menu->width - 2 * WINDOW_BORDER_THICKNESS, MENU_ENTRY_SPACING);
 			}
 			
 			// text
-			fontlib_DrawStringXY(menu->entry[i].string, (menu->x + 30), menu->y + (i * spacing) + 10);
-			
+			fontlib_DrawStringXY(menu->entry[i].string, menu->x + 30, menu->y + i * MENU_ENTRY_SPACING + 5);
 		}
 		
 		gfx_SwapDraw();
@@ -274,7 +275,8 @@ int displayMenu(struct menu *menu) {
 		}
 		
 		// move selecter bar up
-		if(kb_IsDown(kb_KeyUp) && selected>0) {
+		if(kb_IsDown(kb_KeyUp) && selected>0)
+		{
 			selected--;
 			if(selected < offset){
 				offset--;
@@ -283,12 +285,14 @@ int displayMenu(struct menu *menu) {
 		}
 		
 		// select an option
-		if(kb_IsDown(kb_KeyEnter) || kb_IsDown(kb_Key2nd)) {
+		if(kb_IsDown(kb_KeyEnter) || kb_IsDown(kb_Key2nd))
+		{
 			return selected + 1;
 		}
 		
 		// quit the menu (once the clear key has been released)
-		if(kb_IsDown(kb_KeyClear)) {
+		if(kb_IsDown(kb_KeyClear))
+		{
 			while(kb_AnyKey()) kb_Scan();
 			return CANCEL;
 		}
@@ -297,8 +301,6 @@ int displayMenu(struct menu *menu) {
 	
 	return 0;
 };
-
-
 
 int drawScrollbar(struct scrollBar * scrollBar) {
 	gfx_SetColor(scrollBar->colorIndex);

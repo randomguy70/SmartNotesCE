@@ -17,7 +17,7 @@ static void dispHomeScreenButtons(void);
 static void refreshHomeScreenGraphics(struct homescreen *homescreen);
 static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen);
 static uint8_t loadFiles(struct file files[]);
-static struct menu *loadHomeScreenOtherMenu(void);
+static struct menu *loadHomeScreenFileMenu(void);
 
 enum state dispHomeScreen(struct homescreen* homescreen)
 {
@@ -286,19 +286,26 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 		return show_homescreen;
 	}
 	
+	// File Options Menu
 	if(kb_IsDown(kb_KeyGraph)) {
 		
-		struct menu* menu = loadHomeScreenOtherMenu();
+		struct menu* menu = loadHomeScreenFileMenu();
 		uint8_t result = displayMenu(menu);
 		
 		switch(result)
 		{
-			// back
+			// New
 			case 1:
+				newFile();
+				break;
+			
+			// Open
+			case 2:
+				return show_editor;
 				break;
 			
 			// rename
-			case 2:
+			case 3:
 				if(homescreen->numFiles>0)
 				{
 					bool result = renameFile(homescreen->files[homescreen->selectedFile].os_name);
@@ -314,17 +321,17 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 				alert("There aren't any files to rename (obviously)!");
 				break;
 				
-			// hide
-			case 3: 
+			// Delete
+			case 4:
+				checkIfDeleteFile(homescreen->files[homescreen->selectedFile].os_name);
+				break;
+			
+			// (un) Hide
+			case 5: 
 				toggleHiddenStatus(homescreen->files[homescreen->selectedFile].os_name);
 				loadFiles(homescreen->files);
 				break;
-				
-			// settings
-			case 4:
-				// displaySettings();
-				break;
-				
+			
 			default:
 				break;
 		}
@@ -354,25 +361,48 @@ static uint8_t loadFiles(struct file files[]) {
 	return numFiles;
 }
 
-static struct menu *loadHomeScreenOtherMenu(void)
+static struct menu *loadHomeScreenAboutMenu(void)
 {
-	static struct menu menu =
+	static struct menu menu = 
 	{
-		.title = "Options",
-		.x = 200, .y = 100,
-		.numOptions = 5,
-		.hasSprites = true,
+		.title = "About",
+		.x = 64 * 3,
+		.y = 100,
+		.numOptions = 3,
+		.hasSprites = false,
 		
-		.entry =
+		.entry = 
 		{
-			{"Back", left_arrow, left_arrow_height},
-			{"Rename", rename, rename_height},
-			{"(un)Hide", hide, hide_height},
-			{"Settings", settings_gear, settings_gear_height},
-			{"Help", help, help_height},
-		},
+			{"Credits"},
+			{"Help"},
+			{"Build Info"},
+		}
 	};
 	
 	return &menu;
 }
 
+static struct menu *loadHomeScreenFileMenu(void)
+{
+	static struct menu menu =
+	{
+		.title = "Options",
+		.x = 200,
+		.y = 100,
+		.numOptions = 7,
+		.hasSprites = false,
+		
+		.entry =
+		{
+			{"New"},
+			{"Open"},
+			{"Rename"},
+			{"Delete"},
+			{"(un)Hide"},
+			{"(un)Encrypt"},
+			{"Back"},
+		},
+	};
+	
+	return &menu;
+}
