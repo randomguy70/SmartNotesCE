@@ -92,6 +92,7 @@ static void dispHomeScreenBG(void)
 	int width;
 	
 	fontlib_SetAlternateStopCode(0);
+	fontlib_SetWindowFullScreen();
 	
 	// lined-paper background
 	gfx_FillScreen(PAPER_YELLOW);
@@ -121,7 +122,8 @@ static void dispHomeScreenBG(void)
 	// print labels for displayed file data columns
 	fontlib_SetForegroundColor(BLACK);
 	fontlib_DrawStringXY("NAME", FILE_VIEWER_X + 2, FILE_VIEWER_Y - 13);
-	fontlib_DrawStringXY("STATUS", FILE_VIEWER_X + FILE_VIEWER_WIDTH - fontlib_GetStringWidth("STATUS") - 2, FILE_VIEWER_Y - 13);
+	width = fontlib_GetStringWidth("STATUS");
+	fontlib_DrawStringXY("STATUS", FILE_VIEWER_X + FILE_VIEWER_WIDTH - width - 2, FILE_VIEWER_Y - 13);
 	
 	return;
 }
