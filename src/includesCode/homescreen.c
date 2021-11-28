@@ -128,38 +128,28 @@ static void dispHomeScreenBG(void)
 	return;
 }
 
-static void dispHomeScreenButtons(void) {
+static void dispHomeScreenButtons(void)
+{
+	const uint8_t numButtons = 5;
+	const char *text[numButtons] = {"Exit", "Refresh", "About", "Settings", "File"};
+	const uint8_t spacing = LCD_WIDTH / numButtons;
+	int i, x;
 	
-	gfx_sprite_t * sprites[5];
-	sprites[0] = open;
-	sprites[1] = new_icon;
-	sprites[2] = quit;
-	sprites[3] = trash;
-	sprites[4] = more;
+	// bar at bottom
+	gfx_SetColor(LIGHT_GREY);
+	gfx_FillRectangle_NoClip(0, LCD_HEIGHT - 25, LCD_WIDTH, LCD_HEIGHT);
 	
-	for(int i = 1, ii = 0; i < 320; i+=64, ii++) {
-		// button rects
-		gfx_SetColor(LIGHT_GREY);
-		gfx_FillRectangle_NoClip(i+1, 215, 60, 24);
-		gfx_SetColor(BLACK);
-		gfx_Rectangle_NoClip(i+1, 215, 60, 24);
-		
-		// sprites
-		if(i == 1)
-			gfx_TransparentSprite_NoClip(sprites[ii], i+4, 218);
-		else
-			gfx_TransparentSprite_NoClip(sprites[ii], i+3, 217);
-	}
+	// line on top of bar
+	gfx_SetColor(BLACK);
+	gfx_HorizLine_NoClip(0, LCD_HEIGHT - 25, LCD_WIDTH);
 	
-	// text
 	fontlib_SetForegroundColor(0);
 	
-	fontlib_DrawStringXY("Open" ,  27, 224);
-	fontlib_DrawStringXY("New"  ,  90, 224);
-	fontlib_DrawStringXY("Quit" , 157, 224);
-	fontlib_DrawStringXY("Del"  , 220, 224);
-	fontlib_DrawStringXY("Other", 271, 224);
-	
+	for(i = 0; i < 5; i++)
+	{
+		x = (i * spacing) + (spacing / 2) - (fontlib_GetStringWidth(text[i]) / 2);
+		fontlib_DrawStringXY(text[i], x, LCD_HEIGHT - 20);
+	}
 }
 
 static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
