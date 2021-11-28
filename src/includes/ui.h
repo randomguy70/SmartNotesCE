@@ -15,6 +15,7 @@ extern "C" {
 #define WINDOW_BORDER_THICKNESS   2
 
 #define MENU_ENTRY_SPACING       20
+#define MAX_MENU_ENTRIES         10
 #define MAX_MENU_ENTRIES_VISIBLE  7
 
 enum window_type {
@@ -73,10 +74,9 @@ struct menu_entry {
 // thank you mateo(again)
 struct menu {
 	const char *title;
-	int x, y, width;
+	int x, y, width, height;
 	uint8_t numOptions;
 	uint8_t selected;
-	uint8_t offset;
 	bool hasSprites;
 	struct menu_entry entry[];
 };

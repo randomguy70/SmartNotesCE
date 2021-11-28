@@ -389,7 +389,7 @@ static struct menu *loadHomeScreenFileMenu(void)
 		.title = "Options",
 		.width = 100,
 		.height = MENU_ENTRY_SPACING * numOptions + WINDOW_BORDER_THICKNESS,
-		.x = LCD_WIDTH - width - ,
+		.x = LCD_WIDTH - width,
 		.y = width,
 		.numOptions = 7,
 		.hasSprites = false,

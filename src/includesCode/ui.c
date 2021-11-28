@@ -205,21 +205,15 @@ bool alert(char *txt) {
 
 // XXX
 int displayMenu(struct menu *menu) {
-	int offset = 0;
 	int selected = 0;
-	const uint8_t maxOnScrn = 5;
-	int visibleOptions;
-	int height;
 	
-	visibleOptions = menu->numOptions;
-	if(visibleOptions > MAX_MENU_ENTRIES_VISIBLE)
+	if(menu->numOptions > MAX_MENU_ENTRIES)
 	{
-		visibleOptions = MAX_MENU_ENTRIES_VISIBLE;
+		menu->numOptions = MAX_MENU_ENTRIES;
 	}
 	
 	menu->width = 100; // eventually will be proportional to width of longest entry
-	height = MENU_ENTRY_SPACING * visibleOptions + WINDOW_BORDER_THICKNESS;
-	
+		
 	while(true) {
 		gfx_Blit(gfx_screen);
 		gfx_SetDraw(gfx_buffer);
@@ -227,7 +221,7 @@ int displayMenu(struct menu *menu) {
 		// box
 		
 		gfx_SetColor(WHITE);
-		gfx_FillRectangle_NoClip(menu->x, menu->y, menu->width, height);
+		gfx_FillRectangle_NoClip(menu->x, menu->y, menu->width, menu->height);
 		
 		// outline
 		
@@ -235,7 +229,7 @@ int displayMenu(struct menu *menu) {
 		gfx_HorizLine_NoClip(menu->x, menu->y, menu->width);
 		gfx_HorizLine_NoClip(menu->x, menu->y + 1, menu->width);
 		
-		gfx_VertLine_NoClip(menu->x, menu->y, height);
+		gfx_VertLine_NoClip(menu->x, menu->y, menu->height);
 		gfx_VertLine_NoClip(menu->x + 1, menu->y, height);
 		
 		gfx_VertLine_NoClip(menu->x + menu->width - 1 - WINDOW_BORDER_THICKNESS, menu->y, height);
@@ -243,7 +237,7 @@ int displayMenu(struct menu *menu) {
 		
 		fontlib_SetForegroundColor(BLACK);
 		
-		for(uint8_t i = offset; i < menu->numOptions && i < MAX_MENU_ENTRIES_VISIBLE; i++)
+		for(uint8_t i = 0; i < menu->numOptions; i++)
 		{
 			// selecting bar
 			if(i == selected)
