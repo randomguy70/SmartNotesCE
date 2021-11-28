@@ -11,10 +11,11 @@ extern "C" {
 #include "includes/colors.h"
 
 
-#define WINDOW_TITLE_BAR_HEIGHT 10
-#define WINDOW_BORDER_THICKNESS  2
+#define WINDOW_TITLE_BAR_HEIGHT  10
+#define WINDOW_BORDER_THICKNESS   2
 
-#define MAX_MENU_ENTRIES_VISIBLE 7
+#define MENU_ENTRY_SPACING       20
+#define MAX_MENU_ENTRIES_VISIBLE  7
 
 enum window_type {
 	DISPLAY_TEXT_TYPE,
@@ -65,7 +66,7 @@ struct settings {
 };
 
 struct menu_entry {
-	const char *str;
+	const char *string;
 	gfx_sprite_t *sprite;
 };
 

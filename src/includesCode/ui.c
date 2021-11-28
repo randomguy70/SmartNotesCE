@@ -205,32 +205,50 @@ bool alert(char *txt) {
 int displayMenu(struct menu *menu) {
 	int offset = 0;
 	int selected = 0;
-	const uint8_t spacing = 22;
 	const uint8_t maxOnScrn = 5;
-	int height = spacing * maxOnScrn + 4;
+	int visibleOptions;
+	int height;
+	
+	visibleOptions = menu->numOptions;
+	if(visibleOptions > MAX_MENU_ENTRIES_VISIBLE)
+	{
+		visibleOptions = MAX_MENU_ENTRIES_VISIBLE;
+	}
+	
+	menu->width = 120; // eventually will be proportional to width of longest entry
+	int height = MENU_ENTRY_SPACING * visibleOptions + WINDOW_BORDER_THICKNESS;
 	
 	while(true) {
-		gfx_SetDraw(1);
+		gfx_Blit(gfx_screen);
+		gfx_SetDraw(gfx_buffer);
 		
 		// box
+		
 		gfx_SetColor(WHITE);
-		gfx_FillRectangle_NoClip(menu->x, menu->y, width, height);
+		gfx_FillRectangle_NoClip(menu->x, menu->y, menu->width, height);
 		
 		// outline
+		
 		gfx_SetColor(LIGHT_BLUE);
-		thick_Rectangle(menu->x, menu->y, width, height, 2);
+		gfx_HorizLine_NoClip(menu->x, menu->y, menu->width);
+		gfx_HorizLine_NoClip(menu->x, menu->y + 1, menu->width);
 		
-		// draw the entries' sprites and text
+		gfx_VertLine_NoClip(menu->x, menu->y, height);
+		gfx_VertLine_NoClip(menu->x + 1, menu->y, height);
 		
-		gfx_SetTextFGColor(BLACK);
+		gfx_VertLine_NoClip(menu->x + menu->width - WINDOW_BORDER_THICKNESS, menu->y, height);
+		gfx_VertLine_NoClip(menu->x + menu->width - WINDOW_BORDER_THICKNESS + 1, menu->y, height);
 		
-		for(uint8_t i = offset; i < menu->numOptions && i < maxOnScrn; i++) {
+		fontlib_SetForegroundColor(BLACK);
 		
-			// rectangle selecting box
-			if(i == selected) {
+		for(uint8_t i = offset; i < menu->numOptions && i < MAX_MENU_ENTRIES_VISIBLE; i++)
+		{
+			// selecting bar
+			if(i == selected)
+			{
 				// fill box
 				gfx_SetColor(LIGHT_GREY);
-				gfx_FillRectangle_NoClip(menu->x+2, menu->y + i * spacing + 2, width - 4, spacing);
+				gfx_FillRectangle_NoClip(menu->x + WINDOW_BORDER_THICKNESS, menu->y + i * MENU_ENTRY_SPACING + WINDOW_BORDER_THICKNESS, menu->width - 2 * WINDOW_BORDER_THICKNESS, MENU_ENTRY_SPACING);
 				
 				// outline box
 				gfx_SetColor(BLACK);
@@ -238,21 +256,16 @@ int displayMenu(struct menu *menu) {
 			}
 			
 			// text
-			fontlib_DrawStringXY(menu->entry[i].str, (menu->x + 30), menu->y + (i * spacing) + 10); // add 10 to center the text
-			
-			// sprites
-			if(menu->hasSprites)
-				gfx_TransparentSprite_NoClip(menu->entry[i].sprite, menu->x + 4, menu->y + i * spacing + 5);
+			fontlib_DrawStringXY(menu->entry[i].string, (menu->x + 30), menu->y + (i * spacing) + 10);
 			
 		}
 		
-		gfx_BlitRectangle(1, menu->x, menu->y, width, height); // I might change this to just blitting the menu rect, but who knows if anybody is even going to ever read this comment...
+		gfx_SwapDraw();
 		
-		// keyPresses
-		
-		// move selecter bar down
+		// move selecting bar down
 		kb_Scan();
-		if(kb_IsDown(kb_KeyDown) && selected < menu->numOptions -1) {
+		if(kb_IsDown(kb_KeyDown) && selected < menu->numOptions -1)
+		{
 			selected++;
 			if(selected > offset+maxOnScrn){
 				offset++;
