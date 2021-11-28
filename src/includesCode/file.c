@@ -32,13 +32,11 @@ bool newFile(void)
 		if(fileSlot)
 		{
 			ti_Close(fileSlot);
-			alert("File already exists");
+			alert("File already exists. So no, you can't open another file with the same name. Silly you!");
 			return false;
 		}
-		else
-		{
-			fileSlot = ti_Open(buffer, "w");
-		}
+		
+		fileSlot = ti_Open(buffer, "w+");
 		
 		if(!fileSlot)
 		{
@@ -50,7 +48,6 @@ bool newFile(void)
 		ti_Close(fileSlot);
 		
 		return true;
-		
 	}
 	
 	return false;
