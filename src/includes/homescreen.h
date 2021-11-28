@@ -17,6 +17,8 @@ extern "C" {
 #define FILE_VIEWER_WIDTH   252
 #define FILE_VIEWER_HEIGHT  154
 
+#define NUM_HOMESCREEN_BUTTONS 5
+
 // contains properties of the file viewer
 struct homescreen {
 	struct file files[MAX_FILES_LOADABLE];
