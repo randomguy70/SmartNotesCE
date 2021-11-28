@@ -91,21 +91,7 @@ static void dispHomeScreenBG(struct homescreen *homescreen)
 {
 	int width;
 	
-	// scrollbar math (needs fixing)
-	uint8_t scrollbarHeight = 148 * 10 / homescreen->numFiles;
-	
-	// make sure that the scrollbar is a reasonable size
-	if(scrollbarHeight>148)
-	{
-		scrollbarHeight = 148;
-	}
-	if(scrollbarHeight<10)
-	{
-		scrollbarHeight = 10;
-	}
-	
-	int scrollbarX = 280;
-	int scrollbarY = (150 - (scrollbarHeight) + 1) * homescreen->selectedFile / (homescreen->numFiles-1) + 56;
+	fontlib_SetAlternateStopCode(0);
 	
 	// lined-paper background
 	gfx_FillScreen(PAPER_YELLOW);
@@ -120,33 +106,22 @@ static void dispHomeScreenBG(struct homescreen *homescreen)
 	// name and credits
 	fontlib_SetForegroundColor(DARK_BLUE);
 	width = fontlib_GetStringWidth("SMARTNOTES CE");
-	fontlib_DrawStringXY("SMARTNOTES CE", (SCRN_WIDTH/2)-(width/2), 8);
+	fontlib_DrawStringXY("SMARTNOTES CE", (SCRN_WIDTH/2)-(width/2), 5);
 	
 	fontlib_SetForegroundColor(BLACK);
-	width = fontlib_GetStringWidth("VERSION 1.0 BY Randomguy");
-	fontlib_DrawStringXY("Version 1.0 BY Randomguy", (SCRN_WIDTH/2)-(width/2), 25);
+	width = fontlib_GetStringWidth("V.1 by Randomguy");
+	fontlib_DrawStringXY("V.1 by Randomguy", (SCRN_WIDTH/2)-(width/2), 25);
 	
 	// box with file names
 	gfx_SetColor(WHITE);
-	gfx_FillRectangle_NoClip(36,56,248,150);
+	gfx_FillRectangle_NoClip(FILE_VIEWER_X, FILE_VIEWER_Y, FILE_VIEWER_WIDTH, FILE_VIEWER_HEIGHT);
 	gfx_SetColor(LIGHT_BLUE);
-	thick_Rectangle(34, 54, 252, 154, 2);
-	
-	// scrollbar border
-	gfx_SetColor(LIGHT_BLUE);
-	gfx_VertLine_NoClip(scrollbarX-2, 56, 150);
-	gfx_VertLine_NoClip(scrollbarX-1, 56, 150);
-	
-	// scrollbar
-	gfx_SetColor(LIGHT_GREY);
-	gfx_FillRectangle_NoClip(scrollbarX, scrollbarY, 4, scrollbarHeight);
-	gfx_SetColor(BLACK);
-	gfx_Rectangle_NoClip(scrollbarX, scrollbarY, 4, scrollbarHeight);
+	thick_Rectangle(FILE_VIEWER_X, FILE_VIEWER_Y, FILE_VIEWER_WIDTH, FILE_VIEWER_HEIGHT, 2);
 	
 	// print labels for displayed file data columns
 	fontlib_SetForegroundColor(BLACK);
-	fontlib_DrawStringXY("NAME",40,42);
-	fontlib_DrawStringXY("STATUS",210,42);
+	fontlib_DrawStringXY("NAME", FILE_VIEWER_X + 2, FILE_VIEWER_Y - 13);
+	fontlib_DrawStringXY("STATUS", FILE_VIEWER_X + FILE_VIEWER_WIDTH - fontlib_GetStringWidth("STATUS") - 2, FILE_VIEWER_Y - 13);
 	
 	return;
 }
@@ -236,8 +211,12 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 				homescreen->numFiles = loadFiles(homescreen->files);
 			}
 		}
+		else
+		{
+			alert("You can't have more than 30 files.");
+			return show_homescreen;
+		}
 		
-		alert("You can't have more than 30 files.");
 		
 		return show_homescreen;
 	}
