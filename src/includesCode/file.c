@@ -29,11 +29,9 @@ bool newFile(void)
 	
 	if (inputString(buffer, 8, "New File") > 0)
 	{
-		fileSlot = ti_Open(buffer, "r");
 		
-		if(fileSlot)
+		if(fileExists(buffer))
 		{
-			ti_Close(fileSlot);
 			alert("File already exists.");
 			return false;
 		}
