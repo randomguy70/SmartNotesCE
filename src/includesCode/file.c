@@ -63,22 +63,29 @@ bool checkIfDeleteFile(char *name)
 	strcat(message, name);
 	strcat(message, "?");
 	
-	if(alert(message) == true && fileExists(name)) {
-		ti_Delete(name);
-		return 1;
+	if(alert(message) == true && fileExists(name))
+	{
+		if(ti_Delete(name) == true)
+		{
+			return true;
+		}
+		
+		return false;
 	}
 	
-	return 0;
+	return false;
 }
 
-bool renameFile(const char *name) {
+bool renameFile(const char *name)
+{
 	
 	char newNameBuffer[9] = {0};
 	char message[8+9] = {"Rename "};
 	
 	strcat(message, name);
 	
-	if(inputString(newNameBuffer, 8, message) > 0) {
+	if(inputString(newNameBuffer, 8, message) > 0)
+	{
 		ti_Rename(name, newNameBuffer);
 		return true;
 	}
@@ -86,11 +93,17 @@ bool renameFile(const char *name) {
 	return false;
 }
 
-bool fileExists(char* name) {
+bool fileExists(char* name)
+{
 	ti_var_t slot = ti_Open(name, "r");
-	ti_Close(slot);
+		
 	if(!slot)
+	{
 		return false;
+	}
+	
+	ti_Close(slot);
+	
 	return true;
 }
 

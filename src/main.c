@@ -102,9 +102,5 @@ static uint8_t setupFontlibc() {
 
 static void cleanup() {
 	gfx_End();
-		
-	// prevents the on-key error message
-	(*(volatile uint8_t*)0xF00008) = 1;
-	
-	return;
+	archiveAll();		
 }
