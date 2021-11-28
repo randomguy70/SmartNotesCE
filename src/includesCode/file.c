@@ -9,20 +9,6 @@
 #include <includes/editor.h>
 #include <includes/buffer.h>
 
-void archiveAll()
-{
-	ti_var_t fileSlot;
-	char *fileName;
-	void *search_pos = NULL;
-	
-	while (((fileName = ti_Detect(&search_pos, "TXT")) != NULL)) {
-		fileSlot = ti_Open(fileName, "r");
-		ti_SetArchiveStatus(true, fileSlot);
-		ti_Close(fileSlot);
-	}
-	
-}
-
 uint8_t getNumFiles(const char * txt)
 {
 	uint8_t result = 0;
@@ -128,4 +114,31 @@ bool isHidden(char* name) {
 	if(!fileExists(name))
 		return false;
 	return (name[0])<(65);
+}
+
+void archiveAll(void)
+{
+	void *searchPtr = NULL;
+	char *namePtr = NULL;
+	ti_var_t fileSlot;
+	
+	while ((namePtr = ti_Detect(&searchPtr, HEADER_STR)) != NULL)
+	{
+		fileSlot = ti_Open(namePtr, "r");
+		
+		// I really don't trust fileioc, so extra precautions...
+		if(!fileSlot)
+		{
+			return;
+		}
+		
+		if (ti_SetArchiveStatus(true, fileSlot))
+		{
+			ti_Close(fileSlot);
+		}
+		else
+		{
+			return;
+		}
+	}
 }

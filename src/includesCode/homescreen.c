@@ -73,11 +73,11 @@ static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uin
 	// display when no files were detected
 	if (numFiles == 0)
 	{
-		const char str1[] = "--NO FILES FOUND--)";
-		const char str2[] = "That's too bad for you :(";
+		char str1[] = "--NO FILES FOUND--)";
+		char str2[] = "That's too bad for you :(";
 		
-		const int x1 = (LCD_WIDTH / 2) - (fontlib_GetStringWidth(str1) / 2);
-		const int x2 = (LCD_WIDTH / 2) - (fontlib_GetStringWidth(str2) / 2);
+		int x1 = (LCD_WIDTH / 2) - (fontlib_GetStringWidth(str1) / 2);
+		int x2 = (LCD_WIDTH / 2) - (fontlib_GetStringWidth(str2) / 2);
 		
 		fontlib_SetForegroundColor(244);
 		fontlib_DrawStringXY(str1, x1, 80);
@@ -321,11 +321,26 @@ static uint8_t loadFiles(struct file files[]) {
 	uint8_t numFiles = 0;
 	char *namePtr = NULL;
 	void *search_pos = NULL;
+	ti_var_t fileSlot;
 	
-	while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL && numFiles < 30)
+	while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL)
 	{
-		strcpy(files[numFiles].os_name, namePtr);				
+		if (numFiles > 30)
+		{
+			return numFiles;
+		}
+		
+		fileSlot = ti_Open(namePtr, "r");
+		
+		if(!fileSlot)
+		{
+			return numFiles;
+		}
+		
+		strcpy(files[numFiles].os_name, namePtr);
 		numFiles++;
+		ti_Close(fileSlot);
+		
 	}
 	
 	return numFiles;
