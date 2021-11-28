@@ -29,9 +29,9 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 	while(true)
 	{
 		gfx_SetDraw(gfx_buffer);
-		dispHomeScreenBG(homescreen);
-		dispHomeScreenButtons();
-		dispFiles(homescreen->files, homescreen->numFiles, homescreen->offset, homescreen->selectedFile);
+		dispHomeScreenBG(homescreen); // not cause of crash
+		dispHomeScreenButtons();      // not cause of crash
+		dispFiles(homescreen->files, homescreen->numFiles, homescreen->offset, homescreen->selectedFile); // not cause of crash
 		gfx_Wait();
 		gfx_SwapDraw();
 		
@@ -236,10 +236,8 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 				homescreen->numFiles = loadFiles(homescreen->files);
 			}
 		}
-		else
-		{
-			alert("You can't have more than 30 files, my note-crazy friend!");
-		}
+		
+		alert("You can't have more than 30 files.");
 		
 		return show_homescreen;
 	}

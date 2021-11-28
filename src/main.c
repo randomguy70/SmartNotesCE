@@ -72,7 +72,7 @@ static uint8_t setupFontlibc() {
 	fontlib_font_t *my_font;
 	
 	// Get the first font present in the font pack
-	my_font = fontlib_GetFontByIndex("DRSANS", 0);
+	my_font = fontlib_GetFontByIndex("DrSans", 0);
 	if (!my_font) {
 		gfx_Begin();
 		gfx_SetTextFGColor(BLACK);
