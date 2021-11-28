@@ -24,7 +24,8 @@ static void cleanup();
 
 void main(void) {
 		
-	if(!setupFontlibc()) {
+	if(!setupFontlibc())
+	{
 		return;
 	}
 	
@@ -38,7 +39,7 @@ void main(void) {
 	struct editor editor;
 	enum state state = show_homescreen;
 	enum state prevState = state;
-
+	
 	state = show_homescreen;
 	
 	while (true)

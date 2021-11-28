@@ -34,7 +34,7 @@ bool newFile(void)
 		if(fileSlot)
 		{
 			ti_Close(fileSlot);
-			alert("File already exists. So no, you can't open another file with the same name. Silly you!");
+			alert("File already exists. So in other words, rejected. Ouch.");
 			return false;
 		}
 		
@@ -47,6 +47,7 @@ bool newFile(void)
 		
 		ti_Seek(0, SEEK_SET, fileSlot);
 		ti_Write(HEADER_STR, 3, 1, fileSlot);
+		// ti_SetArchiveStatus(true, fileSlot);
 		ti_Close(fileSlot);
 		
 		return true;
