@@ -14,6 +14,7 @@
 static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile);
 static void dispHomeScreenBG(void);
 static void dispHomeScreenButtons(void);
+static void refreshHomeScreenGraphics(struct homescreen *homescreen);
 static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen);
 static uint8_t loadFiles(struct file files[]);
 static struct menu *loadHomeScreenOtherMenu(void);
@@ -26,15 +27,12 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 	homescreen->offset = 0;
 	homescreen->numFiles = loadFiles(homescreen->files);
 	
+	kb_Scan();
+	refreshHomeScreenGraphics(homescreen);
+	
 	while(true)
 	{
-		gfx_SetDraw(gfx_buffer);
 		kb_Scan();
-		dispHomeScreenBG();
-		dispHomeScreenButtons();
-		dispFiles(homescreen->files, homescreen->numFiles, homescreen->offset, homescreen->selectedFile); // not cause of crash
-		gfx_Wait();
-		gfx_SwapDraw();
 		
 		ret = handleHomeScreenKeyPresses(homescreen);
 		
@@ -157,18 +155,46 @@ static void dispHomeScreenButtons(void)
 		}
 		
 		x = (i * spacing) + (spacing / 2) - (fontlib_GetStringWidth(text[i]) / 2);
-		fontlib_DrawStringXY(text[i], x, LCD_HEIGHT - 20);
+		fontlib_DrawStringXY(text[i], x, LCD_HEIGHT - 19);
 	}
 }
 
-static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
+static void refreshHomeScreenGraphics(struct homescreen *homescreen)
+{
+	gfx_SetDraw(gfx_buffer);
+	dispHomeScreenBG();
+	dispHomeScreenButtons();
+	dispFiles(homescreen->files, homescreen->numFiles, homescreen->offset, homescreen->selectedFile);
+	gfx_Wait();
+	gfx_SwapDraw();
+}
+
+static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 {
 	// quit
-	if(kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyZoom)) 
+	if(kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyYequ)) 
 	{
+		// refresh so that you can see the quit button being highlighted
+		refreshHomeScreenGraphics(homescreen);
+		
+		while(kb_AnyKey())
+		{
+			kb_Scan();
+		}
 		return should_exit;
 	}
+	
+	// refresh
+	if(kb_IsDown(kb_KeyWindow))
+	{
+		homescreen->selectedFile = 0;
+		homescreen->offset = 0;
+		homescreen->numFiles = loadFiles(homescreen->files);
+		refreshHomeScreenGraphics(homescreen);
 		
+		return show_homescreen;
+	}
+	
 	// move cursor down
 	if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1)
 	{
@@ -177,9 +203,10 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 			homescreen->offset++;
 		}
 		
+		refreshHomeScreenGraphics(homescreen);
 		return show_homescreen;
 	}
-
+	
 	// move cursor up
 	if (kb_IsDown(kb_KeyUp) && homescreen->selectedFile>0)
 	{
@@ -188,6 +215,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 			homescreen->offset--;
 		}
 		
+		refreshHomeScreenGraphics(homescreen);
 		return show_homescreen;
 	}
 	
@@ -215,10 +243,12 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 		else
 		{
 			alert("You can't have more than 30 files.");
+			
+			refreshHomeScreenGraphics(homescreen);
 			return show_homescreen;
 		}
 		
-		
+		refreshHomeScreenGraphics(homescreen);
 		return show_homescreen;
 	}
 	
@@ -228,6 +258,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 		if(homescreen->numFiles <= 0)
 		{
 			alert("There aren't any files to delete!");
+			refreshHomeScreenGraphics(homescreen);
 			return show_homescreen;
 		}
 		
@@ -248,7 +279,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 		}
 		
 		homescreen->numFiles = loadFiles(homescreen->files);
-		
+		refreshHomeScreenGraphics(homescreen);
 		return show_homescreen;
 	}
 	
@@ -296,6 +327,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 		}
 	}
 	
+	refreshHomeScreenGraphics(homescreen);
 	return show_homescreen;
 }
 
