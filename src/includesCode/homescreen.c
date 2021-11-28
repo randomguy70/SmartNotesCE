@@ -12,7 +12,7 @@
 #include <gfx/gfx.h>
 
 static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile);
-static void dispHomeScreenBG(struct homescreen* homescreen);
+static void dispHomeScreenBG(void);
 static void dispHomeScreenButtons(void);
 static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen);
 static uint8_t loadFiles(struct file files[]);
@@ -29,7 +29,7 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 	while(true)
 	{
 		gfx_SetDraw(gfx_buffer);
-		dispHomeScreenBG(homescreen); // not cause of crash
+		dispHomeScreenBG(); // not cause of crash
 		dispHomeScreenButtons();      // not cause of crash
 		dispFiles(homescreen->files, homescreen->numFiles, homescreen->offset, homescreen->selectedFile); // not cause of crash
 		gfx_Wait();
@@ -50,22 +50,22 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile)
 {
 	uint8_t i;
-	unsigned int fileY = 55;
+	const unsigned int fileX = FILE_VIEWER_X + 5;
+	unsigned int fileY = FILE_VIEWER_Y + 3;
 	
 	for(i=offset; i < MAX_FILES_VIEWABLE + offset && i<MAX_FILES_LOADABLE && i<numFiles; i++)
 	{
-		
 		if (selectedFile == i)
 		{
 			// leave some pixels at the edge of the window for the scrollbar
 			gfx_SetColor(LIGHT_GREY);
-			gfx_FillRectangle_NoClip(36, fileY + 1, 242, 15);
+			gfx_FillRectangle_NoClip(FILE_VIEWER_X + 2, fileY - 1, FILE_VIEWER_WIDTH - 4, 15);
 			gfx_SetColor(BLACK);
-			gfx_Rectangle_NoClip(36, fileY + 1, 242, 15);
+			gfx_Rectangle_NoClip(FILE_VIEWER_X + 2, fileY - 1, FILE_VIEWER_WIDTH - 4, 15);
 		}
 		
 		fontlib_SetForegroundColor(BLACK);
-		fontlib_DrawStringXY(files[i].os_name, 40, fileY);
+		fontlib_DrawStringXY(files[i].os_name, fileX, fileY);
 		
 		fileY += FILE_SPACING;
 	}
@@ -87,7 +87,7 @@ static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uin
 	return;
 }
 
-static void dispHomeScreenBG(struct homescreen *homescreen)
+static void dispHomeScreenBG(void)
 {
 	int width;
 	
