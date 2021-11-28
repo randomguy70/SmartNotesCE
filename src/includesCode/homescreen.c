@@ -29,13 +29,13 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 	while(true)
 	{
 		gfx_SetDraw(gfx_buffer);
+		kb_Scan();
 		dispHomeScreenBG();
 		dispHomeScreenButtons();
 		dispFiles(homescreen->files, homescreen->numFiles, homescreen->offset, homescreen->selectedFile); // not cause of crash
 		gfx_Wait();
 		gfx_SwapDraw();
 		
-		kb_Scan();
 		ret = handleHomeScreenKeyPresses(homescreen);
 		
 		if(ret == should_exit || ret == show_editor) 
@@ -131,7 +131,7 @@ static void dispHomeScreenBG(void)
 static void dispHomeScreenButtons(void)
 {
 	const char *text[NUM_HOMESCREEN_BUTTONS] = {"Exit", "Refresh", "About", "Settings", "File"};
-	const uint8_t keys[5] = [kb_Yequ, kb_Window, kb_Zoom, kb_Trace, kb_Graph];
+	const uint8_t keys[5] = {kb_Yequ, kb_Window, kb_Zoom, kb_Trace, kb_Graph};
 	const uint8_t spacing = LCD_WIDTH / NUM_HOMESCREEN_BUTTONS;
 	int i, x;
 	
@@ -142,9 +142,7 @@ static void dispHomeScreenButtons(void)
 	// line on top of bar
 	gfx_SetColor(BLACK);
 	gfx_HorizLine_NoClip(0, LCD_HEIGHT - 25, LCD_WIDTH);
-	
-	kb_ScanGroup(1);
-	
+		
 	fontlib_SetForegroundColor(0);
 	
 	for(i = 0; i < NUM_HOMESCREEN_BUTTONS; i++)
@@ -153,7 +151,7 @@ static void dispHomeScreenButtons(void)
 		{
 			if(kb_Data[1] & keys[i])
 			{
-				gfx_SetColor(DARK_BLUE);
+				gfx_SetColor(LIGHT_BLUE);
 				gfx_FillRectangle_NoClip(i*spacing, LCD_HEIGHT - 24, spacing, 24);
 			}
 		}
