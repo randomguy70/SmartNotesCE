@@ -34,7 +34,7 @@ bool newFile(void)
 		if(fileSlot)
 		{
 			ti_Close(fileSlot);
-			alert("File already exists. So in other words, rejected. Ouch.");
+			alert("File already exists.");
 			return false;
 		}
 		
