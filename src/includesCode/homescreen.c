@@ -34,6 +34,11 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 	{
 		kb_Scan();
 		
+		if(kb_AnyKey())
+		{
+			refreshHomeScreenGraphics(homescreen);
+		}
+		
 		ret = handleHomeScreenKeyPresses(homescreen);
 		
 		if(ret == should_exit || ret == show_editor) 
@@ -281,32 +286,8 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 		return show_editor;
 	}
 	
-	// new file
-	/*
-	if (kb_IsDown(kb_KeyWindow))
-	{
-		if(homescreen->numFiles < 30)
-		{
-			if(newFile())
-			{
-				homescreen->numFiles = loadFiles(homescreen->files);
-			}
-		}
-		else
-		{
-			alert("You can't have more than 30 files.");
-			
-			refreshHomeScreenGraphics(homescreen);
-			return show_homescreen;
-		}
-		
-		refreshHomeScreenGraphics(homescreen);
-		return show_homescreen;
-	}
-	*/
-	
 	// delete file
-	if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel)))
+	if (kb_IsDown(kb_KeyDel))
 	{
 		if(homescreen->numFiles <= 0)
 		{
