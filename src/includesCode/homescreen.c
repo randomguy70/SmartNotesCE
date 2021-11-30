@@ -282,6 +282,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 	}
 	
 	// new file
+	/*
 	if (kb_IsDown(kb_KeyWindow))
 	{
 		if(homescreen->numFiles < 30)
@@ -302,6 +303,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 		refreshHomeScreenGraphics(homescreen);
 		return show_homescreen;
 	}
+	*/
 	
 	// delete file
 	if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel)))
@@ -389,8 +391,8 @@ static struct menu *loadHomeScreenFileMenu(void)
 		.title = "Options",
 		.width = 100,
 		.height = MENU_ENTRY_SPACING * numOptions + WINDOW_BORDER_THICKNESS,
-		.x = LCD_WIDTH - width,
-		.y = width,
+		.x = LCD_WIDTH - width + 1,
+		.y = 73,
 		.numOptions = 7,
 		.hasSprites = false,
 		

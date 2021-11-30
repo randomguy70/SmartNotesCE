@@ -204,8 +204,11 @@ bool alert(char *txt) {
 
 
 // XXX
-int displayMenu(struct menu *menu) {
+int displayMenu(struct menu *menu)
+{
 	int selected = 0;
+	bool wasPressed = false;
+	int stringWidth;
 	
 	if(menu->numOptions > MAX_MENU_ENTRIES)
 	{
@@ -213,8 +216,13 @@ int displayMenu(struct menu *menu) {
 	}
 	
 	menu->width = 100; // eventually will be proportional to width of longest entry
+	
+	fontlib_SetWindow(menu->x, menu->y, menu->width, menu->height);
+	
+	while(true)
+	{
+		kb_Scan();
 		
-	while(true) {
 		gfx_Blit(gfx_screen);
 		gfx_SetDraw(gfx_buffer);
 		
@@ -230,10 +238,10 @@ int displayMenu(struct menu *menu) {
 		gfx_HorizLine_NoClip(menu->x, menu->y + 1, menu->width);
 		
 		gfx_VertLine_NoClip(menu->x, menu->y, menu->height);
-		gfx_VertLine_NoClip(menu->x + 1, menu->y, height);
+		gfx_VertLine_NoClip(menu->x + 1, menu->y, menu->height);
 		
-		gfx_VertLine_NoClip(menu->x + menu->width - 1 - WINDOW_BORDER_THICKNESS, menu->y, height);
-		gfx_VertLine_NoClip(menu->x + menu->width - WINDOW_BORDER_THICKNESS, menu->y, height);
+		gfx_VertLine_NoClip(menu->x + menu->width - 1 - WINDOW_BORDER_THICKNESS, menu->y, menu->height);
+		gfx_VertLine_NoClip(menu->x + menu->width - WINDOW_BORDER_THICKNESS, menu->y, menu->height);
 		
 		fontlib_SetForegroundColor(BLACK);
 		
@@ -242,61 +250,65 @@ int displayMenu(struct menu *menu) {
 			// selecting bar
 			if(i == selected)
 			{
-				// fill box
-				gfx_SetColor(LIGHT_GREY);
+				// fill selecting box
+				if(wasPressed == true && !(kb_IsDown(kb_KeyEnter) || kb_IsDown(kb_Key2nd)))
+				{
+					gfx_SetColor(DARK_GREY);
+				}
+				else
+				{
+					gfx_SetColor(LIGHT_GREY);
+				}
+				
 				gfx_FillRectangle_NoClip(menu->x + WINDOW_BORDER_THICKNESS, menu->y + i * MENU_ENTRY_SPACING + WINDOW_BORDER_THICKNESS, menu->width - 2 * WINDOW_BORDER_THICKNESS, MENU_ENTRY_SPACING);
 				
-				// outline box
+				// outline for selecting box
 				gfx_SetColor(BLACK);
 				gfx_Rectangle_NoClip(menu->x + WINDOW_BORDER_THICKNESS, menu->y + i * MENU_ENTRY_SPACING + WINDOW_BORDER_THICKNESS, menu->width - 2 * WINDOW_BORDER_THICKNESS, MENU_ENTRY_SPACING);
 			}
 			
 			// text
-			fontlib_DrawStringXY(menu->entry[i].string, menu->x + 30, menu->y + i * MENU_ENTRY_SPACING + 5);
+			stringWidth = fontlib_GetStringWidth(menu->entry[i].string);
+			fontlib_DrawStringXY(menu->entry[i].string, menu->x + (menu->width / 2 - stringWidth / 2), menu->y + i * MENU_ENTRY_SPACING + 5);
 		}
 		
 		gfx_SwapDraw();
 		
 		// move selecting bar down
-		kb_Scan();
-		if(kb_IsDown(kb_KeyDown) && selected < menu->numOptions -1)
+		if(kb_IsDown(kb_KeyDown) && selected < menu->numOptions - 1)
 		{
 			selected++;
-			if(selected > offset+maxOnScrn){
-				offset++;
-			}
-			delay(100);
+			delay(200);
 		}
 		
 		// move selecter bar up
-		if(kb_IsDown(kb_KeyUp) && selected>0)
+		else if(kb_IsDown(kb_KeyUp) && selected>0)
 		{
 			selected--;
-			if(selected < offset){
-				offset--;
-			}
-			delay(100);
+			delay(200);
 		}
 		
 		// select an option
-		if(kb_IsDown(kb_KeyEnter) || kb_IsDown(kb_Key2nd))
+		if(wasPressed == true && !(kb_IsDown(kb_KeyEnter) || kb_IsDown(kb_Key2nd)))
 		{
 			return selected + 1;
 		}
 		
-		// quit the menu (once the clear key has been released)
+		// quit the menu (once every key has been released)
 		if(kb_IsDown(kb_KeyClear))
 		{
 			while(kb_AnyKey()) kb_Scan();
 			return CANCEL;
 		}
 		
+		wasPressed = (kb_IsDown(kb_Key2nd) || kb_IsDown(kb_KeyEnter));
 	}
 	
 	return 0;
 };
 
-int drawScrollbar(struct scrollBar * scrollBar) {
+int drawScrollbar(struct scrollBar * scrollBar)
+{
 	gfx_SetColor(scrollBar->colorIndex);
 	
 	for(uint8_t i=0; i<scrollBar->width; i++) {
