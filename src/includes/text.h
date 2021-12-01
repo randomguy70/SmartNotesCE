@@ -6,7 +6,6 @@ extern "C" {
 #endif
 
 #include "includes/buffer.h"
-#include "includes/editor.h"
 
 enum textMode {
 	MATH = 1,

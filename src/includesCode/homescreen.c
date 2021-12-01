@@ -101,18 +101,18 @@ static void dispHomeScreenBG(void)
 	
 	for(uint8_t i = 0; i<11; i++)
 	{
-		gfx_HorizLine_NoClip(0, i*20, SCRN_WIDTH);
-		gfx_HorizLine_NoClip(0, i*20+1, SCRN_WIDTH);
+		gfx_HorizLine_NoClip(0, i*20, LCD_WIDTH);
+		gfx_HorizLine_NoClip(0, i*20+1, LCD_WIDTH);
 	}
 
 	// name and credits
 	fontlib_SetForegroundColor(DARK_BLUE);
 	width = fontlib_GetStringWidth("SMARTNOTES CE");
-	fontlib_DrawStringXY("SMARTNOTES CE", (SCRN_WIDTH/2)-(width/2), 5);
+	fontlib_DrawStringXY("SMARTNOTES CE", (LCD_WIDTH/2)-(width/2), 5);
 	
 	fontlib_SetForegroundColor(BLACK);
 	width = fontlib_GetStringWidth("V.1 by Randomguy");
-	fontlib_DrawStringXY("V.1 by Randomguy", (SCRN_WIDTH/2)-(width/2), 25);
+	fontlib_DrawStringXY("V.1 by Randomguy", (LCD_WIDTH/2)-(width/2), 25);
 	
 	// box with file names
 	gfx_SetColor(WHITE);

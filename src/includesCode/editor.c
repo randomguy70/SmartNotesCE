@@ -24,14 +24,16 @@ enum state dispEditor(struct editor *editor) {
 	
 	initialiseEditor(editor);
 	
-	getVisibleLinePtrs(editor);
+	// getVisibleLinePtrs(editor);
 	
 	while(true)
 	{
 		kb_Scan();
 		
+		gfx_SetDraw(gfx_buffer);
 		dispEditorBK(editor);
-				
+		gfx_SwapDraw();
+		
 		ret = handleEditorKeyPresses();
 		
 		if(ret == should_exit || show_homescreen)
@@ -63,7 +65,6 @@ static void dispEditorBK(struct editor *editor)
 {
 	int strWidth; // used for centering strings
 	
-	gfx_SetDraw(gfx_buffer);
 	gfx_FillScreen(WHITE);
 	
 	// header rectangle fill

@@ -100,8 +100,8 @@ bool alert(char *txt) {
 	uint8_t maxLines = 4;
 	int width = 150; 
 	int height = (2*fontHeight)+(maxLines*fontHeight); // height of the window. has 2 extra line spaces for a header
-	int x = SCRN_WIDTH/2 - width/2;
-	int y = SCRN_HEIGHT/2 - height/2;
+	int x = LCD_WIDTH/2 - width/2;
+	int y = LCD_HEIGHT/2 - height/2;
 	
 	// text vars
 	int headerX;
@@ -135,7 +135,7 @@ bool alert(char *txt) {
 	// header text
 	const char *headerTxt = "Warning";
 	headerY = y-1;
-	headerX = (SCRN_WIDTH/2) - (fontlib_GetStringWidth(headerTxt)/2);
+	headerX = (LCD_WIDTH/2) - (fontlib_GetStringWidth(headerTxt)/2);
 	fontlib_SetCursorPosition(headerX, headerY);
 	fontlib_SetForegroundColor(RED);
 	fontlib_DrawString(headerTxt);
@@ -143,8 +143,8 @@ bool alert(char *txt) {
 	// header line
 	uint8_t length = 100;
 	gfx_SetColor(LIGHT_BLUE);
-	gfx_HorizLine(SCRN_WIDTH/2-length/2, y+fontHeight-1, length);
-	gfx_HorizLine(SCRN_WIDTH/2-length/2, y+fontHeight, length);
+	gfx_HorizLine(LCD_WIDTH/2-length/2, y+fontHeight-1, length);
+	gfx_HorizLine(LCD_WIDTH/2-length/2, y+fontHeight, length);
 	
 	// reset the cursor position
 	fontlib_SetCursorPosition(txtX, txtY);
