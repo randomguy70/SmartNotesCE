@@ -27,8 +27,6 @@ extern "C" {
 #define EDITOR_TEXT_BOX_WIDTH     LCD_WIDTH
 #define EDITOR_TEXT_BOX_HEIGHT    LCD_HEIGHT - (EDITOR_HEADER_BAR_HEIGHT + EDITOR_FOOTER_BAR_HEIGHT)
 
-struct textBox;
-
 struct editor {
 	struct file file;
 	struct buffer buffer;
@@ -39,9 +37,6 @@ struct editor {
 enum state dispEditor(struct editor* editor);
 
 static int initialiseEditor(struct editor *editor);
-
-// get the pointers to the lines on screen
-static int getTextBoxLinePointers(struct textBox *textBox);
 
 // gets the pointers to the start of each line in the file, as well as their byte offset from the text origin
 int getLinePtrs(struct buffer *buffer);
