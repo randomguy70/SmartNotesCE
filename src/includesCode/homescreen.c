@@ -17,6 +17,7 @@ static void dispHomeScreenButtons(void);
 static void refreshHomeScreenGraphics(struct homescreen *homescreen);
 static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen);
 static uint8_t loadFiles(struct file files[]);
+static struct menu *loadHomeScreenAboutMenu(void);
 static struct menu *loadHomeScreenFileMenu(void);
 
 enum state dispHomeScreen(struct homescreen* homescreen)
@@ -34,10 +35,7 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 	{
 		kb_Scan();
 		
-		if(kb_AnyKey())
-		{
-			refreshHomeScreenGraphics(homescreen);
-		}
+		refreshHomeScreenGraphics(homescreen);
 		
 		ret = handleHomeScreenKeyPresses(homescreen);
 		
@@ -178,14 +176,8 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 {
 	// quit
 	if(kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyYequ)) 
-	{
-		// refresh so that you can see the quit button being highlighted
-		refreshHomeScreenGraphics(homescreen);
-		
-		while(kb_AnyKey())
-		{
-			kb_Scan();
-		}
+	{	
+		while(kb_AnyKey()) kb_Scan();
 		return should_exit;
 	}
 	
@@ -195,13 +187,13 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 		homescreen->selectedFile = 0;
 		homescreen->offset = 0;
 		homescreen->numFiles = loadFiles(homescreen->files);
-		refreshHomeScreenGraphics(homescreen);
 		
 		return show_homescreen;
 	}
 	
 	// File Options Menu
-	if(kb_IsDown(kb_KeyGraph)) {
+	if(kb_IsDown(kb_KeyGraph))
+	{
 		
 		struct menu* menu = loadHomeScreenFileMenu();
 		uint8_t result = displayMenu(menu);
@@ -251,6 +243,19 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 		}
 	}
 	
+	// About Menu
+	if(kb_IsDown(kb_KeyZoom))
+	{
+		struct menu* menu = loadHomeScreenAboutMenu();
+		uint8_t result = displayMenu(menu);
+		
+		switch (result)
+		{
+			default: break;
+		}
+		return show_homescreen;
+	}
+	
 	// move cursor down
 	if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1)
 	{
@@ -259,7 +264,6 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 			homescreen->offset++;
 		}
 		
-		refreshHomeScreenGraphics(homescreen);
 		return show_homescreen;
 	}
 	
@@ -271,7 +275,6 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 			homescreen->offset--;
 		}
 		
-		refreshHomeScreenGraphics(homescreen);
 		return show_homescreen;
 	}
 	
@@ -292,7 +295,6 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 		if(homescreen->numFiles <= 0)
 		{
 			alert("There aren't any files to delete!");
-			refreshHomeScreenGraphics(homescreen);
 			return show_homescreen;
 		}
 		
@@ -313,11 +315,9 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 		}
 		
 		homescreen->numFiles = loadFiles(homescreen->files);
-		refreshHomeScreenGraphics(homescreen);
 		return show_homescreen;
 	}
 	
-	refreshHomeScreenGraphics(homescreen);
 	return show_homescreen;
 }
 
@@ -343,11 +343,16 @@ static uint8_t loadFiles(struct file files[]) {
 
 static struct menu *loadHomeScreenAboutMenu(void)
 {
+	const int width = 90;
+	const int height = 62;
+	
 	static struct menu menu = 
 	{
 		.title = "About",
-		.x = 64 * 3,
-		.y = 100,
+		.x = (64*2) + ((LCD_WIDTH / NUM_HOMESCREEN_BUTTONS) / 2) - (width / 2),
+		.y = LCD_HEIGHT - height - 25,
+		.width = width,
+		.height = height,
 		.numOptions = 3,
 		.hasSprites = false,
 		

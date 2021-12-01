@@ -251,7 +251,7 @@ int displayMenu(struct menu *menu)
 			if(i == selected)
 			{
 				// fill selecting box
-				if(wasPressed == true && !(kb_IsDown(kb_KeyEnter) || kb_IsDown(kb_Key2nd)))
+				if(kb_IsDown(kb_KeyEnter) || kb_IsDown(kb_Key2nd))
 				{
 					gfx_SetColor(DARK_GREY);
 				}
