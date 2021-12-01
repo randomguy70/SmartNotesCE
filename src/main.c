@@ -38,7 +38,6 @@ int main(void) {
 	struct homescreen homescreen;
 	struct editor editor;
 	enum state state = show_homescreen;
-	enum state prevState = state;
 	
 	state = show_homescreen;
 	

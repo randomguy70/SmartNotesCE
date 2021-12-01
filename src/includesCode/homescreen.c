@@ -28,9 +28,6 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 	homescreen->offset = 0;
 	homescreen->numFiles = loadFiles(homescreen->files);
 	
-	kb_Scan();
-	refreshHomeScreenGraphics(homescreen);
-	
 	while(true)
 	{
 		kb_Scan();
@@ -39,7 +36,7 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 		
 		ret = handleHomeScreenKeyPresses(homescreen);
 		
-		if(ret == should_exit || ret == show_editor) 
+		if(ret == should_exit || ret == show_editor)
 		{
 			return ret;
 		}
@@ -58,11 +55,18 @@ static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uin
 	{
 		if (selectedFile == i)
 		{
-			// leave some pixels at the edge of the window for the scrollbar
-			gfx_SetColor(LIGHT_GREY);
-			gfx_FillRectangle_NoClip(FILE_VIEWER_X + 2, fileY - 1, FILE_VIEWER_WIDTH - 4, 15);
+			if(kb_IsDown(kb_Key2nd) || kb_IsDown(kb_KeyEnter))
+			{
+				gfx_SetColor(DARK_GREY);
+			}
+			else
+			{
+				gfx_SetColor(LIGHT_GREY);
+			}
+			
+			gfx_FillRectangle_NoClip(FILE_VIEWER_X + WINDOW_BORDER_THICKNESS, fileY - 1, FILE_VIEWER_WIDTH - 4, 15);
 			gfx_SetColor(BLACK);
-			gfx_Rectangle_NoClip(FILE_VIEWER_X + 2, fileY - 1, FILE_VIEWER_WIDTH - 4, 15);
+			gfx_Rectangle_NoClip(FILE_VIEWER_X + WINDOW_BORDER_THICKNESS, fileY - 1, FILE_VIEWER_WIDTH - 4, 15);
 		}
 		
 		fontlib_SetForegroundColor(BLACK);
@@ -284,13 +288,8 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 	}
 	
 	// open file
-	if(kb_IsDown(kb_KeyYequ)|| kb_IsDown(kb_Key2nd) || kb_IsDown(kb_KeyEnter))
+	if(kb_IsDown(kb_KeyEnter) || kb_IsDown(kb_Key2nd))
 	{
-		if(homescreen->numFiles <= 0)
-		{
-			return show_homescreen;
-		}
-		
 		return show_editor;
 	}
 	
@@ -326,7 +325,8 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 	return show_homescreen;
 }
 
-static uint8_t loadFiles(struct file files[]) {
+static uint8_t loadFiles(struct file files[])
+{
 	uint8_t numFiles = 0;
 	char *namePtr = NULL;
 	void *search_pos = NULL;
@@ -374,8 +374,8 @@ static struct menu *loadHomeScreenAboutMenu(void)
 
 static struct menu *loadHomeScreenFileMenu(void)
 {
-	const width = 100;
-	const numOptions = 7;
+	const int width = 100;
+	const int numOptions = 7;
 	
 	static struct menu menu =
 	{

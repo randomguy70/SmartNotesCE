@@ -1,18 +1,18 @@
-#include "main.h"
-#include <includes/editor.h>
-
 #include <fontlibc.h>
 #include <graphx.h>
 #include <keypadc.h>
 #include <fontlibc.h>
 #include <fileioc.h>
 
-#include <includes/file.h>
-#include <includes/text.h>
-#include <includes/characters.h>
-#include <includes/ui.h>
-#include <includes/colors.h>
+#include "main.h"
+#include "includes/editor.h"
+#include "includes/file.h"
+#include "includes/text.h"
+#include "includes/characters.h"
+#include "includes/ui.h"
+#include "includes/colors.h"
 
+static int initialiseEditor(struct editor *editor);
 static void dispEditorBK();
 // static void dispEditorText(struct editor* editor);
 static enum state handleEditorKeyPresses(void);
@@ -28,19 +28,26 @@ enum state dispEditor(struct editor *editor) {
 	
 	while(true)
 	{
-		kb_Scan();
 		
 		gfx_SetDraw(gfx_buffer);
 		dispEditorBK(editor);
-		gfx_SwapDraw();
+		gfx_Blit(gfx_buffer);
 		
-		ret = handleEditorKeyPresses();
+		kb_Scan();
 		
-		if(ret == should_exit || show_homescreen)
+		if(kb_IsDown(kb_KeyClear))
 		{
-			return ret;
+			while(kb_AnyKey()) kb_Scan();
+			return show_homescreen;
+		}
+		
+		if(ret == should_exit)
+		{
+			return should_exit;
 		}
 	}
+	
+	return ret;
 }
 
 static int initialiseEditor(struct editor *editor)
@@ -57,7 +64,9 @@ static int initialiseEditor(struct editor *editor)
 // XXX 
 static unsigned int getVisibleLinePtrs(struct editor *editor)
 {
+	unsigned int numVisibleLines = 0;
 	
+	return numVisibleLines;
 }
 
 // displays the editor background
@@ -123,8 +132,7 @@ static enum state handleEditorKeyPresses(void)
 	}
 	
 	if(kb_IsDown(kb_Key2nd)) {
-		alert("Exiting Editor...");
-		return show_editor;
+		return show_homescreen;
 	}
 	
 	return show_editor;
