@@ -6,13 +6,7 @@ extern "C" {
 #endif
 
 #include "includes/buffer.h"
-
-#define EDITOR_MAX_LINES_VIEWABLE 15
-#define EDITOR_HEADER_BAR_HEIGHT  20
-#define EDITOR_FOOTER_BAR_HEIGHT  20
-#define EDITOR_TEXT_BOX_Y         EDITOR_HEADER_BAR_HEIGHT
-#define EDITOR_TEXT_BOX_WIDTH     LCD_WIDTH
-#define EDITOR_TEXT_BOX_HEIGHT    LCD_HEIGHT - (EDITOR_HEADER_BAR_HEIGHT + EDITOR_FOOTER_BAR_HEIGHT)
+#include "includes/editor.h"
 
 enum textMode {
 	MATH = 1,
@@ -28,23 +22,19 @@ struct inputState {
 struct textBox {
 	int x, y, width, height;
 	
-	char *startOfText;
-	int textLength;
+	int curLine, curCol;
 	
-	int numLines;
 	int numLinesOnScreen;
-	int maxLinesOnScreen;
 	int lineOffset;
 	
-	// holds the pointers to the lines on screen
-	char *linePointers[EDITOR_MAX_LINES_VIEWABLE + 1];
-	uint8_t lineLengths[EDITOR_MAX_LINES_VIEWABLE + 1];
+	uint8_t prevLinePtr;
+	uint8_t prevLineLen;
+	uint8_t visiblelineLengths[11];
 };
 
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title);
 
 // inputChar() returns the last character inputted based on the value of the current os_GetSCS() value, and the current text mode.
-
 // text Modes are:
 // 1) Math related ascii characters, such as {} () */+-="?,. etc...
 // 2) Capital ascii letters, such as ABC...

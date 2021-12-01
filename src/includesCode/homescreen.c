@@ -187,7 +187,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 		homescreen->selectedFile = 0;
 		homescreen->offset = 0;
 		homescreen->numFiles = loadFiles(homescreen->files);
-		
+				
 		return show_homescreen;
 	}
 	
@@ -203,6 +203,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 			// New
 			case 1:
 				newFile();
+				homescreen->numFiles = loadFiles(homescreen->files);
 				break;
 			
 			// Open
@@ -217,9 +218,10 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 					bool result = renameFile(homescreen->files[homescreen->selectedFile].os_name);
 					if(result)
 					{
-						loadFiles(homescreen->files);
+						homescreen->numFiles = loadFiles(homescreen->files);
 						break;
 					}
+					
 					alert("Something went wrong. Tough luck, buddy.");
 					break;
 				}
@@ -230,20 +232,23 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 			// Delete
 			case 4:
 				checkIfDeleteFile(homescreen->files[homescreen->selectedFile].os_name);
+				homescreen->numFiles = loadFiles(homescreen->files);
 				break;
 			
 			// (un) Hide
 			case 5: 
 				toggleHiddenStatus(homescreen->files[homescreen->selectedFile].os_name);
-				loadFiles(homescreen->files);
+				homescreen->numFiles = loadFiles(homescreen->files);
 				break;
 			
 			default:
 				break;
 		}
+		
+		return show_editor;
 	}
 	
-	// About Menu
+	// XXX About Menu
 	if(kb_IsDown(kb_KeyZoom))
 	{
 		struct menu* menu = loadHomeScreenAboutMenu();
