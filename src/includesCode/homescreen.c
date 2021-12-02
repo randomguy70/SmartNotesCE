@@ -181,7 +181,6 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 	// quit
 	if(kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyYequ)) 
 	{	
-		while(kb_AnyKey()) kb_Scan();
 		return should_exit;
 	}
 	
