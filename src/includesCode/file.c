@@ -3,11 +3,11 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <includes/file.h>
-#include <includes/text.h>
-#include <includes/ui.h>
-#include <includes/editor.h>
-#include <includes/buffer.h>
+#include "includes/file.h"
+#include "includes/text.h"
+#include "includes/ui.h"
+#include "includes/editor.h"
+#include "includes/buffer.h"
 
 uint8_t getNumFiles(const char * txt)
 {
@@ -47,8 +47,6 @@ bool newFile(void)
 		ti_Write(HEADER_STR, 3, 1, fileSlot);
 		ti_SetArchiveStatus(true, fileSlot);
 		ti_Close(fileSlot);
-		
-		alert("wrote to file");
 		
 		return true;
 	}

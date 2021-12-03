@@ -98,14 +98,14 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		// success
 		if (kb_IsDown(kb_KeyEnter) && strLen > 0 && strLen <= maxLength && strlen > 0)
 		{
-			return 1;
+			while(kb_IsDown(kb_KeyEnter)) kb_Scan();
+			return 0;
 		}
 		
 		// quit
 		if (kb_IsDown(kb_KeyClear))
 		{
-			while(kb_AnyKey()) kb_Scan();
-			
+			while(kb_IsDown(kb_KeyClear)) kb_Scan();
 			return 0;
 		}
 		
@@ -128,6 +128,8 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 			strLen--;
 		}
 	}
+	
+	return 0;
 }
 
 char inputChar(enum textMode mode, uint8_t keyPressed)

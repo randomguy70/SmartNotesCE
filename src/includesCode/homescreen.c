@@ -205,9 +205,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 		{
 			// New
 			case 1:
-				alert("about to make new file");
 				newFile();
-				alert("made new file");
 				homescreen->numFiles = loadFiles(homescreen->files);
 				break;
 			
@@ -220,14 +218,17 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 				if(homescreen->numFiles>0)
 				{
 					bool result = renameFile(homescreen->files[homescreen->selectedFile].os_name);
+					
 					if(result)
 					{
 						homescreen->numFiles = loadFiles(homescreen->files);
 						break;
 					}
-					
-					alert("Something went wrong. Tough luck, buddy.");
-					break;
+					else
+					{
+						alert("Something went wrong. Tough luck, buddy.");
+						break;
+					}
 				}
 				
 				alert("There aren't any files to rename (obviously)!");
