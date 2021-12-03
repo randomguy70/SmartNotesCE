@@ -2,53 +2,33 @@
 
 #include "includes/buffer.h"
 
+// I will switch to gap buffer method later, but for now...
 int fileToBuffer(const char *name, struct buffer *buffer) {
-	ti_var_t file_slot;
-	int data_to_transfer;
+	ti_var_t fileSlot;
+	int dataSize;
 	
-	file_slot = ti_Open(name, "r");
+	fileSlot = ti_Open(name, "r");
+	if(!fileSlot) return 0;
 	
-	if(!file_slot) {
-		ti_Close(file_slot);
-		return 0;
-	}
+	dataSize = ti_GetSize(fileSlot);
+	ti_Seek(MIN_FILE_SIZE, SEEK_SET, fileSlot);
+	ti_Read(buffer->buffer, dataSize, 1, fileSlot);
+	ti_Close(fileSlot);
 	
-	data_to_transfer = ti_GetSize(file_slot) - 3;
-	
-	if (data_to_transfer > MAX_BUFFER_SIZE)
-	{
-		data_to_transfer = MAX_BUFFER_SIZE;
-	}
-	
-	ti_Seek(MIN_FILE_SIZE, SEEK_SET, file_slot);
-	ti_Read(buffer->buf1, data_to_transfer, 1, file_slot);
-	ti_Close(file_slot);
-	
-	buffer->total_size = data_to_transfer;
-	buffer->buf1_size = data_to_transfer;
-	buffer->buf2_size = 0;
-	
-	return data_to_transfer;
+	return dataSize;
 }
 
+// I will switch to gap buffer method later, but for now...
 int bufferToFile(struct buffer *buffer, char *name) {
-	ti_var_t file_slot;
+	ti_var_t fileSlot;
 	
-	file_slot = ti_Open(name, "w");
+	fileSlot = ti_Open(name, "w+");
+	if(!fileSlot) return 0;
 	
-	if(!file_slot) {
-		ti_Close(file_slot);
-		return 0;
-	}
+	ti_Seek(0, SEEK_SET, fileSlot);
+	ti_Write(HEADER_STR, sizeof HEADER_STR, 1, fileSlot);
+	ti_Write(buffer->buffer, buffer->dataSize, 1, fileSlot);
+	ti_Close(fileSlot);
 	
-	ti_Seek(MIN_FILE_SIZE, SEEK_SET, file_slot);
-	ti_Write("TXT", 3, 1, file_slot);
-	
-	ti_Seek(MIN_FILE_SIZE, SEEK_SET, file_slot);
-	ti_Write(buffer->buf1, buffer->buf1_size, 1, file_slot);
-	ti_Write(buffer->buf2, buffer->buf2_size, 1, file_slot);
-	
-	ti_Close(file_slot);
-	
-	return MIN_FILE_SIZE + buffer->buf1_size + buffer->buf2_size;
+	return MIN_FILE_SIZE + buffer->dataSize;
 }

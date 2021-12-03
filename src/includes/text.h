@@ -48,8 +48,6 @@ int fontlib_copyWord(char * dest, char * src);
 int fontlib_copyWordL(char *dest, char *src, int chars);
 int fontlib_strlen(char *string);
 
-int drawSpace();
-
 void updateInputMode(struct inputState *inputState);
 void displayTextMode(int x, int y, enum textMode textMode);
 
@@ -57,7 +55,8 @@ int textBox_getVisibleLinePointers(struct textBox *textBox);
 
 bool isValidWordChar(char character);
 
-int getWordLen(char *pos, struct buffer *buffer);
+int getWordLen(char *start);
+int getLineLen(char *start);
 
 // returns num characters with NO word wrapping
 int getMaxCharsPerLine(char *start, char *end);
