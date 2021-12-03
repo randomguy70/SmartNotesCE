@@ -47,6 +47,9 @@ bool newFile(void)
 		ti_Write(HEADER_STR, 3, 1, fileSlot);
 		ti_SetArchiveStatus(true, fileSlot);
 		ti_Close(fileSlot);
+		
+		alert("wrote to file");
+		
 		return true;
 	}
 	
@@ -61,7 +64,7 @@ bool checkIfDeleteFile(char *name)
 	
 	if(alert(message) == true)
 	{
-		if(ti_Delete(name) == true)
+		if(ti_Delete(name) != 0)
 		{
 			return true;
 		}
@@ -70,7 +73,9 @@ bool checkIfDeleteFile(char *name)
 			alert("Error encountered.");
 			return false;
 		}
-	}	
+	}
+	
+	return false;
 }
 
 bool renameFile(const char *name)

@@ -205,14 +205,15 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 		{
 			// New
 			case 1:
+				alert("about to make new file");
 				newFile();
+				alert("made new file");
 				homescreen->numFiles = loadFiles(homescreen->files);
 				break;
 			
 			// Open
 			case 2:
 				return show_editor;
-				break;
 			
 			// rename
 			case 3:
@@ -248,7 +249,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 				break;
 		}
 		
-		return show_editor;
+		return show_homescreen;
 	}
 	
 	// XXX About Menu
