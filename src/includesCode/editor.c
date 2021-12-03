@@ -64,10 +64,10 @@ static int initialiseEditor(struct editor *editor)
 static unsigned int getVisibleLinePtrs(struct editor *editor)
 {
 	unsigned int numVisibleLines = 0;
+	int lineLen;
 	
 	while(numVisibleLines <= EDITOR_MAX_LINES_VIEWABLE)
 	{
-		
 	}
 	
 	return numVisibleLines;

@@ -40,14 +40,6 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title);
 // 3) Lowercase ascii letters, such as abc...
 char inputChar(enum textMode mode, uint8_t keyPressed);
 
-// returns the number of characters in a word terminated with a null character or alternate stop code
-int fontlib_GetStrLen(const char *string);
-
-void fontlib_DrawStringXY(const char *str, int x, int y);
-int fontlib_copyWord(char * dest, char * src);
-int fontlib_copyWordL(char *dest, char *src, int chars);
-int fontlib_strlen(char *string);
-
 void updateInputMode(struct inputState *inputState);
 void displayTextMode(int x, int y, enum textMode textMode);
 
@@ -56,7 +48,11 @@ int textBox_getVisibleLinePointers(struct textBox *textBox);
 bool isValidWordChar(char character);
 
 int getWordLen(char *start);
-int getLineLen(char *start);
+int getLineLen(char *start, int maxWidth);
+
+void fontlib_DrawStringXY(const char *str, int x, int y);
+void fontlib_DrawStringLXY(const char *str, int length, int x, int y);
+int drawLine(char *start, int x, int y);
 
 // returns num characters with NO word wrapping
 int getMaxCharsPerLine(char *start, char *end);

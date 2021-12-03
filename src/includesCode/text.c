@@ -179,19 +179,8 @@ char inputChar(enum textMode mode, uint8_t keyPressed)
 	return character;
 }
 
-int fontlib_strlen(char *string)
-{
-	int i = 0;
-	
-	while(string[i]!='\0' && string[i] != fontlib_GetAlternateStopCode())
-	{
-		i++;
-	}
-	
-	return i;
-}
 
-// finds the character length of the next word in a file buffer
+// returns the character length of the next word
 int getWordLen(char *start)
 {
 	int len = 0;
@@ -212,7 +201,8 @@ int getWordLen(char *start)
 	return 0;
 }
 
-int getLineLen(char *start)
+// returns the character lengt of the next line
+int getLineLen(char *start, int maxWidth)
 {
 	char *pos = start;
 	int wordLen;
@@ -220,23 +210,31 @@ int getLineLen(char *start)
 	int lineLen;
 	int lineWidth;
 	
+	fontlib_SetAlternateStopCode(' ');
+	
 	while(true)
 	{
 		START:
 		
+		// check for extra stop codes (new line, etc...)
+		if(*pos == '\n')
+		{
+			return lineLen;
+		}
+		
 		wordLen = getWordLen(pos);
-		wordWidth = fontlib_GetStringWidth(pos);
+		wordWidth = fontlib_GetStringWidthL(pos, wordLen);
 		
 		// if word doesn't fit on to line and line already has at least 1 word
-		if(lineWidth + wordWidth > EDITOR_TEXT_BOX_WIDTH && lineLen > 0)
+		if(lineWidth + wordWidth > maxWidth && lineLen > 0)
 		{
 			return lineLen;
 		}
 		
 		// if word is too long for line but the line doesn't have anything on it yet
-		else if(lineWidth + wordWidth > EDITOR_TEXT_BOX_WIDTH && lineLen <= 0)
+		else if(lineWidth + wordWidth > maxWidth && lineLen <= 0)
 		{
-			while(fontlib_GetStringWidthL(pos, lineLen) <= EDITOR_TEXT_BOX_WIDTH)
+			while(fontlib_GetStringWidthL(pos, lineLen) <= maxWidth)
 			{
 				lineLen++;
 			}
@@ -244,9 +242,9 @@ int getLineLen(char *start)
 		}
 		
 		// if word fits on line
-		else if(lineWidth + wordWidth <= EDITOR_TEXT_BOX_WIDTH)
+		else if(lineWidth + wordWidth <= maxWidth)
 		{
-			pos += wordLen;
+			pos += wordLen + 1;
 			lineLen += wordLen;
 			lineWidth += wordWidth;
 			
@@ -263,6 +261,16 @@ int getLineLen(char *start)
 	return lineLen;
 }
 
+int drawLine(char *start, int x, int y)
+{
+	int len = getLineLen(start, EDITOR_TEXT_BOX_WIDTH);
+	
+	fontlib_SetAlternateStopCode('\0');
+	fontlib_DrawStringLXY(start, len, x, y);
+	
+	return len;
+}
+
 void fontlib_DrawStringXY(const char *str, int x, int y)
 {
 	fontlib_SetCursorPosition(x, y);
@@ -270,20 +278,16 @@ void fontlib_DrawStringXY(const char *str, int x, int y)
 	return;
 }
 
-// XXX NEEDS TO BE CONVERTED TO THE NEW BUFFER FORMAT
-int copyWordL(char *dest, char *src, int chars)
+void fontlib_DrawStringLXY(const char *str, int length, int x, int y)
 {
-	int pos = 0;
+	fontlib_SetCursorPosition(x, y);
 	
-	while(pos < chars && src[pos] != '\0' && src[pos] != ' ')
+	int i = 0;
+	while(i < length && str[i] != fontlib_GetAlternateStopCode() && str[i] != '\n' && str[i] != '\0')
 	{
-		dest[pos] = src[pos];
-		pos++;
-	}
-	
-	dest[pos] = '\0';
-	
-	return pos;
+		fontlib_DrawGlyph(str[i]);
+		i++;
+	}	
 }
 
 bool isValidWordChar(char character)
@@ -295,6 +299,7 @@ bool isValidWordChar(char character)
 	
 	return false;
 }
+
 
 void displayTextMode(int x, int y, enum textMode textMode)
 {
