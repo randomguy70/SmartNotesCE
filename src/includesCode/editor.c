@@ -24,11 +24,10 @@ enum state dispEditor(struct editor *editor) {
 	
 	initialiseEditor(editor);
 	
-	// getVisibleLinePtrs(editor);
+	getVisibleLinePtrs(editor);
 	
 	while(true)
 	{
-		
 		gfx_SetDraw(gfx_buffer);
 		dispEditorBK(editor);
 		gfx_Blit(gfx_buffer);
@@ -65,6 +64,11 @@ static int initialiseEditor(struct editor *editor)
 static unsigned int getVisibleLinePtrs(struct editor *editor)
 {
 	unsigned int numVisibleLines = 0;
+	
+	while(numVisibleLines <= EDITOR_MAX_LINES_VIEWABLE)
+	{
+		
+	}
 	
 	return numVisibleLines;
 }

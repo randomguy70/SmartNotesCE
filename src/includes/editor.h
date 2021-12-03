@@ -32,6 +32,8 @@ struct editor {
 	struct file file;
 	struct buffer buffer;
 	struct textBox textBox;
+	char *pos;
+	int visibleLineLengths[EDITOR_MAX_LINES_VIEWABLE];
 };
 
 enum state dispEditor(struct editor* editor);
