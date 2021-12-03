@@ -222,6 +222,8 @@ int getLineLen(char *start)
 	
 	while(true)
 	{
+		START:
+		
 		wordLen = getWordLen(pos);
 		wordWidth = fontlib_GetStringWidth(pos);
 		
@@ -230,12 +232,35 @@ int getLineLen(char *start)
 		{
 			return lineLen;
 		}
-		// if word does fit on line
+		
+		// if word is too long for line but the line doesn't have anything on it yet
+		else if(lineWidth + wordWidth > EDITOR_TEXT_BOX_WIDTH && lineLen <= 0)
+		{
+			while(fontlib_GetStringWidthL(pos, lineLen) <= EDITOR_TEXT_BOX_WIDTH)
+			{
+				lineLen++;
+			}
+			return lineLen;
+		}
+		
+		// if word fits on line
 		else if(lineWidth + wordWidth <= EDITOR_TEXT_BOX_WIDTH)
 		{
+			pos += wordLen;
+			lineLen += wordLen;
+			lineWidth += wordWidth;
 			
+			goto START;
+		}
+		
+		// shouldn't ever get here but you never know...
+		else
+		{
+			return lineLen;
 		}
 	}
+	
+	return lineLen;
 }
 
 void fontlib_DrawStringXY(const char *str, int x, int y)
