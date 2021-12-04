@@ -181,6 +181,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 	// quit
 	if(kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyYequ)) 
 	{	
+		while(kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyYequ)) kb_Scan();
 		return should_exit;
 	}
 	
@@ -197,15 +198,16 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 	// File Options Menu
 	if(kb_IsDown(kb_KeyGraph))
 	{
-		
 		struct menu* menu = loadHomeScreenFileMenu();
 		uint8_t result = displayMenu(menu);
-		
+				
 		switch(result)
 		{
 			// New
 			case 1:
+				alert("making new file");
 				newFile();
+				alert("made new file");
 				homescreen->numFiles = loadFiles(homescreen->files);
 				break;
 			

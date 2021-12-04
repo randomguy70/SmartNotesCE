@@ -44,10 +44,9 @@ bool newFile(void)
 		}
 		
 		ti_Seek(0, SEEK_SET, fileSlot);
-		ti_Write(HEADER_STR, 3, 1, fileSlot);
-		ti_SetArchiveStatus(true, fileSlot);
+		ti_Write(HEADER_STR, sizeof HEADER_STR, 1, fileSlot);
+		// ti_SetArchiveStatus(true, fileSlot); // for some reason this *&*%-ing line of code crashes
 		ti_Close(fileSlot);
-		
 		return true;
 	}
 	

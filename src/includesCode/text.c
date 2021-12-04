@@ -100,7 +100,7 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
 		if (kb_IsDown(kb_KeyEnter) && strLen > 0 && strLen <= maxLength && strlen > 0)
 		{
 			while(kb_IsDown(kb_KeyEnter)) kb_Scan();
-			return 0;
+			return strLen;
 		}
 		
 		// quit
@@ -205,10 +205,10 @@ int getWordLen(char *start)
 int getLineLen(char *start, int maxWidth)
 {
 	char *pos = start;
-	int wordLen;
-	int wordWidth;
-	int lineLen;
-	int lineWidth;
+	int wordLen = 0;
+	int wordWidth = 0;
+	int lineLen = 0;
+	int lineWidth = 0;
 	
 	fontlib_SetAlternateStopCode(' ');
 	
