@@ -47,11 +47,14 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile)
 {
 	uint8_t i;
-	const unsigned int fileX = FILE_VIEWER_X + 5;
-	unsigned int fileY = FILE_VIEWER_Y + 3;
+	int fileX = STARTING_FILE_X;
+	int fileY = STARTING_FILE_Y;
 	
+	// file menu
 	for(i=offset; i < MAX_FILES_VIEWABLE + offset && i<MAX_FILES_LOADABLE && i<numFiles; i++)
 	{
+		// selecting box
+		
 		if (selectedFile == i)
 		{
 			if(kb_IsDown(kb_Key2nd) || kb_IsDown(kb_KeyEnter))
@@ -63,9 +66,8 @@ static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uin
 				gfx_SetColor(LIGHT_GREY);
 			}
 			
-			gfx_FillRectangle_NoClip(FILE_VIEWER_X + WINDOW_BORDER_THICKNESS, fileY - 1, FILE_VIEWER_WIDTH - 4, 15);
-			gfx_SetColor(BLACK);
-			gfx_Rectangle_NoClip(FILE_VIEWER_X + WINDOW_BORDER_THICKNESS, fileY - 1, FILE_VIEWER_WIDTH - 4, 15);
+			gfx_FillRectangle_NoClip(fileX, fileY, STARTING_FILE_WIDTH, FILE_SPACING);
+			gfx_SetColor(BLACK); gfx_Rectangle_NoClip(fileX, fileY, STARTING_FILE_WIDTH, FILE_SPACING);
 		}
 		
 		fontlib_SetForegroundColor(BLACK);
@@ -74,11 +76,13 @@ static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uin
 		fileY += FILE_SPACING;
 	}
 	
+	// RECENTS
+	
 	// display when no files were detected
 	if (numFiles == 0)
 	{
-		char str1[] = "--NO FILES FOUND--)";
-		char str2[] = "That's too bad for you :(";
+		const char *str1 = "--NO FILES FOUND--)";
+		const char *str2 = "That's too bad for you :(";
 		
 		int x1 = (LCD_WIDTH / 2) - (fontlib_GetStringWidth(str1) / 2);
 		int x2 = (LCD_WIDTH / 2) - (fontlib_GetStringWidth(str2) / 2);
@@ -109,20 +113,14 @@ static void dispHomeScreenBG(void)
 	}
 	
 	// name and credits
-	fontlib_SetForegroundColor(DARK_BLUE);
+	fontlib_SetForegroundColor(BLACK);
 	txtWidth = fontlib_GetStringWidth("SMARTNOTES CE");
 	fontlib_DrawStringXY("SMARTNOTES CE", (LCD_WIDTH/2)-(txtWidth/2), 5);
 	
 	fontlib_SetForegroundColor(BLACK);
 	txtWidth = fontlib_GetStringWidth("V.1 by Randomguy");
 	
-	// box with file names
-	// gfx_SetColor(WHITE);
-	// gfx_FillRectangle_NoClip(FILE_VIEWER_X, FILE_VIEWER_Y, FILE_VIEWER_WIDTH, FILE_VIEWER_HEIGHT);
-	// gfx_SetColor(LIGHT_BLUE);
-	// thick_Rectangle(FILE_VIEWER_X, FILE_VIEWER_Y, FILE_VIEWER_WIDTH, FILE_VIEWER_HEIGHT, 2);
-	
-	// rounded rectangle FOR FILE VIEWER BOX
+	// FILE VIEWER BOX with rounded corners
 	
 	// corners
 	gfx_SetColor(MEDIUM_GREY);
@@ -131,20 +129,25 @@ static void dispHomeScreenBG(void)
 	gfx_FillCircle_NoClip(FILE_VIEWER_X + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_HEIGHT - FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS);                       // bottom left
 	gfx_FillCircle_NoClip(FILE_VIEWER_X + FILE_VIEWER_WIDTH - FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_HEIGHT - FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS);   // bottom right
 	
-	// HEADER
+	// header
 	gfx_FillRectangle_NoClip(FILE_VIEWER_X + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y, FILE_VIEWER_WIDTH - (FILE_VIEWER_BORDER_RADIUS * 2), FILE_VIEWER_HEADER_HEIGHT);                // fill between top corners
 	gfx_FillRectangle_NoClip(FILE_VIEWER_X, FILE_VIEWER_Y + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_HEADER_HEIGHT - FILE_VIEWER_BORDER_RADIUS);              // fill top left corner
 	gfx_FillRectangle_NoClip(FILE_VIEWER_X + FILE_VIEWER_WIDTH - FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS + 1, FILE_VIEWER_HEADER_HEIGHT - FILE_VIEWER_BORDER_RADIUS); // fill top right corner
 	
 	fontlib_SetForegroundColor(BLACK);
 	txtWidth = fontlib_GetStringWidth("Files");
-	fontlib_DrawStringXY("Files", FILE_VIEWER_X + (FILE_VIEWER_WIDTH / 4) - (txtWidth / 2), FILE_VIEWER_Y + 2);
+	fontlib_DrawStringXY("Files", FILE_VIEWER_X + (FILE_VIEWER_WIDTH / 4) - (txtWidth / 2), FILE_VIEWER_Y + 4);
 	txtWidth = fontlib_GetStringWidth("Recents");
-	fontlib_DrawStringXY("Recents", FILE_VIEWER_X + (FILE_VIEWER_WIDTH * 3 / 4) - (txtWidth / 2), FILE_VIEWER_Y + 2);
+	fontlib_DrawStringXY("Recents", FILE_VIEWER_X + (FILE_VIEWER_WIDTH * 3 / 4) - (txtWidth / 2), FILE_VIEWER_Y + 4);
 	
-	// BODY
+	// body
 	gfx_SetColor(WHITE);
 	gfx_FillRectangle_NoClip(FILE_VIEWER_X, FILE_VIEWER_Y + FILE_VIEWER_HEADER_HEIGHT + 2, FILE_VIEWER_WIDTH + 1, FILE_VIEWER_HEIGHT - FILE_VIEWER_HEADER_HEIGHT - FILE_VIEWER_BORDER_RADIUS);
+	
+	// files / recents dividor
+	gfx_SetColor(MEDIUM_GREY);
+	gfx_VertLine_NoClip(FILE_VIEWER_DIVIDOR_X, FILE_VIEWER_DIVIDOR_Y, FILE_VIEWER_DIVIDOR_HEIGHT);
+	gfx_VertLine_NoClip(FILE_VIEWER_DIVIDOR_X + 1, FILE_VIEWER_DIVIDOR_Y, FILE_VIEWER_DIVIDOR_HEIGHT);
 	
 	// footer
 	gfx_SetColor(MEDIUM_GREY);
@@ -191,7 +194,7 @@ static void refreshHomeScreenGraphics(struct homescreen *homescreen)
 	gfx_SetDraw(gfx_buffer);
 	dispHomeScreenBG();
 	dispHomeScreenButtons();
-	// dispFiles(homescreen->files, homescreen->numFiles, homescreen->offset, homescreen->selectedFile);
+	dispFiles(homescreen->files, homescreen->numFiles, homescreen->offset, homescreen->selectedFile);
 	gfx_Wait();
 	gfx_SwapDraw();
 }
