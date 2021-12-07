@@ -44,8 +44,7 @@ struct homescreen {
 	uint8_t numFilesDisplayed;
    uint8_t offset;             // the number of files that were scrolled up off the screen
    uint8_t selectedFile;
-   int timeOfLastScroll;
-   int timeSinceLastScroll;
+   bool wasScrolled;
 };
 
 // displays homescreen and deals with all the homescreen functions and options

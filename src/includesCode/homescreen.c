@@ -26,6 +26,7 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 	homescreen->selectedFile = 0;
 	homescreen->offset = 0;
 	homescreen->numFiles = loadFiles(homescreen->files);
+	homescreen->wasScrolled = false;
 	
 	while(true)
 	{
@@ -48,7 +49,6 @@ static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uin
 {
 	uint8_t i;
 	int txtWidth;
-	char *name;
 	int fileX = STARTING_FILE_X;
 	int fileY = STARTING_FILE_Y;
 	
@@ -177,6 +177,11 @@ static void dispHomeScreenBG(void)
 	gfx_VertLine_NoClip(FILE_VIEWER_X, FILE_VIEWER_Y + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_HEIGHT - 2*FILE_VIEWER_BORDER_RADIUS);                      // left
 	gfx_VertLine_NoClip(FILE_VIEWER_X + FILE_VIEWER_WIDTH, FILE_VIEWER_Y + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_HEIGHT - 2*FILE_VIEWER_BORDER_RADIUS);  // right
 	gfx_HorizLine_NoClip(FILE_VIEWER_X + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_HEIGHT, FILE_VIEWER_WIDTH - 2*FILE_VIEWER_BORDER_RADIUS); // bottom
+	
+	// separate btwn header & body
+	gfx_SetColor(BLACK);
+	gfx_HorizLine_NoClip(FILE_VIEWER_X, FILE_VIEWER_Y + FILE_VIEWER_HEADER_HEIGHT - 1, FILE_VIEWER_WIDTH);
+	// gfx_HorizLine_NoClip(FILE_VIEWER_X, FILE_VIEWER_Y + FILE_VIEWER_HEADER_HEIGHT, FILE_VIEWER_WIDTH);
 	
 	return;
 }
@@ -317,28 +322,53 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 	// move cursor down
 	if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1)
 	{
-		homescreen->selectedFile++;
-		if(homescreen->selectedFile >= homescreen->offset+10){
-			homescreen->offset++;
+		if(homescreen->wasScrolled == false)
+		{
+			homescreen->selectedFile++;
+			if(homescreen->selectedFile >= homescreen->offset+10)
+			{
+				homescreen->offset++;
+			}
+			
+			homescreen->wasScrolled = true;
+			return show_homescreen;
 		}
-		
-		return show_homescreen;
+		else
+		{
+			return show_homescreen;
+		}
 	}
 	
 	// move cursor up
 	if (kb_IsDown(kb_KeyUp) && homescreen->selectedFile>0)
 	{
-		homescreen->selectedFile--;
-		if(homescreen->selectedFile < homescreen->offset){
-			homescreen->offset--;
+		if(homescreen->wasScrolled == false)
+		{
+			homescreen->selectedFile--;
+			if(homescreen->selectedFile < homescreen->offset)
+			{
+				homescreen->offset--;
+			}
+			
+			homescreen->wasScrolled = true;
+			return show_homescreen;
 		}
-		
-		return show_homescreen;
+		else
+		{
+			return show_homescreen;
+		}
+	}
+	
+	// falling edge scrollbar stuff
+	if(!(kb_IsDown(kb_KeyUp) || kb_IsDown(kb_Key2nd)))
+	{
+		homescreen->wasScrolled = false;
 	}
 	
 	// open file
 	if(kb_IsDown(kb_KeyEnter) || kb_IsDown(kb_Key2nd))
 	{
+		while(kb_IsDown(kb_KeyEnter) || kb_IsDown(kb_Key2nd)) kb_Scan();
 		return show_editor;
 	}
 	
