@@ -47,6 +47,7 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile)
 {
 	uint8_t i;
+	int txtWidth;
 	int fileX = STARTING_FILE_X;
 	int fileY = STARTING_FILE_Y;
 	
@@ -71,7 +72,8 @@ static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uin
 		}
 		
 		fontlib_SetForegroundColor(BLACK);
-		fontlib_DrawStringXY(files[i].os_name, fileX, fileY);
+		txtWidth = fontlib_GetStringWidth(files[i].os_name);
+		fontlib_DrawStringXY(files[i].os_name, fileX + STARTING_FILE_WIDTH / 2, fileY);
 		
 		fileY += FILE_SPACING;
 	}
