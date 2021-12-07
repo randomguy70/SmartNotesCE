@@ -22,6 +22,27 @@ uint8_t getNumFiles(const char * txt)
 	return result;
 }
 
+uint8_t loadFiles(struct file files[])
+{
+	uint8_t numFiles = 0;
+	char *namePtr = NULL;
+	void *search_pos = NULL;
+	
+	while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL)
+	{
+		if (numFiles > 30)
+		{
+			return numFiles;
+		}
+		
+		strcpy(files[numFiles].os_name, namePtr);
+		numFiles++;
+		
+	}
+	
+	return numFiles;
+}
+
 bool newFile(void)
 {
 	char buffer[10] = {0};

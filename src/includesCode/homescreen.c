@@ -5,20 +5,19 @@
 #include <tice.h>
 #include <fontlibc.h>
 
-#include <includes/homescreen.h>
-#include <includes/text.h>
-#include <includes/file.h>
-#include <includes/ui.h>
-#include <gfx/gfx.h>
+#include "gfx/gfx.h"
+
+#include "includes/homescreen.h"
+#include "includes/text.h"
+#include "includes/file.h"
+#include "includes/ui.h"
+#include "includes/menues.h"
 
 static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile);
 static void dispHomeScreenBG(void);
 static void dispHomeScreenButtons(void);
 static void refreshHomeScreenGraphics(struct homescreen *homescreen);
 static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen);
-static uint8_t loadFiles(struct file files[]);
-static struct menu *loadHomeScreenAboutMenu(void);
-static struct menu *loadHomeScreenFileMenu(void);
 
 enum state dispHomeScreen(struct homescreen* homescreen)
 {
@@ -94,7 +93,7 @@ static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uin
 
 static void dispHomeScreenBG(void)
 {
-	int width;
+	int txtWidth;
 	
 	fontlib_SetAlternateStopCode(0);
 	fontlib_SetWindowFullScreen();
@@ -108,27 +107,42 @@ static void dispHomeScreenBG(void)
 		gfx_HorizLine_NoClip(0, i*20, LCD_WIDTH);
 		gfx_HorizLine_NoClip(0, i*20+1, LCD_WIDTH);
 	}
-
+	
 	// name and credits
 	fontlib_SetForegroundColor(DARK_BLUE);
-	width = fontlib_GetStringWidth("SMARTNOTES CE");
-	fontlib_DrawStringXY("SMARTNOTES CE", (LCD_WIDTH/2)-(width/2), 5);
+	txtWidth = fontlib_GetStringWidth("SMARTNOTES CE");
+	fontlib_DrawStringXY("SMARTNOTES CE", (LCD_WIDTH/2)-(txtWidth/2), 5);
 	
 	fontlib_SetForegroundColor(BLACK);
-	width = fontlib_GetStringWidth("V.1 by Randomguy");
-	fontlib_DrawStringXY("V.1 by Randomguy", (LCD_WIDTH/2)-(width/2), 25);
+	txtWidth = fontlib_GetStringWidth("V.1 by Randomguy");
 	
 	// box with file names
-	gfx_SetColor(WHITE);
-	gfx_FillRectangle_NoClip(FILE_VIEWER_X, FILE_VIEWER_Y, FILE_VIEWER_WIDTH, FILE_VIEWER_HEIGHT);
-	gfx_SetColor(LIGHT_BLUE);
-	thick_Rectangle(FILE_VIEWER_X, FILE_VIEWER_Y, FILE_VIEWER_WIDTH, FILE_VIEWER_HEIGHT, 2);
+	// gfx_SetColor(WHITE);
+	// gfx_FillRectangle_NoClip(FILE_VIEWER_X, FILE_VIEWER_Y, FILE_VIEWER_WIDTH, FILE_VIEWER_HEIGHT);
+	// gfx_SetColor(LIGHT_BLUE);
+	// thick_Rectangle(FILE_VIEWER_X, FILE_VIEWER_Y, FILE_VIEWER_WIDTH, FILE_VIEWER_HEIGHT, 2);
 	
-	// print labels for displayed file data columns
-	fontlib_SetForegroundColor(BLACK);
-	fontlib_DrawStringXY("NAME", FILE_VIEWER_X + 2, FILE_VIEWER_Y - 13);
-	width = fontlib_GetStringWidth("STATUS");
-	fontlib_DrawStringXY("STATUS", FILE_VIEWER_X + FILE_VIEWER_WIDTH - width - 2, FILE_VIEWER_Y - 13);
+	// rounded rectangle FOR FILE VIEWER BOX
+	
+	// corners
+	gfx_SetColor(MEDIUM_GREY);
+	gfx_FillCircle(FILE_VIEWER_X + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS);                                            // top left
+	gfx_FillCircle(FILE_VIEWER_X + FILE_VIEWER_WIDTH - FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS);                        // top right
+	gfx_FillCircle(FILE_VIEWER_X + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_HEIGHT - FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS);                       // bottom left
+	gfx_FillCircle(FILE_VIEWER_X + FILE_VIEWER_WIDTH - FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_HEIGHT - FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS);   // bottom right
+	
+	// HEADER
+	gfx_FillRectangle(FILE_VIEWER_X + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y, FILE_VIEWER_WIDTH - (FILE_VIEWER_BORDER_RADIUS * 2), FILE_VIEWER_HEADER_HEIGHT);                // fill between top corners
+	gfx_FillRectangle(FILE_VIEWER_X, FILE_VIEWER_Y + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_HEADER_HEIGHT - FILE_VIEWER_BORDER_RADIUS);              // fill top left corner
+	gfx_FillRectangle(FILE_VIEWER_X + FILE_VIEWER_WIDTH - FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS + 1, FILE_VIEWER_HEADER_HEIGHT - FILE_VIEWER_BORDER_RADIUS); // fill top right corner
+	
+	// BODY
+	gfx_SetColor(WHITE);
+	gfx_FillRectangle(FILE_VIEWER_X, FILE_VIEWER_Y + FILE_VIEWER_HEADER_HEIGHT + 2, FILE_VIEWER_WIDTH + 1, FILE_VIEWER_HEIGHT - FILE_VIEWER_HEADER_HEIGHT - FILE_VIEWER_BORDER_RADIUS);
+	
+	// footer
+	gfx_SetColor(MEDIUM_GREY);
+	gfx_FillRectangle(FILE_VIEWER_X + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_HEIGHT - FILE_VIEWER_BORDER_RADIUS + 2, FILE_VIEWER_WIDTH - FILE_VIEWER_BORDER_RADIUS * 2, FILE_VIEWER_BORDER_RADIUS);
 	
 	return;
 }
@@ -171,7 +185,7 @@ static void refreshHomeScreenGraphics(struct homescreen *homescreen)
 	gfx_SetDraw(gfx_buffer);
 	dispHomeScreenBG();
 	dispHomeScreenButtons();
-	dispFiles(homescreen->files, homescreen->numFiles, homescreen->offset, homescreen->selectedFile);
+	// dispFiles(homescreen->files, homescreen->numFiles, homescreen->offset, homescreen->selectedFile);
 	gfx_Wait();
 	gfx_SwapDraw();
 }
@@ -326,81 +340,4 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 	}
 	
 	return show_homescreen;
-}
-
-static uint8_t loadFiles(struct file files[])
-{
-	uint8_t numFiles = 0;
-	char *namePtr = NULL;
-	void *search_pos = NULL;
-	
-	while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL)
-	{
-		if (numFiles > 30)
-		{
-			return numFiles;
-		}
-		
-		strcpy(files[numFiles].os_name, namePtr);
-		numFiles++;
-		
-	}
-	
-	return numFiles;
-}
-
-static struct menu *loadHomeScreenAboutMenu(void)
-{
-	const int width = 90;
-	const int height = 62;
-	
-	static struct menu menu = 
-	{
-		.title = "About",
-		.x = (64*2) + ((LCD_WIDTH / NUM_HOMESCREEN_BUTTONS) / 2) - (width / 2),
-		.y = LCD_HEIGHT - height - 25,
-		.width = width,
-		.height = height,
-		.numOptions = 3,
-		.hasSprites = false,
-		
-		.entry = 
-		{
-			{"Credits"},
-			{"Help"},
-			{"Build Info"},
-		}
-	};
-	
-	return &menu;
-}
-
-static struct menu *loadHomeScreenFileMenu(void)
-{
-	const int width = 100;
-	const int numOptions = 7;
-	
-	static struct menu menu =
-	{
-		.title = "Options",
-		.width = 100,
-		.height = MENU_ENTRY_SPACING * numOptions + WINDOW_BORDER_THICKNESS,
-		.x = LCD_WIDTH - width + 1,
-		.y = 73,
-		.numOptions = 7,
-		.hasSprites = false,
-		
-		.entry =
-		{
-			{"New"},
-			{"Open"},
-			{"Rename"},
-			{"Delete"},
-			{"(un)Hide"},
-			{"(un)Encrypt"},
-			{"Back"},
-		},
-	};
-	
-	return &menu;
 }

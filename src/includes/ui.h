@@ -14,10 +14,6 @@ extern "C" {
 #define WINDOW_TITLE_BAR_HEIGHT  10
 #define WINDOW_BORDER_THICKNESS   2
 
-#define MENU_ENTRY_SPACING       20
-#define MAX_MENU_ENTRIES         10
-#define MAX_MENU_ENTRIES_VISIBLE  7
-
 enum window_type {
 	DISPLAY_TEXT_TYPE,
 	OPTION_TYPE,
@@ -66,21 +62,6 @@ struct settings {
 	enum color windowBG;
 };
 
-struct menu_entry {
-	const char *string;
-	gfx_sprite_t *sprite;
-};
-
-// thank you mateo(again)
-struct menu {
-	const char *title;
-	int x, y, width, height;
-	uint8_t numOptions;
-	uint8_t selected;
-	bool hasSprites;
-	struct menu_entry entry[];
-};
-
 struct scrollBar{
 	int x;
 	int y;
@@ -111,11 +92,6 @@ prints a message window with wordwrap
  -returns false if the user presses clear
 */
 bool alert(char *txt);
-
-/** displays a menu with sprites
- * @param menu pointer to a struct containing the sprite and text data for the menu
- * */
-int displayMenu(struct menu * menu);
 
 // draws a rectangle with a given thickness
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);

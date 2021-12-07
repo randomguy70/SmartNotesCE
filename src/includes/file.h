@@ -29,11 +29,19 @@ bytes 50->end of the file: text data
 struct file;
 struct buffer;
 
+// contains data about a certain (open) file
+struct file {
+	char os_name[10];
+	unsigned int size;
+};
+
 // archives all files with "TXT" as the first 3 bytes
 void archiveAll();
 
 // detects "TXT" appvars and returns the number found
 uint8_t getNumFiles(const char *txt);
+
+uint8_t loadFiles(struct file files[]);
 
 // creates a new text file with an inputted name (a text file is an appvar with TXT as the first 3 bytes, sortof like an extension a file has on a computer)
 bool newFile(void);
@@ -43,12 +51,6 @@ bool checkIfDeleteFile(char *name);
 
 // renames a file with an inputted name
 bool renameFile(const char *name);
-
-// contains data about a certain (open) file
-struct file {
-	char os_name[10];
-	unsigned int size;
-};
 
 // check if user wants to delete a file, and deleted the selected file if so
 bool checkIfDeleteFile(char *name);
