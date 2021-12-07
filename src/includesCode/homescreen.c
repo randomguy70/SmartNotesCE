@@ -325,7 +325,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 		if(homescreen->wasScrolled == false)
 		{
 			homescreen->selectedFile++;
-			if(homescreen->selectedFile >= homescreen->offset+10)
+			if(homescreen->selectedFile >= homescreen->offset + MAX_FILES_VIEWABLE)
 			{
 				homescreen->offset++;
 			}
