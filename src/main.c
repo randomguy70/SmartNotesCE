@@ -55,9 +55,10 @@ int main(void) {
 		
 		if(state == show_editor)
 		{
-			alert("showing editor...");
-			editor.file = homescreen.files[homescreen.selectedFile];
-			state = dispEditor(&editor);
+			// alert("showing editor...");
+			// editor.file = homescreen.files[homescreen.selectedFile];
+			// state = dispEditor(&editor);
+			state = show_homescreen;
 		}
 	}
 	

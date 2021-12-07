@@ -32,6 +32,7 @@ struct buffer;
 // contains data about a certain (open) file
 struct file {
 	char os_name[10];
+	char view_name[10];
 	unsigned int size;
 };
 

@@ -48,6 +48,7 @@ static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uin
 {
 	uint8_t i;
 	int txtWidth;
+	char *name;
 	int fileX = STARTING_FILE_X;
 	int fileY = STARTING_FILE_Y;
 	
