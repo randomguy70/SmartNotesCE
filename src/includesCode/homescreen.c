@@ -239,7 +239,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 		homescreen->selectedFile = 0;
 		homescreen->offset = 0;
 		homescreen->numFiles = loadFiles(homescreen->files);
-				
+		
 		return show_homescreen;
 	}
 	
@@ -253,9 +253,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 		{
 			// New
 			case 1:
-				alert("making new file");
 				newFile();
-				alert("made new file");
 				homescreen->numFiles = loadFiles(homescreen->files);
 				break;
 			
@@ -291,7 +289,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 				break;
 			
 			// (un) Hide
-			case 5: 
+			case 5:
 				toggleHiddenStatus(homescreen->files[homescreen->selectedFile].os_name);
 				homescreen->numFiles = loadFiles(homescreen->files);
 				break;
