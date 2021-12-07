@@ -9,17 +9,21 @@ extern "C" {
 #include <includes/file.h>
 
 #define MAX_FILES_LOADABLE  30
-#define MAX_FILES_VIEWABLE  10
+#define MAX_FILES_VIEWABLE  9
 #define FILE_SPACING			 15
 
 #define FILE_VIEWER_BORDER_RADIUS   9
 #define FILE_VIEWER_HEADER_HEIGHT   20
-#define FILE_VIEWER_WIDTH           260
-#define FILE_VIEWER_HEIGHT          (FILE_SPACING * MAX_FILES_VIEWABLE) + FILE_VIEWER_HEADER_HEIGHT
+#define FILE_VIEWER_FOOTER_HEIGHT   FILE_VIEWER_BORDER_RADIUS
+#define FILE_VIEWER_WIDTH           250
+#define FILE_VIEWER_HEIGHT          (FILE_SPACING * MAX_FILES_VIEWABLE) + FILE_VIEWER_HEADER_HEIGHT + FILE_VIEWER_FOOTER_HEIGHT
 #define FILE_VIEWER_X               (LCD_WIDTH / 2) - (FILE_VIEWER_WIDTH / 2)
-#define FILE_VIEWER_Y               30
+#define FILE_VIEWER_Y               LCD_HEIGHT / 2 - 82 // i had to hard code FILE_VIEWER_HEIGHT because the compiler apparently couldn't do it
 
-#define NUM_HOMESCREEN_BUTTONS 5
+#define STARTING_FILE_X             FILE_VIEWER_X
+#define STARTING_FILE_Y             FILE_VIEWER_Y + FILE_VIEWER_HEADER_HEIGHT
+
+#define NUM_HOMESCREEN_BUTTONS      5
 
 // contains properties of the file viewer
 struct homescreen {
