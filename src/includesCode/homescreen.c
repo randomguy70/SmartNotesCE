@@ -73,7 +73,7 @@ static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uin
 		
 		fontlib_SetForegroundColor(BLACK);
 		txtWidth = fontlib_GetStringWidth(files[i].os_name);
-		fontlib_DrawStringXY(files[i].os_name, fileX + STARTING_FILE_WIDTH / 2, fileY);
+		fontlib_DrawStringXY(files[i].os_name, fileX + (FILE_VIEWER_WIDTH / 4) - txtWidth  /2, fileY + 1);
 		
 		fileY += FILE_SPACING;
 	}
