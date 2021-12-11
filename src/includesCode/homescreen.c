@@ -27,6 +27,7 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 	homescreen->offset = 0;
 	homescreen->numFiles = loadFiles(homescreen->files);
 	homescreen->wasScrolled = false;
+	homescreen->cyclesSinceLastScroll = MIN_CYCLES_BETWEEN_SCROLLS;
 	
 	while(true)
 	{
@@ -40,6 +41,8 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 		{
 			return ret;
 		}
+		
+		homescreen->cyclesSinceLastScroll++;
 	}
 	
 	return should_exit;
@@ -322,17 +325,18 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 	// move cursor down
 	if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1)
 	{
-		if(homescreen->wasScrolled == false)
+		if(homescreen->cyclesSinceLastScroll >= MIN_CYCLES_BETWEEN_SCROLLS)
 		{
 			homescreen->selectedFile++;
 			if(homescreen->selectedFile >= homescreen->offset + MAX_FILES_VIEWABLE)
 			{
 				homescreen->offset++;
 			}
+			homescreen->cyclesSinceLastScroll = 0;
 			
-			homescreen->wasScrolled = true;
 			return show_homescreen;
 		}
+		
 		else
 		{
 			return show_homescreen;
@@ -342,27 +346,22 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 	// move cursor up
 	if (kb_IsDown(kb_KeyUp) && homescreen->selectedFile>0)
 	{
-		if(homescreen->wasScrolled == false)
+		if(homescreen->cyclesSinceLastScroll >= MIN_CYCLES_BETWEEN_SCROLLS)
 		{
 			homescreen->selectedFile--;
 			if(homescreen->selectedFile < homescreen->offset)
 			{
 				homescreen->offset--;
 			}
+			homescreen->cyclesSinceLastScroll = 0;
 			
-			homescreen->wasScrolled = true;
 			return show_homescreen;
 		}
+		
 		else
 		{
 			return show_homescreen;
 		}
-	}
-	
-	// falling edge scrollbar stuff
-	if(!(kb_IsDown(kb_KeyUp) || kb_IsDown(kb_Key2nd)))
-	{
-		homescreen->wasScrolled = false;
 	}
 	
 	// open file
