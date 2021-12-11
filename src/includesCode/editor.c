@@ -1,170 +1,117 @@
-#include "main.h"
-#include <includes/editor.h>
-
 #include <fontlibc.h>
 #include <graphx.h>
 #include <keypadc.h>
 #include <fontlibc.h>
 #include <fileioc.h>
 
-#include <includes/file.h>
-#include <includes/text.h>
-#include <includes/characters.h>
-#include <includes/ui.h>
-#include <includes/colors.h>
+#include "main.h"
+#include "includes/editor.h"
+#include "includes/file.h"
+#include "includes/text.h"
+#include "includes/characters.h"
+#include "includes/ui.h"
+#include "includes/colors.h"
 
+static int initialiseEditor(struct editor *editor);
 static void dispEditorBK();
-static void dispEditorText(struct editor* editor);
+// static void dispEditorText(struct editor* editor);
 static enum state handleEditorKeyPresses(void);
-int getLinePtrs(struct buffer* buffer);
+static unsigned int getVisibleLinePtrs(struct editor *editor);
 
 enum state dispEditor(struct editor *editor) {
 	
 	enum state ret = show_editor;
 	
-	editor->curLine = 0;
-	editor->curCol = 0;
-	editor->editOffset = 0;
-	
+	alert("before initialise");
 	initialiseEditor(editor);
-	
-	getTextBoxLinePointers(editor);
+	alert("after initialise");
+	// getVisibleLinePtrs(editor);
 	
 	while(true)
 	{
+		gfx_SetDraw(gfx_buffer);
 		dispEditorBK(editor);
-		dispEditorText(editor);
+		gfx_SwapDraw();
+		drawLine("Hello World!!!", 1, 30);
+		kb_Scan();
 		
-		ret = handleEditorKeyPresses();
-		
-		if(ret == should_exit || show_homescreen)
+		if(kb_IsDown(kb_KeyClear))
 		{
-			return ret;
+			while(kb_AnyKey()) kb_Scan();
+			return show_homescreen;
+		}
+		
+		if(ret == should_exit)
+		{
+			return should_exit;
 		}
 	}
+	
+	return ret;
 }
 
 static int initialiseEditor(struct editor *editor)
 {
 	fileToBuffer(editor->file.os_name, &(editor->buffer));
 	
-	
-	editor->textBox.width = EDITOR_TEXT_BOX_WIDTH;
-	editor->textBox.height = EDITOR_TEXT_BOX_HEIGHT;
-	editor->textBox.x = SCRN_WIDTH/2 - EDITOR_TEXT_BOX_WIDTH/2;
-	editor->textBox.y = SCRN_HEIGHT/2 - EDITOR_TEXT_BOX_HEIGHT/2;
-	
-	editor->textBox.maxLinesOnScreen = EDITOR_MAX_LINES_VIEWABLE;
+	editor->textBox.curLine = 0;
+	editor->textBox.curCol = 0;
 	editor->textBox.lineOffset = 0;
-	 
+	
 	return 1;
 }
 
-// THIS FUNCTION NEEDS TO GO
-static int getTextBoxLinePointers(struct textBox *textBox)
+// XXX 
+static unsigned int getVisibleLinePtrs(struct editor *editor)
 {
-	char *end = textBox->startOfText + textBox->textLength;
-	char *readPos = textBox->startOfText;
-	char *curLine = textBox->startOfText;
-	int linesCounted = 0;
-	// pixel width
-	int curLineWidth = 0;
-	// character count
-	int curLineLen = 0;
-	// pixel width
-	int curWordWidth = 0;
-	// character count
-	int curWordLen = 0;
+	unsigned int numVisibleLines = 0;
+	int lineLen;
 	
-	fontlib_SetAlternateStopCode(0);
+	editor->visibleLineLengths[0] = editor->buffer.buffer + editor->buffer.offset;
 	
-	textBox->maxLinesOnScreen = 5;
-	
-	// initialise the first line
-	textBox->linePointers[linesCounted] = curLine;
-	
-	while(true)
+	while(numVisibleLines <= EDITOR_MAX_LINES_VIEWABLE)
 	{
-		START:
 		
-		// curWordLen = getWordLen(readPos, end); REALLY WRONG
-		curWordWidth = fontlib_GetStringWidthL(readPos, curWordLen);
-		
-		// if it reaches the end of the data => return
-		if(readPos >= end || linesCounted > textBox->maxLinesOnScreen)
-		{
-			break;
-		}
-		
-		// make sure it doesn't overflow
-		if (readPos + curWordLen >= end)
-		{
-			curWordLen = end - readPos;
-		}
-		
-		// if word fits => append it
-		if(curLineWidth + curWordWidth < textBox->width)
-		{
-			readPos += curWordLen;
-			curLineLen += curWordLen;
-			curLineWidth += curWordWidth;
-			goto START;
-		}
-		
-		// if word doesn't fit and there is stuff on the line already => new line
-		if((curLineWidth + curWordWidth < textBox->width) && (curLineLen > 0))
-		{
-			curLine += curLineLen;
-			curLineLen = 0;
-			curLineWidth = 0;
-			textBox->linePointers[++linesCounted] = curLine;
-			textBox->numLines++;
-			
-			goto START;
-		}
-		
-		// if the word is too big for an entire line => force wrap it
-		if((curLineWidth + curWordWidth < textBox->width) && (curLineLen == 0))
-		{
-			curLineLen = getMaxCharsPerLine(curLine, end);
-			curLine += curLineLen;
-			textBox->linePointers[++linesCounted] = curLine;
-			goto START;
-		}
 	}
 	
-	textBox->numLinesOnScreen = linesCounted;
-	return linesCounted;
+	return numVisibleLines;
 }
 
 // displays the editor background
 static void dispEditorBK(struct editor *editor)
 {
+	int strWidth; // used for centering strings
 	
-	gfx_SetDraw(gfx_buffer);
 	gfx_FillScreen(WHITE);
 	
-	// header rectangle
-	gfx_SetColor(MEDIUM_GREY);
-	gfx_FillRectangle_NoClip(0, 0, SCRN_WIDTH, 20);
-	gfx_SetColor(BLACK);
-	gfx_HorizLine_NoClip(0, 20, SCRN_WIDTH);
+	// header rectangle fill
+	gfx_SetColor(LIGHT_GREY);
+	gfx_FillRectangle_NoClip(EDITOR_HEADER_BAR_X, EDITOR_HEADER_BAR_Y, EDITOR_HEADER_BAR_WIDTH, EDITOR_HEADER_BAR_HEIGHT);
 	
-	// header txt
+	// header rect. outline
+	gfx_SetColor(BLACK);
+	gfx_HorizLine_NoClip(EDITOR_HEADER_BAR_X, EDITOR_HEADER_BAR_Y + EDITOR_HEADER_BAR_HEIGHT - 1, EDITOR_HEADER_BAR_WIDTH);
+	
+	// header text
+	fontlib_SetWindowFullScreen();
 	fontlib_SetTransparency(true);
 	fontlib_SetForegroundColor(BLACK);
-	fontlib_SetAlternateStopCode(0); // the name might have spaces in it
-	fontlib_DrawStringXY(editor->file.os_name, 1, 2);
+	fontlib_SetAlternateStopCode(0);
+	
+	strWidth = fontlib_GetStringWidth(editor->file.os_name);
+	fontlib_DrawStringXY(editor->file.os_name, EDITOR_HEADER_BAR_X + (EDITOR_HEADER_BAR_WIDTH / 2) - (strWidth / 2), 5);
 	
 	// footer
-	gfx_SetColor(MEDIUM_GREY);
-	gfx_FillRectangle_NoClip(0, 220, SCRN_WIDTH, 20);
+	gfx_SetColor(LIGHT_GREY);
+	gfx_FillRectangle_NoClip(EDITOR_FOOTER_BAR_X, EDITOR_FOOTER_BAR_Y, EDITOR_FOOTER_BAR_WIDTH,  EDITOR_FOOTER_BAR_HEIGHT );
 	gfx_SetColor(BLACK);
-	gfx_HorizLine_NoClip(0, 220, SCRN_WIDTH);
+	gfx_HorizLine_NoClip(EDITOR_FOOTER_BAR_X, EDITOR_FOOTER_BAR_Y, EDITOR_FOOTER_BAR_WIDTH);
 		
-	return;	
+	return;
 }
 
+// XXX Display Editor Text
+/*
 static void dispEditorText(struct editor *editor)
 {
 	uint8_t lineLen;
@@ -183,18 +130,17 @@ static void dispEditorText(struct editor *editor)
 	
 	return;
 }
+*/
 
+// XXX
 static enum state handleEditorKeyPresses(void)
 {
-	kb_Scan();
-	
 	if(kb_IsDown(kb_KeyClear)) {
 		return should_exit;
 	}
 	
 	if(kb_IsDown(kb_Key2nd)) {
-		alert("Well well, it worked!!!");
-		return show_editor;
+		return show_homescreen;
 	}
 	
 	return show_editor;

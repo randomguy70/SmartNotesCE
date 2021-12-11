@@ -11,8 +11,8 @@ extern "C" {
 #include "includes/colors.h"
 
 
-#define WINDOW_TITLE_BAR_HEIGHT 10
-
+#define WINDOW_TITLE_BAR_HEIGHT  10
+#define WINDOW_BORDER_THICKNESS   2
 
 enum window_type {
 	DISPLAY_TEXT_TYPE,
@@ -62,23 +62,6 @@ struct settings {
 	enum color windowBG;
 };
 
-// this is what it looks like. thank you mateo :P
-struct menu_entry {
-	const char * str;
-	gfx_sprite_t * sprite;
-	uint8_t spriteHeight;
-	// void (*func_ptr)(void); 
-};
-
-// thank you mateo(again)
-struct menu {
-	const char * title; // title of menu
-	int x, y; // x and y coord of menu window
-	uint8_t numOptions;
-	bool hasSprites; // whether or not the menu entries have sprites
-	struct menu_entry entry[]; // contains all of the menu entries
-};
-
 struct scrollBar{
 	int x;
 	int y;
@@ -109,11 +92,6 @@ prints a message window with wordwrap
  -returns false if the user presses clear
 */
 bool alert(char *txt);
-
-/** displays a menu with sprites
- * @param menu pointer to a struct containing the sprite and text data for the menu
- * */
-int displayMenu(struct menu * menu);
 
 // draws a rectangle with a given thickness
 void thick_Rectangle(int x, int y, int width, int height, uint8_t thickness);

@@ -22,11 +22,11 @@
 static uint8_t setupFontlibc();
 static void cleanup();
 
-void main(void) {
+int main(void) {
 		
 	if(!setupFontlibc())
 	{
-		return;
+		return 0;
 	}
 	
 	gfx_Begin();
@@ -38,7 +38,6 @@ void main(void) {
 	struct homescreen homescreen;
 	struct editor editor;
 	enum state state = show_homescreen;
-	enum state prevState = state;
 	
 	state = show_homescreen;
 	
@@ -56,17 +55,15 @@ void main(void) {
 		
 		if(state == show_editor)
 		{
-			// if(prevState != state) {
-			// 	strcpy(editor.file.os_name, homescreen.files[homescreen.selectedFile].os_name);
-			// 	prevState = state;
-			// }
+			// alert("showing editor...");
+			// editor.file = homescreen.files[homescreen.selectedFile];
 			// state = dispEditor(&editor);
 			state = show_homescreen;
 		}
 	}
 	
 	cleanup();
-	return;
+	return 0;
 }
 
 static uint8_t setupFontlibc() {

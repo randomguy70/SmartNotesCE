@@ -6,9 +6,6 @@
 #define RELEASE_STRING "V.1.0"
 #define AUTHOR "Randomguy"
 
-#define SCRN_WIDTH    320
-#define SCRN_HEIGHT   240
-
 #define HOME            1  // Integer return signifying a request to go to the homescreen (file viwer)
 #define QUIT            0  // Integer return signifying a quit request.
 #define CANCEL        100  // Integer return signifying a cancel / close window request. NOT the same as QUIT.

@@ -5,18 +5,19 @@
 #include <tice.h>
 #include <fontlibc.h>
 
-#include <includes/homescreen.h>
-#include <includes/text.h>
-#include <includes/file.h>
-#include <includes/ui.h>
-#include <gfx/gfx.h>
+#include "gfx/gfx.h"
+
+#include "includes/homescreen.h"
+#include "includes/text.h"
+#include "includes/file.h"
+#include "includes/ui.h"
+#include "includes/menues.h"
 
 static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile);
 static void dispHomeScreenBG(void);
 static void dispHomeScreenButtons(void);
+static void refreshHomeScreenGraphics(struct homescreen *homescreen);
 static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen);
-static uint8_t loadFiles(struct file files[]);
-static struct menu *loadHomeScreenOtherMenu(void);
 
 enum state dispHomeScreen(struct homescreen* homescreen)
 {
@@ -25,23 +26,23 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 	homescreen->selectedFile = 0;
 	homescreen->offset = 0;
 	homescreen->numFiles = loadFiles(homescreen->files);
+	homescreen->wasScrolled = false;
+	homescreen->cyclesSinceLastScroll = MIN_CYCLES_BETWEEN_SCROLLS;
 	
 	while(true)
 	{
-		gfx_SetDraw(gfx_buffer);
-		dispHomeScreenBG();
-		dispHomeScreenButtons();
-		dispFiles(homescreen->files, homescreen->numFiles, homescreen->offset, homescreen->selectedFile); // not cause of crash
-		gfx_Wait();
-		gfx_SwapDraw();
-		
 		kb_Scan();
+		
+		refreshHomeScreenGraphics(homescreen);
+		
 		ret = handleHomeScreenKeyPresses(homescreen);
 		
-		if(ret == should_exit || ret == show_editor) 
+		if(ret == should_exit || ret == show_editor)
 		{
 			return ret;
 		}
+		
+		homescreen->cyclesSinceLastScroll++;
 	}
 	
 	return should_exit;
@@ -50,31 +51,44 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uint8_t selectedFile)
 {
 	uint8_t i;
-	const unsigned int fileX = FILE_VIEWER_X + 5;
-	unsigned int fileY = FILE_VIEWER_Y + 3;
+	int txtWidth;
+	int fileX = STARTING_FILE_X;
+	int fileY = STARTING_FILE_Y;
 	
+	// file menu
 	for(i=offset; i < MAX_FILES_VIEWABLE + offset && i<MAX_FILES_LOADABLE && i<numFiles; i++)
 	{
+		// selecting box
+		
 		if (selectedFile == i)
 		{
-			// leave some pixels at the edge of the window for the scrollbar
-			gfx_SetColor(LIGHT_GREY);
-			gfx_FillRectangle_NoClip(FILE_VIEWER_X + 2, fileY - 1, FILE_VIEWER_WIDTH - 4, 15);
-			gfx_SetColor(BLACK);
-			gfx_Rectangle_NoClip(FILE_VIEWER_X + 2, fileY - 1, FILE_VIEWER_WIDTH - 4, 15);
+			if(kb_IsDown(kb_Key2nd) || kb_IsDown(kb_KeyEnter))
+			{
+				gfx_SetColor(DARK_GREY);
+			}
+			else
+			{
+				gfx_SetColor(LIGHT_GREY);
+			}
+			
+			gfx_FillRectangle_NoClip(fileX, fileY, STARTING_FILE_WIDTH, FILE_SPACING);
+			gfx_SetColor(BLACK); gfx_Rectangle_NoClip(fileX, fileY, STARTING_FILE_WIDTH, FILE_SPACING);
 		}
 		
 		fontlib_SetForegroundColor(BLACK);
-		fontlib_DrawStringXY(files[i].os_name, fileX, fileY);
+		txtWidth = fontlib_GetStringWidth(files[i].os_name);
+		fontlib_DrawStringXY(files[i].os_name, fileX + (FILE_VIEWER_WIDTH / 4) - txtWidth  /2, fileY + 1);
 		
 		fileY += FILE_SPACING;
 	}
 	
+	// RECENTS
+	
 	// display when no files were detected
 	if (numFiles == 0)
 	{
-		char str1[] = "--NO FILES FOUND--)";
-		char str2[] = "That's too bad for you :(";
+		const char *str1 = "--NO FILES FOUND--)";
+		const char *str2 = "That's too bad for you :(";
 		
 		int x1 = (LCD_WIDTH / 2) - (fontlib_GetStringWidth(str1) / 2);
 		int x2 = (LCD_WIDTH / 2) - (fontlib_GetStringWidth(str2) / 2);
@@ -89,7 +103,7 @@ static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uin
 
 static void dispHomeScreenBG(void)
 {
-	int width;
+	int txtWidth;
 	
 	fontlib_SetAlternateStopCode(0);
 	fontlib_SetWindowFullScreen();
@@ -100,131 +114,265 @@ static void dispHomeScreenBG(void)
 	
 	for(uint8_t i = 0; i<11; i++)
 	{
-		gfx_HorizLine_NoClip(0, i*20, SCRN_WIDTH);
-		gfx_HorizLine_NoClip(0, i*20+1, SCRN_WIDTH);
+		gfx_HorizLine_NoClip(0, i*20, LCD_WIDTH);
+		gfx_HorizLine_NoClip(0, i*20+1, LCD_WIDTH);
 	}
-
+	
 	// name and credits
-	fontlib_SetForegroundColor(DARK_BLUE);
-	width = fontlib_GetStringWidth("SMARTNOTES CE");
-	fontlib_DrawStringXY("SMARTNOTES CE", (SCRN_WIDTH/2)-(width/2), 5);
+	fontlib_SetForegroundColor(BLACK);
+	txtWidth = fontlib_GetStringWidth("SMARTNOTES CE");
+	fontlib_DrawStringXY("SMARTNOTES CE", (LCD_WIDTH/2)-(txtWidth/2), 5);
 	
 	fontlib_SetForegroundColor(BLACK);
-	width = fontlib_GetStringWidth("V.1 by Randomguy");
-	fontlib_DrawStringXY("V.1 by Randomguy", (SCRN_WIDTH/2)-(width/2), 25);
+	txtWidth = fontlib_GetStringWidth("V.1 by Randomguy");
 	
-	// box with file names
+	// FILE VIEWER BOX with rounded corners
+	
+	// top corners
+	gfx_SetColor(MEDIUM_GREY);
+	gfx_FillCircle_NoClip(FILE_VIEWER_X + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS);                                            // top left
+	gfx_FillCircle_NoClip(FILE_VIEWER_X + FILE_VIEWER_WIDTH - FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS);                        // top right
+	
+	// top corner borders
+	gfx_SetColor(BLACK);
+	gfx_Circle_NoClip(FILE_VIEWER_X + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS);                                            // top left
+	gfx_Circle_NoClip(FILE_VIEWER_X + FILE_VIEWER_WIDTH - FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS);                        // top right
+	
+	// bottom corners
 	gfx_SetColor(WHITE);
-	gfx_FillRectangle_NoClip(FILE_VIEWER_X, FILE_VIEWER_Y, FILE_VIEWER_WIDTH, FILE_VIEWER_HEIGHT);
-	gfx_SetColor(LIGHT_BLUE);
-	thick_Rectangle(FILE_VIEWER_X, FILE_VIEWER_Y, FILE_VIEWER_WIDTH, FILE_VIEWER_HEIGHT, 2);
+	gfx_FillCircle_NoClip(FILE_VIEWER_X + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_HEIGHT - FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS);                       // bottom left
+	gfx_FillCircle_NoClip(FILE_VIEWER_X + FILE_VIEWER_WIDTH - FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_HEIGHT - FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS);   // bottom right
 	
-	// print labels for displayed file data columns
+	// bottom corner borders
+	gfx_SetColor(BLACK);
+	gfx_Circle_NoClip(FILE_VIEWER_X + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_HEIGHT - FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS);                       // bottom left
+	gfx_Circle_NoClip(FILE_VIEWER_X + FILE_VIEWER_WIDTH - FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_HEIGHT - FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS);   // bottom right
+	
+	gfx_SetColor(BLACK);
+	// header
+	gfx_SetColor(MEDIUM_GREY);
+	gfx_FillRectangle_NoClip(FILE_VIEWER_X + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y, FILE_VIEWER_WIDTH - (FILE_VIEWER_BORDER_RADIUS * 2), FILE_VIEWER_HEADER_HEIGHT);                // fill between top corners
+	gfx_FillRectangle_NoClip(FILE_VIEWER_X, FILE_VIEWER_Y + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_HEADER_HEIGHT - FILE_VIEWER_BORDER_RADIUS);              // fill top left corner
+	gfx_FillRectangle_NoClip(FILE_VIEWER_X + FILE_VIEWER_WIDTH - FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_BORDER_RADIUS + 1, FILE_VIEWER_HEADER_HEIGHT - FILE_VIEWER_BORDER_RADIUS); // fill top right corner
+	
 	fontlib_SetForegroundColor(BLACK);
-	fontlib_DrawStringXY("NAME", FILE_VIEWER_X + 2, FILE_VIEWER_Y - 13);
-	width = fontlib_GetStringWidth("STATUS");
-	fontlib_DrawStringXY("STATUS", FILE_VIEWER_X + FILE_VIEWER_WIDTH - width - 2, FILE_VIEWER_Y - 13);
+	txtWidth = fontlib_GetStringWidth("Files");
+	fontlib_DrawStringXY("Files", FILE_VIEWER_X + (FILE_VIEWER_WIDTH / 4) - (txtWidth / 2), FILE_VIEWER_Y + 4);
+	txtWidth = fontlib_GetStringWidth("Recents");
+	fontlib_DrawStringXY("Recents", FILE_VIEWER_X + (FILE_VIEWER_WIDTH * 3 / 4) - (txtWidth / 2), FILE_VIEWER_Y + 4);
+	
+	// body
+	gfx_SetColor(WHITE);
+	gfx_FillRectangle_NoClip(FILE_VIEWER_X, FILE_VIEWER_Y + FILE_VIEWER_HEADER_HEIGHT, FILE_VIEWER_WIDTH + 1, FILE_VIEWER_HEIGHT - FILE_VIEWER_HEADER_HEIGHT - FILE_VIEWER_BORDER_RADIUS);
+	
+	// footer
+	gfx_SetColor(WHITE);
+	gfx_FillRectangle_NoClip(FILE_VIEWER_X + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_HEIGHT - FILE_VIEWER_FOOTER_HEIGHT, FILE_VIEWER_WIDTH - FILE_VIEWER_BORDER_RADIUS * 2, FILE_VIEWER_BORDER_RADIUS);
+	
+	// files / recents dividor
+	gfx_SetColor(MEDIUM_GREY);
+	gfx_VertLine_NoClip(FILE_VIEWER_DIVIDOR_X, FILE_VIEWER_DIVIDOR_Y, FILE_VIEWER_DIVIDOR_HEIGHT);
+	gfx_VertLine_NoClip(FILE_VIEWER_DIVIDOR_X + 1, FILE_VIEWER_DIVIDOR_Y, FILE_VIEWER_DIVIDOR_HEIGHT);
+	
+	// border
+	gfx_SetColor(BLACK);
+	gfx_HorizLine_NoClip(FILE_VIEWER_X + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y, FILE_VIEWER_WIDTH - 2*FILE_VIEWER_BORDER_RADIUS);                      // top
+	gfx_VertLine_NoClip(FILE_VIEWER_X, FILE_VIEWER_Y + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_HEIGHT - 2*FILE_VIEWER_BORDER_RADIUS);                      // left
+	gfx_VertLine_NoClip(FILE_VIEWER_X + FILE_VIEWER_WIDTH, FILE_VIEWER_Y + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_HEIGHT - 2*FILE_VIEWER_BORDER_RADIUS);  // right
+	gfx_HorizLine_NoClip(FILE_VIEWER_X + FILE_VIEWER_BORDER_RADIUS, FILE_VIEWER_Y + FILE_VIEWER_HEIGHT, FILE_VIEWER_WIDTH - 2*FILE_VIEWER_BORDER_RADIUS); // bottom
+	
+	// separate btwn header & body
+	gfx_SetColor(BLACK);
+	gfx_HorizLine_NoClip(FILE_VIEWER_X, FILE_VIEWER_Y + FILE_VIEWER_HEADER_HEIGHT - 1, FILE_VIEWER_WIDTH);
+	// gfx_HorizLine_NoClip(FILE_VIEWER_X, FILE_VIEWER_Y + FILE_VIEWER_HEADER_HEIGHT, FILE_VIEWER_WIDTH);
 	
 	return;
 }
 
-static void dispHomeScreenButtons(void) {
+static void dispHomeScreenButtons(void)
+{
+	const char *text[NUM_HOMESCREEN_BUTTONS] = {"Exit", "Refresh", "About", "Settings", "File"};
+	const uint8_t keys[5] = {kb_Yequ, kb_Window, kb_Zoom, kb_Trace, kb_Graph};
+	const uint8_t spacing = LCD_WIDTH / NUM_HOMESCREEN_BUTTONS;
+	int i, x;
 	
-	gfx_sprite_t * sprites[5];
-	sprites[0] = open;
-	sprites[1] = new_icon;
-	sprites[2] = quit;
-	sprites[3] = trash;
-	sprites[4] = more;
+	// bar at bottom
+	gfx_SetColor(LIGHT_GREY);
+	gfx_FillRectangle_NoClip(0, LCD_HEIGHT - 25, LCD_WIDTH, 25);
 	
-	for(int i = 1, ii = 0; i < 320; i+=64, ii++) {
-		// button rects
-		gfx_SetColor(LIGHT_GREY);
-		gfx_FillRectangle_NoClip(i+1, 215, 60, 24);
-		gfx_SetColor(BLACK);
-		gfx_Rectangle_NoClip(i+1, 215, 60, 24);
+	// line on top of bar
+	gfx_SetColor(BLACK);
+	gfx_HorizLine_NoClip(0, LCD_HEIGHT - 25, LCD_WIDTH);
 		
-		// sprites
-		if(i == 1)
-			gfx_TransparentSprite_NoClip(sprites[ii], i+4, 218);
-		else
-			gfx_TransparentSprite_NoClip(sprites[ii], i+3, 217);
-	}
-	
-	// text
 	fontlib_SetForegroundColor(0);
 	
-	fontlib_DrawStringXY("Open" ,  27, 224);
-	fontlib_DrawStringXY("New"  ,  90, 224);
-	fontlib_DrawStringXY("Quit" , 157, 224);
-	fontlib_DrawStringXY("Del"  , 220, 224);
-	fontlib_DrawStringXY("Other", 271, 224);
-	
+	for(i = 0; i < NUM_HOMESCREEN_BUTTONS; i++)
+	{
+		if(kb_Data[1])
+		{
+			if(kb_Data[1] & keys[i])
+			{
+				gfx_SetColor(LIGHT_BLUE);
+				gfx_FillRectangle_NoClip(i*spacing, LCD_HEIGHT - 24, spacing, 24);
+			}
+		}
+		
+		x = (i * spacing) + (spacing / 2) - (fontlib_GetStringWidth(text[i]) / 2);
+		fontlib_DrawStringXY(text[i], x, LCD_HEIGHT - 19);
+	}
 }
 
-static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
+static void refreshHomeScreenGraphics(struct homescreen *homescreen)
+{
+	gfx_SetDraw(gfx_buffer);
+	dispHomeScreenBG();
+	dispHomeScreenButtons();
+	dispFiles(homescreen->files, homescreen->numFiles, homescreen->offset, homescreen->selectedFile);
+	gfx_Wait();
+	gfx_SwapDraw();
+}
+
+static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 {
 	// quit
-	if(kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyZoom)) 
-	{
+	if(kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyYequ)) 
+	{	
+		while(kb_IsDown(kb_KeyClear) || kb_IsDown(kb_KeyYequ)) kb_Scan();
 		return should_exit;
 	}
+	
+	// refresh
+	if(kb_IsDown(kb_KeyWindow))
+	{
+		homescreen->selectedFile = 0;
+		homescreen->offset = 0;
+		homescreen->numFiles = loadFiles(homescreen->files);
 		
+		return show_homescreen;
+	}
+	
+	// File Options Menu
+	if(kb_IsDown(kb_KeyGraph))
+	{
+		struct menu* menu = loadHomeScreenFileMenu();
+		uint8_t result = displayMenu(menu);
+				
+		switch(result)
+		{
+			// New
+			case 1:
+				newFile();
+				homescreen->numFiles = loadFiles(homescreen->files);
+				break;
+			
+			// Open
+			case 2:
+				return show_editor;
+			
+			// rename
+			case 3:
+				if(homescreen->numFiles>0)
+				{
+					bool result = renameFile(homescreen->files[homescreen->selectedFile].os_name);
+					
+					if(result)
+					{
+						homescreen->numFiles = loadFiles(homescreen->files);
+						break;
+					}
+					else
+					{
+						alert("Something went wrong. Tough luck, buddy.");
+						break;
+					}
+				}
+				
+				alert("There aren't any files to rename (obviously)!");
+				break;
+				
+			// Delete
+			case 4:
+				checkIfDeleteFile(homescreen->files[homescreen->selectedFile].os_name);
+				homescreen->numFiles = loadFiles(homescreen->files);
+				break;
+			
+			// (un) Hide
+			case 5:
+				toggleHiddenStatus(homescreen->files[homescreen->selectedFile].os_name);
+				homescreen->numFiles = loadFiles(homescreen->files);
+				break;
+			
+			default:
+				break;
+		}
+		
+		return show_homescreen;
+	}
+	
+	// XXX About Menu
+	if(kb_IsDown(kb_KeyZoom))
+	{
+		struct menu* menu = loadHomeScreenAboutMenu();
+		uint8_t result = displayMenu(menu);
+		
+		switch (result)
+		{
+			default: break;
+		}
+		return show_homescreen;
+	}
+	
 	// move cursor down
 	if(kb_IsDown(kb_KeyDown) && homescreen->selectedFile < homescreen->numFiles-1)
 	{
-		homescreen->selectedFile++;
-		if(homescreen->selectedFile >= homescreen->offset+10){
-			homescreen->offset++;
+		if(homescreen->cyclesSinceLastScroll >= MIN_CYCLES_BETWEEN_SCROLLS)
+		{
+			homescreen->selectedFile++;
+			if(homescreen->selectedFile >= homescreen->offset + MAX_FILES_VIEWABLE)
+			{
+				homescreen->offset++;
+			}
+			homescreen->cyclesSinceLastScroll = 0;
+			
+			return show_homescreen;
 		}
 		
-		return show_homescreen;
+		else
+		{
+			return show_homescreen;
+		}
 	}
-
+	
 	// move cursor up
 	if (kb_IsDown(kb_KeyUp) && homescreen->selectedFile>0)
 	{
-		homescreen->selectedFile--;
-		if(homescreen->selectedFile < homescreen->offset){
-			homescreen->offset--;
+		if(homescreen->cyclesSinceLastScroll >= MIN_CYCLES_BETWEEN_SCROLLS)
+		{
+			homescreen->selectedFile--;
+			if(homescreen->selectedFile < homescreen->offset)
+			{
+				homescreen->offset--;
+			}
+			homescreen->cyclesSinceLastScroll = 0;
+			
+			return show_homescreen;
 		}
 		
-		return show_homescreen;
+		else
+		{
+			return show_homescreen;
+		}
 	}
 	
 	// open file
-	if(kb_IsDown(kb_KeyYequ)|| kb_IsDown(kb_Key2nd) || kb_IsDown(kb_KeyEnter))
+	if(kb_IsDown(kb_KeyEnter) || kb_IsDown(kb_Key2nd))
 	{
-		if(homescreen->numFiles <= 0)
-		{
-			return show_homescreen;
-		}
-		
+		while(kb_IsDown(kb_KeyEnter) || kb_IsDown(kb_Key2nd)) kb_Scan();
 		return show_editor;
 	}
 	
-	// new file
-	if (kb_IsDown(kb_KeyWindow))
-	{
-		if(homescreen->numFiles < 30)
-		{
-			if(newFile())
-			{
-				homescreen->numFiles = loadFiles(homescreen->files);
-			}
-		}
-		else
-		{
-			alert("You can't have more than 30 files.");
-			return show_homescreen;
-		}
-		
-		
-		return show_homescreen;
-	}
-	
 	// delete file
-	if ((kb_IsDown(kb_KeyTrace) || kb_IsDown(kb_KeyDel)))
+	if (kb_IsDown(kb_KeyDel))
 	{
 		if(homescreen->numFiles <= 0)
 		{
@@ -249,95 +397,8 @@ static enum state handleHomeScreenKeyPresses(struct homescreen* homescreen)
 		}
 		
 		homescreen->numFiles = loadFiles(homescreen->files);
-		
 		return show_homescreen;
 	}
 	
-	if(kb_IsDown(kb_KeyGraph)) {
-		
-		struct menu* menu = loadHomeScreenOtherMenu();
-		uint8_t result = displayMenu(menu);
-		
-		switch(result)
-		{
-			// back
-			case 1:
-				break;
-			
-			// rename
-			case 2:
-				if(homescreen->numFiles>0)
-				{
-					bool result = renameFile(homescreen->files[homescreen->selectedFile].os_name);
-					if(result)
-					{
-						loadFiles(homescreen->files);
-						break;
-					}
-					alert("Something went wrong. Tough luck, buddy.");
-					break;
-				}
-				
-				alert("There aren't any files to rename (obviously)!");
-				break;
-				
-			// hide
-			case 3: 
-				toggleHiddenStatus(homescreen->files[homescreen->selectedFile].os_name);
-				loadFiles(homescreen->files);
-				break;
-				
-			// settings
-			case 4:
-				// displaySettings();
-				break;
-				
-			default:
-				break;
-		}
-	}
-	
 	return show_homescreen;
-}
-
-static uint8_t loadFiles(struct file files[]) {
-	uint8_t numFiles = 0;
-	char *namePtr = NULL;
-	void *search_pos = NULL;
-	
-	while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL)
-	{
-		if (numFiles > 30)
-		{
-			return numFiles;
-		}
-		
-		strcpy(files[numFiles].os_name, namePtr);
-		numFiles++;
-		
-	}
-	
-	return numFiles;
-}
-
-static struct menu *loadHomeScreenOtherMenu(void)
-{
-	static struct menu menu =
-	{
-		.title = "Options",
-		.x = 200, .y = 100,
-		.numOptions = 5,
-		.hasSprites = true,
-		
-		.entry =
-		{
-			{"Back", left_arrow, left_arrow_height},
-			{"Rename", rename, rename_height},
-			{"(un)Hide", hide, hide_height},
-			{"Settings", settings_gear, settings_gear_height},
-			{"Help", help, help_height},
-		},
-	};
-	
-	return &menu;
 }

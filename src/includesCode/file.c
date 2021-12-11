@@ -3,11 +3,11 @@
 #include <stdint.h>
 #include <string.h>
 
-#include <includes/file.h>
-#include <includes/text.h>
-#include <includes/ui.h>
-#include <includes/editor.h>
-#include <includes/buffer.h>
+#include "includes/file.h"
+#include "includes/text.h"
+#include "includes/ui.h"
+#include "includes/editor.h"
+#include "includes/buffer.h"
 
 uint8_t getNumFiles(const char * txt)
 {
@@ -20,6 +20,27 @@ uint8_t getNumFiles(const char * txt)
 	}
 	
 	return result;
+}
+
+uint8_t loadFiles(struct file files[])
+{
+	uint8_t numFiles = 0;
+	char *namePtr = NULL;
+	void *search_pos = NULL;
+	
+	while ((namePtr = ti_Detect(&search_pos, HEADER_STR)) != NULL)
+	{
+		if (numFiles > 30)
+		{
+			return numFiles;
+		}
+		
+		strcpy(files[numFiles].os_name, namePtr);
+		numFiles++;
+		
+	}
+	
+	return numFiles;
 }
 
 bool newFile(void)
@@ -44,8 +65,8 @@ bool newFile(void)
 		}
 		
 		ti_Seek(0, SEEK_SET, fileSlot);
-		ti_Write(HEADER_STR, 3, 1, fileSlot);
-		ti_SetArchiveStatus(true, fileSlot);
+		ti_Write(HEADER_STR, sizeof HEADER_STR, 1, fileSlot);
+		// ti_SetArchiveStatus(true, fileSlot); // for some reason this *&*%-ing line of code crashes
 		ti_Close(fileSlot);
 		return true;
 	}
@@ -61,7 +82,7 @@ bool checkIfDeleteFile(char *name)
 	
 	if(alert(message) == true)
 	{
-		if(ti_Delete(name) == true)
+		if(ti_Delete(name) != 0)
 		{
 			return true;
 		}
@@ -70,7 +91,9 @@ bool checkIfDeleteFile(char *name)
 			alert("Error encountered.");
 			return false;
 		}
-	}	
+	}
+	
+	return false;
 }
 
 bool renameFile(const char *name)

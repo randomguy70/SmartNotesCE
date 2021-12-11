@@ -1,8 +1,0 @@
-Todo:
-- fix scrollbar or take it away
-- only update scrollbar when the screen is shifted
-- add settings & help windows
-- add a file hiding/unhiding function
-- planning on adding longer filenames
-- add text viewbox
-- fix selected bar going off screen when deleting only file existing

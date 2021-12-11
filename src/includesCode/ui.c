@@ -100,8 +100,8 @@ bool alert(char *txt) {
 	uint8_t maxLines = 4;
 	int width = 150; 
 	int height = (2*fontHeight)+(maxLines*fontHeight); // height of the window. has 2 extra line spaces for a header
-	int x = SCRN_WIDTH/2 - width/2;
-	int y = SCRN_HEIGHT/2 - height/2;
+	int x = LCD_WIDTH/2 - width/2;
+	int y = LCD_HEIGHT/2 - height/2;
 	
 	// text vars
 	int headerX;
@@ -135,7 +135,7 @@ bool alert(char *txt) {
 	// header text
 	const char *headerTxt = "Warning";
 	headerY = y-1;
-	headerX = (SCRN_WIDTH/2) - (fontlib_GetStringWidth(headerTxt)/2);
+	headerX = (LCD_WIDTH/2) - (fontlib_GetStringWidth(headerTxt)/2);
 	fontlib_SetCursorPosition(headerX, headerY);
 	fontlib_SetForegroundColor(RED);
 	fontlib_DrawString(headerTxt);
@@ -143,8 +143,8 @@ bool alert(char *txt) {
 	// header line
 	uint8_t length = 100;
 	gfx_SetColor(LIGHT_BLUE);
-	gfx_HorizLine(SCRN_WIDTH/2-length/2, y+fontHeight-1, length);
-	gfx_HorizLine(SCRN_WIDTH/2-length/2, y+fontHeight, length);
+	gfx_HorizLine(LCD_WIDTH/2-length/2, y+fontHeight-1, length);
+	gfx_HorizLine(LCD_WIDTH/2-length/2, y+fontHeight, length);
 	
 	// reset the cursor position
 	fontlib_SetCursorPosition(txtX, txtY);
@@ -202,91 +202,8 @@ bool alert(char *txt) {
 	return 0;
 }
 
-int displayMenu(struct menu * menu) {
-	int offset = 0;
-	int selected = 0;
-	uint8_t spacing = 22;
-	uint8_t maxOnScrn = 5;
-	uint8_t width = 120;
-	int height = spacing * maxOnScrn + 4;
-	
-	while(true) {
-		gfx_SetDraw(1);
-		
-		// box
-		gfx_SetColor(WHITE);
-		gfx_FillRectangle_NoClip(menu->x, menu->y, width, height);
-		
-		// outline
-		gfx_SetColor(LIGHT_BLUE);
-		thick_Rectangle(menu->x, menu->y, width, height, 2);
-		
-		// draw the entries' sprites and text
-		
-		gfx_SetTextFGColor(BLACK);
-		
-		for(uint8_t i = offset; i < menu->numOptions && i < maxOnScrn; i++) {
-		
-			// rectangle selecting box
-			if(i == selected) {
-				// fill box
-				gfx_SetColor(LIGHT_GREY);
-				gfx_FillRectangle_NoClip(menu->x+2, menu->y + i * spacing + 2, width - 4, spacing);
-				
-				// outline box
-				gfx_SetColor(BLACK);
-				gfx_Rectangle_NoClip(menu->x+2, menu->y + i * spacing + 2, width - 4, spacing);
-			}
-			
-			// text
-			fontlib_DrawStringXY(menu->entry[i].str, (menu->x + 30), menu->y + (i * spacing) + 10); // add 10 to center the text
-			
-			// sprites
-			if(menu->hasSprites)
-				gfx_TransparentSprite_NoClip(menu->entry[i].sprite, menu->x + 4, menu->y + i * spacing + 5);
-			
-		}
-		
-		gfx_BlitRectangle(1, menu->x, menu->y, width, height); // I might change this to just blitting the menu rect, but who knows if anybody is even going to ever read this comment...
-		
-		// keyPresses
-		
-		// move selecter bar down
-		kb_Scan();
-		if(kb_IsDown(kb_KeyDown) && selected < menu->numOptions -1) {
-			selected++;
-			if(selected > offset+maxOnScrn){
-				offset++;
-			}
-			delay(100);
-		}
-		
-		// move selecter bar up
-		if(kb_IsDown(kb_KeyUp) && selected>0) {
-			selected--;
-			if(selected < offset){
-				offset--;
-			}
-			delay(100);
-		}
-		
-		// select an option
-		if(kb_IsDown(kb_KeyEnter) || kb_IsDown(kb_Key2nd)) {
-			return selected + 1;
-		}
-		
-		// quit the menu (once the clear key has been released)
-		if(kb_IsDown(kb_KeyClear)) {
-			while(kb_AnyKey()) kb_Scan();
-			return CANCEL;
-		}
-		
-	}
-	
-	return 0;
-};
-
-int drawScrollbar(struct scrollBar * scrollBar) {
+int drawScrollbar(struct scrollBar * scrollBar)
+{
 	gfx_SetColor(scrollBar->colorIndex);
 	
 	for(uint8_t i=0; i<scrollBar->width; i++) {

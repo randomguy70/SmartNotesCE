@@ -7,13 +7,6 @@ extern "C" {
 
 #include "includes/buffer.h"
 
-#define EDITOR_MAX_LINES_VIEWABLE 15
-#define EDITOR_HEADER_BAR_HEIGHT  20
-#define EDITOR_FOOTER_BAR_HEIGHT  20
-#define EDITOR_TEXT_BOX_Y         EDITOR_HEADER_BAR_HEIGHT
-#define EDITOR_TEXT_BOX_WIDTH     LCD_WIDTH
-#define EDITOR_TEXT_BOX_HEIGHT    LCD_HEIGHT - (EDITOR_HEADER_BAR_HEIGHT + EDITOR_FOOTER_BAR_HEIGHT)
-
 enum textMode {
 	MATH = 1,
 	CAPS,
@@ -28,38 +21,24 @@ struct inputState {
 struct textBox {
 	int x, y, width, height;
 	
-	char *startOfText;
-	int textLength;
+	int curLine, curCol;
 	
-	int numLines;
 	int numLinesOnScreen;
-	int maxLinesOnScreen;
 	int lineOffset;
 	
-	// holds the pointers to the lines on screen
-	char *linePointers[EDITOR_MAX_LINES_VIEWABLE + 1];
-	uint8_t lineLengths[EDITOR_MAX_LINES_VIEWABLE + 1];
+	uint8_t prevLinePtr;
+	uint8_t prevLineLen;
+	uint8_t visiblelineLengths[11];
 };
 
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title);
 
 // inputChar() returns the last character inputted based on the value of the current os_GetSCS() value, and the current text mode.
-
 // text Modes are:
 // 1) Math related ascii characters, such as {} () */+-="?,. etc...
 // 2) Capital ascii letters, such as ABC...
 // 3) Lowercase ascii letters, such as abc...
 char inputChar(enum textMode mode, uint8_t keyPressed);
-
-// returns the number of characters in a word terminated with a null character or alternate stop code
-int fontlib_GetStrLen(const char *string);
-
-void fontlib_DrawStringXY(const char *str, int x, int y);
-int fontlib_copyWord(char * dest, char * src);
-int fontlib_copyWordL(char *dest, char *src, int chars);
-int fontlib_strlen(char *string);
-
-int drawSpace();
 
 void updateInputMode(struct inputState *inputState);
 void displayTextMode(int x, int y, enum textMode textMode);
@@ -68,7 +47,12 @@ int textBox_getVisibleLinePointers(struct textBox *textBox);
 
 bool isValidWordChar(char character);
 
-int getWordLen(char *pos, struct buffer *buffer);
+int getWordLen(char *start);
+int getLineLen(char *start, int maxWidth);
+
+void fontlib_DrawStringXY(const char *str, int x, int y);
+void fontlib_DrawStringLXY(const char *str, int length, int x, int y);
+int drawLine(char *start, int x, int y);
 
 // returns num characters with NO word wrapping
 int getMaxCharsPerLine(char *start, char *end);

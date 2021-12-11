@@ -11,15 +11,18 @@
 // buf1 = ascii data before cursor
 // buf2 = ascii data after cursor
 struct buffer {
-	char buf1[MAX_BUFFER_SIZE];
-	char buf2[MAX_BUFFER_SIZE];
+	char buffer[MAX_BUFFER_SIZE];
+	// char buf2[MAX_BUFFER_SIZE];
 	
-	int buf1_size;
-	int buf2_size;
-	int buf1_pos;
-	int buf2_pos;
+	int dataSize;
 	
-	int total_size;
+	int offset;
+	// int buf1_size;
+	// int buf2_size;
+	// int buf1_pos;
+	// int buf2_pos;
+	
+	// int total_size;
 };
 
 int fileToBuffer(const char *name, struct buffer* buffer);
