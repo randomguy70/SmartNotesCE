@@ -39,14 +39,10 @@ struct textBox {
 **/
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title, bool restrictFirstChar);
 
-/** inputChar() returns the last character inputted based on the value of the current os_GetSCS() value, and the current text mode.
- * text Modes are:
- * 1) Math related ascii characters, such as {} () */+-="?,. etc...
- * 2) Capital ascii letters, such as ABC...
- * 3) Lowercase ascii letters, such as abc...
- * @param
-**/
-
+/* inputChar() returns the last character inputted based on the value of the current os_GetSCS() value, and the current text mode.
+ * @param mode The text mode (Numbers, Capital letters, Lowercase, etc...)
+ * @param keyPressed The os_CSC key value to change into ASCII value
+*/
 char inputChar(enum textMode mode, uint8_t keyPressed);
 
 void updateInputMode(struct inputState *inputState);
