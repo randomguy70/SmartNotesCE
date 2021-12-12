@@ -35,10 +35,12 @@ extern "C" {
 #define STARTING_RECENTS_Y               FILE_VIEWER_Y + FILE_VIEWER_HEADER_HEIGHT
 #define STARTING_RECENTS_WIDTH           (FILE_VIEWER_WIDTH / 2) - FILE_VIEWER_BORDER_THICKNESS - (FILE_VIEWER_DIVIDOR_WIDTH / 2)
 
+#define FILE_LOCK_ICON_X                 STARTING_FILE_X + 80
+#define FILE_HIDDEN_ICON_X               STARTING_FILE_X + 105
+
 #define NUM_HOMESCREEN_BUTTONS           5
 
-#define MIN_CYCLES_AFTER_FIRST_SCROLL    100
-#define MIN_CYCLES_BETWEEN_SCROLLS       3
+#define MIN_CYCLES_BETWEEN_SCROLLS       2
 
 // contains properties of the file viewer
 struct homescreen {

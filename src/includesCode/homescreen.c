@@ -59,7 +59,6 @@ static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uin
 	for(i=offset; i < MAX_FILES_VIEWABLE + offset && i<MAX_FILES_LOADABLE && i<numFiles; i++)
 	{
 		// selecting box
-		
 		if (selectedFile == i)
 		{
 			if(kb_IsDown(kb_Key2nd) || kb_IsDown(kb_KeyEnter))
@@ -77,7 +76,12 @@ static void dispFiles(struct file files[], uint8_t numFiles, uint8_t offset, uin
 		
 		fontlib_SetForegroundColor(BLACK);
 		txtWidth = fontlib_GetStringWidth(files[i].os_name);
-		fontlib_DrawStringXY(files[i].os_name, fileX + (FILE_VIEWER_WIDTH / 4) - txtWidth  /2, fileY + 1);
+		fontlib_DrawStringXY(files[i].view_name, fileX + 2, fileY + 1);
+		
+		if(files[i].isHidden)
+		{
+			gfx_TransparentSprite_NoClip(hide, FILE_HIDDEN_ICON_X, fileY + 2);
+		}
 		
 		fileY += FILE_SPACING;
 	}

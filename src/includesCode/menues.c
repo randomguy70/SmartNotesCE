@@ -6,6 +6,7 @@
 
 #include "includes/ui.h"
 #include "includes/homescreen.h"
+#include "includes/text.h"
 
 // XXX
 int displayMenu(struct menu *menu)
@@ -82,14 +83,14 @@ int displayMenu(struct menu *menu)
 		if(kb_IsDown(kb_KeyDown) && selected < menu->numOptions - 1)
 		{
 			selected++;
-			delay(200);
+			delay(100);
 		}
 		
 		// move selecter bar up
 		else if(kb_IsDown(kb_KeyUp) && selected>0)
 		{
 			selected--;
-			delay(200);
+			delay(100);
 		}
 		
 		// select an option
@@ -102,7 +103,7 @@ int displayMenu(struct menu *menu)
 		if(kb_IsDown(kb_KeyClear))
 		{
 			while(kb_AnyKey()) kb_Scan();
-			return CANCEL;
+			return 0;
 		}
 		
 		wasPressed = (kb_IsDown(kb_Key2nd) || kb_IsDown(kb_KeyEnter));

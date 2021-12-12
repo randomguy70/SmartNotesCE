@@ -34,6 +34,8 @@ struct file {
 	char os_name[10];
 	char view_name[10];
 	unsigned int size;
+	
+	bool isHidden;
 };
 
 // archives all files with "TXT" as the first 3 bytes

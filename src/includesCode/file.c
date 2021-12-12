@@ -36,6 +36,18 @@ uint8_t loadFiles(struct file files[])
 		}
 		
 		strcpy(files[numFiles].os_name, namePtr);
+		strcpy(files[numFiles].view_name, namePtr);
+		
+		if(isHidden(files[numFiles].view_name))
+		{
+			files[numFiles].view_name[0] ^= 64;
+			files[numFiles].isHidden = true;
+		}
+		else
+		{
+			files[numFiles].isHidden = false;
+		}
+		
 		numFiles++;
 		
 	}

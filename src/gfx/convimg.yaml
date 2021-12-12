@@ -18,6 +18,8 @@ converts:
       - help.png
       - hide.png
       - rename.png
+      - lock_on.png
+      - lock_off.png
 outputs:
   - type: c
     include-file: gfx.h

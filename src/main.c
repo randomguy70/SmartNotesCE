@@ -31,9 +31,9 @@ int main(void) {
 	
 	gfx_Begin();
 	gfx_SetPalette(palette, sizeof_palette, 0);
-	gfx_SetTransparentColor(2);
-	gfx_SetTextTransparentColor(2);
-	gfx_SetTextBGColor(2);
+	gfx_SetTransparentColor(TRANSPARENT);
+	gfx_SetTextTransparentColor(TRANSPARENT);
+	gfx_SetTextBGColor(TRANSPARENT);
 	
 	struct homescreen homescreen;
 	struct editor editor;
@@ -84,16 +84,17 @@ static uint8_t setupFontlibc() {
 		gfx_PrintString("or email me at onlychessfreeze0515@gmail.com.");
 		
 		// make sure that a key was pressed AFTER all the keys were released
-		while(kb_AnyKey()){}
-		while(!kb_AnyKey()){}
+		while(kb_AnyKey()) kb_Scan();
+		while(!kb_AnyKey()) kb_Scan();
 		
 		gfx_End();
 		return false;
 	}
 	
 	fontlib_SetFont(my_font, 0);
-	fontlib_SetBackgroundColor(2);
+	fontlib_SetBackgroundColor(TRANSPARENT);
 	fontlib_SetTransparency(true);
+	fontlib_SetFirstPrintableCodePoint(1);
 	
 	return true;
 	

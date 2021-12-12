@@ -18,6 +18,8 @@ extern "C" {
 #include "help.h"
 #include "hide.h"
 #include "rename.h"
+#include "lock_on.h"
+#include "lock_off.h"
 
 #ifdef __cplusplus
 }
