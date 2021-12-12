@@ -2,16 +2,7 @@ palettes:
   - name: palette
     images: automatic
     fixed-entries:
-    - color: {index: 0, r:    0, g:    0, b:    0}   # black
-    - color: {index: 1, r:  255, g:  255, b:  255}   # white
-    - color: {index: 2, r:  255, g:    0, b:  128}   # transparent color (hot pink)
-    - color: {index: 3, r:  128, g:  128, b:  128}   # dark grey
-    - color: {index: 4, r:  137, g:  148, b:  153}   # medium grey (I really like this color; it took forever to find the correct rgb values!)
-    - color: {index: 5, r:  211, g:  211, b:  211}   # light grey
-    - color: {index: 6, r:    0, g:    0, b:  255}   # dark blue
-    - color: {index: 7, r:  255, g:    0, b:    0}   # red
-    - color: {index: 8, r:   135, g:  206, b: 250}   # light blue
-    - color: {index: 9, r:  255, g:  255, b:  136}   # stickypad yellow color for school-paper background
+    - image: default_colors.png
 converts:
   - name: myimages
     palette: palette
