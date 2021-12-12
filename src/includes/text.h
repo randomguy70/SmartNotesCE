@@ -31,13 +31,22 @@ struct textBox {
 	uint8_t visiblelineLengths[11];
 };
 
-uint8_t inputString(char* buffer, uint8_t maxLength, const char * title);
+/** Opens a window for entering text
+ * @param buffer buffer to store inputted string in. Allocate at least (maxLength + 1) bytes to prevent overflow!
+ * @param maxLength the maximum number of characters allowed to be inputted.
+ * @param title a short string used as a title at the top of the window (don't do more than 15 characters)
+ * @param restrictFirstChar used for inputting file names because TI-OS doesn't like names to begin with certain characters
+**/
+uint8_t inputString(char* buffer, uint8_t maxLength, const char * title, bool restrictFirstChar);
 
-// inputChar() returns the last character inputted based on the value of the current os_GetSCS() value, and the current text mode.
-// text Modes are:
-// 1) Math related ascii characters, such as {} () */+-="?,. etc...
-// 2) Capital ascii letters, such as ABC...
-// 3) Lowercase ascii letters, such as abc...
+/** inputChar() returns the last character inputted based on the value of the current os_GetSCS() value, and the current text mode.
+ * text Modes are:
+ * 1) Math related ascii characters, such as {} () */+-="?,. etc...
+ * 2) Capital ascii letters, such as ABC...
+ * 3) Lowercase ascii letters, such as abc...
+ * @param
+**/
+
 char inputChar(enum textMode mode, uint8_t keyPressed);
 
 void updateInputMode(struct inputState *inputState);

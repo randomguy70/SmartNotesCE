@@ -13,7 +13,7 @@
 #include "includes/buffer.h"
 #include "includes/editor.h"
 
-uint8_t inputString(char* buffer, uint8_t maxLength, const char * title)
+uint8_t inputString(char* buffer, uint8_t maxLength, const char * title, bool restrictFirstChar)
 {
 	uint8_t strLen = 0;
 	char character;
