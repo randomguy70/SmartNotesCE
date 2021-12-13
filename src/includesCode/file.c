@@ -60,7 +60,7 @@ bool newFile(void)
 	char buffer[10] = {0};
 	ti_var_t fileSlot;
 	
-	if (inputString(buffer, 8, "New File") > 0)
+	if (inputString(buffer, 8, "New File", true) > 0)
 	{
 		
 		if(fileExists(buffer))
@@ -116,7 +116,7 @@ bool renameFile(const char *name)
 	
 	strcat(message, name);
 	
-	if(inputString(newNameBuffer, 8, message) > 0)
+	if(inputString(newNameBuffer, 8, message, true) > 0)
 	{
 		ti_Rename(name, newNameBuffer);
 		return true;

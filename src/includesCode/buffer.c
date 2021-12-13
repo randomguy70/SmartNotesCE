@@ -35,5 +35,5 @@ int bufferToFile(struct fileBuffer *buffer, char *name) {
 	ti_Resize(HEADER_STR_LEN + buffer->totalDataLen, fileSlot);
 	ti_Close(fileSlot);
 	
-	return MIN_FILE_SIZE + buffer->dataSize;
+	return MIN_FILE_SIZE + buffer->totalDataLen;
 }
