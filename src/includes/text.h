@@ -7,18 +7,29 @@ extern "C" {
 
 #include "includes/buffer.h"
 
-enum textMode {
+struct word
+{
+	char *ptr;
+	int len;
+	int width;
+	char stopCode;
+};
+
+enum textMode
+{
 	MATH = 1,
 	CAPS,
 	LOWER_CASE,
 };
 
-struct inputState {
+struct inputState
+{
 	enum textMode textMode;
 	bool alphaPrev;
 };
 
-struct textBox {
+struct textBox
+{
 	int x, y, width, height;
 	
 	int curLine, curCol;
@@ -39,10 +50,10 @@ struct textBox {
 **/
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title, bool restrictFirstChar);
 
-/* inputChar() returns the last character inputted based on the value of the current os_GetSCS() value, and the current text mode.
+/** returns the ASCII character value converted from an os_GetCSC() value
  * @param mode The text mode (Numbers, Capital letters, Lowercase, etc...)
  * @param keyPressed The os_CSC key value to change into ASCII value
-*/
+**/
 char inputChar(enum textMode mode, uint8_t keyPressed);
 
 void updateInputMode(struct inputState *inputState);
@@ -52,6 +63,7 @@ int textBox_getVisibleLinePointers(struct textBox *textBox);
 
 bool isValidWordChar(char character);
 
+struct word getWord(char *ptr, struct fileBuffer *buffer);
 int getWordLen(char *start);
 int getLineLen(char *start, int maxWidth);
 

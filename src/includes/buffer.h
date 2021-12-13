@@ -5,19 +5,17 @@
 
 #include "includes/file.h"
 
-#define MAX_BUFFER_SIZE 16000
+#define FILE_BUFFER_SIZE (2 * MAX_FILE_DATA_SIZE)
 
-// file data buffer (using gap buffer method)
-// buf1 = ascii data before cursor
-// buf2 = ascii data after cursor
-struct buffer {
-	char data[MAX_BUFFER_SIZE * 2];
-	unsigned int dataSizeBeforeCursor;
-	unsigned int dataSizeAfterCursor;
-	unsigned int cursorOffset;
+struct fileBuffer {
+	char data[FILE_BUFFER_SIZE];
+	size_t dataLenBeforeCursor;
+	size_t dataLenAfterCursor;
+	size_t totalDataLen;
+	int cursorOffset;
 };
 
-int fileToBuffer(const char *name, struct buffer* buffer);
-int bufferToFile(struct buffer* buffer, char* name);
+int fileToBuffer(const char *name, struct fileBuffer *buffer);
+int bufferToFile(struct fileBuffer *buffer, char* name);
 
 #endif

@@ -115,10 +115,19 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title, bool re
 		if (strLen < 8 && (keyPressed != sk_Alpha && keyPressed != sk_2nd && keyPressed != sk_Mode && keyPressed != sk_Del && keyPressed != sk_GraphVar && keyPressed != sk_Stat && keyPressed != sk_Enter))
 		{
 			character = inputChar(inputState.textMode, keyPressed);
-			if (character != '\0' && strLen<=maxLength)
+			if (character != '\0' && strLen<=maxLength && strLen > 0)
 			{
 				buffer[strLen] = character;
 				strLen++;
+			}
+			// first character of inputted file name
+			else if(restrictFirstChar == true && strLen == 0 && character != '\0' && strLen <= maxLength)
+			{
+				if(character >= 64 && character < 128)
+				{
+					buffer[strLen] = character;
+					strLen++;
+				}
 			}
 		}
 		
@@ -179,6 +188,31 @@ char inputChar(enum textMode mode, uint8_t keyPressed)
 	return character;
 }
 
+
+struct word getWord(char *ptr, struct fileBuffer *buffer)
+{
+	struct word word;
+	word.len = 0;
+	word.width = 0;
+	word.ptr = ptr;
+	
+	while(true)
+	{
+		if(*ptr == ' ' || *ptr == '\n' || *ptr == '\0')
+		{
+			word.stopCode = *ptr;
+			break;
+		}
+		else
+		{
+			word.len++;
+			word.width += fontlib_GetGlyphWidth(*ptr);
+			ptr++;
+		}
+	}
+	
+	return word;
+}
 
 // returns the character length of the next word
 int getWordLen(char *start)
@@ -299,7 +333,6 @@ bool isValidWordChar(char character)
 	
 	return false;
 }
-
 
 void displayTextMode(int x, int y, enum textMode textMode)
 {

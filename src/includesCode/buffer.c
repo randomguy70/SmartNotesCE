@@ -2,32 +2,37 @@
 
 #include "includes/buffer.h"
 
-// I will switch to gap buffer method later, but for now...
-int fileToBuffer(const char *name, struct buffer *buffer) {
+int fileToBuffer(const char *name, struct fileBuffer *buffer) {
 	ti_var_t fileSlot;
-	int dataSize;
+	size_t dataSize;
 	
 	fileSlot = ti_Open(name, "r");
 	if(!fileSlot) return 0;
 	
-	dataSize = ti_GetSize(fileSlot);
-	ti_Seek(MIN_FILE_SIZE, SEEK_SET, fileSlot);
-	ti_Read(buffer->buffer, dataSize, 1, fileSlot);
+	dataSize = ti_GetSize(fileSlot) - HEADER_STR_LEN;
+	ti_Seek(HEADER_STR_LEN, SEEK_SET, fileSlot);
+	ti_Read(buffer->data[FILE_BUFFER_SIZE - dataSize], dataSize, 1, fileSlot);
 	ti_Close(fileSlot);
+	
+	buffer->dataLenAfterCursor = dataSize;
+	buffer->dataLenBeforeCursor = 0;
+	buffer->totalDataLen = dataSize;
+	buffer->cursorOffset = 0;
 	
 	return dataSize;
 }
 
-// I will switch to gap buffer method later, but for now...
-int bufferToFile(struct buffer *buffer, char *name) {
+int bufferToFile(struct fileBuffer *buffer, char *name) {
 	ti_var_t fileSlot;
 	
 	fileSlot = ti_Open(name, "w+");
 	if(!fileSlot) return 0;
 	
 	ti_Seek(0, SEEK_SET, fileSlot);
-	ti_Write(HEADER_STR, sizeof HEADER_STR, 1, fileSlot);
-	ti_Write(buffer->buffer, buffer->dataSize, 1, fileSlot);
+	ti_Write(HEADER_STR, HEADER_STR_LEN, 1, fileSlot);
+	ti_Write(buffer->data, buffer->dataLenBeforeCursor, 1, fileSlot);
+	ti_Write(buffer->data + FILE_BUFFER_SIZE - buffer->dataLenAfterCursor, buffer->dataLenAfterCursor, 1, fileSlot);
+	ti_Resize(HEADER_STR_LEN + buffer->totalDataLen, fileSlot);
 	ti_Close(fileSlot);
 	
 	return MIN_FILE_SIZE + buffer->dataSize;

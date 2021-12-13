@@ -67,12 +67,7 @@ static unsigned int getVisibleLinePtrs(struct editor *editor)
 	unsigned int numVisibleLines = 0;
 	int lineLen;
 	
-	editor->visibleLineLengths[0] = editor->buffer.buffer + editor->buffer.offset;
-	
-	while(numVisibleLines <= EDITOR_MAX_LINES_VIEWABLE)
-	{
-		
-	}
+	editor->linePtr[0] = editor->buffer.data + editor->buffer.dataLenBeforeCursor - 1;
 	
 	return numVisibleLines;
 }

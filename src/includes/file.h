@@ -21,10 +21,10 @@ bytes 50->end of the file: text data
 	
 // text editing specific things
 #define HEADER_STR           "TXT"                // header string of all text files
-#define MIN_FILE_SIZE        sizeof HEADER_STR
-#define MAX_FILE_NAME_SIZE   18
-
-#define FILE_BUFFER_SIZE     16000
+#define HEADER_STR_LEN       3
+#define MIN_FILE_SIZE        HEADER_STR_LEN
+#define MAX_FILE_SIZE        MIN_FILE_SIZE + 16000
+#define MAX_FILE_DATA_SIZE   16000
 
 struct file;
 struct buffer;
