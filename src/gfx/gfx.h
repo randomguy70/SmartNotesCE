@@ -23,6 +23,7 @@ extern "C" {
 #include "exit_icon.h"
 #include "refresh_icon.h"
 #include "about_icon.h"
+#include "title_sprite.h"
 
 #ifdef __cplusplus
 }

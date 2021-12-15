@@ -127,6 +127,7 @@ static void dispHomeScreenBG(void)
 	txtWidth = fontlib_GetStringWidth("SMARTNOTES CE");
 	fontlib_DrawStringXY("SMARTNOTES CE", (LCD_WIDTH/2)-(txtWidth/2), 5);
 	
+	
 	fontlib_SetForegroundColor(BLACK);
 	txtWidth = fontlib_GetStringWidth("V.1 by Randomguy");
 	
