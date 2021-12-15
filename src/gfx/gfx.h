@@ -20,6 +20,9 @@ extern "C" {
 #include "rename.h"
 #include "lock_on.h"
 #include "lock_off.h"
+#include "exit_icon.h"
+#include "refresh_icon.h"
+#include "about_icon.h"
 
 #ifdef __cplusplus
 }

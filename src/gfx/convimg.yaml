@@ -20,6 +20,10 @@ converts:
       - rename.png
       - lock_on.png
       - lock_off.png
+      - exit_icon.png
+      - refresh_icon.png
+      - about_icon.png
+      - title_sprite.png
 outputs:
   - type: c
     include-file: gfx.h

@@ -196,6 +196,7 @@ static void dispHomeScreenBG(void)
 static void dispHomeScreenButtons(void)
 {
 	const char *text[NUM_HOMESCREEN_BUTTONS] = {"Exit", "Refresh", "About", "Settings", "File"};
+	const gfx_sprite_t *sprites[5] = {exit_icon, refresh_icon, about_icon};
 	const uint8_t keys[5] = {kb_Yequ, kb_Window, kb_Zoom, kb_Trace, kb_Graph};
 	const uint8_t spacing = LCD_WIDTH / NUM_HOMESCREEN_BUTTONS;
 	int i, x;
@@ -223,6 +224,10 @@ static void dispHomeScreenButtons(void)
 		
 		x = (i * spacing) + (spacing / 2) - (fontlib_GetStringWidth(text[i]) / 2);
 		fontlib_DrawStringXY(text[i], x, LCD_HEIGHT - 19);
+		if(i < 3)
+		{
+			gfx_TransparentSprite(sprites[i], x - 17, LCD_HEIGHT - 21);
+		}
 	}
 }
 
