@@ -124,9 +124,9 @@ static void dispHomeScreenBG(void)
 	
 	// name and credits
 	fontlib_SetForegroundColor(BLACK);
-	txtWidth = fontlib_GetStringWidth("SMARTNOTES CE");
-	fontlib_DrawStringXY("SMARTNOTES CE", (LCD_WIDTH/2)-(txtWidth/2), 5);
-	
+	// txtWidth = fontlib_GetStringWidth("SMARTNOTES CE");
+	// fontlib_DrawStringXY("SMARTNOTES CE", (LCD_WIDTH/2)-(txtWidth/2), 5);
+	gfx_TransparentSprite_NoClip(title_sprite, LCD_WIDTH / 2 - title_sprite->width / 2, 7);
 	
 	fontlib_SetForegroundColor(BLACK);
 	txtWidth = fontlib_GetStringWidth("V.1 by Randomguy");
@@ -225,10 +225,10 @@ static void dispHomeScreenButtons(void)
 		
 		x = (i * spacing) + (spacing / 2) - (fontlib_GetStringWidth(text[i]) / 2);
 		fontlib_DrawStringXY(text[i], x, LCD_HEIGHT - 19);
-		if(i < 3)
-		{
-			gfx_TransparentSprite(sprites[i], x - 17, LCD_HEIGHT - 21);
-		}
+		// if(i < 3)
+		// {
+		// 	gfx_TransparentSprite(sprites[i], x - 17, LCD_HEIGHT - 21);
+		// }
 	}
 }
 
