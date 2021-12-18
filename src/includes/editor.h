@@ -10,6 +10,7 @@ extern "C" {
 #include "includes/file.h"
 #include "includes/buffer.h"
 #include "includes/text.h"
+#include "main.h"
 
 #define EDITOR_MAX_LINES_VIEWABLE  11
 

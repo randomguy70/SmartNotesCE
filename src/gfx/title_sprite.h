@@ -6,10 +6,10 @@ extern "C" {
 #endif
 
 #define title_sprite_width 125
-#define title_sprite_height 14
-#define title_sprite_size 1752
+#define title_sprite_height 13
+#define title_sprite_size 1627
 #define title_sprite ((gfx_sprite_t*)title_sprite_data)
-extern unsigned char title_sprite_data[1752];
+extern unsigned char title_sprite_data[1627];
 
 #ifdef __cplusplus
 }

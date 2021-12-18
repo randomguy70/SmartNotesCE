@@ -52,6 +52,8 @@ struct homescreen {
    bool wasScrolled;
    int cyclesSinceFirstScroll;
    int cyclesSinceLastScroll;
+   
+   bool selectedWasPressed;
 };
 
 // displays homescreen and deals with all the homescreen functions and options

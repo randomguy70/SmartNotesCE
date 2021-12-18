@@ -28,6 +28,7 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 	homescreen->numFiles = loadFiles(homescreen->files);
 	homescreen->wasScrolled = false;
 	homescreen->cyclesSinceLastScroll = MIN_CYCLES_BETWEEN_SCROLLS;
+	homescreen->selectedWasPressed = false;
 	
 	while(true)
 	{
@@ -377,6 +378,11 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 	// open file
 	if(kb_IsDown(kb_KeyEnter) || kb_IsDown(kb_Key2nd))
 	{
+		homescreen->selectedWasPressed = true;
+	}
+	else if(homescreen->selectedWasPressed == true)
+	{
+		homescreen->selectedWasPressed = false;
 		while(kb_IsDown(kb_KeyEnter) || kb_IsDown(kb_Key2nd)) kb_Scan();
 		return show_editor;
 	}

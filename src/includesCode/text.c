@@ -121,13 +121,10 @@ uint8_t inputString(char* buffer, uint8_t maxLength, const char * title, bool re
 				strLen++;
 			}
 			// first character of inputted file name
-			else if(restrictFirstChar == true && strLen == 0 && character != '\0' && strLen <= maxLength)
+			else if( restrictFirstChar == true && strLen == 0 && ((character >= 'A' && character <= 'Z') || (character >= '0' && character <= '9')) )
 			{
-				if(character >= 64 && character < 128)
-				{
-					buffer[strLen] = character;
-					strLen++;
-				}
+				buffer[strLen] = character;
+				strLen++;
 			}
 		}
 		

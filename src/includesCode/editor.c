@@ -22,22 +22,22 @@ enum state dispEditor(struct editor *editor) {
 	
 	enum state ret = show_editor;
 	
-	alert("before initialise");
 	initialiseEditor(editor);
-	alert("after initialise");
 	// getVisibleLinePtrs(editor);
 	
 	while(true)
 	{
+		kb_Scan();
 		gfx_SetDraw(gfx_buffer);
 		dispEditorBK(editor);
 		gfx_SwapDraw();
-		drawLine("Hello World!!!", 1, 30);
-		kb_Scan();
 		
 		if(kb_IsDown(kb_KeyClear))
 		{
-			while(kb_AnyKey()) kb_Scan();
+			return should_exit;
+		}
+		if(kb_IsDown(kb_KeyEnter))
+		{
 			return show_homescreen;
 		}
 		
@@ -52,7 +52,7 @@ enum state dispEditor(struct editor *editor) {
 
 static int initialiseEditor(struct editor *editor)
 {
-	fileToBuffer(editor->file.os_name, &(editor->buffer));
+	// fileToBuffer(editor->file.os_name, &(editor->buffer));
 	
 	editor->textBox.curLine = 0;
 	editor->textBox.curCol = 0;
@@ -103,6 +103,21 @@ static void dispEditorBK(struct editor *editor)
 	gfx_HorizLine_NoClip(EDITOR_FOOTER_BAR_X, EDITOR_FOOTER_BAR_Y, EDITOR_FOOTER_BAR_WIDTH);
 		
 	return;
+}
+
+static void displayEditorButtons(void)
+{
+	int i;
+	
+	// bar at bottom
+	gfx_SetColor(LIGHT_GREY);
+	gfx_FillRectangle_NoClip(0, LCD_HEIGHT - 25, LCD_WIDTH, 25);
+	
+	// line on top of bar
+	gfx_SetColor(BLACK);
+	gfx_HorizLine_NoClip(0, LCD_HEIGHT - 25, LCD_WIDTH);
+	
+	const char *text[5] = {"Home", ""}
 }
 
 // XXX Display Editor Text
