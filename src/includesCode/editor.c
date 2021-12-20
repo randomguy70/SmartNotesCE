@@ -74,7 +74,7 @@ static unsigned int getVisibleLinePtrs(struct editor *editor)
 // displays the editor background
 static void dispEditorBK(struct editor *editor)
 {
-	int strWidth; // used for centering strings
+	int strWidth;
 	
 	gfx_FillScreen(WHITE);
 	
@@ -95,12 +95,6 @@ static void dispEditorBK(struct editor *editor)
 	strWidth = fontlib_GetStringWidth(editor->file.os_name);
 	fontlib_DrawStringXY(editor->file.os_name, EDITOR_HEADER_BAR_X + (EDITOR_HEADER_BAR_WIDTH / 2) - (strWidth / 2), 5);
 	
-	// footer
-	gfx_SetColor(LIGHT_GREY);
-	gfx_FillRectangle_NoClip(EDITOR_FOOTER_BAR_X, EDITOR_FOOTER_BAR_Y, EDITOR_FOOTER_BAR_WIDTH,  EDITOR_FOOTER_BAR_HEIGHT );
-	gfx_SetColor(BLACK);
-	gfx_HorizLine_NoClip(EDITOR_FOOTER_BAR_X, EDITOR_FOOTER_BAR_Y, EDITOR_FOOTER_BAR_WIDTH);
-		
 	return;
 }
 
@@ -108,13 +102,12 @@ static void displayEditorButtons(void)
 {
 	int i, x;
 	
-	// bar at bottom
+	// footer
 	gfx_SetColor(LIGHT_GREY);
-	gfx_FillRectangle_NoClip(0, LCD_HEIGHT - 25, LCD_WIDTH, 25);
+	gfx_FillRectangle_NoClip(EDITOR_FOOTER_BAR_X, EDITOR_FOOTER_BAR_Y, EDITOR_FOOTER_BAR_WIDTH,  EDITOR_FOOTER_BAR_HEIGHT );
 	
-	// line on top of bar
 	gfx_SetColor(BLACK);
-	gfx_HorizLine_NoClip(0, LCD_HEIGHT - 25, LCD_WIDTH);
+	gfx_HorizLine_NoClip(EDITOR_FOOTER_BAR_X, EDITOR_FOOTER_BAR_Y, EDITOR_FOOTER_BAR_WIDTH);
 	
 	const char *text[5] = {"Home", "Edit", "Save", "Unused", "File"};
 	const uint8_t keys[5] = {kb_Yequ, kb_Window, kb_Zoom, kb_Trace, kb_Graph};
