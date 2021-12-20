@@ -29,6 +29,9 @@ extern "C" {
 #define EDITOR_TEXT_BOX_WIDTH      LCD_WIDTH
 #define EDITOR_TEXT_BOX_HEIGHT     LCD_HEIGHT - (EDITOR_HEADER_BAR_HEIGHT + EDITOR_FOOTER_BAR_HEIGHT)
 
+#define NUM_EDITOR_BUTTONS         5
+#define EDITOR_BUTTON_SPACING      LCD_WIDTH / NUM_EDITOR_BUTTONS
+
 struct editor {
 	struct file file;
 	struct fileBuffer buffer;

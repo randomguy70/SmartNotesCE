@@ -14,13 +14,13 @@
 
 static int initialiseEditor(struct editor *editor);
 static void dispEditorBK();
-// static void dispEditorText(struct editor* editor);
+static void displayEditorButtons(void);
 static enum state handleEditorKeyPresses(void);
 static unsigned int getVisibleLinePtrs(struct editor *editor);
 
 enum state dispEditor(struct editor *editor) {
 	
-	enum state ret = show_editor;
+	enum state ret;
 	
 	initialiseEditor(editor);
 	// getVisibleLinePtrs(editor);
@@ -30,21 +30,20 @@ enum state dispEditor(struct editor *editor) {
 		kb_Scan();
 		gfx_SetDraw(gfx_buffer);
 		dispEditorBK(editor);
+		displayEditorButtons();
 		gfx_SwapDraw();
 		
-		if(kb_IsDown(kb_KeyClear))
-		{
-			return should_exit;
-		}
-		if(kb_IsDown(kb_KeyEnter))
-		{
-			return show_homescreen;
-		}
+		ret = handleEditorKeyPresses();
 		
 		if(ret == should_exit)
 		{
 			return should_exit;
 		}
+		if(ret == show_homescreen)
+		{
+			return show_homescreen;
+		}
+		
 	}
 	
 	return ret;
@@ -107,7 +106,7 @@ static void dispEditorBK(struct editor *editor)
 
 static void displayEditorButtons(void)
 {
-	int i;
+	int i, x;
 	
 	// bar at bottom
 	gfx_SetColor(LIGHT_GREY);
@@ -117,7 +116,25 @@ static void displayEditorButtons(void)
 	gfx_SetColor(BLACK);
 	gfx_HorizLine_NoClip(0, LCD_HEIGHT - 25, LCD_WIDTH);
 	
-	const char *text[5] = {"Home", ""}
+	const char *text[5] = {"Home", "Edit", "Save", "Unused", "File"};
+	const uint8_t keys[5] = {kb_Yequ, kb_Window, kb_Zoom, kb_Trace, kb_Graph};
+	
+	fontlib_SetForegroundColor(BLACK);
+	
+	for(i = 0; i < NUM_EDITOR_BUTTONS; i++)
+	{
+		if(kb_Data[1])
+		{
+			if(kb_Data[1] & keys[i])
+			{
+				gfx_SetColor(LIGHT_BLUE);
+				gfx_FillRectangle_NoClip(i * EDITOR_BUTTON_SPACING, LCD_HEIGHT - 24, EDITOR_BUTTON_SPACING, 24);
+			}
+		}
+		
+		x = (i * EDITOR_BUTTON_SPACING) + (EDITOR_BUTTON_SPACING / 2) - (fontlib_GetStringWidth(text[i]) / 2);
+		fontlib_DrawStringXY(text[i], x, LCD_HEIGHT - 19);
+	}
 }
 
 // XXX Display Editor Text
@@ -146,10 +163,12 @@ static void dispEditorText(struct editor *editor)
 static enum state handleEditorKeyPresses(void)
 {
 	if(kb_IsDown(kb_KeyClear)) {
+		while(kb_IsDown(kb_KeyClear)) kb_Scan();
 		return should_exit;
 	}
 	
 	if(kb_IsDown(kb_Key2nd)) {
+		while(kb_IsDown(kb_Key2nd)) kb_Scan();
 		return show_homescreen;
 	}
 	
