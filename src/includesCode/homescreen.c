@@ -269,7 +269,7 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 	{
 		struct menu* menu = loadHomeScreenFileMenu();
 		uint8_t result = displayMenu(menu);
-				
+		
 		switch(result)
 		{
 			// New

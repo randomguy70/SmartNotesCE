@@ -19,23 +19,23 @@ static void displayEditorButtons(void);
 static enum state handleEditorKeyPresses(struct editor *editor);
 static unsigned int getVisibleLinePtrs(struct editor *editor);
 
-enum state dispEditor(struct editor *editor) {
+enum state dispEditor(struct editor *editor)
+{
 	
 	enum state ret;
-	
-	// initialiseEditor(editor);
 	
 	while(true)
 	{
 		kb_Scan();
-		refreshEditorGraphics(editor);
 		
+		refreshEditorGraphics(editor);
 		ret = handleEditorKeyPresses(editor);
 		
 		if(ret == should_exit)
 		{
 			return should_exit;
 		}
+		
 		if(ret == show_homescreen)
 		{
 			return show_homescreen;
@@ -155,7 +155,6 @@ static void dispEditorText(struct editor *editor)
 }
 */
 
-// XXX
 static enum state handleEditorKeyPresses(struct editor *editor)
 {
 	if(kb_IsDown(kb_KeyClear))

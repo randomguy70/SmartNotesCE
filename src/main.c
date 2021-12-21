@@ -56,7 +56,7 @@ int main(void) {
 		if(state == show_editor)
 		{
 			// editor.file = homescreen.files[homescreen.selectedFile];
-			strcpy(editor.file.os_name, "FILLLE");
+			strcpy(editor.file.os_name, "_FILE_");
 			state = dispEditor(&editor);
 			// state = show_homescreen;
 		}
