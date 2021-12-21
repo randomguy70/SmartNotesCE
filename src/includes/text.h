@@ -47,12 +47,15 @@ struct textBox
  * @param maxLength the maximum number of characters allowed to be inputted.
  * @param title a short string used as a title at the top of the window (don't do more than 15 characters)
  * @param restrictFirstChar used for inputting file names because TI-OS doesn't like names to begin with certain characters
+ * 
+ * @returns the length of the inputted string
 **/
 uint8_t inputString(char* buffer, uint8_t maxLength, const char * title, bool restrictFirstChar);
 
-/** returns the ASCII character value converted from an os_GetCSC() value
+/**
  * @param mode The text mode (Numbers, Capital letters, Lowercase, etc...)
  * @param keyPressed The os_CSC key value to change into ASCII value
+ * @returns the ASCII equivalent of the os_CSC key value
 **/
 char inputChar(enum textMode mode, uint8_t keyPressed);
 

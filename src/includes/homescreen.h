@@ -54,6 +54,8 @@ struct homescreen {
    int cyclesSinceLastScroll;
    
    bool selectedWasPressed;
+   
+   bool allowEditor;                      // prevents editor from being called accidentally
 };
 
 // displays homescreen and deals with all the homescreen functions and options

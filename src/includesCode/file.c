@@ -110,7 +110,7 @@ bool checkIfDeleteFile(char *name)
 
 bool renameFile(const char *name)
 {
-	
+	uint8_t result;
 	char newNameBuffer[9] = {0};
 	char message[8+9] = {"Rename "};
 	
@@ -118,7 +118,25 @@ bool renameFile(const char *name)
 	
 	if(inputString(newNameBuffer, 8, message, true) > 0)
 	{
-		ti_Rename(name, newNameBuffer);
+		result = ti_Rename(name, newNameBuffer);
+		
+		if(result == 1)
+		{
+			char message[40] = "File ";
+			strcat(message, newNameBuffer);
+			strcat(message, " already exists.");
+			alert(message);
+			return false;
+		}
+		if(result == 2)
+		{
+			char message[55] = "An error occured while trying to rename ";
+			strcat(message, newNameBuffer);
+			strcat(message, ".");
+			alert(message);
+			return false;
+		}
+		
 		return true;
 	}
 	

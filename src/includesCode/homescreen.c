@@ -29,6 +29,7 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 	homescreen->wasScrolled = false;
 	homescreen->cyclesSinceLastScroll = MIN_CYCLES_BETWEEN_SCROLLS;
 	homescreen->selectedWasPressed = false;
+	homescreen->allowEditor = false;
 	
 	while(true)
 	{
@@ -38,10 +39,15 @@ enum state dispHomeScreen(struct homescreen* homescreen)
 		
 		ret = handleHomeScreenKeyPresses(homescreen);
 		
-		if(ret == should_exit || ret == show_editor)
+		if(ret == should_exit)
 		{
 			return ret;
 		}
+		if(ret == show_editor && homescreen->allowEditor == true)
+		{
+			return ret;
+		}
+		
 		
 		homescreen->cyclesSinceLastScroll++;
 	}
@@ -226,10 +232,6 @@ static void dispHomeScreenButtons(void)
 		
 		x = (i * spacing) + (spacing / 2) - (fontlib_GetStringWidth(text[i]) / 2);
 		fontlib_DrawStringXY(text[i], x, LCD_HEIGHT - 19);
-		// if(i < 3)
-		// {
-		// 	gfx_TransparentSprite(sprites[i], x - 17, LCD_HEIGHT - 21);
-		// }
 	}
 }
 
@@ -274,44 +276,32 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 			case 1:
 				newFile();
 				homescreen->numFiles = loadFiles(homescreen->files);
-				break;
+				return show_homescreen;
 			
 			// Open
 			case 2:
+				homescreen->allowEditor = true;
 				return show_editor;
 			
 			// rename
 			case 3:
-				if(homescreen->numFiles>0)
+				if(homescreen->numFiles > 0 && renameFile(homescreen->files[homescreen->selectedFile].os_name) == true)
 				{
-					bool result = renameFile(homescreen->files[homescreen->selectedFile].os_name);
-					
-					if(result)
-					{
-						homescreen->numFiles = loadFiles(homescreen->files);
-						break;
-					}
-					else
-					{
-						alert("Something went wrong. Tough luck, buddy.");
-						break;
-					}
+					homescreen->numFiles = loadFiles(homescreen->files);
+					return show_homescreen;
 				}
-				
-				alert("There aren't any files to rename (obviously)!");
-				break;
 				
 			// Delete
 			case 4:
 				checkIfDeleteFile(homescreen->files[homescreen->selectedFile].os_name);
 				homescreen->numFiles = loadFiles(homescreen->files);
-				break;
+				return show_homescreen;
 			
 			// (un) Hide
 			case 5:
 				toggleHiddenStatus(homescreen->files[homescreen->selectedFile].os_name);
 				homescreen->numFiles = loadFiles(homescreen->files);
-				break;
+				return show_homescreen;
 			
 			default:
 				break;
@@ -379,10 +369,12 @@ static enum state handleHomeScreenKeyPresses(struct homescreen *homescreen)
 	if(kb_IsDown(kb_KeyEnter) || kb_IsDown(kb_Key2nd))
 	{
 		homescreen->selectedWasPressed = true;
+		return show_homescreen;
 	}
 	else if(homescreen->selectedWasPressed == true)
 	{
 		homescreen->selectedWasPressed = false;
+		homescreen->allowEditor = true;
 		while(kb_IsDown(kb_KeyEnter) || kb_IsDown(kb_Key2nd)) kb_Scan();
 		return show_editor;
 	}

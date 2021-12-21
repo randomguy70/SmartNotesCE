@@ -13,27 +13,24 @@
 #include "includes/colors.h"
 
 static int initialiseEditor(struct editor *editor);
+static void refreshEditorGraphics(struct editor *editor);
 static void dispEditorBK();
 static void displayEditorButtons(void);
-static enum state handleEditorKeyPresses(void);
+static enum state handleEditorKeyPresses(struct editor *editor);
 static unsigned int getVisibleLinePtrs(struct editor *editor);
 
 enum state dispEditor(struct editor *editor) {
 	
 	enum state ret;
 	
-	initialiseEditor(editor);
-	// getVisibleLinePtrs(editor);
+	// initialiseEditor(editor);
 	
 	while(true)
 	{
 		kb_Scan();
-		gfx_SetDraw(gfx_buffer);
-		dispEditorBK(editor);
-		displayEditorButtons();
-		gfx_SwapDraw();
+		refreshEditorGraphics(editor);
 		
-		ret = handleEditorKeyPresses();
+		ret = handleEditorKeyPresses(editor);
 		
 		if(ret == should_exit)
 		{
@@ -43,9 +40,7 @@ enum state dispEditor(struct editor *editor) {
 		{
 			return show_homescreen;
 		}
-		
 	}
-	
 	return ret;
 }
 
@@ -69,6 +64,14 @@ static unsigned int getVisibleLinePtrs(struct editor *editor)
 	editor->linePtr[0] = editor->buffer.data + editor->buffer.dataLenBeforeCursor - 1;
 	
 	return numVisibleLines;
+}
+
+static void refreshEditorGraphics(struct editor *editor)
+{
+	gfx_SetDraw(gfx_buffer);
+	dispEditorBK(editor);
+	displayEditorButtons();
+	gfx_SwapDraw();
 }
 
 // displays the editor background
@@ -153,14 +156,16 @@ static void dispEditorText(struct editor *editor)
 */
 
 // XXX
-static enum state handleEditorKeyPresses(void)
+static enum state handleEditorKeyPresses(struct editor *editor)
 {
-	if(kb_IsDown(kb_KeyClear)) {
+	if(kb_IsDown(kb_KeyClear))
+	{
 		while(kb_IsDown(kb_KeyClear)) kb_Scan();
 		return should_exit;
 	}
 	
-	if(kb_IsDown(kb_Key2nd)) {
+	if(kb_IsDown(kb_Key2nd))
+	{
 		while(kb_IsDown(kb_Key2nd)) kb_Scan();
 		return show_homescreen;
 	}
