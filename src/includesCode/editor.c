@@ -41,6 +41,7 @@ enum state dispEditor(struct editor *editor)
 			return show_homescreen;
 		}
 	}
+	
 	return ret;
 }
 
@@ -90,6 +91,7 @@ static void dispEditorBK(struct editor *editor)
 	gfx_HorizLine_NoClip(EDITOR_HEADER_BAR_X, EDITOR_HEADER_BAR_Y + EDITOR_HEADER_BAR_HEIGHT - 1, EDITOR_HEADER_BAR_WIDTH);
 	
 	// header text
+	
 	fontlib_SetWindowFullScreen();
 	fontlib_SetTransparency(true);
 	fontlib_SetForegroundColor(BLACK);
@@ -97,8 +99,6 @@ static void dispEditorBK(struct editor *editor)
 	
 	strWidth = fontlib_GetStringWidth(editor->file.os_name);
 	fontlib_DrawStringXY(editor->file.os_name, EDITOR_HEADER_BAR_X + (EDITOR_HEADER_BAR_WIDTH / 2) - (strWidth / 2), 5);
-	
-	return;
 }
 
 static void displayEditorButtons(void)
